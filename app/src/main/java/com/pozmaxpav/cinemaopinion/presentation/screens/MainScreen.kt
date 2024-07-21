@@ -56,6 +56,25 @@ fun MainScreen() {
             }
         }
 
+        /**
+         * Этот код использует компонент SearchBar внутри Column, который является контейнером для вертикального размещения элементов.
+         * Вот что происходит:
+         *
+         * modifier = Modifier.padding(padding): Добавляет отступы вокруг Column, используя значение padding, которое передается из Scaffold.
+         * Это отступы, которые обеспечивают корректное размещение элементов внутри Column, учитывая отступы от Scaffold.
+         *
+         * if (searchBarActive): Условие для проверки, активен ли поиск (searchBarActive).
+         * Если searchBarActive равно true, то компонент SearchBar будет отображаться. В противном случае, он не будет отображаться.
+         *
+         * Передача параметров в SearchBar:
+         *
+         * query = query: Передает текущее значение запроса.
+         * onQueryChange = { newQuery -> query = newQuery }: Обновляет состояние query при изменении текста в поле поиска.
+         * onSearch = { searchQuery -> /* обработка поиска */ }: Позволяет обработать поиск, когда пользователь выполняет поиск.
+         * active = searchBarActive: Управляет состоянием активности SearchBar.
+         * onActiveChange = { isActive -> searchBarActive = isActive }: Обновляет состояние активности поиска.
+         */
+
         if (!searchBarActive) {
             LazyColumn(
                 modifier = Modifier
