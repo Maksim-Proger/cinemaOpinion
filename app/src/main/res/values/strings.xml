@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Cinema Opinion</string>
+    <string name="header_name">Фильмы</string>
+    <string name="icon_account">Иконка аккаунта</string>
+    <string name="icon_search">Иконка поиска</string>
+    <string name="title_account">Профиль</string>
 </resources>
