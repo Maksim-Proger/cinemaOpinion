@@ -12,7 +12,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.screens.AccountScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,18 +22,18 @@ fun TopAppBar(
 ) {
     TopAppBar(
         scrollBehavior = scrollBehavior,
-        title = { Text(text = stringResource(id = R.string.header_name)) },
+        title = { Text(text = stringResource(id = R.string.top_app_bar_header_name)) },
         actions = {
             IconButton(onClick = onSearchButtonClick) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = stringResource(id = R.string.icon_search)
+                    contentDescription = stringResource(id = R.string.description_icon_search)
                 )
             }
             IconButton(onClick = onAccountButtonClick) {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = stringResource(id = R.string.icon_account)
+                    contentDescription = stringResource(id = R.string.description_icon_account)
                 )
             }
         }

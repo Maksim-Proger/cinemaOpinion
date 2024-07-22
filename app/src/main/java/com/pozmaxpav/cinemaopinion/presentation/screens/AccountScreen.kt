@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.Card
@@ -27,12 +26,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
-import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
 import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
 
 @Composable
@@ -68,7 +65,7 @@ fun AccountScreen(
                         )
                     }
                     Text(
-                        text = stringResource(id = R.string.title_account),
+                        text = stringResource(id = R.string.title_account_screen),
                         style = MaterialTheme.typography.headlineMedium
                     )
                     SettingsMenu(navController)

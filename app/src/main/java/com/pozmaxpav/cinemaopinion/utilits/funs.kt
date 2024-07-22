@@ -17,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.pozmaxpav.cinemaopinion.R
 
 @Composable
 fun AccountListItem(icon: Painter, contentDescription: String, title: String) {
@@ -52,7 +54,9 @@ fun TextField(
     singleLine: Boolean = true
 ) {
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 15.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 15.dp),
         value = value,
         onValueChange = onValueChange,
         label = label,
@@ -63,7 +67,7 @@ fun TextField(
                 IconButton(onClick = { onValueChange("") }) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Clear Email"
+                        contentDescription = stringResource(id = R.string.description_clear_text)
                     )
                 }
             }
