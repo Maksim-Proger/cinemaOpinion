@@ -31,14 +31,22 @@ fun MainScreen() {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
+    var onAccountButtonClick by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 onSearchButtonClick = { searchBarActive = !searchBarActive },
+                onAccountButtonClick = { onAccountButtonClick = true },
                 scrollBehavior = scrollBehavior
             )
+
+            if (onAccountButtonClick) {
+                AccountScreen(
+                    onClick = { onAccountButtonClick = false } // Закрытие диалога при нажатии
+                )
+            }
         }
     ) { padding ->
 
