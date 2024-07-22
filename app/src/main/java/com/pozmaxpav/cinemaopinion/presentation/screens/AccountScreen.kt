@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,7 +41,9 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
 
 @Composable
-fun AccountScreen() {
+fun AccountScreen(
+    onClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +66,7 @@ fun AccountScreen() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = onClick,
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -141,6 +144,6 @@ private fun AccountListItem(icon: ImageVector, title: String) {
 @Composable
 fun AccountScreenPreview() {
     CinemaOpinionTheme {
-        AccountScreen()
+        AccountScreen(onClick = { /* Действие при клике */ })
     }
 }
