@@ -5,24 +5,31 @@
     <string name="icon_search">Иконка поиска</string>
     <string name="title_account">Профиль</string>
 
-
-
+    <!--   Text for Drop-Down Menu   -->
     <string name="drop_down_menu_item_edit">Изменить данные пользователя</string>
     <string name="drop_down_menu_item_settings">Настройки</string>
     <string name="drop_down_menu_item_exit">Сменить пользователя</string>
 
+    <!--   Text of the fields   -->
+    <string name="text_for_edit_name_field">Имя пользователя</string>
+    <string name="placeholder_for_edit_name_field">Введите новое имя пользователя</string>
 
+    <string name="text_for_edit_email_field">Email</string>
+    <string name="placeholder_for_edit_email_field">Введите новый Email</string>
 
+    <string name="text_for_edit_password_field">Пароль</string>
+    <string name="placeholder_for_edit_password_field">Введите новый пароль пользователя</string>
 
     <!--  Title Icons  -->
     <string name="my_list_movies">Мой список</string>
     <string name="joint_list_films">Общий список</string>
-
-
 
     <!--  Description Icons  -->
     <string name="description_icon_edit">Icon Edit</string>
     <string name="description_icon_settings">Icon Srttings</string>
     <string name="description_icon_exit">Icon Exit</string>
     <string name="description_icon_movie_list">Icon Movie List</string>
+    <string name="description_icon_edit_change_name">Icon Edit Change Name</string>
+    <string name="description_icon_edit_change_email">Icon Edit Change Email</string>
+    <string name="description_icon_edit_change_password">Icon Edit Change Password</string>
 </resources>

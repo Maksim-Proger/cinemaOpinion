@@ -30,7 +30,6 @@ fun SettingsMenu() {
         IconButton(onClick = { menuOpeningStatus = true }) {
             Icon(Icons.Default.MoreVert, contentDescription = "Icon MoreVert")
         }
-
         DropdownMenu(
             expanded = menuOpeningStatus,
             onDismissRequest = { menuOpeningStatus = false }
