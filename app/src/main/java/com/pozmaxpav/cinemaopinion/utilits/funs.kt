@@ -1,25 +1,31 @@
 package com.pozmaxpav.cinemaopinion.utilits
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AccountListItem(icon: ImageVector, title: String) {
+fun AccountListItem(icon: Painter, contentDescription: String, title: String) {
     Row(
-        modifier = Modifier.padding(horizontal = 10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+            .clickable { /*TODO: onClick*/ },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             modifier = Modifier.padding(end = 15.dp),
-            imageVector = icon,
-            contentDescription = title
+            painter = icon,
+            contentDescription = contentDescription
         )
         Text(text = title)
     }

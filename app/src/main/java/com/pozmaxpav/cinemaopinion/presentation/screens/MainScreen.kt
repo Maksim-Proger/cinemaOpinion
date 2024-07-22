@@ -50,9 +50,7 @@ fun MainScreen() {
         }
     ) { padding ->
 
-        Column(
-            modifier = Modifier.padding(padding)
-        ) {
+        Column(modifier = Modifier.padding(padding)) {
             if (searchBarActive) {
                 SearchBar(
                     query = query,
