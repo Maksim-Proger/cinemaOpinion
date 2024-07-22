@@ -49,7 +49,6 @@ fun MainScreen() {
             }
         }
     ) { padding ->
-
         Column(modifier = Modifier.padding(padding)) {
             if (searchBarActive) {
                 SearchBar(
@@ -61,7 +60,6 @@ fun MainScreen() {
                 )
             }
         }
-
         /**
          * Этот код использует компонент SearchBar внутри Column, который является контейнером для вертикального размещения элементов.
          * Вот что происходит:

@@ -52,31 +52,24 @@ fun AccountScreen(onClick: () -> Unit) {
                     .fillMaxSize()
                     .padding(horizontal = 25.dp, vertical = 15.dp)
             ) {
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(
-                        onClick = onClick,
-                    ) {
+                    IconButton(onClick = onClick) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = null
                         )
                     }
-
                     Text(
                         text = stringResource(id = R.string.title_account),
                         style = MaterialTheme.typography.headlineMedium
                     )
-
                     SettingsMenu()
                 }
-
                 Spacer(modifier = Modifier.padding(8.dp))
-
                 Card(
                     modifier = Modifier.fillMaxSize(),
                     colors = CardDefaults.cardColors(
@@ -107,19 +100,15 @@ fun AccountScreen(onClick: () -> Unit) {
                         Spacer(modifier = Modifier.height(20.dp))
                         HorizontalDivider()
                         Spacer(modifier = Modifier.height(20.dp))
-
                         AccountListItem(
                             icon = painterResource(id = R.drawable.ic_movie_list),
-                            contentDescription =
-                                    stringResource(id = R.string.description_icon_movie_list),
-                            title = stringResource(id =  R.string.my_list_movies)
+                            contentDescription = stringResource(id = R.string.description_icon_movie_list),
+                            title = stringResource(id = R.string.my_list_movies)
                         )
                         Spacer(modifier = Modifier.height(20.dp))
-
                         AccountListItem(
                             icon = painterResource(id = R.drawable.ic_movie_list),
-                            contentDescription =
-                                    stringResource(id = R.string.description_icon_movie_list),
+                            contentDescription = stringResource(id = R.string.description_icon_movie_list),
                             title = stringResource(id = R.string.joint_list_films)
                         )
                     }
