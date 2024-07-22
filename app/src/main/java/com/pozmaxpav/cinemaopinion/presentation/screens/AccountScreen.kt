@@ -39,11 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
+import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
 
 @Composable
-fun AccountScreen(
-    onClick: () -> Unit
-) {
+fun AccountScreen(onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -94,9 +93,7 @@ fun AccountScreen(
                             .fillMaxSize()
                             .padding(15.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
                                 modifier = Modifier.size(60.dp),
                                 imageVector = Icons.Default.AccountCircle,
@@ -115,28 +112,13 @@ fun AccountScreen(
                         HorizontalDivider()
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        AccountListItem(icon = Icons.Filled.List, title = "Мой список")
+                        AccountListItem(icon = Icons.Filled.List, title = stringResource(id = R.string.my_list_movies))
                         Spacer(modifier = Modifier.height(20.dp))
-                        AccountListItem(icon = Icons.Filled.List, title = "Общий список")
+                        AccountListItem(icon = Icons.Filled.List, title = stringResource(id = R.string.joint_list_films))
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun AccountListItem(icon: ImageVector, title: String) {
-    Row(
-        modifier = Modifier.padding(horizontal = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            modifier = Modifier.padding(end = 15.dp),
-            imageVector = icon,
-            contentDescription = title
-        )
-        Text(text = title)
     }
 }
 
