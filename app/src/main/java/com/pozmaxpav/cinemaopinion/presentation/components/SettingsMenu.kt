@@ -20,10 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 
 @Composable
-fun SettingsMenu() {
+fun SettingsMenu(navController: NavHostController) {
     var menuOpeningStatus by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.wrapContentSize()) {
@@ -41,8 +43,14 @@ fun SettingsMenu() {
                         Icons.Default.Edit,
                         contentDescription = stringResource(id = R.string.description_icon_edit)
                     )
-                              },
-                onClick = { /* Handle Edit */ }
+                },
+                onClick = { // TODO: Надо детальнее разобраться в этой навигации
+                    navController.navigate(Route.EditPersonalInformationScreen.route) {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
             )
             DropdownMenuItem(
                 text = { Text(text = stringResource(id = R.string.drop_down_menu_item_settings)) },

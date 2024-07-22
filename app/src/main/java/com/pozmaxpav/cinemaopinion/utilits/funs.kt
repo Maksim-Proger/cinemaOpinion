@@ -52,7 +52,7 @@ fun TextField(
     singleLine: Boolean = true
 ) {
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 15.dp),
         value = value,
         onValueChange = onValueChange,
         label = label,
@@ -62,8 +62,8 @@ fun TextField(
             {
                 IconButton(onClick = { onValueChange("") }) {
                     Icon(
-                        imageVector = Icons.Default.Close, // Использует стандартную иконку "Close"
-                        contentDescription = "Clear Email" // Описание для иконки
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Clear Email"
                     )
                 }
             }

@@ -29,11 +29,14 @@ import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
 import com.pozmaxpav.cinemaopinion.utilits.TextField
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.Text
 
 @Composable
 fun EditPersonalInformationScreen() {
 
     var (username, setUsername) = remember { mutableStateOf("") }
+    var (email, setEmail) = remember { mutableStateOf("") }
+    var (password, setPassword) = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
@@ -46,15 +49,15 @@ fun EditPersonalInformationScreen() {
         TextField(
             value = username,
             onValueChange = setUsername,
-            label = { stringResource(id = R.string.drop_down_menu_item_edit) },
-            placeholder = { stringResource(id = R.string.placeholder_for_edit_name_field) },
+            label = { Text(stringResource(id = R.string.text_for_edit_name_field)) },
+            placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_name_field)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = stringResource(id = R.string.description_icon_edit_change_name)
                 )
             },
-            supportingText = { stringResource(id = R.string.text_for_edit_name_field) },
+            supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_name_field)) },
             keyboardActions = KeyboardActions( // Обрабатываем нажатие клавиши Enter.
                 onDone = {
                     // Здесь можно выполнить какое-то действие при нажатии клавиши Enter.
@@ -65,17 +68,17 @@ fun EditPersonalInformationScreen() {
         )
 
         TextField(
-            value = username,
-            onValueChange = setUsername,
-            label = { stringResource(id = R.string.text_for_edit_email_field) },
-            placeholder = { stringResource(id = R.string.placeholder_for_edit_email_field) },
+            value = email,
+            onValueChange = setEmail,
+            label = { Text(stringResource(id = R.string.text_for_edit_email_field)) },
+            placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_email_field)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = stringResource(id = R.string.description_icon_edit_change_email)
                 )
             },
-            supportingText = { stringResource(id = R.string.placeholder_for_edit_email_field) },
+            supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_email_field)) },
             keyboardActions = KeyboardActions( // Обрабатываем нажатие клавиши Enter.
                 onDone = {
                     // Здесь можно выполнить какое-то действие при нажатии клавиши Enter.
@@ -86,17 +89,17 @@ fun EditPersonalInformationScreen() {
         )
 
         TextField(
-            value = username,
-            onValueChange = setUsername,
-            label = { stringResource(id = R.string.text_for_edit_password_field) },
-            placeholder = { stringResource(id = R.string.placeholder_for_edit_password_field) },
+            value = password,
+            onValueChange = setPassword,
+            label = { Text(stringResource(id = R.string.text_for_edit_password_field)) },
+            placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_password_field)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = stringResource(id = R.string.description_icon_edit_change_password)
                 )
             },
-            supportingText = { stringResource(id = R.string.placeholder_for_edit_password_field) },
+            supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_password_field)) },
             keyboardActions = KeyboardActions( // Обрабатываем нажатие клавиши Enter.
                 onDone = {
                     // Здесь можно выполнить какое-то действие при нажатии клавиши Enter.
