@@ -6,4 +6,10 @@
     <string name="title_account">Профиль</string>
     <string name="my_list_movies">Мой список</string>
     <string name="joint_list_films">Общий список</string>
+    <string name="drop_down_menu_item_edit">Изменить данные пользователя</string>
+    <string name="drop_down_menu_item_settings">Настройки</string>
+    <string name="drop_down_menu_item_exit">Сменить пользователя</string>
+    <string name="description_icon_edit">Icon Edit</string>
+    <string name="description_icon_settings">Icon Srttings</string>
+    <string name="description_icon_exit">Icon Exit</string>
 </resources>

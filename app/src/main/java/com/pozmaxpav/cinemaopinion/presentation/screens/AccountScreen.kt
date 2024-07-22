@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
 import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
 import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
 
@@ -62,7 +63,8 @@ fun AccountScreen(onClick: () -> Unit) {
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     IconButton(
                         onClick = onClick,
@@ -72,11 +74,13 @@ fun AccountScreen(onClick: () -> Unit) {
                             contentDescription = null
                         )
                     }
-                    Spacer(modifier = Modifier.padding(end = 15.dp))
+
                     Text(
                         text = stringResource(id = R.string.title_account),
                         style = MaterialTheme.typography.headlineMedium
                     )
+
+                    SettingsMenu()
                 }
 
                 Spacer(modifier = Modifier.padding(8.dp))
