@@ -21,13 +21,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.presentation.components.SearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBar
 import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
@@ -44,6 +45,7 @@ fun MainScreen() {
 
             if (onAccountButtonClick) {
                 AccountScreen(
+                    navController,
                     onClick = { onAccountButtonClick = false } // Закрытие диалога при нажатии
                 )
             }
@@ -95,10 +97,10 @@ fun MainScreen() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    CinemaOpinionTheme {
-        MainScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun MainScreenPreview() {
+//    CinemaOpinionTheme {
+//        MainScreen()
+//    }
+//}

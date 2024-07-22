@@ -29,13 +29,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
 import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
 import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
 
 @Composable
-fun AccountScreen(onClick: () -> Unit) {
+fun AccountScreen(
+    navController: NavHostController,
+    onClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +71,7 @@ fun AccountScreen(onClick: () -> Unit) {
                         text = stringResource(id = R.string.title_account),
                         style = MaterialTheme.typography.headlineMedium
                     )
-                    SettingsMenu()
+                    SettingsMenu(navController)
                 }
                 Spacer(modifier = Modifier.padding(8.dp))
                 Card(
@@ -118,10 +122,10 @@ fun AccountScreen(onClick: () -> Unit) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AccountScreenPreview() {
-    CinemaOpinionTheme {
-        AccountScreen(onClick = { /* Действие при клике */ })
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun AccountScreenPreview() {
+//    CinemaOpinionTheme {
+//        AccountScreen(onClick = { /* Действие при клике */ })
+//    }
+//}
