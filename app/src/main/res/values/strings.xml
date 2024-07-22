@@ -4,4 +4,6 @@
     <string name="icon_account">Иконка аккаунта</string>
     <string name="icon_search">Иконка поиска</string>
     <string name="title_account">Профиль</string>
+    <string name="my_list_movies">Мой список</string>
+    <string name="joint_list_films">Общий список</string>
 </resources>
