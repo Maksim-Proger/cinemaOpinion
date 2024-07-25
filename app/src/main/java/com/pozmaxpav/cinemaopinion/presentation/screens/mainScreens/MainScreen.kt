@@ -1,5 +1,6 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens
+package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -38,6 +40,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.SearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
+import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,13 +50,16 @@ fun MainScreen(navController: NavHostController) {
     var searchBarActive by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
 
-    val viewModel: MainViewModel = hiltViewModel()
-    val premiereMovies  = viewModel.premiersMovies.collectAsState()
+//    val viewModel: MainViewModel = hiltViewModel()
+//    val premiereMovies = viewModel.premiersMovies.collectAsState()
+
+    // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
+    var selectedMovie by remember { mutableStateOf<Movie?>(null) }
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
-    LaunchedEffect(Unit) {
-        viewModel.fetchPremiersMovies(2023, "July")
-    }
+//    LaunchedEffect(Unit) {
+//        viewModel.fetchPremiersMovies(2022, "July")
+//    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -72,29 +78,21 @@ fun MainScreen(navController: NavHostController) {
             }
         }
     ) { padding ->
+
+
+
         Column(modifier = Modifier.padding(padding)) {
             if (searchBarActive) {
                 SearchBar(
                     query = query,
-                    onQueryChange = {newQuery -> query = newQuery},
-                    onSearch = {searchQuery -> /* обработка поиска */},
+                    onQueryChange = { newQuery -> query = newQuery },
+                    onSearch = { searchQuery -> /* обработка поиска */ },
                     active = searchBarActive,
-                    onActiveChange = {isActive -> searchBarActive = isActive}
+                    onActiveChange = { isActive -> searchBarActive = isActive }
                 )
             }
         }
         /**
-         * Этот код использует компонент SearchBar внутри Column, который является контейнером для вертикального размещения элементов.
-         * Вот что происходит:
-         *
-         * modifier = Modifier.padding(padding): Добавляет отступы вокруг Column, используя значение padding, которое передается из Scaffold.
-         * Это отступы, которые обеспечивают корректное размещение элементов внутри Column, учитывая отступы от Scaffold.
-         *
-         * if (searchBarActive): Условие для проверки, активен ли поиск (searchBarActive).
-         * Если searchBarActive равно true, то компонент SearchBar будет отображаться. В противном случае, он не будет отображаться.
-         *
-         * Передача параметров в SearchBar:
-         *
          * query = query: Передает текущее значение запроса.
          * onQueryChange = { newQuery -> query = newQuery }: Обновляет состояние query при изменении текста в поле поиска.
          * onSearch = { searchQuery -> /* обработка поиска */ }: Позволяет обработать поиск, когда пользователь выполняет поиск.
@@ -103,41 +101,57 @@ fun MainScreen(navController: NavHostController) {
          */
 
         if (!searchBarActive) {
+//            if (selectedMovie != null) {
+//                DetailsCardFilm(selectedMovie!!, onClick = { selectedMovie = null }, padding)
+//            } else {
+//                LazyColumn(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(padding),
+//                    contentPadding = PaddingValues(16.dp)
+//                ) {
+//                    premiereMovies.let { moviesList ->
+//                        moviesList.value?.let {
+//                            items(it.items) { movie ->
+//                                MovieItem(movie) {
+//                                    selectedMovie = movie
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+
+            // Для теста
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding),
-                contentPadding = PaddingValues(16.dp)
+                    .padding(padding)
             ) {
-                premiereMovies.let { moviesList ->
-                    moviesList.value?.let {
-                        items(it.items) { movie ->
-                            MovieItem(movie)
-                        }
-                    }
+                items(50) {item ->
+                    Text(text = "Item $item")
                 }
             }
+
+
         }
     }
 }
 
 @Composable
-fun MovieItem(movie: Movie) {
+fun MovieItem(movie: Movie, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
+            .clickable { onClick() }
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
 
-            AsyncImage(
-                model = movie.posterUrl,
-                contentDescription = movie.nameRu,
-                modifier = Modifier
-                    .height(150.dp),
-                contentScale = ContentScale.Fit
-            )
+            WorkerWithImage(movie, 150.dp)
+
             Spacer(modifier = Modifier.width(16.dp))
+
             Column {
                 Text(
                     text = movie.nameRu,
@@ -156,8 +170,7 @@ fun MovieItem(movie: Movie) {
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    val navController = rememberNavController()
     CinemaOpinionTheme {
-        MainScreen(navController = navController)
+        MainScreen(rememberNavController())
     }
 }

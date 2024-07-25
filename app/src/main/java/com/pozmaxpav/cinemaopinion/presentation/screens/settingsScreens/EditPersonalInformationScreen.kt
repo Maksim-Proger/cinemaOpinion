@@ -25,9 +25,9 @@ import androidx.compose.material3.Text
 @Composable
 fun EditPersonalInformationScreen() {
 
-    var (username, setUsername) = remember { mutableStateOf("") }
-    var (email, setEmail) = remember { mutableStateOf("") }
-    var (password, setPassword) = remember { mutableStateOf("") }
+    val (username, setUsername) = remember { mutableStateOf("") }
+    val (email, setEmail) = remember { mutableStateOf("") }
+    val (password, setPassword) = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
