@@ -26,10 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
+import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
 import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
 
 @Composable
@@ -119,10 +122,16 @@ fun AccountScreen(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun AccountScreenPreview() {
-//    CinemaOpinionTheme {
-//        AccountScreen(onClick = { /* Действие при клике */ })
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun AccountScreenPreview() {
+    // Создаем тестовый NavHostController
+    val navController = rememberNavController()
+
+    CinemaOpinionTheme {
+        AccountScreen(
+            navController = navController,
+            onClick = { /* Действие при клике */ }
+        )
+    }
+}
