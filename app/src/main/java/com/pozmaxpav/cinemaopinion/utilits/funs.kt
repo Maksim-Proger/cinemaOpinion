@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,11 +18,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.Movie
 
 @Composable
 fun AccountListItem(icon: Painter, contentDescription: String, title: String) {
@@ -84,4 +89,15 @@ fun TextField(
     )
 }
 
-
+@Composable
+fun WorkerWithImage(
+    movie: Movie,
+    height: Dp
+) {
+    AsyncImage(
+        model = movie.posterUrl,
+        contentDescription = movie.nameRu,
+        modifier = Modifier.height(height),
+        contentScale = ContentScale.Fit
+    )
+}

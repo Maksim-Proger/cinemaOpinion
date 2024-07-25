@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens
+package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
