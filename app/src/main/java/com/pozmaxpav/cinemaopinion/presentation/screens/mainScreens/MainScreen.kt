@@ -50,16 +50,16 @@ fun MainScreen(navController: NavHostController) {
     var searchBarActive by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
 
-//    val viewModel: MainViewModel = hiltViewModel()
-//    val premiereMovies = viewModel.premiersMovies.collectAsState()
+    val viewModel: MainViewModel = hiltViewModel()
+    val premiereMovies = viewModel.premiersMovies.collectAsState()
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
     var selectedMovie by remember { mutableStateOf<Movie?>(null) }
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
-//    LaunchedEffect(Unit) {
-//        viewModel.fetchPremiersMovies(2022, "July")
-//    }
+    LaunchedEffect(Unit) {
+        viewModel.fetchPremiersMovies(2022, "July")
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -101,39 +101,26 @@ fun MainScreen(navController: NavHostController) {
          */
 
         if (!searchBarActive) {
-//            if (selectedMovie != null) {
-//                DetailsCardFilm(selectedMovie!!, onClick = { selectedMovie = null }, padding)
-//            } else {
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(padding),
-//                    contentPadding = PaddingValues(16.dp)
-//                ) {
-//                    premiereMovies.let { moviesList ->
-//                        moviesList.value?.let {
-//                            items(it.items) { movie ->
-//                                MovieItem(movie) {
-//                                    selectedMovie = movie
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-
-            // Для теста
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-            ) {
-                items(50) {item ->
-                    Text(text = "Item $item")
+            if (selectedMovie != null) {
+                DetailsCardFilm(selectedMovie!!, onClick = { selectedMovie = null }, padding)
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    premiereMovies.let { moviesList ->
+                        moviesList.value?.let {
+                            items(it.items) { movie ->
+                                MovieItem(movie) {
+                                    selectedMovie = movie
+                                }
+                            }
+                        }
+                    }
                 }
             }
-
-
         }
     }
 }
@@ -164,13 +151,5 @@ fun MovieItem(movie: Movie, onClick: () -> Unit) {
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    CinemaOpinionTheme {
-        MainScreen(rememberNavController())
     }
 }
