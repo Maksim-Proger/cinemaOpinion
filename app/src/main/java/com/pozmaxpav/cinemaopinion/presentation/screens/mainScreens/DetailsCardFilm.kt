@@ -59,41 +59,31 @@ fun DetailsCardFilm(
                             text = movie.nameRu,
                             style = MaterialTheme.typography.bodyLarge
                         )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = movie.year,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = movie.countries.toString(),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
                         when(movie) {
                             is MovieData.Movie -> {
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = movie.premiereRu,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = movie.genres.toString(),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
+                            }
+                            is MovieData.MovieTopList -> {
                                 Text(
-                                    text = movie.countries.toString(),
+                                    text = movie.rating.toString(),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                             }
-                            is MovieData.MovieTopList -> {}
                         }
-//                        Spacer(modifier = Modifier.height(4.dp))
-//                        Text(
-//                            text = movie.premiereRu,
-//                            style = MaterialTheme.typography.bodyLarge
-//                        )
-//                        Spacer(modifier = Modifier.height(4.dp))
-//                        Text(
-//                            text = movie.genres.toString(),
-//                            style = MaterialTheme.typography.bodyLarge
-//                        )
-//                        Spacer(modifier = Modifier.height(4.dp))
-//                        Text(
-//                            text = movie.countries.toString(),
-//                            style = MaterialTheme.typography.bodyLarge
-//                        )
                     }
                 }
             }
