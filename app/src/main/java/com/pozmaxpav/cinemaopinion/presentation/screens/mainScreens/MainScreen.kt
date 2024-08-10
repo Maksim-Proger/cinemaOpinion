@@ -41,9 +41,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
-//import com.pozmaxpav.cinemaopinion.domain.models.Movie
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
-//import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
 import com.pozmaxpav.cinemaopinion.presentation.components.SearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
@@ -160,21 +158,35 @@ fun MovieItem(
             Spacer(modifier = Modifier.width(16.dp))
 
             Column {
+                Text(
+                    text = movie.nameRu,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = movie.year,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = movie.countries.toString(),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+
                 when(movie) {
                     is MovieData.Movie -> {
-                        Column {
-                            Text(
-                                text = movie.nameRu,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = movie.premiereRu,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
+                        Text(
+                            text = movie.genres.toString(),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
-                    is MovieData.MovieTopList -> {}
+                    is MovieData.MovieTopList -> {
+                        Text(
+                            text = movie.rating.toString(),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
             }
         }

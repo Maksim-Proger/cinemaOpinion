@@ -33,7 +33,7 @@ fun ApiMovie.toDomain(): MovieData.Movie {
         posterUrl = posterUrl,
         posterUrlPreview = posterUrlPreview,
         genres = genres.map { it.toDomain() },
-        premiereRu = premiereRu,
+        year = year,
         countries = countries.map { it.toDomain() }
     )
 }
@@ -41,10 +41,14 @@ fun ApiMovie.toDomain(): MovieData.Movie {
 fun ApiMovieTopList.toDomain(): MovieData.MovieTopList {
     return MovieData.MovieTopList(
         filmId = filmId,
+        rating = rating,
         nameRu = nameRu,
-        posterUrl = posterUrl
+        posterUrl = posterUrl,
+        year = year,
+        countries = countries.map { it.toDomain() }
     )
 }
+
 
 fun ApiMovieList.toDomain(): MovieList {
     return MovieList(
