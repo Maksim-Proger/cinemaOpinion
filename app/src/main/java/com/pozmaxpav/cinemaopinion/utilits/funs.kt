@@ -26,8 +26,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.Movie
-import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
+//import com.pozmaxpav.cinemaopinion.domain.models.Movie
+import com.pozmaxpav.cinemaopinion.domain.models.MovieData
+//import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
 
 @Composable
 fun AccountListItem(icon: Painter, contentDescription: String, title: String) {
@@ -93,8 +94,7 @@ fun TextField(
 
 @Composable
 fun WorkerWithImage(
-//    movie: Movie,
-    movie: MovieTopList,
+    movie: MovieData,
     height: Dp
 ) {
     AsyncImage(

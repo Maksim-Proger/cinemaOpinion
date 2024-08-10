@@ -41,8 +41,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.Movie
-import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
+//import com.pozmaxpav.cinemaopinion.domain.models.Movie
+import com.pozmaxpav.cinemaopinion.domain.models.MovieData
+//import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
 import com.pozmaxpav.cinemaopinion.presentation.components.SearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
@@ -64,12 +65,12 @@ fun MainScreen(navController: NavHostController) {
     val topListMovies = viewModel.topListMovies.collectAsState()
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
-    var selectedMovie by remember { mutableStateOf<MovieTopList?>(null) }
+    var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
-//        viewModel.fetchPremiersMovies(2022, "July")
-        viewModel.fetchTopListMovies(3) // TODO: Надо разобраться как настроить переключение страницы
+        viewModel.fetchPremiersMovies(2022, "July")
+        viewModel.fetchTopListMovies(1) // TODO: Надо разобраться как настроить переключение страницы
     }
 
     Scaffold(
@@ -115,44 +116,25 @@ fun MainScreen(navController: NavHostController) {
             if (selectedMovie != null) {
                 DetailsCardFilm(selectedMovie!!, onClick = { selectedMovie = null }, padding)
             } else {
+
+                // Определяем, какие данные будут отображаться в зависимости от состояния filterBarActive
+                val moviesToDisplay: List<MovieData> = if (!filterBarActive) {
+                    premiereMovies.value?.items ?: emptyList<MovieData>()
+                } else {
+                    topListMovies.value?.films ?: emptyList<MovieData>()
+                }
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-
-                    topListMovies.let { moviesList ->
-                        moviesList.value?.let {
-                            items(it.films) { movie ->
-                                MovieItem(movie = movie) {
-                                    selectedMovie = movie
-                                }
-                            }
+                    items(moviesToDisplay) { movie ->
+                        MovieItem(movie = movie) {
+                            selectedMovie = movie
                         }
                     }
-
-//                    if (!filterBarActive) {
-//                        premiereMovies.let { moviesList ->
-//                            moviesList.value?.let {
-//                                items(it.items) { movie ->
-//                                    MovieItem(movie = movie) {
-//                                        selectedMovie = movie
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    } else {
-//                        topListMovies.let { moviesList ->
-//                            moviesList.value?.let {
-//                                items(it.films) { movie ->
-//                                    MovieItem(movie = movie) {
-//                                        selectedMovie = movie
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
                 }
             }
         }
@@ -162,8 +144,7 @@ fun MainScreen(navController: NavHostController) {
 
 @Composable
 fun MovieItem(
-//    movie: Movie,
-    movie: MovieTopList,
+    movie: MovieData,
     onClick: () -> Unit
 ) {
     Card(
@@ -179,15 +160,22 @@ fun MovieItem(
             Spacer(modifier = Modifier.width(16.dp))
 
             Column {
-//                Text(
-//                    text = movie.nameRu,
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))
-//                Text(
-//                    text = movie.premiereRu,
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
+                when(movie) {
+                    is MovieData.Movie -> {
+                        Column {
+                            Text(
+                                text = movie.nameRu,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = movie.premiereRu,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                    is MovieData.MovieTopList -> {}
+                }
             }
         }
     }
