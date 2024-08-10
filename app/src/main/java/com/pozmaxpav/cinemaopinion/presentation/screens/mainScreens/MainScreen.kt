@@ -1,6 +1,8 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,8 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -35,7 +40,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.Movie
+import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
 import com.pozmaxpav.cinemaopinion.presentation.components.SearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
@@ -48,24 +55,30 @@ fun MainScreen(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
+    var filterBarActive by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
 
+    // Работаем с VoewModel
     val viewModel: MainViewModel = hiltViewModel()
     val premiereMovies = viewModel.premiersMovies.collectAsState()
+    val topListMovies = viewModel.topListMovies.collectAsState()
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
-    var selectedMovie by remember { mutableStateOf<Movie?>(null) }
+    var selectedMovie by remember { mutableStateOf<MovieTopList?>(null) }
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
-        viewModel.fetchPremiersMovies(2022, "July")
+//        viewModel.fetchPremiersMovies(2022, "July")
+        viewModel.fetchTopListMovies(3) // TODO: Надо разобраться как настроить переключение страницы
     }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
+                title = stringResource(id = R.string.top_app_bar_header_name),
                 onSearchButtonClick = { searchBarActive = !searchBarActive },
+                onFilterButtonClick = { filterBarActive = true },
                 onAccountButtonClick = { onAccountButtonClick = true },
                 scrollBehavior = scrollBehavior
             )
@@ -78,8 +91,6 @@ fun MainScreen(navController: NavHostController) {
             }
         }
     ) { padding ->
-
-
 
         Column(modifier = Modifier.padding(padding)) {
             if (searchBarActive) {
@@ -110,23 +121,51 @@ fun MainScreen(navController: NavHostController) {
                         .padding(padding),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    premiereMovies.let { moviesList ->
+
+                    topListMovies.let { moviesList ->
                         moviesList.value?.let {
-                            items(it.items) { movie ->
-                                MovieItem(movie) {
+                            items(it.films) { movie ->
+                                MovieItem(movie = movie) {
                                     selectedMovie = movie
                                 }
                             }
                         }
                     }
+
+//                    if (!filterBarActive) {
+//                        premiereMovies.let { moviesList ->
+//                            moviesList.value?.let {
+//                                items(it.items) { movie ->
+//                                    MovieItem(movie = movie) {
+//                                        selectedMovie = movie
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    } else {
+//                        topListMovies.let { moviesList ->
+//                            moviesList.value?.let {
+//                                items(it.films) { movie ->
+//                                    MovieItem(movie = movie) {
+//                                        selectedMovie = movie
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
                 }
             }
         }
     }
 }
 
+
 @Composable
-fun MovieItem(movie: Movie, onClick: () -> Unit) {
+fun MovieItem(
+//    movie: Movie,
+    movie: MovieTopList,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -140,15 +179,15 @@ fun MovieItem(movie: Movie, onClick: () -> Unit) {
             Spacer(modifier = Modifier.width(16.dp))
 
             Column {
-                Text(
-                    text = movie.nameRu,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = movie.premiereRu,
-                    style = MaterialTheme.typography.bodyLarge
-                )
+//                Text(
+//                    text = movie.nameRu,
+//                    style = MaterialTheme.typography.bodyLarge
+//                )
+//                Spacer(modifier = Modifier.height(4.dp))
+//                Text(
+//                    text = movie.premiereRu,
+//                    style = MaterialTheme.typography.bodyLarge
+//                )
             }
         }
     }

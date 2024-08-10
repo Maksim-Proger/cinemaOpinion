@@ -8,6 +8,7 @@ import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(private val api: MovieListApi) : MovieRepository {
+
     override suspend fun getPremiereMovies(year: Int, month: String): MovieList {
         return api.movies(year, month).toDomain()
     }
@@ -15,4 +16,5 @@ class MovieRepositoryImpl @Inject constructor(private val api: MovieListApi) : M
     override suspend fun getTopMovies(page: Int): PagedMovieList {
         return api.topList(page).toDomain()
     }
+
 }
