@@ -19,14 +19,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.pozmaxpav.cinemaopinion.domain.models.Movie
-import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
+//import com.pozmaxpav.cinemaopinion.domain.models.Movie
+import com.pozmaxpav.cinemaopinion.domain.models.MovieData
+//import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 
 @Composable
 fun DetailsCardFilm(
 //    movie: Movie,
-    movie: MovieTopList,
+//    movie: MovieTopList,
+    movie: MovieData,
     onClick: () -> Unit,
     padding: PaddingValues
 ) {
@@ -57,6 +59,26 @@ fun DetailsCardFilm(
                             text = movie.nameRu,
                             style = MaterialTheme.typography.bodyLarge
                         )
+                        when(movie) {
+                            is MovieData.Movie -> {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = movie.premiereRu,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = movie.genres.toString(),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = movie.countries.toString(),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                            is MovieData.MovieTopList -> {}
+                        }
 //                        Spacer(modifier = Modifier.height(4.dp))
 //                        Text(
 //                            text = movie.premiereRu,
