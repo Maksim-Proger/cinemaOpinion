@@ -9,3 +9,9 @@ data class Movie(
     val premiereRu: String,
     val countries: List<Country>
 )
+
+data class MovieTopList(
+    val filmId: Int,
+    val nameRu: String,
+    val posterUrl: String,
+)

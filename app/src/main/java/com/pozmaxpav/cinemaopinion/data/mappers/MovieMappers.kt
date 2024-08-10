@@ -4,11 +4,13 @@ import com.pozmaxpav.cinemaopinion.data.api.models.ApiCountry
 import com.pozmaxpav.cinemaopinion.data.api.models.ApiGenre
 import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovie
 import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieList
+import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieTopList
 import com.pozmaxpav.cinemaopinion.data.api.models.ApiPagedMovieList
 import com.pozmaxpav.cinemaopinion.domain.models.Country
 import com.pozmaxpav.cinemaopinion.domain.models.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.Movie
 import com.pozmaxpav.cinemaopinion.domain.models.MovieList
+import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.PagedMovieList
 
 fun ApiGenre.toDomain(): Genre {
@@ -32,6 +34,14 @@ fun ApiMovie.toDomain(): Movie {
         genres = genres.map { it.toDomain() },
         premiereRu = premiereRu,
         countries = countries.map { it.toDomain() }
+    )
+}
+
+fun ApiMovieTopList.toDomain(): MovieTopList {
+    return MovieTopList(
+        filmId = filmId,
+        nameRu = nameRu,
+        posterUrl = posterUrl
     )
 }
 

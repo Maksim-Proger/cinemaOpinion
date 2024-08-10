@@ -20,11 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.domain.models.Movie
+import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 
 @Composable
 fun DetailsCardFilm(
-    movie: Movie,
+//    movie: Movie,
+    movie: MovieTopList,
     onClick: () -> Unit,
     padding: PaddingValues
 ) {
@@ -55,21 +57,21 @@ fun DetailsCardFilm(
                             text = movie.nameRu,
                             style = MaterialTheme.typography.bodyLarge
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = movie.premiereRu,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = movie.genres.toString(),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = movie.countries.toString(),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+//                        Spacer(modifier = Modifier.height(4.dp))
+//                        Text(
+//                            text = movie.premiereRu,
+//                            style = MaterialTheme.typography.bodyLarge
+//                        )
+//                        Spacer(modifier = Modifier.height(4.dp))
+//                        Text(
+//                            text = movie.genres.toString(),
+//                            style = MaterialTheme.typography.bodyLarge
+//                        )
+//                        Spacer(modifier = Modifier.height(4.dp))
+//                        Text(
+//                            text = movie.countries.toString(),
+//                            style = MaterialTheme.typography.bodyLarge
+//                        )
                     }
                 }
             }

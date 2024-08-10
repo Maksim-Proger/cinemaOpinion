@@ -23,6 +23,7 @@
 
     <!--  Description Icons  -->
     <string name="description_icon_account">Иконка аккаунта</string>
+    <string name="description_icon_filter">Иконка фильтра</string>
     <string name="description_clear_text">Clear Text</string>
     <string name="description_icon_search">Иконка поиска</string>
     <string name="description_icon_edit">Icon Edit</string>
