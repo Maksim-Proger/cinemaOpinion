@@ -4,6 +4,7 @@
     <string name="top_app_bar_header_name_all_movies">Фильмы</string>
     <string name="top_app_bar_header_name_top_list_movies">Топ фильмов</string>
     <string name="title_account_screen">Профиль</string>
+    <string name="top_app_bar_header_name_user_information">Данные пользователя</string>
 
     <!--   Text for Drop-Down Menu   -->
     <string name="drop_down_menu_item_edit">Изменить данные пользователя</string>
@@ -21,6 +22,7 @@
     <!--  Title Icons  -->
     <string name="my_list_movies">Мой список</string>
     <string name="joint_list_films">Общий список</string>
+    <string name="floating_action_button">Сохранить</string>
 
     <!--  Description Icons  -->
     <string name="description_icon_account">Иконка аккаунта</string>
@@ -34,4 +36,5 @@
     <string name="description_icon_edit_change_name">Icon Edit Change Name</string>
     <string name="description_icon_edit_change_email">Icon Edit Change Email</string>
     <string name="description_icon_edit_change_password">Icon Edit Change Password</string>
+    <string name="description_icon_home_button">Icon Edit Change Password</string>
 </resources>
