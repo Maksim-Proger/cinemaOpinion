@@ -19,15 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-//import com.pozmaxpav.cinemaopinion.domain.models.Movie
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
-//import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 
 @Composable
 fun DetailsCardFilm(
-//    movie: Movie,
-//    movie: MovieTopList,
     movie: MovieData,
     onClick: () -> Unit,
     padding: PaddingValues

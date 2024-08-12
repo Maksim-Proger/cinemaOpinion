@@ -2,7 +2,6 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import android.util.Log
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,10 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,21 +28,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.SearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,6 +48,8 @@ fun MainScreen(navController: NavHostController) {
     var filterBarActive by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
 
+    var titleTopBarStae by remember { mutableStateOf(false) }
+
     // Работаем с VoewModel
     val viewModel: MainViewModel = hiltViewModel()
     val premiereMovies = viewModel.premiersMovies.collectAsState()
@@ -67,7 +60,7 @@ fun MainScreen(navController: NavHostController) {
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
-        viewModel.fetchPremiersMovies(2022, "July")
+        viewModel.fetchPremiersMovies(2022, "July") // TODO: Надо добавить возможность выбора даты
         viewModel.fetchTopListMovies(1) // TODO: Надо разобраться как настроить переключение страницы
     }
 
@@ -75,9 +68,16 @@ fun MainScreen(navController: NavHostController) {
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = stringResource(id = R.string.top_app_bar_header_name),
+                title = if (!titleTopBarStae) {
+                    stringResource(id = R.string.top_app_bar_header_name_all_movies)
+                } else {
+                    stringResource(id = R.string.top_app_bar_header_name_top_list_movies)
+                },
                 onSearchButtonClick = { searchBarActive = !searchBarActive },
-                onFilterButtonClick = { filterBarActive = true },
+                onFilterButtonClick = {
+                    filterBarActive = !filterBarActive
+                    titleTopBarStae = !titleTopBarStae
+                },
                 onAccountButtonClick = { onAccountButtonClick = true },
                 scrollBehavior = scrollBehavior
             )
@@ -85,12 +85,11 @@ fun MainScreen(navController: NavHostController) {
             if (onAccountButtonClick) {
                 AccountScreen(
                     navController,
-                    onClick = { onAccountButtonClick = false } // Закрытие диалога при нажатии
+                    onClick = { onAccountButtonClick = false } // Закрытие диалогового окна
                 )
             }
         }
     ) { padding ->
-
         Column(modifier = Modifier.padding(padding)) {
             if (searchBarActive) {
                 SearchBar(
@@ -139,12 +138,8 @@ fun MainScreen(navController: NavHostController) {
     }
 }
 
-
 @Composable
-fun MovieItem(
-    movie: MovieData,
-    onClick: () -> Unit
-) {
+fun MovieItem(movie: MovieData, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
