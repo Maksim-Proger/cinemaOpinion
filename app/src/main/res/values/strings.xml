@@ -1,7 +1,8 @@
 <resources>
     <!--  General Strings  -->
     <string name="app_name">Cinema Opinion</string>
-    <string name="top_app_bar_header_name">Фильмы</string>
+    <string name="top_app_bar_header_name_all_movies">Фильмы</string>
+    <string name="top_app_bar_header_name_top_list_movies">Топ фильмов</string>
     <string name="title_account_screen">Профиль</string>
 
     <!--   Text for Drop-Down Menu   -->
