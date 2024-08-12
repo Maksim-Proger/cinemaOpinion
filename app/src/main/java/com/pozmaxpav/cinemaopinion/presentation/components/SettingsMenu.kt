@@ -45,6 +45,9 @@ fun SettingsMenu(navController: NavHostController) {
                     )
                 },
                 onClick = { // TODO: Надо детальнее разобраться в этой навигации
+
+                    menuOpeningStatus = false
+
                     navController.navigate(Route.EditPersonalInformationScreen.route) {
                         popUpTo(navController.graph.startDestinationId) { saveState = true }
                         launchSingleTop = true
