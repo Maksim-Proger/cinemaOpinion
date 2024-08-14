@@ -28,3 +28,9 @@ sealed class MovieData {
     ) : MovieData()
 
 }
+
+data class SearchListMovie(
+    val kinopoiskId: Int,
+    val nameRu: String?,
+    val posterUrl: String
+)

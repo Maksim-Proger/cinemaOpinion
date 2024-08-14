@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.PagedMovieList
+import com.pozmaxpav.cinemaopinion.domain.models.SearchList
+import com.pozmaxpav.cinemaopinion.domain.models.SearchListMovie
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +25,9 @@ class MainViewModel @Inject constructor(
 
     private val _topListMovies = MutableStateFlow<PagedMovieList?>(null)
     val topListMovies: StateFlow<PagedMovieList?> get() = _topListMovies.asStateFlow()
+
+    private val _searchMovies = MutableStateFlow<SearchList?>(null)
+    val searchMovies: StateFlow<SearchList?> get() = _searchMovies.asStateFlow()
 
     fun fetchPremiersMovies(year: Int, month: String) {
         viewModelScope.launch {
@@ -46,4 +51,17 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun fetchSearchMovies(keyword: String) {
+        viewModelScope.launch {
+            try {
+                Log.d("@@@@@", "fetchSearchMovies called with keyword: $keyword")
+                val movies = repository.getSearchMovies(keyword)
+                Log.d("@@@@@", "Movies received: ${movies.toString()}")
+                _searchMovies.value = movies
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("@@@@@", "Error fetching movies: ${e.message}")
+            }
+        }
+    }
 }
