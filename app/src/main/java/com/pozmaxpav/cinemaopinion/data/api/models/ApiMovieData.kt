@@ -1,7 +1,6 @@
 package com.pozmaxpav.cinemaopinion.data.api.models
 
 import com.pozmaxpav.cinemaopinion.domain.models.Country
-import com.pozmaxpav.cinemaopinion.domain.models.Genre
 
 data class ApiMovie(
     val kinopoiskId: Int,
@@ -13,7 +12,7 @@ data class ApiMovie(
     val countries: List<ApiCountry>
 )
 
-data class ApiMovieTopList(
+data class ApiMovieTop(
     val filmId: Int,
     val rating: String,
     val nameRu: String,
@@ -22,8 +21,10 @@ data class ApiMovieTopList(
     val countries: List<ApiCountry>
 )
 
-data class ApiMovieSearchList(
+data class ApiMovieSearch(
     val kinopoiskId: Int,
-    val nameRu: String?,
-    val posterUrl: String
+    val nameRu: String,
+    val posterUrl: String,
+    val year: String,
+    val countries: List<ApiCountry>
 )

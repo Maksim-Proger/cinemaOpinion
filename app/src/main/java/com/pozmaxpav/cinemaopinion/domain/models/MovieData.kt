@@ -1,9 +1,9 @@
 package com.pozmaxpav.cinemaopinion.domain.models
 
 sealed class MovieData {
-    abstract val nameRu: String
-    abstract val posterUrl: String
-    abstract val year: String
+    abstract val nameRu: String?
+    abstract val posterUrl: String?
+    abstract val year: String?
     abstract val countries: List<Country>
 
     data class Movie(
@@ -17,7 +17,7 @@ sealed class MovieData {
         override val countries: List<Country>
     ) : MovieData()
 
-    data class MovieTopList(
+    data class MovieTop(
         val filmId: Int,
         val rating: String,
 
@@ -27,10 +27,13 @@ sealed class MovieData {
         override val countries: List<Country>
     ) : MovieData()
 
-}
+    data class MovieSearch(
+        val kinopoiskId: Int,
 
-data class SearchListMovie(
-    val kinopoiskId: Int,
-    val nameRu: String?,
-    val posterUrl: String
-)
+        override val nameRu: String,
+        override val posterUrl: String,
+        override val year: String,
+        override val countries: List<Country>
+    ) : MovieData()
+
+}

@@ -4,17 +4,16 @@ import com.pozmaxpav.cinemaopinion.data.api.models.ApiCountry
 import com.pozmaxpav.cinemaopinion.data.api.models.ApiGenre
 import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovie
 import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieList
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieSearchList
+import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieSearch
+import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieTop
 import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieTopList
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiPagedMovieList
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiSearchMovieList
+import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.models.Country
 import com.pozmaxpav.cinemaopinion.domain.models.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
 import com.pozmaxpav.cinemaopinion.domain.models.MovieList
-import com.pozmaxpav.cinemaopinion.domain.models.PagedMovieList
-import com.pozmaxpav.cinemaopinion.domain.models.SearchList
-import com.pozmaxpav.cinemaopinion.domain.models.SearchListMovie
+import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
+import com.pozmaxpav.cinemaopinion.domain.models.MovieSearchList
 
 fun ApiGenre.toDomain(): Genre {
     return Genre(
@@ -40,10 +39,20 @@ fun ApiMovie.toDomain(): MovieData.Movie {
     )
 }
 
-fun ApiMovieTopList.toDomain(): MovieData.MovieTopList {
-    return MovieData.MovieTopList(
+fun ApiMovieTop.toDomain(): MovieData.MovieTop {
+    return MovieData.MovieTop(
         filmId = filmId,
         rating = rating,
+        nameRu = nameRu,
+        posterUrl = posterUrl,
+        year = year,
+        countries = countries.map { it.toDomain() }
+    )
+}
+
+fun ApiMovieSearch.toDomain(): MovieData.MovieSearch {
+    return MovieData.MovieSearch(
+        kinopoiskId = kinopoiskId,
         nameRu = nameRu,
         posterUrl = posterUrl,
         year = year,
@@ -58,24 +67,16 @@ fun ApiMovieList.toDomain(): MovieList {
     )
 }
 
-fun ApiPagedMovieList.toDomain(): PagedMovieList {
-    return PagedMovieList(
+fun ApiMovieTopList.toDomain(): MovieTopList {
+    return MovieTopList(
         pagesCount = pagesCount,
         films = films.map { it.toDomain() }
     )
 }
 
-fun ApiMovieSearchList.toDomain2(): SearchListMovie {
-    return SearchListMovie(
-        kinopoiskId = kinopoiskId,
-        nameRu = nameRu,
-        posterUrl = posterUrl
-    )
-}
-
-fun ApiSearchMovieList.toDomain2(): SearchList {
-    return SearchList(
+fun ApiMovieSearchList.toDomain(): MovieSearchList {
+    return MovieSearchList(
         total = total,
-        items = items.map { it.toDomain2() }
+        items = items.map { it.toDomain() }
     )
 }

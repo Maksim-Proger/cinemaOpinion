@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,7 +59,11 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
             )
         },
         floatingActionButton = {
-            FabButton()
+            FabButton(
+                imageIcon = Icons.Default.Add,
+                contentDescription = stringResource(id = R.string.description_floating_action_button_save),
+                textFloatingButton = stringResource(id = R.string.floating_action_button_save)
+            )
         },
         floatingActionButtonPosition = FabPosition.End
 

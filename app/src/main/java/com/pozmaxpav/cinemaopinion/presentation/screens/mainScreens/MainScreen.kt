@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -37,12 +37,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
-import com.pozmaxpav.cinemaopinion.domain.models.SearchListMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
+import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.SearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
-import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage2
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,8 +65,7 @@ fun MainScreen(navController: NavHostController) {
     val searchMovies = viewModel.searchMovies.collectAsState()
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
-//    var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
-    var selectedMovie by remember { mutableStateOf<SearchListMovie?>(null) }
+    var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
@@ -98,6 +97,13 @@ fun MainScreen(navController: NavHostController) {
                     onClick = { onAccountButtonClick = false } // Закрытие диалогового окна
                 )
             }
+        },
+        floatingActionButton = {
+            FabButton(
+                imageIcon = Icons.Default.Settings,
+                contentDescription = stringResource(id = R.string.description_floating_action_button_settings),
+                textFloatingButton = stringResource(id = R.string.floating_action_button_settings)
+            )
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding)) {
@@ -121,7 +127,7 @@ fun MainScreen(navController: NavHostController) {
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
-            val moviesToDisplay: List<SearchListMovie> = searchMovies.value?.items ?: emptyList()
+            val moviesToDisplay: List<MovieData> = searchMovies.value?.items ?: emptyList()
             if (moviesToDisplay.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier
@@ -130,7 +136,7 @@ fun MainScreen(navController: NavHostController) {
                     contentPadding = PaddingValues(16.dp)
                 ) {
                     items(moviesToDisplay) { movie ->
-                        MovieItem2(movie = movie) {
+                        MovieItem(movie = movie) {
                             selectedMovie = movie
                         }
                     }
@@ -169,84 +175,3 @@ fun MainScreen(navController: NavHostController) {
 }
 
 
-@Composable
-fun MovieItem(movie: MovieData, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable { onClick() }
-    ) {
-        Row(modifier = Modifier.padding(16.dp)) {
-
-            WorkerWithImage(movie, 150.dp)
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column {
-                Text(
-                    text = movie.nameRu,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = movie.year,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = movie.countries.toString(),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                when (movie) {
-                    is MovieData.Movie -> {
-                        Text(
-                            text = movie.genres.toString(),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-
-                    is MovieData.MovieTopList -> {
-                        Text(
-                            text = movie.rating.toString(),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun MovieItem2(movie: SearchListMovie, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable { onClick() }
-    ) {
-        Row(modifier = Modifier.padding(16.dp)) {
-
-            WorkerWithImage2(movie, 150.dp)
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column {
-                Text(
-                    text = movie.nameRu ?: "Нет имени",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = movie.kinopoiskId.toString(),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-            }
-        }
-    }
-}
