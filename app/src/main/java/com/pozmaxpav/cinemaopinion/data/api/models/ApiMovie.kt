@@ -21,3 +21,9 @@ data class ApiMovieTopList(
     val year: String,
     val countries: List<ApiCountry>
 )
+
+data class ApiMovieSearchList(
+    val kinopoiskId: Int,
+    val nameRu: String?,
+    val posterUrl: String
+)

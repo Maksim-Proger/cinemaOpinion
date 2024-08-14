@@ -28,6 +28,8 @@ import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
 //import com.pozmaxpav.cinemaopinion.domain.models.Movie
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.SearchListMovie
+
 //import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
 
 @Composable
@@ -95,6 +97,19 @@ fun TextField(
 @Composable
 fun WorkerWithImage(
     movie: MovieData,
+    height: Dp
+) {
+    AsyncImage(
+        model = movie.posterUrl,
+        contentDescription = movie.nameRu,
+        modifier = Modifier.height(height),
+        contentScale = ContentScale.Fit
+    )
+}
+
+@Composable
+fun WorkerWithImage2(
+    movie: SearchListMovie,
     height: Dp
 ) {
     AsyncImage(
