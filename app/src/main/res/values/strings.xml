@@ -22,9 +22,12 @@
     <!--  Title Icons  -->
     <string name="my_list_movies">Мой список</string>
     <string name="joint_list_films">Общий список</string>
-    <string name="floating_action_button">Сохранить</string>
+    <string name="floating_action_button_save">Сохранить</string>
+    <string name="floating_action_button_settings">Фильтр</string>
 
     <!--  Description Icons  -->
+    <string name="description_floating_action_button_save">Floating Button Save</string>
+    <string name="description_floating_action_button_settings">Floating Button Settings</string>
     <string name="description_icon_account">Иконка аккаунта</string>
     <string name="description_icon_filter">Иконка фильтра</string>
     <string name="description_clear_text">Clear Text</string>
