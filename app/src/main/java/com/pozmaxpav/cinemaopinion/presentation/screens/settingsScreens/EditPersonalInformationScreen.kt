@@ -62,7 +62,8 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
             FabButton(
                 imageIcon = Icons.Default.Add,
                 contentDescription = stringResource(id = R.string.description_floating_action_button_save),
-                textFloatingButton = stringResource(id = R.string.floating_action_button_save)
+                textFloatingButton = stringResource(id = R.string.floating_action_button_save),
+                onFilterButtonClick = {/* TODO */}
             )
         },
         floatingActionButtonPosition = FabPosition.End
