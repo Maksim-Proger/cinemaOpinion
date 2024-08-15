@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -119,59 +121,79 @@ fun DetailsCardFilm(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .wrapContentSize()
             .padding(padding)
     ) {
         Card(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .clickable { onClick() },
+                .wrapContentSize()
+                .padding(16.dp),
             elevation = CardDefaults.cardElevation(8.dp)
         ) {
+
+            Row(
+                modifier = Modifier.padding(10.dp).clickable { onClick() }
+            ) {
+                Icon(imageVector = Icons.Default.Close, contentDescription = null)
+            }
+
             Row(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 16.dp, horizontal = 16.dp),
+                    .wrapContentSize()
+                    .padding(vertical = 10.dp, horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(modifier = Modifier.padding(16.dp)) {
-                    WorkerWithImage(movie, 250.dp)
-
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        Text(
-                            text = movie.nameRu ?: "Нет названия",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = movie.year ?: "Нет года выпуска",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = movie.countries.toString(),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        when(movie) {
-                            is MovieData.Movie -> {
-                                Text(
-                                    text = movie.genres.toString(),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-                            is MovieData.MovieTop -> {
-                                Text(
-                                    text = movie.rating.toString(),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-
-                            is MovieData.MovieSearch -> {}
+                WorkerWithImage(movie, 250.dp)
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(
+                        text = movie.nameRu ?: "Нет названия",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = movie.year ?: "Нет года выпуска",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = movie.countries.toString(),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    when(movie) {
+                        is MovieData.Movie -> {
+                            Text(
+                                text = movie.genres.toString(),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
                         }
+                        is MovieData.MovieTop -> {
+                            Text(
+                                text = movie.rating.toString(),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                        is MovieData.MovieSearch -> {}
                     }
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = { /*TODO*/ },
+                ) {
+                    Text(text = "Add to my list")
+                }
+                Button(
+                    onClick = { /*TODO*/ },
+                ) {
+                    Text(text = "Add to general list")
                 }
             }
         }
