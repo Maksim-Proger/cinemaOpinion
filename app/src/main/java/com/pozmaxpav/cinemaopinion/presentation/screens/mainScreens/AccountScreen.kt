@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,13 +51,21 @@ fun AccountScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(vertical = 30.dp)
                 .fillMaxHeight(0.5f),
-            elevation = CardDefaults.cardElevation(8.dp)
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = colorResource(id = R.color.color_account_card),
+                contentColor = colorResource(id = R.color.color_text_account_card)
+            )
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 25.dp, vertical = 15.dp)
+                    .padding(
+                        horizontal = 25.dp,
+                        vertical = 15.dp
+                    )
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -77,7 +88,8 @@ fun AccountScreen(
                 Card(
                     modifier = Modifier.fillMaxSize(),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary
+                        containerColor = colorResource(id = R.color.color_content_account_card),
+                        contentColor = colorResource(id = R.color.color_text_account_card)
                     ),
                     elevation = CardDefaults.cardElevation(8.dp)
                 ) {
@@ -123,6 +135,7 @@ fun AccountScreen(
 }
 
 @Preview(showBackground = true)
+@Preview(uiMode = UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun AccountScreenPreview() {
     // Создаем тестовый NavHostController

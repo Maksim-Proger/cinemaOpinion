@@ -126,34 +126,34 @@ fun MainScreen(navController: NavHostController) {
             }
         }
 
-        if (!searchBarActive) {
-            if (selectedMovie != null) {
-                DetailsCardFilm(
-                    selectedMovie!!,
-                    onClick = { selectedMovie = null },
-                    padding
-                )
-            } else {
-                val moviesToDisplay: List<MovieData> = when {
-                    searchCompleted -> searchMovies.value?.items ?: emptyList()
-                    !filterBarActive && !searchBarActive -> premiereMovies.value?.items ?: emptyList()
-                    filterBarActive && !searchBarActive -> topListMovies.value?.films ?: emptyList()
-                    else -> emptyList()
-                }
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    items(moviesToDisplay) { movie ->
-                        MovieItem(movie = movie) {
-                            selectedMovie = movie
-                        }
-                    }
-                }
-            }
-        }
+//        if (!searchBarActive) {
+//            if (selectedMovie != null) {
+//                DetailsCardFilm(
+//                    selectedMovie!!,
+//                    onClick = { selectedMovie = null },
+//                    padding
+//                )
+//            } else {
+//                val moviesToDisplay: List<MovieData> = when {
+//                    searchCompleted -> searchMovies.value?.items ?: emptyList()
+//                    !filterBarActive && !searchBarActive -> premiereMovies.value?.items ?: emptyList()
+//                    filterBarActive && !searchBarActive -> topListMovies.value?.films ?: emptyList()
+//                    else -> emptyList()
+//                }
+//                LazyColumn(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(padding),
+//                    contentPadding = PaddingValues(16.dp)
+//                ) {
+//                    items(moviesToDisplay) { movie ->
+//                        MovieItem(movie = movie) {
+//                            selectedMovie = movie
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
