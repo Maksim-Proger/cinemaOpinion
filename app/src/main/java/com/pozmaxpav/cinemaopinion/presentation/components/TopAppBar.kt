@@ -20,7 +20,6 @@ import com.pozmaxpav.cinemaopinion.R
 fun TopAppBar(
     title: String,
     onSearchButtonClick: () -> Unit,
-    onFilterButtonClick: () -> Unit,
     onAccountButtonClick: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior
 ) {
@@ -32,12 +31,6 @@ fun TopAppBar(
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = stringResource(id = R.string.description_icon_search)
-                )
-            }
-            IconButton(onClick = onFilterButtonClick) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = stringResource(id = R.string.description_icon_filter)
                 )
             }
             IconButton(onClick = onAccountButtonClick) {

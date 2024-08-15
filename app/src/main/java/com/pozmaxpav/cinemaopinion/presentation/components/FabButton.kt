@@ -12,10 +12,11 @@ import com.pozmaxpav.cinemaopinion.R
 fun FabButton(
     imageIcon: ImageVector,
     contentDescription: String,
-    textFloatingButton: String
+    textFloatingButton: String,
+    onFilterButtonClick: () -> Unit,
 ) {
     ExtendedFloatingActionButton(
-        onClick = { /*TODO*/ },
+        onClick = onFilterButtonClick,
         icon = {
             Icon(
                 imageVector = imageIcon,

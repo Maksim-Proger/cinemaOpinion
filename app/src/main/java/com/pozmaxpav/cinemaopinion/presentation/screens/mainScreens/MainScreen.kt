@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.SearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
+import com.pozmaxpav.cinemaopinion.utilits.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,6 +54,7 @@ fun MainScreen(navController: NavHostController) {
     // Блок поиска
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
+    var searchCompleted by remember { mutableStateOf(false) } // Переменная состояния, указывающая на завершение поиска
 
     var filterBarActive by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
@@ -83,10 +86,6 @@ fun MainScreen(navController: NavHostController) {
                     stringResource(id = R.string.top_app_bar_header_name_top_list_movies)
                 },
                 onSearchButtonClick = { searchBarActive = !searchBarActive },
-                onFilterButtonClick = {
-                    filterBarActive = !filterBarActive
-                    titleTopBarStae = !titleTopBarStae
-                },
                 onAccountButtonClick = { onAccountButtonClick = true },
                 scrollBehavior = scrollBehavior
             )
@@ -102,7 +101,12 @@ fun MainScreen(navController: NavHostController) {
             FabButton(
                 imageIcon = Icons.Default.Settings,
                 contentDescription = stringResource(id = R.string.description_floating_action_button_settings),
-                textFloatingButton = stringResource(id = R.string.floating_action_button_settings)
+                textFloatingButton = stringResource(id = R.string.floating_action_button_settings),
+                onFilterButtonClick = {
+                    filterBarActive = !filterBarActive
+                    titleTopBarStae = !titleTopBarStae
+                    searchCompleted = false
+                },
             )
         }
     ) { padding ->
@@ -111,8 +115,9 @@ fun MainScreen(navController: NavHostController) {
                 SearchBar(
                     query = query,
                     onQueryChange = { newQuery -> query = newQuery },
-                    onSearch = {
-                        searchQuery -> viewModel.fetchSearchMovies(searchQuery)
+                    onSearch = { searchQuery ->
+                        viewModel.fetchSearchMovies(searchQuery)
+                        searchCompleted = true
                         searchBarActive = false
                     },
                     active = searchBarActive,
@@ -121,14 +126,29 @@ fun MainScreen(navController: NavHostController) {
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            val moviesToDisplay: List<MovieData> = searchMovies.value?.items ?: emptyList()
-            if (moviesToDisplay.isNotEmpty()) {
+        if (!searchBarActive) {
+            if (selectedMovie != null) {
+                DetailsCardFilm(
+                    selectedMovie!!,
+                    onClick = { selectedMovie = null },
+                    padding
+                )
+            } else {
+
+//                // Определяем, какие данные будут отображаться в зависимости от состояния filterBarActive
+//                val moviesToDisplay: List<MovieData> = if (!filterBarActive ) {
+//                    premiereMovies.value?.items ?: emptyList<MovieData>()
+//                } else {
+//                    topListMovies.value?.films ?: emptyList<MovieData>()
+//                }
+
+                val moviesToDisplay: List<MovieData> = when {
+                    searchCompleted -> searchMovies.value?.items ?: emptyList()
+                    !filterBarActive && !searchBarActive -> premiereMovies.value?.items ?: emptyList()
+                    filterBarActive && !searchBarActive -> topListMovies.value?.films ?: emptyList()
+                    else -> emptyList()
+                }
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -143,34 +163,6 @@ fun MainScreen(navController: NavHostController) {
                 }
             }
         }
-
-
-//        if (!searchBarActive) {
-//            if (selectedMovie != null) {
-//                DetailsCardFilm(selectedMovie!!, onClick = { selectedMovie = null }, padding)
-//            } else {
-//
-//                // Определяем, какие данные будут отображаться в зависимости от состояния filterBarActive
-//                val moviesToDisplay: List<MovieData> = if (!filterBarActive) {
-//                    premiereMovies.value?.items ?: emptyList<MovieData>()
-//                } else {
-//                    topListMovies.value?.films ?: emptyList<MovieData>()
-//                }
-//
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(padding),
-//                    contentPadding = PaddingValues(16.dp)
-//                ) {
-//                    items(moviesToDisplay) { movie ->
-//                        MovieItem(movie = movie) {
-//                            selectedMovie = movie
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
 }
 
