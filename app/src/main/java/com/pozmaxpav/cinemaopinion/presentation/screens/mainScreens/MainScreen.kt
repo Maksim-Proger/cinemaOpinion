@@ -134,21 +134,12 @@ fun MainScreen(navController: NavHostController) {
                     padding
                 )
             } else {
-
-//                // Определяем, какие данные будут отображаться в зависимости от состояния filterBarActive
-//                val moviesToDisplay: List<MovieData> = if (!filterBarActive ) {
-//                    premiereMovies.value?.items ?: emptyList<MovieData>()
-//                } else {
-//                    topListMovies.value?.films ?: emptyList<MovieData>()
-//                }
-
                 val moviesToDisplay: List<MovieData> = when {
                     searchCompleted -> searchMovies.value?.items ?: emptyList()
                     !filterBarActive && !searchBarActive -> premiereMovies.value?.items ?: emptyList()
                     filterBarActive && !searchBarActive -> topListMovies.value?.films ?: emptyList()
                     else -> emptyList()
                 }
-
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()

@@ -5,6 +5,8 @@
     <string name="top_app_bar_header_name_top_list_movies">Топ фильмов</string>
     <string name="title_account_screen">Профиль</string>
     <string name="top_app_bar_header_name_user_information">Данные пользователя</string>
+    <string name="no_movie_title">Нет названия фильма</string>
+    <string name="no_year_of_release_of_the_film">Нет года выпуска фильма</string>
 
     <!--   Text for Drop-Down Menu   -->
     <string name="drop_down_menu_item_edit">Изменить данные пользователя</string>

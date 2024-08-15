@@ -107,11 +107,12 @@ fun WorkerWithImage(
 ) {
     AsyncImage(
         model = movie.posterUrl,
-        contentDescription = movie.nameRu,
+        contentDescription = movie.nameRu ?: stringResource(id = R.string.no_movie_title),
         modifier = Modifier.height(height),
         contentScale = ContentScale.Fit
     )
 }
+
 
 @Composable
 fun DetailsCardFilm(
@@ -130,9 +131,10 @@ fun DetailsCardFilm(
                 .padding(16.dp),
             elevation = CardDefaults.cardElevation(8.dp)
         ) {
-
             Row(
-                modifier = Modifier.padding(10.dp).clickable { onClick() }
+                modifier = Modifier
+                    .padding(10.dp)
+                    .clickable { onClick() }
             ) {
                 Icon(imageVector = Icons.Default.Close, contentDescription = null)
             }
@@ -147,12 +149,12 @@ fun DetailsCardFilm(
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = movie.nameRu ?: "Нет названия",
+                        text = movie.nameRu ?: stringResource(id = R.string.no_movie_title),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = movie.year ?: "Нет года выпуска",
+                        text = movie.year ?: stringResource(id = R.string.no_year_of_release_of_the_film),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(modifier = Modifier.height(4.dp))
@@ -178,7 +180,6 @@ fun DetailsCardFilm(
                     }
                 }
             }
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
