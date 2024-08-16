@@ -160,14 +160,14 @@ fun DetailsCardFilm(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = movie.countries.toString(),
+                        text = FormatCountries(movie.countries),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     when(movie) {
                         is MovieData.Movie -> {
                             Text(
-                                text = movie.genres.toString(),
+                                text = FormatGenres(movie.genres),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }

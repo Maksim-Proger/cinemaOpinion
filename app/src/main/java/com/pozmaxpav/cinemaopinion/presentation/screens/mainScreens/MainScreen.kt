@@ -144,6 +144,9 @@ fun MainScreen(navController: NavHostController) {
                     onClick = { selectedMovie = null },
                     padding
                 )
+                BackHandler {
+                    selectedMovie = null
+                }
             } else {
                 val moviesToDisplay: List<MovieData> = when {
                     searchCompleted -> searchMovies.value?.items ?: emptyList()
