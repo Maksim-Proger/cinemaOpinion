@@ -19,6 +19,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
+import com.pozmaxpav.cinemaopinion.utilits.FormatCountries
+import com.pozmaxpav.cinemaopinion.utilits.FormatGenres
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 
 @Composable
@@ -49,22 +51,22 @@ fun MovieItem(movie: MovieData, onClick: () -> Unit) {
                     text = movie.nameRu ?: "Нет названия",
                     style = MaterialTheme.typography.bodyLarge
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(7.dp))
                 Text(
                     text = movie.year ?: "Нет года выпуска",
                     style = MaterialTheme.typography.bodyLarge
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(7.dp))
                 Text(
-                    text = movie.countries.toString(),
+                    text = FormatCountries(movie.countries),
                     style = MaterialTheme.typography.bodyLarge
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(7.dp))
 
                 when (movie) {
                     is MovieData.Movie -> {
                         Text(
-                            text = movie.genres.toString(),
+                            text = FormatGenres(movie.genres),
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }

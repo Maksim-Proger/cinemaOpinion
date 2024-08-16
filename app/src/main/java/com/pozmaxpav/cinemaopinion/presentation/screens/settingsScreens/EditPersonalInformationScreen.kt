@@ -77,6 +77,7 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+
             CustomTextField(
                 value = username,
                 onValueChange = setUsername,
@@ -89,9 +90,10 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                     )
                 },
                 supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_name_field)) },
-                keyboardActions = KeyboardActions(
+                keyboardActions = KeyboardActions( // Обрабатываем нажатие клавиши Enter.
                     onDone = {
-                        keyboardController?.hide()
+                        // Переназначение действия клавиши Enter.
+                        keyboardController?.hide() // При нажатии закрываем клавиатуру.
                     }
                 )
             )
@@ -127,10 +129,9 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                     )
                 },
                 supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_password_field)) },
-                keyboardActions = KeyboardActions( // Обрабатываем нажатие клавиши Enter.
+                keyboardActions = KeyboardActions(
                     onDone = {
-                        // Переназначение действия клавиши Enter.
-                        keyboardController?.hide() // При нажатии закрываем клавиатуру.
+                        keyboardController?.hide()
                     }
                 )
             )

@@ -47,7 +47,7 @@ fun MainScreen(navController: NavHostController) {
     // Блок поиска
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
-    var searchCompleted by remember { mutableStateOf(false) } // Переменная состояния, указывающая на завершение поиска
+    var searchCompleted by remember { mutableStateOf(false) } // Флаг для отображения списка фильмов после поиска
     var searchHistory = mutableListOf<String>()
 
     var onFilterButtonClick by remember { mutableStateOf(false) }

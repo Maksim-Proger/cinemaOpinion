@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.Country
+import com.pozmaxpav.cinemaopinion.domain.models.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
 
 @Composable
@@ -197,5 +199,17 @@ fun DetailsCardFilm(
                 }
             }
         }
+    }
+}
+
+fun FormatGenres(genres: List<Genre>): String {
+    return genres.joinToString(separator = ", ") {
+        it.genre
+    }
+}
+
+fun FormatCountries(country: List<Country>): String {
+    return country.joinToString(separator = ", ") {
+        it.country
     }
 }
