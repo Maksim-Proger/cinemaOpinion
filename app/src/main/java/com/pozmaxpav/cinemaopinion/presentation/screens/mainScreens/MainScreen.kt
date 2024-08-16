@@ -1,5 +1,10 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,7 +48,7 @@ fun MainScreen(navController: NavHostController) {
     var searchBarActive by remember { mutableStateOf(false) }
     var searchCompleted by remember { mutableStateOf(false) } // Переменная состояния, указывающая на завершение поиска
 
-    var filterBarActive by remember { mutableStateOf(false) }
+    var onFilterButtonClick by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
 
     var titleTopBarStae by remember { mutableStateOf(false) }
@@ -66,16 +71,18 @@ fun MainScreen(navController: NavHostController) {
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CustomTopAppBar(
-                title = if (!titleTopBarStae) {
-                    stringResource(id = R.string.top_app_bar_header_name_all_movies)
-                } else {
-                    stringResource(id = R.string.top_app_bar_header_name_top_list_movies)
-                },
-                onSearchButtonClick = { searchBarActive = !searchBarActive },
-                onAccountButtonClick = { onAccountButtonClick = true },
-                scrollBehavior = scrollBehavior
-            )
+            if (!searchBarActive) {
+                CustomTopAppBar(
+                    title = if (!titleTopBarStae) {
+                        stringResource(id = R.string.top_app_bar_header_name_all_movies)
+                    } else {
+                        stringResource(id = R.string.top_app_bar_header_name_top_list_movies)
+                    },
+                    onSearchButtonClick = { searchBarActive = !searchBarActive },
+                    onAccountButtonClick = { onAccountButtonClick = true },
+                    scrollBehavior = scrollBehavior
+                )
+            }
 
             if (onAccountButtonClick) {
                 AccountScreen(
@@ -90,26 +97,32 @@ fun MainScreen(navController: NavHostController) {
                 contentDescription = stringResource(id = R.string.description_floating_action_button_settings),
                 textFloatingButton = stringResource(id = R.string.floating_action_button_settings),
                 onFilterButtonClick = {
-                    filterBarActive = !filterBarActive
+                    onFilterButtonClick = !onFilterButtonClick
                     titleTopBarStae = !titleTopBarStae
                     searchCompleted = false
                 },
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-            if (searchBarActive) {
-                CustomSearchBar(
-                    query = query,
-                    onQueryChange = { newQuery -> query = newQuery },
-                    onSearch = { searchQuery ->
-                        viewModel.fetchSearchMovies(searchQuery)
-                        searchCompleted = true
-                        searchBarActive = false
-                    },
-                    active = searchBarActive,
-                    onActiveChange = { isActive -> searchBarActive = isActive }
-                )
+        AnimatedVisibility(
+            visible = searchBarActive,
+            enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut() // TODO: не работает скрытие
+        ) {
+            Column(modifier = Modifier.padding(padding)) {
+                if (searchBarActive) {
+                    CustomSearchBar(
+                        query = query,
+                        onQueryChange = { newQuery -> query = newQuery },
+                        onSearch = { searchQuery ->
+                            viewModel.fetchSearchMovies(searchQuery)
+                            searchCompleted = true
+                            searchBarActive = false
+                        },
+                        active = searchBarActive,
+                        onActiveChange = { isActive -> searchBarActive = isActive }
+                    )
+                }
             }
         }
 
@@ -123,8 +136,8 @@ fun MainScreen(navController: NavHostController) {
             } else {
                 val moviesToDisplay: List<MovieData> = when {
                     searchCompleted -> searchMovies.value?.items ?: emptyList()
-                    !filterBarActive && !searchBarActive -> premiereMovies.value?.items ?: emptyList()
-                    filterBarActive && !searchBarActive -> topListMovies.value?.films ?: emptyList()
+                    !onFilterButtonClick && !searchBarActive -> premiereMovies.value?.items ?: emptyList()
+                    onFilterButtonClick && !searchBarActive -> topListMovies.value?.films ?: emptyList()
                     else -> emptyList()
                 }
                 LazyColumn(

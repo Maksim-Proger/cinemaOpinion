@@ -23,7 +23,7 @@ fun CustomSearchBar(
     onActiveChange: (Boolean) -> Unit
 ) {
     DockedSearchBar(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 30.dp),
         query = query,
         onQueryChange = onQueryChange,
         onSearch = onSearch,
