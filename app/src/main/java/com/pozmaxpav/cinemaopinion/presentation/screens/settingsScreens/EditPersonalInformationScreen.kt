@@ -27,7 +27,7 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.utilits.TextField
+import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +77,7 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            TextField(
+            CustomTextField(
                 value = username,
                 onValueChange = setUsername,
                 label = { Text(stringResource(id = R.string.text_for_edit_name_field)) },
@@ -96,7 +96,7 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                 )
             )
 
-            TextField(
+            CustomTextField(
                 value = email,
                 onValueChange = setEmail,
                 label = { Text(stringResource(id = R.string.text_for_edit_email_field)) },
@@ -115,7 +115,7 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                 )
             )
 
-            TextField(
+            CustomTextField(
                 value = password,
                 onValueChange = setPassword,
                 label = { Text(stringResource(id = R.string.text_for_edit_password_field)) },
