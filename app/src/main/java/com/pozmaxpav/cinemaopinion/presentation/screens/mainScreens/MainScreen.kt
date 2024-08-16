@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -47,6 +48,7 @@ fun MainScreen(navController: NavHostController) {
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
     var searchCompleted by remember { mutableStateOf(false) } // Переменная состояния, указывающая на завершение поиска
+    var searchHistory = mutableListOf<String>()
 
     var onFilterButtonClick by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
@@ -87,21 +89,28 @@ fun MainScreen(navController: NavHostController) {
             if (onAccountButtonClick) {
                 AccountScreen(
                     navController,
-                    onClick = { onAccountButtonClick = false } // Закрытие диалогового окна
+                    onClick = { onAccountButtonClick = false }
                 )
+
+                // Обработка нажатия системной кнопки "Назад"
+                BackHandler {
+                    onAccountButtonClick = false
+                }
             }
         },
         floatingActionButton = {
-            FabButton(
-                imageIcon = Icons.Default.Settings,
-                contentDescription = stringResource(id = R.string.description_floating_action_button_settings),
-                textFloatingButton = stringResource(id = R.string.floating_action_button_settings),
-                onFilterButtonClick = {
-                    onFilterButtonClick = !onFilterButtonClick
-                    titleTopBarStae = !titleTopBarStae
-                    searchCompleted = false
-                },
-            )
+            if (!onAccountButtonClick && !searchBarActive) {
+                FabButton(
+                    imageIcon = Icons.Default.Settings,
+                    contentDescription = stringResource(id = R.string.description_floating_action_button_settings),
+                    textFloatingButton = stringResource(id = R.string.floating_action_button_settings),
+                    onFilterButtonClick = {
+                        onFilterButtonClick = !onFilterButtonClick
+                        titleTopBarStae = !titleTopBarStae
+                        searchCompleted = false
+                    },
+                )
+            }
         }
     ) { padding ->
         AnimatedVisibility(
@@ -116,11 +125,13 @@ fun MainScreen(navController: NavHostController) {
                         onQueryChange = { newQuery -> query = newQuery },
                         onSearch = { searchQuery ->
                             viewModel.fetchSearchMovies(searchQuery)
+                            searchHistory.add(searchQuery)
                             searchCompleted = true
                             searchBarActive = false
                         },
                         active = searchBarActive,
-                        onActiveChange = { isActive -> searchBarActive = isActive }
+                        onActiveChange = { isActive -> searchBarActive = isActive },
+                        searchHistory = searchHistory
                     )
                 }
             }

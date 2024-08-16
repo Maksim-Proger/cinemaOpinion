@@ -138,7 +138,6 @@ fun AccountScreen(
 @Preview(uiMode = UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun AccountScreenPreview() {
-    // Создаем тестовый NavHostController
     val navController = rememberNavController()
 
     CinemaOpinionTheme {
