@@ -7,6 +7,9 @@ import com.pozmaxpav.cinemaopinion.domain.models.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.MovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
+import com.pozmaxpav.cinemaopinion.domain.usecase.GetPremiereMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.GetSearchMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.GetTopMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: MovieRepository
+    private val getPremiereMoviesUseCase: GetPremiereMoviesUseCase,
+    private val getSearchMoviesUseCase: GetSearchMoviesUseCase,
+    private val getTopMoviesUseCase: GetTopMoviesUseCase
 ) : ViewModel() {
 
     private val _premiereMovies = MutableStateFlow<MovieList?>(null)
@@ -31,7 +36,7 @@ class MainViewModel @Inject constructor(
     fun fetchPremiersMovies(year: Int, month: String) {
         viewModelScope.launch {
             try {
-                val movies = repository.getPremiereMovies(year, month)
+                val movies = getPremiereMoviesUseCase.execute(year, month)
                 _premiereMovies.value = movies
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -42,7 +47,7 @@ class MainViewModel @Inject constructor(
     fun fetchTopListMovies(page: Int) {
         viewModelScope.launch {
             try {
-                val movies = repository.getTopMovies(page)
+                val movies = getTopMoviesUseCase.execute(page)
                 _topListMovies.value = movies
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -53,13 +58,10 @@ class MainViewModel @Inject constructor(
     fun fetchSearchMovies(keyword: String) {
         viewModelScope.launch {
             try {
-                Log.d("@@@@@", "fetchSearchMovies called with keyword: $keyword")
-                val movies = repository.getSearchMovies(keyword)
-                Log.d("@@@@@", "Movies received: ${movies.toString()}")
+                val movies = getSearchMoviesUseCase.execute(keyword)
                 _searchMovies.value = movies
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.e("@@@@@", "Error fetching movies: ${e.message}")
             }
         }
     }
