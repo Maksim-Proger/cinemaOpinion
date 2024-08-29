@@ -13,10 +13,10 @@ fun FabButton(
     imageIcon: ImageVector,
     contentDescription: String,
     textFloatingButton: String,
-    onFilterButtonClick: () -> Unit,
+    onButtonClick: () -> Unit,
 ) {
     ExtendedFloatingActionButton(
-        onClick = onFilterButtonClick,
+        onClick = onButtonClick,
         icon = {
             Icon(
                 imageVector = imageIcon,
