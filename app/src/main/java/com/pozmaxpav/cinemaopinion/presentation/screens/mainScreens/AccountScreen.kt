@@ -35,7 +35,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
-import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
+import com.pozmaxpav.cinemaopinion.presentation.theme.CinemaOpinionTheme
 import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
 
 @Composable

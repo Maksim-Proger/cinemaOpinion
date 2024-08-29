@@ -14,7 +14,7 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.pozmaxpav.cinemaopinion.presentation.navigation.NavGraph
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.ui.theme.CinemaOpinionTheme
+import com.pozmaxpav.cinemaopinion.presentation.theme.CinemaOpinionTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

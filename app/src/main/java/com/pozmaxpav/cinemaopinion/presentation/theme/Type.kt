@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.ui.theme
+package com.pozmaxpav.cinemaopinion.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
