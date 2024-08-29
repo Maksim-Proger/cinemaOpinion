@@ -104,7 +104,7 @@ fun MainScreen(navController: NavHostController) {
                     imageIcon = Icons.Default.Settings,
                     contentDescription = stringResource(id = R.string.description_floating_action_button_settings),
                     textFloatingButton = stringResource(id = R.string.floating_action_button_settings),
-                    onFilterButtonClick = {
+                    onButtonClick = {
                         onFilterButtonClick = !onFilterButtonClick
                         titleTopBarStae = !titleTopBarStae
                         searchCompleted = false

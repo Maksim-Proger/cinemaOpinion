@@ -25,7 +25,9 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 
 @Composable
-fun SettingsMenu(navController: NavHostController) {
+fun SettingsMenu(
+    navController: NavHostController
+) {
     var menuOpeningStatus by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.wrapContentSize()) {
@@ -36,6 +38,7 @@ fun SettingsMenu(navController: NavHostController) {
             expanded = menuOpeningStatus,
             onDismissRequest = { menuOpeningStatus = false }
         ) {
+
             DropdownMenuItem(
                 text = { Text(text = stringResource(id = R.string.drop_down_menu_item_edit)) },
                 leadingIcon = {
@@ -55,6 +58,7 @@ fun SettingsMenu(navController: NavHostController) {
                     }
                 }
             )
+
             DropdownMenuItem(
                 text = { Text(text = stringResource(id = R.string.drop_down_menu_item_settings)) },
                 leadingIcon = {
@@ -65,7 +69,9 @@ fun SettingsMenu(navController: NavHostController) {
                               },
                 onClick = { /* Handle Settings */ }
             )
+
             HorizontalDivider()
+
             DropdownMenuItem(
                 text = { Text(text = stringResource(id = R.string.drop_down_menu_item_exit)) },
                 leadingIcon = {
@@ -76,6 +82,7 @@ fun SettingsMenu(navController: NavHostController) {
                               },
                 onClick = { /* Handle Exit */ }
             )
+
         }
     }
 }
