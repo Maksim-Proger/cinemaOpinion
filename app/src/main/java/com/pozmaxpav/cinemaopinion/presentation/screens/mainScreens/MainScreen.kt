@@ -66,7 +66,7 @@ fun MainScreen(navController: NavHostController) {
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
-        viewModel.fetchPremiersMovies(2022, "July") // TODO: Надо добавить возможность выбора даты
+        viewModel.fetchPremiersMovies(2023, "July") // TODO: Надо добавить возможность выбора даты
         viewModel.fetchTopListMovies(1) // TODO: Надо разобраться как настроить переключение страницы
     }
 
@@ -116,7 +116,7 @@ fun MainScreen(navController: NavHostController) {
         AnimatedVisibility(
             visible = searchBarActive,
             enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
-            exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut() // TODO: не работает скрытие
+//            exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut() // TODO: не работает скрытие
         ) {
             Column(modifier = Modifier.padding(padding)) {
                 if (searchBarActive) {

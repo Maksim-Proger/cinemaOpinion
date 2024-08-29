@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.ui.theme
+package com.pozmaxpav.cinemaopinion.presentation.theme
 
 import android.app.Activity
 import android.os.Build
