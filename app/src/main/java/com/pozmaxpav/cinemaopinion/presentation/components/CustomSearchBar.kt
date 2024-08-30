@@ -40,7 +40,13 @@ fun CustomSearchBar(
         trailingIcon = {
             if (active) {
                 IconButton(
-                    onClick = { if (query.isNotEmpty()) onQueryChange("") else onActiveChange(false) }
+                    onClick = {
+                        if (query.isNotEmpty()) {
+                            onQueryChange("")
+                        } else {
+                            onActiveChange(false)
+                        }
+                    }
                 ) {
                     Icon(imageVector = Icons.Filled.Close, contentDescription = null)
                 }
