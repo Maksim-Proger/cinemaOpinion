@@ -26,7 +26,8 @@ import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 
 @Composable
 fun SettingsMenu(
-    navController: NavHostController
+    // Передаем элементы меню как один блок кода и функцию для закрытия меню
+    content: @Composable (closeMenu: () -> Unit) -> Unit
 ) {
     var menuOpeningStatus by remember { mutableStateOf(false) }
 
@@ -34,56 +35,90 @@ fun SettingsMenu(
         IconButton(onClick = { menuOpeningStatus = true }) {
             Icon(Icons.Default.MoreVert, contentDescription = "Icon MoreVert")
         }
+
         DropdownMenu(
             expanded = menuOpeningStatus,
             onDismissRequest = { menuOpeningStatus = false }
         ) {
-
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.drop_down_menu_item_edit)) },
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Edit,
-                        contentDescription = stringResource(id = R.string.description_icon_edit)
-                    )
-                },
-                onClick = { // TODO: Надо детальнее разобраться в этой навигации
-
-                    menuOpeningStatus = false
-
-                    navController.navigate(Route.EditPersonalInformationScreen.route) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-            )
-
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.drop_down_menu_item_settings)) },
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Settings,
-                        contentDescription = stringResource(id = R.string.description_icon_settings)
-                    )
-                              },
-                onClick = { /* Handle Settings */ }
-            )
-
-            HorizontalDivider()
-
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.drop_down_menu_item_exit)) },
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.ExitToApp,
-                        contentDescription = stringResource(id = R.string.description_icon_exit)
-                    )
-                              },
-                onClick = { /* Handle Exit */ }
-            )
-
+            content { menuOpeningStatus = false }
         }
     }
 }
 
+
+@Composable
+fun MyDropdownMenuItem(
+    onNavigate: () -> Unit,
+    title: String,
+    leadingIcon: @Composable (() -> Unit)? = null,
+) {
+    DropdownMenuItem(
+        text = { Text(text = title) },
+        leadingIcon = leadingIcon,
+        onClick = { onNavigate() }
+    )
+}
+
+
+//@Composable
+//fun SettingsMenu(
+//    navController: NavHostController
+//) {
+//    var menuOpeningStatus by remember { mutableStateOf(false) }
+//
+//    Box(modifier = Modifier.wrapContentSize()) {
+//        IconButton(onClick = { menuOpeningStatus = true }) {
+//            Icon(Icons.Default.MoreVert, contentDescription = "Icon MoreVert")
+//        }
+//        DropdownMenu(
+//            expanded = menuOpeningStatus,
+//            onDismissRequest = { menuOpeningStatus = false }
+//        ) {
+//
+//            DropdownMenuItem(
+//                text = { Text(text = stringResource(id = R.string.drop_down_menu_item_edit)) },
+//                leadingIcon = {
+//                    Icon(
+//                        Icons.Default.Edit,
+//                        contentDescription = stringResource(id = R.string.description_icon_edit)
+//                    )
+//                },
+//                onClick = { // TODO: Надо детальнее разобраться в этой навигации
+//
+//                    menuOpeningStatus = false
+//
+//                    navController.navigate(Route.EditPersonalInformationScreen.route) {
+//                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+//                        launchSingleTop = true
+//                        restoreState = true
+//                    }
+//                }
+//            )
+//
+//            DropdownMenuItem(
+//                text = { Text(text = stringResource(id = R.string.drop_down_menu_item_settings)) },
+//                leadingIcon = {
+//                    Icon(
+//                        Icons.Default.Settings,
+//                        contentDescription = stringResource(id = R.string.description_icon_settings)
+//                    )
+//                              },
+//                onClick = { /* Handle Settings */ }
+//            )
+//
+//            HorizontalDivider()
+//
+//            DropdownMenuItem(
+//                text = { Text(text = stringResource(id = R.string.drop_down_menu_item_exit)) },
+//                leadingIcon = {
+//                    Icon(
+//                        Icons.Default.ExitToApp,
+//                        contentDescription = stringResource(id = R.string.description_icon_exit)
+//                    )
+//                              },
+//                onClick = { /* Handle Exit */ }
+//            )
+//
+//        }
+//    }
+//}
