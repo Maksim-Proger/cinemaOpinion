@@ -40,7 +40,7 @@ fun SettingsMenu(
             expanded = menuOpeningStatus,
             onDismissRequest = { menuOpeningStatus = false }
         ) {
-            content { menuOpeningStatus = false }
+            content { menuOpeningStatus = false } // TODO: Что это за запись такая?
         }
     }
 }
