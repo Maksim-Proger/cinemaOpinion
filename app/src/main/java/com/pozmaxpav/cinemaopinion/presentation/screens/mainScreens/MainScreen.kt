@@ -1,16 +1,13 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,7 +24,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -37,17 +33,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
-import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
-import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.DetailsCardFilm
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -179,38 +171,38 @@ fun MainScreen(navController: NavHostController) {
             }
         }
 
-//        if (!searchBarActive) {
-//            if (selectedMovie != null) {
-//                DetailsCardFilm(
-//                    selectedMovie!!,
-//                    onClick = { selectedMovie = null },
-//                    padding
-//                )
-//                BackHandler {
-//                    selectedMovie = null
-//                }
-//            } else {
-//
-//                val moviesToDisplay: List<MovieData> = when {
-//                    searchCompleted -> searchMovies.value?.items ?: emptyList()
-//                    onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
-//                    else -> premiereMovies.value?.items ?: emptyList()
-//                }
-//
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(padding),
-//                    contentPadding = PaddingValues(16.dp)
-//                ) {
-//                    items(moviesToDisplay) { movie ->
-//                        MovieItem(movie = movie) {
-//                            selectedMovie = movie
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        if (!searchBarActive) {
+            if (selectedMovie != null) {
+                DetailsCardFilm(
+                    selectedMovie!!,
+                    onClick = { selectedMovie = null },
+                    padding
+                )
+                BackHandler {
+                    selectedMovie = null
+                }
+            } else {
+
+                val moviesToDisplay: List<MovieData> = when {
+                    searchCompleted -> searchMovies.value?.items ?: emptyList()
+                    onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
+                    else -> premiereMovies.value?.items ?: emptyList()
+                }
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    items(moviesToDisplay) { movie ->
+                        MovieItem(movie = movie) {
+                            selectedMovie = movie
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
