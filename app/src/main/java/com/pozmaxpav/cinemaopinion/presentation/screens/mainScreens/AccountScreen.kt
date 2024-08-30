@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,7 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
+import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.theme.CinemaOpinionTheme
 import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
 
@@ -82,7 +87,9 @@ fun AccountScreen(
                         text = stringResource(id = R.string.title_account_screen),
                         style = MaterialTheme.typography.headlineMedium
                     )
-                    SettingsMenu(navController)
+
+                    AccountSettingMenu(navController)
+
                 }
                 Spacer(modifier = Modifier.padding(8.dp))
                 Card(
@@ -106,13 +113,14 @@ fun AccountScreen(
                             )
                             Spacer(modifier = Modifier.padding(8.dp))
                             Column {
-                                Text(text = "Максим Позданяков")
+                                Text(text = "Максим Поздняков")
                                 Text(
                                     text = "z@yandex.ru",
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }
                         }
+
                         Spacer(modifier = Modifier.height(20.dp))
                         HorizontalDivider()
                         Spacer(modifier = Modifier.height(20.dp))
@@ -134,16 +142,53 @@ fun AccountScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Preview(uiMode = UI_MODE_NIGHT_YES, showBackground = true)
-@Composable
-fun AccountScreenPreview() {
-    val navController = rememberNavController()
 
-    CinemaOpinionTheme {
-        AccountScreen(
-            navController = navController,
-            onClick = { /* Действие при клике */ }
+@Composable
+private fun AccountSettingMenu(navController: NavHostController) {
+    SettingsMenu { closeMenu ->
+
+        MyDropdownMenuItem(
+            onNavigate = { // TODO: Надо детальнее разобраться в этой навигации
+                navController.navigate(Route.EditPersonalInformationScreen.route) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+                closeMenu() // Закрываем меню после навигации
+            },
+            title = stringResource(id = R.string.drop_down_menu_item_edit),
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Edit,
+                    contentDescription = stringResource(id = R.string.description_icon_edit)
+                )
+            }
+        )
+
+        MyDropdownMenuItem(
+            onNavigate = { /* Настроить навигацию */ },
+            title = stringResource(id = R.string.drop_down_menu_item_settings),
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Settings,
+                    contentDescription = stringResource(id = R.string.description_icon_settings)
+                )
+            }
+        )
+
+        MyDropdownMenuItem(
+            onNavigate = { /* Настроить навигацию */ },
+            title = stringResource(id = R.string.drop_down_menu_item_exit),
+            leadingIcon = {
+                Icon(
+                    Icons.Default.ExitToApp,
+                    contentDescription = stringResource(id = R.string.description_icon_exit)
+                )
+            }
         )
     }
 }
+
+
