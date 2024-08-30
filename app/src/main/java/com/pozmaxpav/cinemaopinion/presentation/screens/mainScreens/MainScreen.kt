@@ -48,14 +48,14 @@ fun MainScreen(navController: NavHostController) {
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
     var searchCompleted by remember { mutableStateOf(false) } // Флаг для отображения списка фильмов после поиска
-    var searchHistory = mutableListOf<String>()
+    val searchHistory = mutableListOf<String>()
 
     var onFilterButtonClick by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
 
     var titleTopBarStae by remember { mutableStateOf(false) }
 
-    // Работаем с VoewModel
+    // Работаем с ViewModel
     val viewModel: MainViewModel = hiltViewModel()
     val premiereMovies = viewModel.premiersMovies.collectAsState()
     val topListMovies = viewModel.topListMovies.collectAsState()
@@ -98,6 +98,7 @@ fun MainScreen(navController: NavHostController) {
                 }
             }
         },
+
         floatingActionButton = {
             if (!onAccountButtonClick && !searchBarActive) {
                 FabButton(
@@ -113,7 +114,7 @@ fun MainScreen(navController: NavHostController) {
             }
         }
     ) { padding ->
-        AnimatedVisibility(
+        AnimatedVisibility( // предупреждение для searchBarActive из-за AnimatedVisibility
             visible = searchBarActive,
             enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
 //            exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut() // TODO: не работает скрытие
@@ -129,7 +130,7 @@ fun MainScreen(navController: NavHostController) {
                             searchCompleted = true
                             searchBarActive = false
                         },
-                        active = searchBarActive,
+                        active = searchBarActive, // TODO: исправить это предупреждение
                         onActiveChange = { isActive -> searchBarActive = isActive },
                         searchHistory = searchHistory
                     )
@@ -148,12 +149,13 @@ fun MainScreen(navController: NavHostController) {
                     selectedMovie = null
                 }
             } else {
+
                 val moviesToDisplay: List<MovieData> = when {
                     searchCompleted -> searchMovies.value?.items ?: emptyList()
-                    !onFilterButtonClick && !searchBarActive -> premiereMovies.value?.items ?: emptyList()
-                    onFilterButtonClick && !searchBarActive -> topListMovies.value?.films ?: emptyList()
-                    else -> emptyList()
+                    onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
+                    else -> premiereMovies.value?.items ?: emptyList()
                 }
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
