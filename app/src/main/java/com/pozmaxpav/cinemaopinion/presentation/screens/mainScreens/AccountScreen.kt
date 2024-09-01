@@ -80,7 +80,7 @@ fun AccountScreen(
                     }
                     Text(
                         text = stringResource(id = R.string.title_account_screen),
-                        style = MaterialTheme.typography.headlineMedium
+                        style = MaterialTheme.typography.displayLarge
                     )
 
                     AccountSettingMenu(navController)
@@ -108,7 +108,10 @@ fun AccountScreen(
                             )
                             Spacer(modifier = Modifier.padding(8.dp))
                             Column {
-                                Text(text = "Максим Поздняков")
+                                Text(
+                                    text = "Максим Поздняков",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
                                 Text(
                                     text = "z@yandex.ru",
                                     style = MaterialTheme.typography.bodySmall

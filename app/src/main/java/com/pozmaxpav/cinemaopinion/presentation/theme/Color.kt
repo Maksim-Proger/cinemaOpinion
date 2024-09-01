@@ -13,3 +13,4 @@ val BlueGray = Color(0xFFA0A3BD)
 val WhiteGray = Color(0xFFB0B3B8)
 
 val DarkBackground = Color(0xFF1A1C1B)
+val LightBackground = Color(0xFFEBE5D9)

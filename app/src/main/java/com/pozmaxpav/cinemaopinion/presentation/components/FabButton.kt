@@ -24,6 +24,7 @@ fun FabButton(
     contentDescription: String,
     textFloatingButton: String,
     onButtonClick: () -> Unit,
+    expanded: Boolean
 ) {
     ExtendedFloatingActionButton(
         onClick = onButtonClick,
@@ -33,7 +34,8 @@ fun FabButton(
                 contentDescription = contentDescription
             )
         },
-        text = { Text(text = textFloatingButton) }
+        text = { Text(text = textFloatingButton) },
+        expanded = expanded
     )
 }
 
@@ -44,7 +46,8 @@ fun FabButtonWithMenu(
     contentDescription: String,
     textFloatingButton: String,
     content: @Composable () -> Unit,
-    onButtonClick: () -> Unit = {}, // TODO: Что это за запись такая?
+    onButtonClick: () -> Unit = {}, // TODO: Что это за запись такая?,
+    expanded: Boolean
 ) {
     var menuExpanded by remember { mutableStateOf(false) } // Состояние для отображения DropdownMenu
 
@@ -56,7 +59,8 @@ fun FabButtonWithMenu(
             onButtonClick = {
                 onButtonClick() // TODO: Что это за запись такая?
                 menuExpanded = true
-            }
+            },
+            expanded = expanded
         )
 
         DropdownMenu(

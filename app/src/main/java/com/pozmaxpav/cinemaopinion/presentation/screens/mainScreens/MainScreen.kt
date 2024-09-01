@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,6 +22,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,6 +64,10 @@ fun MainScreen(navController: NavHostController) {
     val premiereMovies = viewModel.premiersMovies.collectAsState()
     val topListMovies = viewModel.topListMovies.collectAsState()
     val searchMovies = viewModel.searchMovies.collectAsState()
+
+    // Работаем с Fab
+    val listState = rememberLazyListState()
+    val isExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
@@ -143,7 +149,8 @@ fun MainScreen(navController: NavHostController) {
                                 }
                             )
                         }
-                    }
+                    },
+                    expanded = isExpanded
                 )
             }
         }
@@ -190,6 +197,7 @@ fun MainScreen(navController: NavHostController) {
                 }
 
                 LazyColumn(
+                    state = listState, // это свойство нужно для анимации FabButton
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding),
