@@ -63,7 +63,8 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                 imageIcon = Icons.Default.Add,
                 contentDescription = stringResource(id = R.string.description_floating_action_button_save),
                 textFloatingButton = stringResource(id = R.string.floating_action_button_save),
-                onButtonClick = { /* TODO */ }
+                onButtonClick = { /* TODO */ },
+                expanded = false // TODO: проверить работает ли
             )
         },
         floatingActionButtonPosition = FabPosition.End

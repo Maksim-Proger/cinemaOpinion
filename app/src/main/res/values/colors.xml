@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_film_card">#cccccc</color>
+    <color name="color_film_card">#d6ccbf</color>
     <color name="color_film_card_text">#333333</color>
 
     <color name="color_account_card">#ededed</color>

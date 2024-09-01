@@ -24,7 +24,10 @@ import com.pozmaxpav.cinemaopinion.utilits.FormatGenres
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 
 @Composable
-fun MovieItem(movie: MovieData, onClick: () -> Unit) {
+fun MovieItem(
+    movie: MovieData,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
