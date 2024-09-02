@@ -38,6 +38,8 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.Country
 import com.pozmaxpav.cinemaopinion.domain.models.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
+import java.time.DateTimeException
+import java.time.Month
 
 @Composable
 fun AccountListItem(icon: Painter, contentDescription: String, title: String) {
@@ -222,4 +224,21 @@ fun formatCountries(country: List<Country>): String {
     return country.joinToString(separator = ", ") {
         it.country
     }
+}
+
+
+// TODO: доработать метод
+fun formatMonth(fullDate: String): String {
+    val listDate: List<String> = fullDate.split("-")
+    return try {
+        Month.of(listDate[1].toInt()).name.capitalize()
+    } catch (e: DateTimeException) {
+        "Invalid month"
+    }
+}
+
+// TODO: доработать метод
+fun formatYear(fullDate: String) : Int {
+    val listDate: List<String> = fullDate.split("-")
+    return listDate[0].toInt()
 }
