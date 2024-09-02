@@ -146,7 +146,7 @@ private fun AccountSettingMenu(navController: NavHostController) {
     SettingsMenu { closeMenu ->
 
         MyDropdownMenuItem(
-            onNavigate = { // TODO: Надо детальнее разобраться в этой навигации
+            onAction = { // TODO: Надо детальнее разобраться в этой навигации
                 navController.navigate(Route.EditPersonalInformationScreen.route) {
                     popUpTo(navController.graph.startDestinationId) {
                         saveState = true
@@ -166,7 +166,7 @@ private fun AccountSettingMenu(navController: NavHostController) {
         )
 
         MyDropdownMenuItem(
-            onNavigate = { /* Настроить навигацию */ },
+            onAction = { /* Настроить навигацию */ },
             title = stringResource(id = R.string.drop_down_menu_item_settings),
             leadingIcon = {
                 Icon(
@@ -177,7 +177,7 @@ private fun AccountSettingMenu(navController: NavHostController) {
         )
 
         MyDropdownMenuItem(
-            onNavigate = { /* Настроить навигацию */ },
+            onAction = { /* Настроить навигацию */ },
             title = stringResource(id = R.string.drop_down_menu_item_exit),
             leadingIcon = {
                 Icon(

@@ -37,16 +37,25 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.DetailsCardFilm
+import com.pozmaxpav.cinemaopinion.utilits.formatMonth
+import com.pozmaxpav.cinemaopinion.utilits.formatYear
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    // DatePicker
+    var showDatePicker by remember { mutableStateOf(false) }  // Состояние для показа DatePicker
+    // TODO: разобраться что в себе несет эта переменная
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) } // Состояние для выбранной даты
 
     // Блок поиска
     var query by remember { mutableStateOf("") }
@@ -66,7 +75,7 @@ fun MainScreen(navController: NavHostController) {
     val searchMovies = viewModel.searchMovies.collectAsState()
 
     // Работаем с Fab
-    val listState = rememberLazyListState()
+    val listState = rememberLazyListState() // TODO: что это за переменная
     val isExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
@@ -74,7 +83,7 @@ fun MainScreen(navController: NavHostController) {
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
-        viewModel.fetchPremiersMovies(2023, "July") // TODO: Надо добавить возможность выбора даты
+        viewModel.fetchPremiersMovies(2023, "July") // TODO: Надо разобраться как настроить переключение страницы
         viewModel.fetchTopListMovies(1) // TODO: Надо разобраться как настроить переключение страницы
     }
 
@@ -119,7 +128,7 @@ fun MainScreen(navController: NavHostController) {
                     textFloatingButton = "Настройки",
                     content = {
                         MyDropdownMenuItem(
-                            onNavigate = {
+                            onAction = {
                                 onFilterButtonClick = !onFilterButtonClick
                                 titleTopBarState = !titleTopBarState
                                 searchCompleted = false
@@ -139,7 +148,9 @@ fun MainScreen(navController: NavHostController) {
 
                         if (!titleTopBarState) {
                             MyDropdownMenuItem(
-                                onNavigate = { /* TODO: Добавить функционал выбора даты */ },
+                                onAction = {
+                                    showDatePicker = !showDatePicker
+                                },
                                 title = stringResource(id = R.string.drop_down_menu_item_select_date),
                                 leadingIcon = {
                                     Icon(
@@ -153,6 +164,19 @@ fun MainScreen(navController: NavHostController) {
                     expanded = isExpanded
                 )
             }
+
+            // Получение выбранной даты TODO: Доработать!!!
+            selectedDate?.let {
+                viewModel.fetchPremiersMovies(formatYear(it.toString()), formatMonth(it.toString()))
+            }
+
+            DatePickerFunction(
+                showDatePicker,
+                onDateSelected = { date ->
+                    selectedDate = date
+                    showDatePicker = !showDatePicker
+                }
+            )
         }
     ) { padding ->
 
@@ -198,6 +222,7 @@ fun MainScreen(navController: NavHostController) {
 
                 LazyColumn(
                     state = listState, // это свойство нужно для анимации FabButton
+
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding),
