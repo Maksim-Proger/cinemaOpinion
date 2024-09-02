@@ -151,6 +151,7 @@ fun DetailsCardFilm(
             ) {
                 WorkerWithImage(movie, 250.dp)
                 Spacer(modifier = Modifier.width(16.dp))
+
                 Column {
                     Text(
                         text = movie.nameRu ?: stringResource(id = R.string.no_movie_title),
@@ -158,25 +159,30 @@ fun DetailsCardFilm(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = movie.year ?: stringResource(id = R.string.no_year_of_release_of_the_film),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = FormatCountries(movie.countries),
+                        text = formatCountries(movie.countries),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     when(movie) {
                         is MovieData.Movie -> {
                             Text(
-                                text = FormatGenres(movie.genres),
+                                text = movie.premiereRu,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = formatGenres(movie.genres),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
                         is MovieData.MovieTop -> {
                             Text(
-                                text = movie.rating.toString(),
+                                text = movie.year,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = movie.rating,
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
@@ -184,6 +190,7 @@ fun DetailsCardFilm(
                     }
                 }
             }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -205,13 +212,13 @@ fun DetailsCardFilm(
     }
 }
 
-fun FormatGenres(genres: List<Genre>): String {
+fun formatGenres(genres: List<Genre>): String {
     return genres.joinToString(separator = ", ") {
         it.genre
     }
 }
 
-fun FormatCountries(country: List<Country>): String {
+fun formatCountries(country: List<Country>): String {
     return country.joinToString(separator = ", ") {
         it.country
     }

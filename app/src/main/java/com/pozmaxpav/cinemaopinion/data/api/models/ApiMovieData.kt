@@ -1,11 +1,10 @@
 package com.pozmaxpav.cinemaopinion.data.api.models
 
-import com.pozmaxpav.cinemaopinion.domain.models.Country
-
 data class ApiMovie(
     val kinopoiskId: Int,
     val posterUrlPreview: String,
     val genres: List<ApiGenre>,
+    val premiereRu: String,
     val nameRu: String,
     val posterUrl: String,
     val year: String,
@@ -23,6 +22,7 @@ data class ApiMovieTop(
 
 data class ApiMovieSearch(
     val kinopoiskId: Int,
+    val rating: String,
     val nameRu: String,
     val posterUrl: String,
     val year: String,

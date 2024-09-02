@@ -19,8 +19,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.MovieData
-import com.pozmaxpav.cinemaopinion.utilits.FormatCountries
-import com.pozmaxpav.cinemaopinion.utilits.FormatGenres
+import com.pozmaxpav.cinemaopinion.utilits.formatCountries
+import com.pozmaxpav.cinemaopinion.utilits.formatGenres
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 
 @Composable
@@ -46,7 +46,6 @@ fun MovieItem(
         ) {
 
             WorkerWithImage(movie, 150.dp)
-
             Spacer(modifier = Modifier.width(16.dp))
 
             Column {
@@ -56,12 +55,7 @@ fun MovieItem(
                 )
                 Spacer(modifier = Modifier.height(7.dp))
                 Text(
-                    text = movie.year ?: "Нет года выпуска",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(7.dp))
-                Text(
-                    text = FormatCountries(movie.countries),
+                    text = formatCountries(movie.countries),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.height(7.dp))
@@ -69,14 +63,24 @@ fun MovieItem(
                 when (movie) {
                     is MovieData.Movie -> {
                         Text(
-                            text = FormatGenres(movie.genres),
+                            text = movie.premiereRu,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(7.dp))
+                        Text(
+                            text = formatGenres(movie.genres),
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
 
                     is MovieData.MovieTop -> {
                         Text(
-                            text = movie.rating.toString(),
+                            text = movie.year,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(7.dp))
+                        Text(
+                            text = movie.rating,
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }

@@ -34,6 +34,7 @@ fun ApiMovie.toDomain(): MovieData.Movie {
         posterUrl = posterUrl,
         posterUrlPreview = posterUrlPreview,
         genres = genres.map { it.toDomain() },
+        premiereRu = premiereRu,
         year = year,
         countries = countries.map { it.toDomain() }
     )
@@ -56,6 +57,7 @@ fun ApiMovieSearch.toDomain(): MovieData.MovieSearch {
         nameRu = nameRu,
         posterUrl = posterUrl,
         year = year,
+        rating = rating,
         countries = countries.map { it.toDomain() }
     )
 }

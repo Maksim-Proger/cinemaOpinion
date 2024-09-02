@@ -10,6 +10,7 @@ sealed class MovieData {
         val kinopoiskId: Int,
         val posterUrlPreview: String,
         val genres: List<Genre>,
+        val premiereRu: String,
 
         override val nameRu: String,
         override val posterUrl: String,
@@ -29,6 +30,7 @@ sealed class MovieData {
 
     data class MovieSearch(
         val kinopoiskId: Int,
+        val rating: String?,
 
         override val nameRu: String,
         override val posterUrl: String,
