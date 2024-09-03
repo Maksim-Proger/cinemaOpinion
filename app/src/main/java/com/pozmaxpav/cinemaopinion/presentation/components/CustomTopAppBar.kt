@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Search
@@ -12,6 +13,8 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.pozmaxpav.cinemaopinion.R
@@ -26,18 +29,26 @@ fun CustomTopAppBar(
 ) {
     TopAppBar(
         scrollBehavior = scrollBehavior,
-        title = { Text(text = title, style = MaterialTheme.typography.displayLarge) },
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.displayLarge,
+                color = colorResource(R.color.color_text_header_top_app_bar)
+            )
+        },
         actions = {
             IconButton(onClick = onSearchButtonClick) {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = stringResource(id = R.string.description_icon_search)
+                    contentDescription = stringResource(id = R.string.description_icon_search),
+                    tint = colorResource(R.color.color_icon_button_top_app_bar)
                 )
             }
             IconButton(onClick = onAccountButtonClick) {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = stringResource(id = R.string.description_icon_account)
+                    contentDescription = stringResource(id = R.string.description_icon_account),
+                    tint = colorResource(R.color.color_icon_button_top_app_bar)
                 )
             }
         },

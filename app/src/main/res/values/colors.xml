@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--  FilmsCard  -->
     <color name="color_film_card">#d6ccbf</color>
     <color name="color_film_card_text">#333333</color>
 
+    <!--  Account screen  -->
     <color name="color_account_card">#ededed</color>
-    <color name="color_content_account_card">#c2c2c2</color>
-    <color name="color_text_account_card">#2a2a2a</color>
+    <color name="color_content_account_card">#EBE5D9</color>
+    <color name="color_text_account_card">#45041B</color>
+    <color name="color_icon_button_account_card">#45041B</color>
 
     <!--  TopAppBar  -->
-    <color name="color_background_top_app_bar">#FFFFFF</color>
+    <color name="color_background_top_app_bar">#EBE5D9</color>
+    <color name="color_icon_button_top_app_bar">#45041B</color>
+    <color name="color_text_header_top_app_bar">#45041B</color>
+
+    <!--  Fab  -->
+    <color name="color_containerColor_fab">#45041B</color>
+    <color name="color_contentColor_fab">#EBE5D9</color>
+
+
 </resources>

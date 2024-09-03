@@ -79,7 +79,7 @@ fun MainScreen(navController: NavHostController) {
     val isExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
-    var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
+    var selectedMovie by remember { mutableStateOf<MovieData?>(null) } // TODO: надо разобраться как это работает
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
@@ -182,8 +182,10 @@ fun MainScreen(navController: NavHostController) {
 
         AnimatedVisibility(
             visible = searchBarActive,
-            enter = slideInVertically() + fadeIn(),
-            exit = slideOutVertically() + fadeOut()
+//            enter = slideInVertically() + fadeIn(),
+//            exit = slideOutVertically() + fadeOut()
+            enter = slideInVertically(),
+            exit = slideOutVertically()
         ) {
             Column(modifier = Modifier.padding(padding)) {
                 CustomSearchBar(
@@ -195,47 +197,47 @@ fun MainScreen(navController: NavHostController) {
                         searchCompleted = true
                         searchBarActive = false
                     },
-                    active = searchBarActive, // TODO: исправить это предупреждение
+                    active = searchBarActive,
                     onActiveChange = { isActive -> searchBarActive = isActive },
                     searchHistory = searchHistory
                 )
             }
         }
 
-        if (!searchBarActive) {
-            if (selectedMovie != null) {
-                DetailsCardFilm(
-                    selectedMovie!!,
-                    onClick = { selectedMovie = null },
-                    padding
-                )
-                BackHandler {
-                    selectedMovie = null
-                }
-            } else {
-
-                val moviesToDisplay: List<MovieData> = when {
-                    searchCompleted -> searchMovies.value?.items ?: emptyList()
-                    onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
-                    else -> premiereMovies.value?.items ?: emptyList()
-                }
-
-                LazyColumn(
-                    state = listState, // это свойство нужно для анимации FabButton
-
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    items(moviesToDisplay) { movie ->
-                        MovieItem(movie = movie) {
-                            selectedMovie = movie
-                        }
-                    }
-                }
-            }
-        }
+//        if (!searchBarActive) {
+//            if (selectedMovie != null) {
+//                DetailsCardFilm(
+//                    selectedMovie!!,
+//                    onClick = { selectedMovie = null },
+//                    padding
+//                )
+//                BackHandler {
+//                    selectedMovie = null
+//                }
+//            } else {
+//
+//                val moviesToDisplay: List<MovieData> = when {
+//                    searchCompleted -> searchMovies.value?.items ?: emptyList()
+//                    onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
+//                    else -> premiereMovies.value?.items ?: emptyList()
+//                }
+//
+//                LazyColumn(
+//                    state = listState, // это свойство нужно для анимации FabButton
+//
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(padding),
+//                    contentPadding = PaddingValues(16.dp)
+//                ) {
+//                    items(moviesToDisplay) { movie ->
+//                        MovieItem(movie = movie) {
+//                            selectedMovie = movie
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
