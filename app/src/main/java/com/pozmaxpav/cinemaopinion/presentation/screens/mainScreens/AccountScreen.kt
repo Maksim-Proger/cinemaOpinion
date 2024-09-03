@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -74,8 +75,10 @@ fun AccountScreen(
                 ) {
                     IconButton(onClick = onClick) {
                         Icon(
+                            modifier = Modifier.size(30.dp),
                             imageVector = Icons.Default.Close,
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = colorResource(R.color.color_icon_button_account_card)
                         )
                     }
                     Text(
@@ -104,7 +107,9 @@ fun AccountScreen(
                             Image(
                                 modifier = Modifier.size(60.dp),
                                 imageVector = Icons.Outlined.AccountCircle,
-                                contentDescription = null
+                                contentDescription = null,
+                                colorFilter = ColorFilter
+                                    .tint(colorResource(R.color.color_icon_button_account_card))
                             )
                             Spacer(modifier = Modifier.padding(8.dp))
                             Column {
