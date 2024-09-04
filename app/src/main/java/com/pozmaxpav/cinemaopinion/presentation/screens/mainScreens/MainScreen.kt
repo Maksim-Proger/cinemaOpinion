@@ -39,11 +39,11 @@ import com.pozmaxpav.cinemaopinion.domain.models.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
+import com.pozmaxpav.cinemaopinion.presentation.components.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.utilits.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.formatYear
 import java.time.LocalDate
@@ -122,7 +122,7 @@ fun MainScreen(navController: NavHostController) {
         },
 
         floatingActionButton = {
-            if (!onAccountButtonClick && !searchBarActive) {
+            if (!onAccountButtonClick && !searchBarActive && selectedMovie == null) {
                 FabButtonWithMenu(
                     imageIcon = Icons.Default.Settings,
                     contentDescription = "Меню настроек",
@@ -205,40 +205,41 @@ fun MainScreen(navController: NavHostController) {
             }
         }
 
-//        if (!searchBarActive) {
-//            if (selectedMovie != null) {
-//                DetailsCardFilm(
-//                    selectedMovie!!,
-//                    onClick = { selectedMovie = null },
-//                    padding
-//                )
-//                BackHandler {
-//                    selectedMovie = null
-//                }
-//            } else {
-//
-//                val moviesToDisplay: List<MovieData> = when {
-//                    searchCompleted -> searchMovies.value?.items ?: emptyList()
-//                    onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
-//                    else -> premiereMovies.value?.items ?: emptyList()
-//                }
-//
-//                LazyColumn(
-//                    state = listState, // это свойство нужно для анимации FabButton
-//
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .padding(padding),
-//                    contentPadding = PaddingValues(16.dp)
-//                ) {
-//                    items(moviesToDisplay) { movie ->
-//                        MovieItem(movie = movie) {
-//                            selectedMovie = movie
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        if (!searchBarActive) {
+            if (selectedMovie != null) {
+                DetailsCardFilm(
+                    selectedMovie!!,
+                    onClick = { selectedMovie = null },
+                    padding
+                )
+                BackHandler {
+                    selectedMovie = null
+                }
+
+            } else {
+
+                val moviesToDisplay: List<MovieData> = when {
+                    searchCompleted -> searchMovies.value?.items ?: emptyList()
+                    onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
+                    else -> premiereMovies.value?.items ?: emptyList()
+                }
+
+                LazyColumn(
+                    state = listState, // это свойство нужно для анимации FabButton
+
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    items(moviesToDisplay) { movie ->
+                        MovieItem(movie = movie) {
+                            selectedMovie = movie
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

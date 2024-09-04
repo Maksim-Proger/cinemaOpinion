@@ -56,7 +56,6 @@ fun AccountScreen(
                 .padding(vertical = 30.dp)
                 .fillMaxHeight(0.5f)
                 .graphicsLayer(alpha = 0.95f),
-//            elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = colorResource(id = R.color.color_account_card),
                 contentColor = colorResource(id = R.color.color_text_account_card)
