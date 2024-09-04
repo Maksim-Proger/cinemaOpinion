@@ -6,10 +6,10 @@
     <color name="color_film_card_text">#FFFFFF</color>
 
     <!--  Account screen  -->
-    <color name="color_account_card">#20212C</color>
-    <color name="color_content_account_card">#151927</color>
-    <color name="color_text_account_card">#D3D3D3</color>
-    <color name="color_icon_button_account_card">#45041B</color>
+    <color name="color_account_card">#8e7857</color>
+    <color name="color_content_account_card">#726046</color>
+    <color name="color_text_account_card">#1D2523</color>
+    <color name="color_icon_button_account_card">#1D2523</color>
 
     <!--  TopAppBar  -->
     <color name="color_background_top_app_bar">#1A1C1B</color>
