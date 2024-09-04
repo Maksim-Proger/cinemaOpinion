@@ -56,7 +56,6 @@ fun AccountScreen(
                 .padding(vertical = 30.dp)
                 .fillMaxHeight(0.5f)
                 .graphicsLayer(alpha = 0.95f),
-            elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = colorResource(id = R.color.color_account_card),
                 contentColor = colorResource(id = R.color.color_text_account_card)
@@ -96,11 +95,11 @@ fun AccountScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer(alpha = 0.95f),
+//                    elevation = CardDefaults.cardElevation(8.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = colorResource(id = R.color.color_content_account_card),
                         contentColor = colorResource(id = R.color.color_text_account_card)
-                    ),
-                    elevation = CardDefaults.cardElevation(8.dp)
+                    )
                 ) {
                     Column(
                         modifier = Modifier
@@ -169,7 +168,8 @@ private fun AccountSettingMenu(navController: NavHostController) {
             leadingIcon = {
                 Icon(
                     Icons.Default.Edit,
-                    contentDescription = stringResource(id = R.string.description_icon_edit)
+                    contentDescription = stringResource(id = R.string.description_icon_edit),
+                    tint = colorResource(R.color.color_content_color_dropdown_menu)
                 )
             }
         )
@@ -180,7 +180,8 @@ private fun AccountSettingMenu(navController: NavHostController) {
             leadingIcon = {
                 Icon(
                     Icons.Default.Settings,
-                    contentDescription = stringResource(id = R.string.description_icon_settings)
+                    contentDescription = stringResource(id = R.string.description_icon_settings),
+                    tint = colorResource(R.color.color_content_color_dropdown_menu)
                 )
             }
         )
@@ -191,7 +192,8 @@ private fun AccountSettingMenu(navController: NavHostController) {
             leadingIcon = {
                 Icon(
                     Icons.Default.ExitToApp,
-                    contentDescription = stringResource(id = R.string.description_icon_exit)
+                    contentDescription = stringResource(id = R.string.description_icon_exit),
+                    tint = colorResource(R.color.color_content_color_dropdown_menu)
                 )
             }
         )

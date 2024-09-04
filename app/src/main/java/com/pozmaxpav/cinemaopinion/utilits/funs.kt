@@ -1,23 +1,14 @@
 package com.pozmaxpav.cinemaopinion.utilits
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -62,7 +53,6 @@ fun AccountListItem(icon: Painter, contentDescription: String, title: String) {
     }
 }
 
-
 @Composable
 fun CustomTextField(
     value: String,
@@ -105,7 +95,6 @@ fun CustomTextField(
     )
 }
 
-
 @Composable
 fun WorkerWithImage(
     movie: MovieData,
@@ -117,101 +106,6 @@ fun WorkerWithImage(
         modifier = Modifier.height(height),
         contentScale = ContentScale.Fit
     )
-}
-
-
-@Composable
-fun DetailsCardFilm(
-    movie: MovieData,
-    onClick: () -> Unit,
-    padding: PaddingValues
-) {
-    Column(
-        modifier = Modifier
-            .wrapContentSize()
-            .padding(padding)
-    ) {
-        Card(
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(16.dp),
-            elevation = CardDefaults.cardElevation(8.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .clickable { onClick() }
-            ) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = null)
-            }
-
-            Row(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                WorkerWithImage(movie, 250.dp)
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column {
-                    Text(
-                        text = movie.nameRu ?: stringResource(id = R.string.no_movie_title),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = formatCountries(movie.countries),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    when(movie) {
-                        is MovieData.Movie -> {
-                            Text(
-                                text = movie.premiereRu,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = formatGenres(movie.genres),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                        is MovieData.MovieTop -> {
-                            Text(
-                                text = movie.year,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = movie.rating,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                        is MovieData.MovieSearch -> {}
-                    }
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Button(
-                    onClick = { /*TODO*/ },
-                ) {
-                    Text(text = "Add to my list")
-                }
-                Button(
-                    onClick = { /*TODO*/ },
-                ) {
-                    Text(text = "Add to general list")
-                }
-            }
-        }
-    }
 }
 
 fun formatGenres(genres: List<Genre>): String {

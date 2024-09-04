@@ -47,4 +47,8 @@
     <string name="description_icon_edit_change_email">Icon Edit Change Email</string>
     <string name="description_icon_edit_change_password">Icon Edit Change Password</string>
     <string name="description_icon_home_button">Icon Edit Change Password</string>
+
+    <!--  Details Films Card   -->
+    <string name="text_buttons_film_card_to_my_list">Для себя</string>
+    <string name="text_buttons_film_card_to_general_list">Для всех</string>
 </resources>
