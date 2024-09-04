@@ -5,9 +5,17 @@
     <color name="color_film_card">#d6ccbf</color>
     <color name="color_film_card_text">#333333</color>
 
+    <!--  Details Films Card   -->
+    <color name="color_containerColor_film_card">#8e7857</color>
+    <color name="color_contentColor_film_card">#1D2523</color>
+
+    <!--  Dropdown Menu  -->
+    <color name="color_background_dropdown_menu">#45041B</color>
+    <color name="color_content_color_dropdown_menu">#c5bdb2</color>
+
     <!--  Account screen  -->
-    <color name="color_account_card">#ededed</color>
-    <color name="color_content_account_card">#EBE5D9</color>
+    <color name="color_account_card">#d6ccbf</color>
+    <color name="color_content_account_card">#c5bdb2</color>
     <color name="color_text_account_card">#45041B</color>
     <color name="color_icon_button_account_card">#45041B</color>
 

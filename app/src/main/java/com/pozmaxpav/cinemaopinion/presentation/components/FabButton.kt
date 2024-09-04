@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -75,7 +76,9 @@ fun FabButtonWithMenu(
         )
 
         DropdownMenu(
-            modifier = Modifier.width(200.dp),
+            modifier = Modifier
+                .width(200.dp)
+                .background(colorResource(R.color.color_background_dropdown_menu)),
             expanded = menuExpanded,
             onDismissRequest = { menuExpanded = false },
             offset = DpOffset(x = 0.dp, y = (-16).dp) // Смещение раскрывающегося меню вверх

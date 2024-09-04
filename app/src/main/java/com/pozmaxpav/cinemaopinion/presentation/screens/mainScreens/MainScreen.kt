@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -141,7 +142,8 @@ fun MainScreen(navController: NavHostController) {
                             leadingIcon = {
                                 Icon(
                                     Icons.Default.Settings,
-                                    contentDescription = stringResource(id = R.string.description_icon_settings)
+                                    contentDescription = stringResource(id = R.string.description_icon_settings),
+                                    tint = colorResource(R.color.color_content_color_dropdown_menu)
                                 )
                             }
                         )
@@ -155,7 +157,8 @@ fun MainScreen(navController: NavHostController) {
                                 leadingIcon = {
                                     Icon(
                                         Icons.Default.Settings,
-                                        contentDescription = stringResource(id = R.string.description_icon_settings)
+                                        contentDescription = stringResource(id = R.string.description_icon_settings),
+                                        tint = colorResource(R.color.color_content_color_dropdown_menu)
                                     )
                                 }
                             )
@@ -182,8 +185,6 @@ fun MainScreen(navController: NavHostController) {
 
         AnimatedVisibility(
             visible = searchBarActive,
-//            enter = slideInVertically() + fadeIn(),
-//            exit = slideOutVertically() + fadeOut()
             enter = slideInVertically(),
             exit = slideOutVertically()
         ) {
