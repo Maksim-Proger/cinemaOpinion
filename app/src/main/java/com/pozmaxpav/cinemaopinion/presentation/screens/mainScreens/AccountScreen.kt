@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -53,7 +54,8 @@ fun AccountScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 30.dp)
-                .fillMaxHeight(0.5f),
+                .fillMaxHeight(0.5f)
+                .graphicsLayer(alpha = 0.95f),
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = colorResource(id = R.color.color_account_card),
@@ -91,7 +93,9 @@ fun AccountScreen(
                 }
                 Spacer(modifier = Modifier.padding(8.dp))
                 Card(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer(alpha = 0.95f),
                     colors = CardDefaults.cardColors(
                         containerColor = colorResource(id = R.color.color_content_account_card),
                         contentColor = colorResource(id = R.color.color_text_account_card)
@@ -105,7 +109,7 @@ fun AccountScreen(
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
-                                modifier = Modifier.size(60.dp),
+                                modifier = Modifier.size(80.dp),
                                 imageVector = Icons.Outlined.AccountCircle,
                                 contentDescription = null,
                                 colorFilter = ColorFilter
@@ -115,11 +119,11 @@ fun AccountScreen(
                             Column {
                                 Text(
                                     text = "Максим Поздняков",
-                                    style = MaterialTheme.typography.bodyLarge
+                                    style = MaterialTheme.typography.displayMedium
                                 )
                                 Text(
                                     text = "z@yandex.ru",
-                                    style = MaterialTheme.typography.bodySmall
+                                    style = MaterialTheme.typography.bodyLarge
                                 )
                             }
                         }

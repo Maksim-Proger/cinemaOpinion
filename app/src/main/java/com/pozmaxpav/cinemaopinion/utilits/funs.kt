@@ -57,7 +57,7 @@ fun AccountListItem(icon: Painter, contentDescription: String, title: String) {
         )
         Text(
             text = title,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.titleMedium
         )
     }
 }
