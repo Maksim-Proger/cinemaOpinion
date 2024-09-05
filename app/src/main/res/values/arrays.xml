@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="my_string_array">
+        <item>Темная тема</item>
+        <item>Светлая тема</item>
+        <item>Как на устройстве</item>
+    </string-array>
+
+    <string-array name="array_of_languages">
+        <item>Русский</item>
+        <item>Английский</item>
+        <item>Как на устройстве</item>
+    </string-array>
+</resources>
