@@ -13,15 +13,18 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
@@ -41,7 +44,13 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(id = R.string.top_app_bar_header_name_user_information)) },
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.top_app_bar_header_name_user_information),
+                        style = MaterialTheme.typography.displayLarge,
+                        color = colorResource(R.color.color_text_header_top_app_bar)
+                    )
+                },
                 actions = {
                     IconButton(onClick = {
                         navController.navigate(Route.MainScreen.route) {
@@ -52,10 +61,14 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                     }) {
                         Icon(
                             imageVector = Icons.Default.Home,
-                            contentDescription = stringResource(id = R.string.description_icon_home_button)
+                            contentDescription = stringResource(id = R.string.description_icon_home_button),
+                            tint = colorResource(R.color.color_icon_button_top_app_bar)
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = colorResource(id = R.color.color_background_top_app_bar)
+                )
             )
         },
         floatingActionButton = {

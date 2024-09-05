@@ -175,7 +175,16 @@ private fun AccountSettingMenu(navController: NavHostController) {
         )
 
         MyDropdownMenuItem(
-            onAction = { /* Настроить навигацию */ },
+            onAction = {
+                navController.navigate(Route.SettingsScreen.route) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+                closeMenu()
+            },
             title = stringResource(id = R.string.drop_down_menu_item_settings),
             leadingIcon = {
                 Icon(

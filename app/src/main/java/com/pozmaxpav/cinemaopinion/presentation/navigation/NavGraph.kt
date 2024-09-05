@@ -19,6 +19,6 @@ fun NavGraph(
     ) {
         composable(Route.MainScreen.route) { MainScreen(navController) }
         composable(Route.EditPersonalInformationScreen.route) { EditPersonalInformationScreen(navController) }
-        composable(Route.SettingsScreen.route) { SettingsScreen() }
+        composable(Route.SettingsScreen.route) { SettingsScreen(navController) }
     }
 }
