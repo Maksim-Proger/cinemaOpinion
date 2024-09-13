@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -11,10 +10,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
@@ -34,7 +30,6 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun CinemaOpinionTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false, // меняем на false, чтобы вручную поменять основной цвет фона
     content: @Composable () -> Unit
 ) {
@@ -48,7 +43,7 @@ fun CinemaOpinionTheme(
         else -> LightColorScheme
     }
 
-    // Логическое значение, которое определяет, находится система в темном или светлом режиме // TODO: доп разбор
+    // Логическое значение, которое определяет, находится система в темном или светлом режиме
     val isSystemInDarkMode = isSystemInDarkTheme()
     val systemController = rememberSystemUiController()
 
