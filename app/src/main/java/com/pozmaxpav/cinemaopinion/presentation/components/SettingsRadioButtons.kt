@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,14 +25,17 @@ import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
 
 @Composable
-fun RadioButtons(optionsList: List<String>) { // TODO: нужно доработать тему для пунктов
+fun SettingsRadioButtons(
+    optionsList: List<String>,
+    onOptionClick: (String) -> Unit // TODO: Как это работает?
+) {
     var selectedOption by remember { mutableStateOf(optionsList[0]) }
 
     Card(
         modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.color_account_card),
-            contentColor = colorResource(id = R.color.color_text_account_card)
+            containerColor = MaterialTheme.colorScheme.tertiary,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         )
     ) {
         Column(
@@ -45,14 +49,17 @@ fun RadioButtons(optionsList: List<String>) { // TODO: нужно доработ
                         .height(56.dp)
                         .selectable(
                             selected = selectedOption == option,
-                            onClick = { selectedOption = option }
+                            onClick = {
+                                selectedOption = option
+                                onOptionClick(option) // TODO: Как это работает?
+                            }
                         )
                         .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
                         selected = selectedOption == option,
-                        onClick = null
+                        onClick = null // обработка не требуется, так как обработчик находится в selectable
                     )
 
                     Text(
@@ -64,3 +71,4 @@ fun RadioButtons(optionsList: List<String>) { // TODO: нужно доработ
         }
     }
 }
+

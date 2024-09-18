@@ -50,8 +50,8 @@ fun DetailsCardFilm(
                 .padding(16.dp),
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(
-                containerColor = colorResource(R.color.color_containerColor_film_card),
-                contentColor = colorResource(R.color.color_contentColor_film_card)
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
             )
         ) {
             Row(
@@ -59,7 +59,11 @@ fun DetailsCardFilm(
                     .padding(10.dp)
                     .clickable { onClick() }
             ) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary
+                )
             }
 
             Column(
@@ -130,12 +134,8 @@ fun DetailsCardFilm(
                 ) {
                     Button(
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(
-                                R.color.color_buttons_container_color_film_card
-                            ),
-                            contentColor = colorResource(
-                                R.color.color_buttons_content_color_film_card
-                            )
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
                         ),
                         onClick = { /*TODO*/ },
                     ) {
@@ -144,14 +144,11 @@ fun DetailsCardFilm(
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
+
                     Button(
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(
-                                R.color.color_buttons_container_color_film_card
-                            ),
-                            contentColor = colorResource(
-                                R.color.color_buttons_content_color_film_card
-                            )
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
                         ),
                         onClick = { /*TODO*/ },
                     ) {

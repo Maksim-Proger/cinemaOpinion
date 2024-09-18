@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -143,7 +144,7 @@ fun MainScreen(navController: NavHostController) {
                                 Icon(
                                     Icons.Default.Settings,
                                     contentDescription = stringResource(id = R.string.description_icon_settings),
-                                    tint = colorResource(R.color.color_content_color_dropdown_menu)
+                                    tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
                         )
@@ -158,7 +159,7 @@ fun MainScreen(navController: NavHostController) {
                                     Icon(
                                         Icons.Default.Settings,
                                         contentDescription = stringResource(id = R.string.description_icon_settings),
-                                        tint = colorResource(R.color.color_content_color_dropdown_menu)
+                                        tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             )

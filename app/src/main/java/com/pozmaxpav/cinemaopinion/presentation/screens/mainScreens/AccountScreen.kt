@@ -57,8 +57,8 @@ fun AccountScreen(
                 .fillMaxHeight(0.5f)
                 .graphicsLayer(alpha = 0.95f),
             colors = CardDefaults.cardColors(
-                containerColor = colorResource(id = R.color.color_account_card),
-                contentColor = colorResource(id = R.color.color_text_account_card)
+                containerColor = MaterialTheme.colorScheme.tertiary,
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
         ) {
             Column(
@@ -79,7 +79,7 @@ fun AccountScreen(
                             modifier = Modifier.size(30.dp),
                             imageVector = Icons.Default.Close,
                             contentDescription = null,
-                            tint = colorResource(R.color.color_icon_button_account_card)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Text(
@@ -95,10 +95,9 @@ fun AccountScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer(alpha = 0.95f),
-//                    elevation = CardDefaults.cardElevation(8.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = colorResource(id = R.color.color_content_account_card),
-                        contentColor = colorResource(id = R.color.color_text_account_card)
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 ) {
                     Column(
@@ -112,7 +111,7 @@ fun AccountScreen(
                                 imageVector = Icons.Outlined.AccountCircle,
                                 contentDescription = null,
                                 colorFilter = ColorFilter
-                                    .tint(colorResource(R.color.color_icon_button_account_card))
+                                    .tint(MaterialTheme.colorScheme.onSurfaceVariant)
                             )
                             Spacer(modifier = Modifier.padding(8.dp))
                             Column {
@@ -169,7 +168,7 @@ private fun AccountSettingMenu(navController: NavHostController) {
                 Icon(
                     Icons.Default.Edit,
                     contentDescription = stringResource(id = R.string.description_icon_edit),
-                    tint = colorResource(R.color.color_content_color_dropdown_menu)
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
         )
@@ -190,7 +189,7 @@ private fun AccountSettingMenu(navController: NavHostController) {
                 Icon(
                     Icons.Default.Settings,
                     contentDescription = stringResource(id = R.string.description_icon_settings),
-                    tint = colorResource(R.color.color_content_color_dropdown_menu)
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
         )
@@ -202,7 +201,7 @@ private fun AccountSettingMenu(navController: NavHostController) {
                 Icon(
                     Icons.Default.ExitToApp,
                     contentDescription = stringResource(id = R.string.description_icon_exit),
-                    tint = colorResource(R.color.color_content_color_dropdown_menu)
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
         )

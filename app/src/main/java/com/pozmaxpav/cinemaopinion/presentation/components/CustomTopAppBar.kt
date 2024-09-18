@@ -30,7 +30,7 @@ fun CustomTopAppBar(
             Text(
                 text = title,
                 style = MaterialTheme.typography.displayLarge,
-                color = colorResource(R.color.color_text_header_top_app_bar)
+                color = MaterialTheme.colorScheme.onPrimary
             )
         },
         actions = {
@@ -38,19 +38,19 @@ fun CustomTopAppBar(
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = stringResource(id = R.string.description_icon_search),
-                    tint = colorResource(R.color.color_icon_button_top_app_bar)
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
             IconButton(onClick = onAccountButtonClick) {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = stringResource(id = R.string.description_icon_account),
-                    tint = colorResource(R.color.color_icon_button_top_app_bar)
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = colorResource(id = R.color.color_background_top_app_bar)
+            containerColor = MaterialTheme.colorScheme.primary
         )
     )
 }

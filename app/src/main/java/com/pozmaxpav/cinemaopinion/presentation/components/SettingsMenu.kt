@@ -42,12 +42,12 @@ fun SettingsMenu(
 
         DropdownMenu(
             modifier = Modifier
-                .background(colorResource(R.color.color_background_dropdown_menu)),
+                .background(MaterialTheme.colorScheme.secondary),
             expanded = menuOpeningStatus,
             onDismissRequest = { menuOpeningStatus = false },
             offset = DpOffset(x = 0.dp, y = 10.dp) // Смещение раскрывающегося меню вниз
         ) {
-            content { menuOpeningStatus = false } // TODO: Что это за запись такая?
+            content { menuOpeningStatus = false }
 
             /*
             Эта запись позволяет передать функцию закрытия меню в контент. Когда вы вызываете
@@ -70,7 +70,7 @@ fun MyDropdownMenuItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodySmall,
-                color = colorResource(R.color.color_content_color_dropdown_menu)
+                color = MaterialTheme.colorScheme.onSecondary
             )
         },
         leadingIcon = leadingIcon,
