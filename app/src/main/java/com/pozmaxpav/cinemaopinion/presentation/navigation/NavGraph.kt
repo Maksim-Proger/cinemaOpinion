@@ -7,9 +7,11 @@ import androidx.navigation.compose.rememberNavController
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.EditPersonalInformationScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SettingsScreen
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
 
 @Composable
 fun NavGraph(
+    themeViewModel: ThemeViewModel,
     startDestination: String
 ) {
     val navController = rememberNavController()
@@ -19,6 +21,6 @@ fun NavGraph(
     ) {
         composable(Route.MainScreen.route) { MainScreen(navController) }
         composable(Route.EditPersonalInformationScreen.route) { EditPersonalInformationScreen(navController) }
-        composable(Route.SettingsScreen.route) { SettingsScreen(navController) }
+        composable(Route.SettingsScreen.route) { SettingsScreen(themeViewModel, navController) }
     }
 }

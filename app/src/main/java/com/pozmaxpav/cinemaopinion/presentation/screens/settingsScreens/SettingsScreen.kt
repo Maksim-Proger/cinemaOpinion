@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -16,18 +15,21 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.components.RadioButtons
+import com.pozmaxpav.cinemaopinion.presentation.components.SettingsRadioButtons
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(navController: NavHostController) {
+fun SettingsScreen(
+    themeViewModel: ThemeViewModel,
+    navController: NavHostController
+) {
 
     val myStringArray = stringArrayResource(R.array.my_string_array)
     val optionsList = myStringArray.toList()
@@ -42,7 +44,7 @@ fun SettingsScreen(navController: NavHostController) {
                     Text(
                         text = stringResource(id = R.string.drop_down_menu_item_settings),
                         style = MaterialTheme.typography.displayLarge,
-                        color = colorResource(R.color.color_text_header_top_app_bar)
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 },
                 actions = {
@@ -56,12 +58,12 @@ fun SettingsScreen(navController: NavHostController) {
                         Icon(
                             imageVector = Icons.Default.Home,
                             contentDescription = stringResource(id = R.string.description_icon_home_button),
-                            tint = colorResource(R.color.color_icon_button_top_app_bar)
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = colorResource(id = R.color.color_background_top_app_bar)
+                    containerColor = MaterialTheme.colorScheme.primary
                 )
             )
         },
@@ -71,9 +73,27 @@ fun SettingsScreen(navController: NavHostController) {
             modifier = Modifier.padding(innerPadding)
         ) {
             Spacer(modifier = Modifier.padding(16.dp))
-            RadioButtons(optionsList)
-            HorizontalDivider()
-            RadioButtons(languagesList)
+            SettingsRadioButtons(optionsList) { option ->
+                when (option) {
+                    optionsList[0] -> {
+                        // Логика для Темной темы
+                        themeViewModel.changeModeTheme(true)
+                        themeViewModel.changeStatusUsingSystemTheme(false)
+                    }
+                    optionsList[1] -> {
+                        // Логика для Светлой темы
+                        themeViewModel.changeModeTheme(false)
+                        themeViewModel.changeStatusUsingSystemTheme(false)
+                    }
+                    optionsList[2] -> {
+                        // Логика для Системной темы
+                        themeViewModel.changeStatusUsingSystemTheme(true)
+                    }
+                }
+            }
+//            HorizontalDivider()
+//            SettingsRadioButtons(languagesList)
         }
     }
 }
+

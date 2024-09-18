@@ -46,8 +46,8 @@ fun FabButton(
                 style = MaterialTheme.typography.bodyLarge)
         },
         expanded = expanded,
-        containerColor = colorResource(id = R.color.color_containerColor_fab),
-        contentColor = colorResource(id = R.color.color_contentColor_fab)
+        containerColor = MaterialTheme.colorScheme.secondary,
+        contentColor = MaterialTheme.colorScheme.onSecondary
     )
 }
 
@@ -78,7 +78,7 @@ fun FabButtonWithMenu(
         DropdownMenu(
             modifier = Modifier
                 .width(200.dp)
-                .background(colorResource(R.color.color_background_dropdown_menu)),
+                .background(MaterialTheme.colorScheme.secondary),
             expanded = menuExpanded,
             onDismissRequest = { menuExpanded = false },
             offset = DpOffset(x = 0.dp, y = (-16).dp) // Смещение раскрывающегося меню вверх

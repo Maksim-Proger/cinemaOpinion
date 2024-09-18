@@ -1,11 +1,19 @@
 package com.pozmaxpav.cinemaopinion.di
 
+import android.content.Context
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
 import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.SharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
+import com.pozmaxpav.cinemaopinion.domain.usecase.GetModeActivationSystemTheme
+import com.pozmaxpav.cinemaopinion.domain.usecase.GetModeApplicationThemeUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.SaveModeActivationSystemThemeUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.SaveModeApplicationThemeUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -40,6 +48,32 @@ object AppModule {
     @Singleton
     fun provideMovieRepository(api: MovieListApi): MovieRepository {
         return MovieRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideThemeRepository(@ApplicationContext context: Context): ThemeRepository {
+        return SharedPreferencesRepository(context)
+    }
+
+    @Provides
+    fun provideSaveModeApplicationThemeUseCase(themeRepository: ThemeRepository): SaveModeApplicationThemeUseCase {
+        return SaveModeApplicationThemeUseCase(themeRepository)
+    }
+
+    @Provides
+    fun provideGetModeApplicationThemeUseCase(themeRepository: ThemeRepository): GetModeApplicationThemeUseCase {
+        return GetModeApplicationThemeUseCase(themeRepository)
+    }
+
+    @Provides
+    fun provideSaveModeActivationSystemThemeUseCase(themeRepository: ThemeRepository): SaveModeActivationSystemThemeUseCase {
+        return SaveModeActivationSystemThemeUseCase(themeRepository)
+    }
+
+    @Provides
+    fun provideGetModeActivationSystemTheme(themeRepository: ThemeRepository): GetModeActivationSystemTheme {
+        return GetModeActivationSystemTheme(themeRepository)
     }
 
 }

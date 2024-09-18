@@ -34,14 +34,15 @@ fun MovieItem(
             .padding(vertical = 8.dp)
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.color_film_card)
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
         Row(
             modifier = Modifier
                 .padding(16.dp)
                 .background(
-                    color = colorResource(id = R.color.color_film_card)
+                    color = MaterialTheme.colorScheme.surface
                 )
         ) {
 

@@ -48,7 +48,7 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                     Text(
                         text = stringResource(id = R.string.top_app_bar_header_name_user_information),
                         style = MaterialTheme.typography.displayLarge,
-                        color = colorResource(R.color.color_text_header_top_app_bar)
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 },
                 actions = {
@@ -62,12 +62,12 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                         Icon(
                             imageVector = Icons.Default.Home,
                             contentDescription = stringResource(id = R.string.description_icon_home_button),
-                            tint = colorResource(R.color.color_icon_button_top_app_bar)
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = colorResource(id = R.color.color_background_top_app_bar)
+                    containerColor = MaterialTheme.colorScheme.primary
                 )
             )
         },
@@ -77,7 +77,7 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                 contentDescription = stringResource(id = R.string.description_floating_action_button_save),
                 textFloatingButton = stringResource(id = R.string.floating_action_button_save),
                 onButtonClick = { /* TODO */ },
-                expanded = false
+                expanded = true
             )
         },
         floatingActionButtonPosition = FabPosition.End
@@ -100,7 +100,8 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
-                        contentDescription = stringResource(id = R.string.description_icon_edit_change_name)
+                        contentDescription = stringResource(id = R.string.description_icon_edit_change_name),
+                        tint = MaterialTheme.colorScheme.outline
                     )
                 },
                 supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_name_field)) },
@@ -120,7 +121,8 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
-                        contentDescription = stringResource(id = R.string.description_icon_edit_change_email)
+                        contentDescription = stringResource(id = R.string.description_icon_edit_change_email),
+                        tint = MaterialTheme.colorScheme.outline
                     )
                 },
                 supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_email_field)) },
@@ -139,7 +141,8 @@ fun EditPersonalInformationScreen(navController: NavHostController) {
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
-                        contentDescription = stringResource(id = R.string.description_icon_edit_change_password)
+                        contentDescription = stringResource(id = R.string.description_icon_edit_change_password),
+                        tint = MaterialTheme.colorScheme.outline
                     )
                 },
                 supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_password_field)) },

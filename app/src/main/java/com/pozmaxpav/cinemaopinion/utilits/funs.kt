@@ -9,11 +9,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +55,7 @@ fun AccountListItem(icon: Painter, contentDescription: String, title: String) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(
     value: String,
@@ -64,12 +67,22 @@ fun CustomTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     singleLine: Boolean = true
 ) {
+
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 15.dp, vertical = 15.dp),
         value = value,
         onValueChange = onValueChange,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+            focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
+        ),
         label = label,
         placeholder = placeholder,
         leadingIcon = leadingIcon,
@@ -78,7 +91,8 @@ fun CustomTextField(
                 IconButton(onClick = { onValueChange("") }) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(id = R.string.description_clear_text)
+                        contentDescription = stringResource(id = R.string.description_clear_text),
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
@@ -94,6 +108,7 @@ fun CustomTextField(
         singleLine = singleLine,
     )
 }
+
 
 @Composable
 fun WorkerWithImage(

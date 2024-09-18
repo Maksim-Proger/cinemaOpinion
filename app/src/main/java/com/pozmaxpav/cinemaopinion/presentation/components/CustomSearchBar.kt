@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -10,6 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +40,13 @@ fun CustomSearchBar(
         onSearch = onSearch,
         active = active,
         onActiveChange = onActiveChange,
-        leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary
+            )
+        },
         trailingIcon = {
             if (active) {
                 IconButton(
@@ -50,12 +58,16 @@ fun CustomSearchBar(
                         }
                     }
                 ) {
-                    Icon(imageVector = Icons.Filled.Close, contentDescription = null)
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
                 }
             }
         },
         colors = SearchBarDefaults.colors(
-            containerColor = colorResource(R.color.color_containerColor_film_card)
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         // Здесь можно добавить контент, который будет отображаться под строкой поиска
