@@ -84,6 +84,9 @@ dependencies {
     // CLOCK
     implementation("com.maxkeppeler.sheets-compose-dialogs:clock:1.0.2")
 
+    // Расширяем библиотеку с иконками
+    implementation("androidx.compose.material:material-icons-extended-android:1.7.2")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
