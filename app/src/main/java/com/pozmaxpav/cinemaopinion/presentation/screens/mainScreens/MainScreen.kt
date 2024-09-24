@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -77,8 +80,10 @@ fun MainScreen(navController: NavHostController) {
     val searchMovies = viewModel.searchMovies.collectAsState()
 
     // Работаем с Fab
-    val listState = rememberLazyListState() // TODO: что это за переменная
+    val listState = rememberLazyListState()
     val isExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
+    val isScrolling = remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+    var scrollToTop by remember { mutableStateOf(false) }
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) } // TODO: надо разобраться как это работает
@@ -87,6 +92,14 @@ fun MainScreen(navController: NavHostController) {
     LaunchedEffect(Unit) {
         viewModel.fetchPremiersMovies(2023, "July") // TODO: Надо разобраться как настроить переключение страницы
         viewModel.fetchTopListMovies(1) // TODO: Надо разобраться как настроить переключение страницы
+    }
+
+    // Эффект, который реагирует на изменение scrollToTop и прокручивает список
+    LaunchedEffect(scrollToTop) {
+        if (scrollToTop) {
+            listState.animateScrollToItem(0)
+            scrollToTop = false
+        }
     }
 
     Scaffold(
@@ -142,7 +155,7 @@ fun MainScreen(navController: NavHostController) {
                             },
                             leadingIcon = {
                                 Icon(
-                                    Icons.Default.Settings,
+                                    painter = painterResource(id = R.drawable.ic_movies),
                                     contentDescription = stringResource(id = R.string.description_icon_settings),
                                     tint = MaterialTheme.colorScheme.onSecondary
                                 )
@@ -157,8 +170,22 @@ fun MainScreen(navController: NavHostController) {
                                 title = stringResource(id = R.string.drop_down_menu_item_select_date),
                                 leadingIcon = {
                                     Icon(
-                                        Icons.Default.Settings,
-                                        contentDescription = stringResource(id = R.string.description_icon_settings),
+                                        Icons.Default.DateRange,
+                                        contentDescription = stringResource(id = R.string.drop_down_menu_item_select_date),
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            )
+                        }
+
+                        if (isScrolling.value) {
+                            MyDropdownMenuItem(
+                                onAction = { scrollToTop = true },
+                                title = "Вверх",
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.ArrowUpward,
+                                        contentDescription = null,
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
