@@ -52,35 +52,31 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun CinemaOpinionTheme(
     themeViewModel: ThemeViewModel,
-    dynamicColor: Boolean = false, // меняем на false, чтобы вручную поменять основной цвет фона
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
     val isDarkThemeActive by themeViewModel.isDarkThemeActive.collectAsState()
     val isSystemThemeActive by themeViewModel.isSystemThemeActive.collectAsState()
+    val isSystemInDarkMode = isSystemInDarkTheme()
+    val systemController = rememberSystemUiController()
+    val useDarkIcons = if (isSystemThemeActive) !isSystemInDarkMode else !isDarkThemeActive
 
     val colorScheme = when {
-
         isSystemThemeActive -> {
             if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
         }
-
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             if (isDarkThemeActive) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         isDarkThemeActive -> DarkColorScheme
         else -> LightColorScheme
     }
 
-    // Логическое значение, которое определяет, находится система в темном или светлом режиме
-    val isSystemInDarkMode = isSystemInDarkTheme()
-    val systemController = rememberSystemUiController()
-
     SideEffect {
         systemController.setSystemBarsColor(
             color = Color.Transparent,
-            darkIcons = !isSystemInDarkMode
+            darkIcons = useDarkIcons
         )
     }
 
