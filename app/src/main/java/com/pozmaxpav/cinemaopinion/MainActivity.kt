@@ -24,7 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge() // Включаем поддержку полноэкранного режима
 
         /**
          * Настройка окна для использования всего экрана, включая области системы (такие, как статус-бар).
