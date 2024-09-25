@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -70,10 +71,12 @@ fun CustomSearchBar(
             containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
-        // Здесь можно добавить контент, который будет отображаться под строкой поиска
-        searchHistory.takeLast(3).forEach { item ->
+        searchHistory.takeLast(5).forEach { item ->
             ListItem(
-//                modifier = Modifier.clickable { query = item }, // TODO: Придумать как передать
+                modifier = Modifier.clickable {
+                    onQueryChange(item) // Выбор элемента из истории
+                    onSearch(item) // Автоматический поиск
+                },
                 headlineContent = { Text(text = item) },
                 leadingContent = {
                     Icon(
