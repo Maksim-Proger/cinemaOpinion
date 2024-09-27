@@ -1,15 +1,23 @@
 package com.pozmaxpav.cinemaopinion.di
 
 import android.content.Context
+import androidx.room.Room
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
+import com.pozmaxpav.cinemaopinion.data.localdb.appdb.AppDatabase
+import com.pozmaxpav.cinemaopinion.data.localdb.dao.UserDao
 import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SharedPreferencesRepository
+import com.pozmaxpav.cinemaopinion.data.repository.UserRepositoryImpl
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.UserRepository
 import com.pozmaxpav.cinemaopinion.domain.usecase.GetModeActivationSystemTheme
 import com.pozmaxpav.cinemaopinion.domain.usecase.GetModeApplicationThemeUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.GetUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.InsertUserUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.SaveModeActivationSystemThemeUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.SaveModeApplicationThemeUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.UpdateUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -74,6 +82,46 @@ object AppModule {
     @Provides
     fun provideGetModeActivationSystemTheme(themeRepository: ThemeRepository): GetModeActivationSystemTheme {
         return GetModeActivationSystemTheme(themeRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            "user_database"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDao(appDatabase: AppDatabase): UserDao {
+        return appDatabase.userDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(userDao: UserDao): UserRepository {
+        return UserRepositoryImpl(userDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideInsertUserUseCase(userRepository: UserRepository): InsertUserUseCase {
+        return InsertUserUseCase(userRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetUserUseCase(userRepository: UserRepository): GetUserUseCase {
+        return GetUserUseCase(userRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateUserUseCase(userRepository: UserRepository): UpdateUserUseCase {
+        return UpdateUserUseCase(userRepository)
     }
 
 }
