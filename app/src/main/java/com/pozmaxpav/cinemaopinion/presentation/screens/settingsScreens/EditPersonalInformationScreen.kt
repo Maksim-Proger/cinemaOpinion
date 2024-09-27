@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -44,8 +42,6 @@ fun EditPersonalInformationScreen(
 
     val (firstName, setFirstName) = remember { mutableStateOf("") }
     val (lastName, setLastName) = remember { mutableStateOf("") }
-//    val (email, setEmail) = remember { mutableStateOf("") }
-//    val (password, setPassword) = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold(
@@ -126,16 +122,16 @@ fun EditPersonalInformationScreen(
             CustomTextField(
                 value = lastName,
                 onValueChange = setLastName,
-                label = { Text(stringResource(id = R.string.text_for_edit_name_field)) },
-                placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_name_field)) },
+                label = { Text(stringResource(id = R.string.text_for_edit_lastName_field)) },
+                placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_lastName_field)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
-                        contentDescription = stringResource(id = R.string.description_icon_edit_change_name),
+                        contentDescription = stringResource(id = R.string.description_icon_edit_change_lastname),
                         tint = MaterialTheme.colorScheme.outline
                     )
                 },
-                supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_name_field)) },
+                supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_lastName_field)) },
                 keyboardActions = KeyboardActions( // Обрабатываем нажатие клавиши Enter.
                     onDone = {
                         // Переназначение действия клавиши Enter.
@@ -143,46 +139,6 @@ fun EditPersonalInformationScreen(
                     }
                 )
             )
-
-//            CustomTextField(
-//                value = email,
-//                onValueChange = setEmail,
-//                label = { Text(stringResource(id = R.string.text_for_edit_email_field)) },
-//                placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_email_field)) },
-//                leadingIcon = {
-//                    Icon(
-//                        imageVector = Icons.Default.Person,
-//                        contentDescription = stringResource(id = R.string.description_icon_edit_change_email),
-//                        tint = MaterialTheme.colorScheme.outline
-//                    )
-//                },
-//                supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_email_field)) },
-//                keyboardActions = KeyboardActions(
-//                    onDone = {
-//                        keyboardController?.hide()
-//                    }
-//                )
-//            )
-//
-//            CustomTextField(
-//                value = password,
-//                onValueChange = setPassword,
-//                label = { Text(stringResource(id = R.string.text_for_edit_password_field)) },
-//                placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_password_field)) },
-//                leadingIcon = {
-//                    Icon(
-//                        imageVector = Icons.Default.Person,
-//                        contentDescription = stringResource(id = R.string.description_icon_edit_change_password),
-//                        tint = MaterialTheme.colorScheme.outline
-//                    )
-//                },
-//                supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_password_field)) },
-//                keyboardActions = KeyboardActions(
-//                    onDone = {
-//                        keyboardController?.hide()
-//                    }
-//                )
-//            )
         }
     }
 }

@@ -67,16 +67,16 @@ fun AddingNewUserScreen(
             CustomTextField(
                 value = firstName,
                 onValueChange = setFirstName,
-                label = { Text(stringResource(id = R.string.text_for_edit_name_field)) },
-                placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_name_field)) },
+                label = { Text(stringResource(id = R.string.text_for_add_name_field)) },
+                placeholder = { Text(stringResource(id = R.string.placeholder_for_add_name_field)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
-                        contentDescription = stringResource(id = R.string.description_icon_edit_change_name),
+                        contentDescription = stringResource(id = R.string.description_icon_add_name),
                         tint = MaterialTheme.colorScheme.outline
                     )
                 },
-                supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_name_field)) },
+                supportingText = { Text(stringResource(id = R.string.placeholder_for_add_name_field)) },
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
@@ -87,16 +87,16 @@ fun AddingNewUserScreen(
             CustomTextField(
                 value = lastName,
                 onValueChange = setLastName,
-                label = { Text(stringResource(id = R.string.text_for_edit_name_field)) },
-                placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_name_field)) },
+                label = { Text(stringResource(id = R.string.text_for_add_lastName_field)) },
+                placeholder = { Text(stringResource(id = R.string.placeholder_for_add_lastName_field)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
-                        contentDescription = stringResource(id = R.string.description_icon_edit_change_name),
+                        contentDescription = stringResource(id = R.string.description_icon_add_lastName_name),
                         tint = MaterialTheme.colorScheme.outline
                     )
                 },
-                supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_name_field)) },
+                supportingText = { Text(stringResource(id = R.string.placeholder_for_add_lastName_field)) },
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
