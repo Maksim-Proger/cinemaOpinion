@@ -63,6 +63,7 @@ fun AccountScreen(
 
     val user by viewModel.users.collectAsState()
     var onAddingNewUserScreenButtonClick by remember { mutableStateOf(false) }
+    var showSelectedMovies by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -76,6 +77,15 @@ fun AccountScreen(
             )
             BackHandler {
                 onAddingNewUserScreenButtonClick = false
+            }
+        }
+
+        if (showSelectedMovies) {
+            ListSelectedMovies(
+                onDismiss = { showSelectedMovies = false }
+            )
+            BackHandler {
+                showSelectedMovies = false
             }
         }
 
@@ -175,13 +185,15 @@ fun AccountScreen(
                             icon = painterResource(id = R.drawable.ic_movie_list),
                             contentDescription = stringResource(id = R.string.description_icon_movie_list),
                             title = stringResource(id = R.string.my_list_movies)
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        AccountListItem(
-                            icon = painterResource(id = R.drawable.ic_movie_list),
-                            contentDescription = stringResource(id = R.string.description_icon_movie_list),
-                            title = stringResource(id = R.string.joint_list_films)
-                        )
+                        ) {
+                            showSelectedMovies = true
+                        }
+//                        Spacer(modifier = Modifier.height(20.dp))
+//                        AccountListItem(
+//                            icon = painterResource(id = R.drawable.ic_movie_list),
+//                            contentDescription = stringResource(id = R.string.description_icon_movie_list),
+//                            title = stringResource(id = R.string.joint_list_films)
+//                        )
                     }
                 }
             }

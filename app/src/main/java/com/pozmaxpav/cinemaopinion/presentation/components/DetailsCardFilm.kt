@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,20 +22,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 import com.pozmaxpav.cinemaopinion.utilits.formatCountries
 import com.pozmaxpav.cinemaopinion.utilits.formatGenres
+import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 
 @Composable
 fun DetailsCardFilm(
     movie: MovieData,
     onClick: () -> Unit,
-    padding: PaddingValues
+    padding: PaddingValues,
+    viewModel: SelectedMovieViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier
@@ -137,7 +139,11 @@ fun DetailsCardFilm(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary
                         ),
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            // Преобразуем MovieData в SelectedMovie
+                            val selectedMovie = movie.toSelectedMovie()
+                            viewModel.addSelectedMovie(selectedMovie)
+                        },
                     ) {
                         Text(
                             text = stringResource(R.string.text_buttons_film_card_to_my_list),

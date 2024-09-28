@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.domain.models
+package com.pozmaxpav.cinemaopinion.domain.models.moviemodels
 
 sealed class MovieData {
     abstract val nameRu: String?

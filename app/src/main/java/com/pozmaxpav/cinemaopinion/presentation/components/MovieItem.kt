@@ -15,10 +15,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
 import com.pozmaxpav.cinemaopinion.utilits.formatCountries
 import com.pozmaxpav.cinemaopinion.utilits.formatGenres
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage

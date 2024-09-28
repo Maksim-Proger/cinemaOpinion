@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.domain.usecase
+package com.pozmaxpav.cinemaopinion.domain.usecase.user
 
 import com.pozmaxpav.cinemaopinion.domain.models.User
 import com.pozmaxpav.cinemaopinion.domain.repository.UserRepository

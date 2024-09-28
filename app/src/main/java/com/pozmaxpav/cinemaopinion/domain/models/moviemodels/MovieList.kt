@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.domain.models
+package com.pozmaxpav.cinemaopinion.domain.models.moviemodels
 
 class MovieList(
     val total: Int,

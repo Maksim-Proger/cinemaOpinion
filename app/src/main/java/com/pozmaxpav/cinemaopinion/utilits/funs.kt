@@ -28,19 +28,27 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.Country
-import com.pozmaxpav.cinemaopinion.domain.models.Genre
-import com.pozmaxpav.cinemaopinion.domain.models.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.Country
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.Genre
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
 import java.time.DateTimeException
 import java.time.Month
 
 @Composable
-fun AccountListItem(icon: Painter, contentDescription: String, title: String) {
+fun AccountListItem(
+    icon: Painter,
+    contentDescription: String,
+    title: String,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
-            .clickable { /*TODO: onClick*/ },
+            .clickable {
+                onClick()
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -135,7 +143,6 @@ fun formatCountries(country: List<Country>): String {
     }
 }
 
-
 // TODO: доработать метод
 fun formatMonth(fullDate: String): String {
     val listDate: List<String> = fullDate.split("-")
@@ -150,4 +157,21 @@ fun formatMonth(fullDate: String): String {
 fun formatYear(fullDate: String) : Int {
     val listDate: List<String> = fullDate.split("-")
     return listDate[0].toInt()
+}
+
+fun MovieData.toSelectedMovie(): SelectedMovie {
+    return when (this) {
+        is MovieData.Movie -> SelectedMovie(
+            id = this.kinopoiskId,
+            nameFilm = this.nameRu
+        )
+        is MovieData.MovieTop -> SelectedMovie(
+            id = this.filmId,
+            nameFilm = this.nameRu
+        )
+        is MovieData.MovieSearch -> SelectedMovie(
+            id = this.kinopoiskId,
+            nameFilm = this.nameRu
+        )
+    }
 }

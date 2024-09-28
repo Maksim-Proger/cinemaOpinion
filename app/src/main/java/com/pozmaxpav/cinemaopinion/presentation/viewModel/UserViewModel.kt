@@ -1,12 +1,11 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.User
-import com.pozmaxpav.cinemaopinion.domain.usecase.GetUserUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.InsertUserUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.UpdateUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.user.GetUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.user.InsertUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.user.UpdateUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
