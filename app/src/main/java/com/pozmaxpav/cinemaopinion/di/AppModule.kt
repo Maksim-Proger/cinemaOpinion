@@ -4,20 +4,25 @@ import android.content.Context
 import androidx.room.Room
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
 import com.pozmaxpav.cinemaopinion.data.localdb.appdb.AppDatabase
+import com.pozmaxpav.cinemaopinion.data.localdb.dao.SelectedMovieDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.UserDao
 import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.SelectedMovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.data.repository.UserRepositoryImpl
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.SelectedMovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.UserRepository
-import com.pozmaxpav.cinemaopinion.domain.usecase.GetModeActivationSystemTheme
-import com.pozmaxpav.cinemaopinion.domain.usecase.GetModeApplicationThemeUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.GetUserUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.InsertUserUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.SaveModeActivationSystemThemeUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.SaveModeApplicationThemeUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.UpdateUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetListSelectedFilmsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.InsertFilmUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.theme.GetModeActivationSystemTheme
+import com.pozmaxpav.cinemaopinion.domain.usecase.theme.GetModeApplicationThemeUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.user.GetUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.user.InsertUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.theme.SaveModeActivationSystemThemeUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.theme.SaveModeApplicationThemeUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.user.UpdateUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -124,4 +129,28 @@ object AppModule {
         return UpdateUserUseCase(userRepository)
     }
 
+
+    @Provides
+    @Singleton
+    fun provideSelectedMovieDao(appDatabase: AppDatabase): SelectedMovieDao {
+        return appDatabase.selectedMovieDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSelectedMovieRepository(selectedMovieDao: SelectedMovieDao): SelectedMovieRepository {
+        return SelectedMovieRepositoryImpl(selectedMovieDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetListSelectedFilmsUseCase(selectedMovieRepository: SelectedMovieRepository): GetListSelectedFilmsUseCase {
+        return GetListSelectedFilmsUseCase(selectedMovieRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideInsertFilmUseCase(selectedMovieRepository: SelectedMovieRepository): InsertFilmUseCase {
+        return InsertFilmUseCase(selectedMovieRepository)
+    }
 }

@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.domain.usecase
+package com.pozmaxpav.cinemaopinion.domain.usecase.theme
 
 import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
 

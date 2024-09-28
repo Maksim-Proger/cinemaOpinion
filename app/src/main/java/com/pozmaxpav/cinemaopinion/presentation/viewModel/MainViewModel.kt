@@ -1,15 +1,13 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.MovieList
-import com.pozmaxpav.cinemaopinion.domain.models.MovieTopList
-import com.pozmaxpav.cinemaopinion.domain.models.MovieSearchList
-import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
-import com.pozmaxpav.cinemaopinion.domain.usecase.GetPremiereMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.GetSearchMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.GetTopMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
+import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetPremiereMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetTopMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
