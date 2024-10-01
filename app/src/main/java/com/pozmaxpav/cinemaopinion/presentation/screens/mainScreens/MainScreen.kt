@@ -252,7 +252,7 @@ fun MainScreen(navController: NavHostController) {
                 }
 
                 LazyColumn(
-                    state = listState, // это свойство нужно для анимации FabButton
+                    state = listState,
 
                     modifier = Modifier
                         .fillMaxSize()
