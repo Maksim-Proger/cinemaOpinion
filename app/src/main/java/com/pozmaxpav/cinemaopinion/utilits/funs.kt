@@ -131,6 +131,19 @@ fun WorkerWithImage(
     )
 }
 
+@Composable
+fun WorkerWithImageSelectedMovie(
+    movie: SelectedMovie,
+    height: Dp
+) {
+    AsyncImage(
+        model = movie.posterUrl,
+        contentDescription = movie.nameFilm,
+        modifier = Modifier.height(height),
+        contentScale = ContentScale.Fit
+    )
+}
+
 fun formatGenres(genres: List<Genre>): String {
     return genres.joinToString(separator = ", ") {
         it.genre
@@ -159,19 +172,23 @@ fun formatYear(fullDate: String) : Int {
     return listDate[0].toInt()
 }
 
+// Кастуем объект MovieData в SelectedMovie
 fun MovieData.toSelectedMovie(): SelectedMovie {
     return when (this) {
         is MovieData.Movie -> SelectedMovie(
             id = this.kinopoiskId,
-            nameFilm = this.nameRu
+            nameFilm = this.nameRu,
+            posterUrl = this.posterUrl
         )
         is MovieData.MovieTop -> SelectedMovie(
             id = this.filmId,
-            nameFilm = this.nameRu
+            nameFilm = this.nameRu,
+            posterUrl = this.posterUrl
         )
         is MovieData.MovieSearch -> SelectedMovie(
             id = this.kinopoiskId,
-            nameFilm = this.nameRu
+            nameFilm = this.nameRu,
+            posterUrl = this.posterUrl
         )
     }
 }

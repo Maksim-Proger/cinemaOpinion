@@ -6,14 +6,16 @@ import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 fun SelectedMovie.toEntity(): SelectedMovieEntity {
     return SelectedMovieEntity(
         id = id,
-        nameFilm = nameFilm
+        nameFilm = nameFilm,
+        posterUrl = posterUrl
     )
 }
 
 fun SelectedMovieEntity.toDomain(): SelectedMovie {
     return SelectedMovie(
         id = id,
-        nameFilm = nameFilm
+        nameFilm = nameFilm,
+        posterUrl = posterUrl
     )
 }
 

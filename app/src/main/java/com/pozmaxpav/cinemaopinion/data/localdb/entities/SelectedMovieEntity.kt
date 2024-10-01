@@ -6,5 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "selected_films")
 data class SelectedMovieEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
-    val nameFilm: String
+    val nameFilm: String,
+    val posterUrl: String
 )

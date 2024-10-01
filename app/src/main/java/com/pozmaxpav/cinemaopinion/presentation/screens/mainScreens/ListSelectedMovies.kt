@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
+import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 
 
 @Composable
@@ -74,16 +76,31 @@ fun ListSelectedMovies(
                             contentColor = MaterialTheme.colorScheme.onSecondary
                         )
                     ) {
-                        Box(
+                        Row(
                             modifier = Modifier
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                                .padding(16.dp)
                         ) {
+                            WorkerWithImageSelectedMovie(
+                                movie = movie,
+                                height = 90.dp
+                            )
+                            Spacer(modifier = Modifier.padding(horizontal = 10.dp))
                             Text(
                                 text = movie.nameFilm,
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
+
+//                        Box(
+//                            modifier = Modifier
+//                                .fillMaxSize(),
+//                            contentAlignment = Alignment.Center
+//                        ) {
+//                            Text(
+//                                text = movie.nameFilm,
+//                                style = MaterialTheme.typography.bodyLarge
+//                            )
+//                        }
                     }
                 }
             }
