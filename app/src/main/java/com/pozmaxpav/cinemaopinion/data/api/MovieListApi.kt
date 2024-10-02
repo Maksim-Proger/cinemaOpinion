@@ -27,7 +27,7 @@ interface MovieListApi {
     @GET("/api/v2.2/films")
     suspend fun searchFilms(
         @Query("keyword") keyword: String,
-        @Query("page") page: Int = 1
+        @Query("page") page: Int
     ): ApiMovieSearchList
 
 }
