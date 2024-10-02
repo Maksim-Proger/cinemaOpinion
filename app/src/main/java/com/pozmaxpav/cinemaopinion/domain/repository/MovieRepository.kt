@@ -7,5 +7,5 @@ import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
 interface MovieRepository {
     suspend fun getPremiereMovies(year: Int, month: String): MovieList
     suspend fun getTopMovies(page: Int): MovieTopList
-    suspend fun getSearchMovies(keyword: String): MovieSearchList
+    suspend fun getSearchMovies(keyword: String, page: Int): MovieSearchList
 }

@@ -53,10 +53,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun fetchSearchMovies(keyword: String) {
+    fun fetchSearchMovies(keyword: String, page: Int) {
         viewModelScope.launch {
             try {
-                val movies = getSearchMoviesUseCase.execute(keyword)
+                val movies = getSearchMoviesUseCase.execute(keyword, page)
                 _searchMovies.value = movies
             } catch (e: Exception) {
                 e.printStackTrace()

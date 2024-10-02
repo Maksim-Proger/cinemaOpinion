@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -8,28 +9,40 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.NavigateBefore
+import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -84,13 +97,18 @@ fun MainScreen(navController: NavHostController) {
     val isScrolling = remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     var scrollToTop by remember { mutableStateOf(false) }
 
+    // Логика переключения страницы
+    var currentPage by remember { mutableIntStateOf(1) }
+    var showNextPageButton by remember { mutableStateOf(false) }
+    var saveSearchQuery by remember { mutableStateOf("") }
+
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) } // TODO: надо разобраться как это работает
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
-        viewModel.fetchPremiersMovies(2023, "July") // TODO: Надо разобраться как настроить переключение страницы
-        viewModel.fetchTopListMovies(1) // TODO: Надо разобраться как настроить переключение страницы
+        viewModel.fetchPremiersMovies(2023, "July")
+        viewModel.fetchTopListMovies(currentPage) // TODO: Надо разобраться как настроить переключение страницы
     }
 
     // Эффект, который реагирует на изменение scrollToTop и прокручивает список
@@ -99,6 +117,22 @@ fun MainScreen(navController: NavHostController) {
             listState.animateScrollToItem(0)
             scrollToTop = false
         }
+    }
+
+    // TODO: Добавить проверку, чтобы не пытался переключить на несуществующую страницу и добавить для поиска
+    // Эффект, который будет зависеть от состояния списка (для переключения страницы)
+    LaunchedEffect(Unit) {
+        snapshotFlow { listState.layoutInfo } // Создаем поток, который будет отслеживать изменения в состоянии layoutInfo списка
+            .collect { layoutInfo -> // Подписываемся на изменения в этом потоке
+                val totalItems = layoutInfo.totalItemsCount // Получаем общее количество элементов в списке
+
+                // Получаем индекс последнего видимого элемента; если нет видимых элементов, устанавливаем 0
+                val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+
+                // Если достигнут конец списка, показываем кнопку "Следующая страница"
+                // Устанавливаем showNextPageButton в true, если последний видимый элемент - это последний элемент списка и фильтр активен
+                showNextPageButton = lastVisibleItemIndex >= totalItems - 1 && onFilterButtonClick or searchCompleted // TODO: Разобраться с логическими условиями в Kotlin
+            }
     }
 
     Scaffold(
@@ -195,7 +229,7 @@ fun MainScreen(navController: NavHostController) {
                 )
             }
 
-            // Получение выбранной даты TODO: Доработать!!!
+            // Получение выбранной даты TODO: Доработать, нужен только месяц и год!!!
             selectedDate?.let {
                 viewModel.fetchPremiersMovies(formatYear(it.toString()), formatMonth(it.toString()))
             }
@@ -220,7 +254,11 @@ fun MainScreen(navController: NavHostController) {
                     query = query,
                     onQueryChange = { newQuery -> query = newQuery },
                     onSearch = { searchQuery ->
-                        viewModel.fetchSearchMovies(searchQuery)
+
+                        Log.d("@@@", "CustomSearchBar = $currentPage")
+
+                        viewModel.fetchSearchMovies(searchQuery, currentPage)
+                        saveSearchQuery = searchQuery
                         searchHistory.add(searchQuery)
                         searchCompleted = true
                         searchBarActive = false
@@ -263,6 +301,58 @@ fun MainScreen(navController: NavHostController) {
                     items(moviesToDisplay) { movie ->
                         MovieItem(movie = movie) {
                             selectedMovie = movie
+                        }
+                    }
+
+                    // TODO: При поиске не переключает на последнюю страницу. ПРОВЕРИТЬ!
+                    // Добавляем новый элемент
+                    if (showNextPageButton) {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                                    .padding(vertical = 16.dp)
+                            ) {
+                                IconButton (
+                                    onClick = {
+                                        currentPage--
+                                        if (onFilterButtonClick) {
+                                            viewModel.fetchTopListMovies(currentPage)
+                                        } else if (searchCompleted) {
+                                            viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                        }
+                                    },
+                                    modifier = Modifier.wrapContentWidth()
+                                ) {
+                                    Icon(
+                                        // TODO: Поправить содержание
+                                        painter = painterResource(R.drawable.ic_previous_page),
+                                        contentDescription = stringResource(id = R.string.description_icon_home_button),
+                                        tint = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+
+                                IconButton(
+                                    onClick = {
+                                        currentPage++
+                                        if (onFilterButtonClick) {
+                                            viewModel.fetchTopListMovies(currentPage)
+                                        } else if (searchCompleted) {
+                                            Log.d("@@@", "ButtonNextPage = $currentPage")
+                                            viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                        }
+                                    },
+                                    modifier = Modifier.wrapContentWidth()
+                                ) {
+                                    Icon(
+                                        // TODO: Поправить содержание
+                                        painter = painterResource(R.drawable.ic_next_page),
+                                        contentDescription = stringResource(id = R.string.description_icon_home_button),
+                                        tint = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                            }
+
                         }
                     }
                 }

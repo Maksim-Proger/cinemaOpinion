@@ -18,8 +18,8 @@ class MovieRepositoryImpl @Inject constructor(private val api: MovieListApi) : M
         return api.requestTopListMovies(page).toDomain()
     }
 
-    override suspend fun getSearchMovies(keyword: String): MovieSearchList {
-        return api.searchFilms(keyword).toDomain()
+    override suspend fun getSearchMovies(keyword: String, page: Int): MovieSearchList {
+        return api.searchFilms(keyword, page).toDomain()
     }
 
 }
