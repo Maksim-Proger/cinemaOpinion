@@ -73,6 +73,7 @@ fun AccountScreen(
 
         if (onAddingNewUserScreenButtonClick) {
             AddingNewUserScreen(
+                nameToast = stringResource(R.string.add_new_account),
                 onClick = { onAddingNewUserScreenButtonClick = false }
             )
             BackHandler {

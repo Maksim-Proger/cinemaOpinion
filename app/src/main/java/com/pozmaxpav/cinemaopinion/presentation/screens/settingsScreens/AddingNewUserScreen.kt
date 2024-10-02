@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,9 +26,11 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
+import com.pozmaxpav.cinemaopinion.utilits.showToast
 
 @Composable
 fun AddingNewUserScreen(
+    nameToast: String,
     onClick: () -> Unit,
     viewModel: UserViewModel = hiltViewModel()
 ) {
@@ -35,6 +38,8 @@ fun AddingNewUserScreen(
     val (firstName, setFirstName) = remember { mutableStateOf("") }
     val (lastName, setLastName) = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val context = LocalContext.current
 
     Scaffold(
         floatingActionButton = {
@@ -45,10 +50,8 @@ fun AddingNewUserScreen(
                 onButtonClick = {
                     // Сохранение пользователя в базе данных
                     viewModel.addUser(firstName, lastName)
-                    // После сохранения можно сбросить поля ввода
-                    setFirstName("")
-                    setLastName("")
                     onClick()
+                    showToast(context, nameToast)
                 },
                 expanded = true
             )
