@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,10 +33,12 @@ import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
+import com.pozmaxpav.cinemaopinion.utilits.showToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditPersonalInformationScreen(
+    nameToast: String,
     navController: NavHostController,
     viewModel: UserViewModel = hiltViewModel()
 ) {
@@ -43,6 +46,7 @@ fun EditPersonalInformationScreen(
     val (firstName, setFirstName) = remember { mutableStateOf("") }
     val (lastName, setLastName) = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -82,6 +86,14 @@ fun EditPersonalInformationScreen(
                 onButtonClick = {
                     // Обновление пользователя в базе данных
                     viewModel.updateUser(firstName, lastName)
+
+                    navController.navigate(Route.MainScreen.route) {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+
+                    showToast(context, nameToast)
                 },
                 expanded = true
             )

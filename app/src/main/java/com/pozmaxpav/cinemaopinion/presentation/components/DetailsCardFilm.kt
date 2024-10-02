@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,15 +32,20 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 import com.pozmaxpav.cinemaopinion.utilits.formatCountries
 import com.pozmaxpav.cinemaopinion.utilits.formatGenres
+import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 
 @Composable
 fun DetailsCardFilm(
+    nameToast: String,
     movie: MovieData,
     onClick: () -> Unit,
     padding: PaddingValues,
     viewModel: SelectedMovieViewModel = hiltViewModel()
 ) {
+
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -143,6 +149,8 @@ fun DetailsCardFilm(
                             // Преобразуем MovieData в SelectedMovie
                             val selectedMovie = movie.toSelectedMovie()
                             viewModel.addSelectedMovie(selectedMovie)
+
+                            showToast(context, nameToast)
                         },
                     ) {
                         Text(

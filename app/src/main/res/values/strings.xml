@@ -28,11 +28,17 @@
     <string name="text_for_edit_lastName_field">Фамилия пользователя</string>
     <string name="placeholder_for_edit_lastName_field">Введите новую фамилию пользователя</string>
 
+    <!--  ShowToast String  -->
+    <string name="movie_has_been_added">Фильм добавлен в личный список</string>
+    <string name="add_new_account">Пользователь добавлен</string>
+    <string name="edit_personal_information">Данные пользователя обновлены</string>
+
     <!--  Title Icons  -->
     <string name="my_list_movies">Мой список</string>
     <string name="joint_list_films">Общий список</string>
     <string name="floating_action_button_save">Сохранить</string>
     <string name="floating_action_button_settings">Фильтр</string>
+    <string name="list_selected_movies_button_close">Закрыть</string>
 
     <!--  Description Icons  -->
     <string name="description_floating_action_button_save">Floating Button Save</string>

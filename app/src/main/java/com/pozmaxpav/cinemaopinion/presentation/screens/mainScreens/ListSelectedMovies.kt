@@ -30,9 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 
@@ -90,18 +92,9 @@ fun ListSelectedMovies(
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
-
-//                        Box(
-//                            modifier = Modifier
-//                                .fillMaxSize(),
-//                            contentAlignment = Alignment.Center
-//                        ) {
-//                            Text(
-//                                text = movie.nameFilm,
-//                                style = MaterialTheme.typography.bodyLarge
-//                            )
-//                        }
                     }
+                    
+                    Spacer(Modifier.padding(5.dp))
                 }
             }
         }
@@ -116,73 +109,10 @@ fun ListSelectedMovies(
             )
         ) {
             Text(
-                text = "Закрыть",
+                text = stringResource(R.string.list_selected_movies_button_close),
                 style = MaterialTheme.typography.bodyLarge
             )
         }
     }
-
-//    Scaffold(
-//        modifier = Modifier
-//            .fillMaxSize()
-//    ) { innerPadding ->
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .background(Color.Transparent)
-//                .padding(vertical = 45.dp)
-//        ) {
-//            Column(
-//                modifier = Modifier
-//                    .weight(1f)
-//                    .clip(RoundedCornerShape(16.dp))
-//                    .background(MaterialTheme.colorScheme.tertiaryContainer)
-//            ) {
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .fillMaxSize(),
-//                    contentPadding = PaddingValues(16.dp)
-//                ) {
-//                    items(listSelectedMovies) { movie ->
-//                        Card(
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .height(55.dp),
-//                            colors = CardDefaults.cardColors(
-//                                containerColor = MaterialTheme.colorScheme.secondary,
-//                                contentColor = MaterialTheme.colorScheme.onSecondary
-//                            )
-//                        ) {
-//                            Box(
-//                                modifier = Modifier
-//                                    .fillMaxSize(),
-//                                contentAlignment = Alignment.Center
-//                            ) {
-//                                Text(
-//                                    text = movie.nameFilm,
-//                                    style = MaterialTheme.typography.titleMedium
-//                                )
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//
-//            Spacer(modifier = Modifier.padding(15.dp))
-//
-//            Button(
-//                onClick = { onDismiss() },
-//                colors = ButtonDefaults.buttonColors(
-//                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-//                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-//                )
-//            ) {
-//                Text(
-//                    text = "Закрыть",
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
-//            }
-//        }
-//    }
 }
 

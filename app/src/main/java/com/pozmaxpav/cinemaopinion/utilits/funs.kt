@@ -1,5 +1,7 @@
 package com.pozmaxpav.cinemaopinion.utilits
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -191,4 +193,8 @@ fun MovieData.toSelectedMovie(): SelectedMovie {
             posterUrl = this.posterUrl
         )
     }
+}
+
+fun showToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
