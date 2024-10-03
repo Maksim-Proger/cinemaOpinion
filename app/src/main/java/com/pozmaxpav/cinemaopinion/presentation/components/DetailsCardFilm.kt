@@ -21,6 +21,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -38,14 +40,14 @@ import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 @Composable
 fun DetailsCardFilm(
     nameToast: String,
+    nameToast2: String,
     movie: MovieData,
     onClick: () -> Unit,
     padding: PaddingValues,
     viewModel: SelectedMovieViewModel = hiltViewModel()
 ) {
-
+    val statusExist by viewModel.status.collectAsState()
     val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -150,7 +152,9 @@ fun DetailsCardFilm(
                             val selectedMovie = movie.toSelectedMovie()
                             viewModel.addSelectedMovie(selectedMovie)
 
-                            showToast(context, nameToast)
+                            if (statusExist == "error") {
+                                showToast(context, nameToast2)
+                            } else showToast(context, nameToast)
                         },
                     ) {
                         Text(

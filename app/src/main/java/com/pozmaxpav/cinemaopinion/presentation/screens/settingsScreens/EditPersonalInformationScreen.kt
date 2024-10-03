@@ -19,6 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,6 +36,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
+import com.pozmaxpav.cinemaopinion.utilits.returnToMainScreen
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,8 +47,23 @@ fun EditPersonalInformationScreen(
     viewModel: UserViewModel = hiltViewModel()
 ) {
 
+    LaunchedEffect(Unit) {
+        viewModel.fitchUser()
+    }
+
+    val user by viewModel.users.collectAsState()
     val (firstName, setFirstName) = remember { mutableStateOf("") }
     val (lastName, setLastName) = remember { mutableStateOf("") }
+
+    // Выводим данные из базы, если они там есть.
+    // Запускаем LaunchedEffect только для обновления значений, если user не null.
+    LaunchedEffect(user) {
+        user?.let {
+            setFirstName(it.firstName)
+            setLastName(it.lastName)
+        }
+    }
+
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
 
@@ -60,11 +79,7 @@ fun EditPersonalInformationScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        navController.navigate(Route.MainScreen.route) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        returnToMainScreen(navController, Route.MainScreen.route)
                     }) {
                         Icon(
                             imageVector = Icons.Default.Home,
@@ -87,19 +102,13 @@ fun EditPersonalInformationScreen(
                     // Обновление пользователя в базе данных
                     viewModel.updateUser(firstName, lastName)
 
-                    navController.navigate(Route.MainScreen.route) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-
+                    returnToMainScreen(navController, Route.MainScreen.route)
                     showToast(context, nameToast)
                 },
                 expanded = true
             )
         },
         floatingActionButtonPosition = FabPosition.End
-
     ) { padding ->
 
         Column(
