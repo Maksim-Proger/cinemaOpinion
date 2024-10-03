@@ -14,6 +14,7 @@ import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.SelectedMovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.UserRepository
+import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetFilmByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetListSelectedFilmsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.InsertFilmUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.theme.GetModeActivationSystemTheme
@@ -152,5 +153,11 @@ object AppModule {
     @Singleton
     fun provideInsertFilmUseCase(selectedMovieRepository: SelectedMovieRepository): InsertFilmUseCase {
         return InsertFilmUseCase(selectedMovieRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetFilmById(selectedMovieRepository: SelectedMovieRepository): GetFilmByIdUseCase {
+        return GetFilmByIdUseCase(selectedMovieRepository)
     }
 }

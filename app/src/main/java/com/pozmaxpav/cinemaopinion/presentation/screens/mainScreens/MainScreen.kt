@@ -274,6 +274,7 @@ fun MainScreen(navController: NavHostController) {
             if (selectedMovie != null) {
                 DetailsCardFilm(
                     stringResource(R.string.movie_has_been_added),
+                    stringResource(R.string.movie_has_already_been_added),
                     selectedMovie!!,
                     onClick = { selectedMovie = null },
                     padding
@@ -292,7 +293,6 @@ fun MainScreen(navController: NavHostController) {
 
                 LazyColumn(
                     state = listState,
-
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding),
@@ -338,7 +338,6 @@ fun MainScreen(navController: NavHostController) {
                                         if (onFilterButtonClick) {
                                             viewModel.fetchTopListMovies(currentPage)
                                         } else if (searchCompleted) {
-                                            Log.d("@@@", "ButtonNextPage = $currentPage")
                                             viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
                                         }
                                     },

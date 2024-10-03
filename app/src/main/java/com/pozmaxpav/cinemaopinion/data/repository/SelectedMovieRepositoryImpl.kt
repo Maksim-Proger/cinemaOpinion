@@ -14,6 +14,10 @@ class SelectedMovieRepositoryImpl @Inject constructor(
         selectedMovieDao.insertFilm(selectedMovie.toEntity())
     }
 
+    override suspend fun getFilmById(id: Int): SelectedMovie? {
+        return selectedMovieDao.getFilmById(id)?.toDomain()
+    }
+
     override suspend fun getListSelectedFilms(): List<SelectedMovie> {
         return selectedMovieDao.getListSelectedFilms().toDomain()
     }
