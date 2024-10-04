@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 import com.pozmaxpav.cinemaopinion.utilits.formatCountries
@@ -39,12 +40,14 @@ import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 
 @Composable
 fun DetailsCardFilm(
-    nameToast: String,
-    nameToast2: String,
+    addToPersonalList: String,
+    errorToast: String,
+    addToGeneralList: String,
     movie: MovieData,
     onClick: () -> Unit,
     padding: PaddingValues,
-    viewModel: SelectedMovieViewModel = hiltViewModel()
+    viewModel: SelectedMovieViewModel = hiltViewModel(),
+    viewModelFirebase: FirebaseViewModel = hiltViewModel()
 ) {
     val statusExist by viewModel.status.collectAsState()
     val context = LocalContext.current
@@ -153,8 +156,8 @@ fun DetailsCardFilm(
                             viewModel.addSelectedMovie(selectedMovie)
 
                             if (statusExist == "error") {
-                                showToast(context, nameToast2)
-                            } else showToast(context, nameToast)
+                                showToast(context, errorToast)
+                            } else showToast(context, addToPersonalList)
                         },
                     ) {
                         Text(
@@ -168,7 +171,10 @@ fun DetailsCardFilm(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary
                         ),
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            viewModelFirebase.saveMovie(movie.nameRu.toString())
+                            showToast(context, addToGeneralList)
+                        },
                     ) {
                         Text(
                             text = stringResource(R.string.text_buttons_film_card_to_general_list),

@@ -2,6 +2,8 @@ package com.pozmaxpav.cinemaopinion.di
 
 import android.content.Context
 import androidx.room.Room
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
 import com.pozmaxpav.cinemaopinion.data.localdb.appdb.AppDatabase
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.SelectedMovieDao
@@ -10,10 +12,15 @@ import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SelectedMovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.data.repository.UserRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.FirebaseRepositoryImpl
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.SelectedMovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.UserRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetFilmByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetListSelectedFilmsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.InsertFilmUseCase
@@ -159,5 +166,43 @@ object AppModule {
     @Singleton
     fun provideGetFilmById(selectedMovieRepository: SelectedMovieRepository): GetFilmByIdUseCase {
         return GetFilmByIdUseCase(selectedMovieRepository)
+    }
+
+    // Firebase
+
+    @Provides
+    @Singleton
+    fun provideFirebaseDataBase(): FirebaseDatabase {
+        return FirebaseDatabase.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabaseReference(firebaseDatabase: FirebaseDatabase): DatabaseReference {
+        return firebaseDatabase.reference // Создание DatabaseReference
+    }
+
+    @Provides
+    @Singleton
+    fun provideFilmRepository(databaseReference: DatabaseReference): FirebaseRepository {
+        return FirebaseRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveMovieUseCase(firebaseRepository: FirebaseRepository): SaveMovieUseCase {
+        return SaveMovieUseCase(firebaseRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoveMovieUseCase(firebaseRepository: FirebaseRepository): RemoveMovieUseCase {
+        return RemoveMovieUseCase(firebaseRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetMovieUseCase(firebaseRepository: FirebaseRepository): GetMovieUseCase {
+        return GetMovieUseCase(firebaseRepository)
     }
 }

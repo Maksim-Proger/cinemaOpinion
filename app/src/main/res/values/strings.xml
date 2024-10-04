@@ -30,6 +30,7 @@
 
     <!--  ShowToast String  -->
     <string name="movie_has_been_added">Фильм добавлен в личный список</string>
+    <string name="movie_has_been_added_to_general_list">Фильм добавлен в общий список</string>
     <string name="movie_has_already_been_added">Данный фильм уже добавлен</string>
     <string name="add_new_account">Пользователь добавлен</string>
     <string name="edit_personal_information">Данные пользователя обновлены</string>
