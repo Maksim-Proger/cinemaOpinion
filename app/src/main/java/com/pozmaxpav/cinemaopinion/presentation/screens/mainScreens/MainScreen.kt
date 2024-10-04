@@ -275,6 +275,7 @@ fun MainScreen(navController: NavHostController) {
                 DetailsCardFilm(
                     stringResource(R.string.movie_has_been_added),
                     stringResource(R.string.movie_has_already_been_added),
+                    stringResource(R.string.movie_has_been_added_to_general_list),
                     selectedMovie!!,
                     onClick = { selectedMovie = null },
                     padding

@@ -1,14 +1,12 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,36 +17,29 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
-import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
-
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 
 @Composable
-fun ListSelectedMovies(
-    viewModel: SelectedMovieViewModel = hiltViewModel(),
+fun ListSelectedGeneralMovies(
+    viewModel: FirebaseViewModel = hiltViewModel(),
     onClickCloseButton: () -> Unit
 ) {
 
-    val listSelectedMovies by viewModel.selectedMovies.collectAsState()
+    val listMovies by viewModel.movies.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.fitchListSelectedMovies()
+        viewModel.getMovies()
     }
 
     Column(
@@ -68,7 +59,7 @@ fun ListSelectedMovies(
                     .fillMaxSize(),
                 contentPadding = PaddingValues(10.dp)
             ) {
-                items(listSelectedMovies) { movie ->
+                items(listMovies) { movie ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -82,18 +73,13 @@ fun ListSelectedMovies(
                             modifier = Modifier
                                 .padding(16.dp)
                         ) {
-                            WorkerWithImageSelectedMovie(
-                                movie = movie,
-                                height = 90.dp
-                            )
-                            Spacer(modifier = Modifier.padding(horizontal = 10.dp))
                             Text(
-                                text = movie.nameFilm,
+                                text = movie.titleFilm,
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
                     }
-                    
+
                     Spacer(Modifier.padding(5.dp))
                 }
             }
@@ -115,4 +101,3 @@ fun ListSelectedMovies(
         }
     }
 }
-
