@@ -21,6 +21,7 @@ import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.Firebase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.DeleteSelectedFilmUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetFilmByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetListSelectedFilmsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.InsertFilmUseCase
@@ -137,6 +138,7 @@ object AppModule {
         return UpdateUserUseCase(userRepository)
     }
 
+    // SelectedFilm
 
     @Provides
     @Singleton
@@ -166,6 +168,12 @@ object AppModule {
     @Singleton
     fun provideGetFilmById(selectedMovieRepository: SelectedMovieRepository): GetFilmByIdUseCase {
         return GetFilmByIdUseCase(selectedMovieRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeleteSelectedFilmUseCase(selectedMovieRepository: SelectedMovieRepository): DeleteSelectedFilmUseCase {
+        return DeleteSelectedFilmUseCase(selectedMovieRepository)
     }
 
     // Firebase

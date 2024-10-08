@@ -108,7 +108,7 @@ fun MainScreen(navController: NavHostController) {
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
         viewModel.fetchPremiersMovies(2023, "July")
-        viewModel.fetchTopListMovies(currentPage) // TODO: Надо разобраться как настроить переключение страницы
+        viewModel.fetchTopListMovies(currentPage)
     }
 
     // Эффект, который реагирует на изменение scrollToTop и прокручивает список
@@ -299,7 +299,7 @@ fun MainScreen(navController: NavHostController) {
                         .padding(padding),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    items(moviesToDisplay) { movie ->
+                    items(moviesToDisplay) { movie -> // TODO: Подумать, можно ли все прировнять к общему ID?
                         MovieItem(movie = movie) {
                             selectedMovie = movie
                         }
