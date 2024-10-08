@@ -1,6 +1,8 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -48,11 +50,13 @@ fun ListSelectedGeneralMovies(
             .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 45.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.tertiaryContainer)
+        Card(
+            modifier = Modifier.weight(1f),
+            shape = RoundedCornerShape(8.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer
+            )
         ) {
             LazyColumn(
                 modifier = Modifier
@@ -87,17 +91,24 @@ fun ListSelectedGeneralMovies(
 
         Spacer(modifier = Modifier.padding(15.dp))
 
-        Button(
-            onClick = { onClickCloseButton() },
-            colors = ButtonDefaults.buttonColors(
+        Card(
+            modifier = Modifier
+                .clickable(onClick = { onClickCloseButton() }),
+            shape = RoundedCornerShape(8.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
         ) {
-            Text(
-                text = stringResource(R.string.list_selected_movies_button_close),
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Box(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.list_selected_movies_button_close),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
     }
 }
