@@ -158,6 +158,8 @@ fun DetailsCardFilm(
                             if (statusExist == "error") {
                                 showToast(context, errorToast)
                             } else showToast(context, addToPersonalList)
+
+                            onClick()
                         },
                     ) {
                         Text(

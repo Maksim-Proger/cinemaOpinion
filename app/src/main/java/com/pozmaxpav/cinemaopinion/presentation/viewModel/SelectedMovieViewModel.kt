@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.DeleteSelectedFilmUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetFilmByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetListSelectedFilmsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.InsertFilmUseCase
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class SelectedMovieViewModel @Inject constructor(
     private val getListSelectedFilmsUseCase: GetListSelectedFilmsUseCase,
     private val insertFilmUseCase: InsertFilmUseCase,
-    private val getFilmById: GetFilmByIdUseCase
+    private val getFilmById: GetFilmByIdUseCase,
+    private val deleteSelectedFilmUseCase: DeleteSelectedFilmUseCase
 ) : ViewModel() {
 
     private val _selectedMovies = MutableStateFlow<List<SelectedMovie>>(emptyList())
@@ -26,6 +28,11 @@ class SelectedMovieViewModel @Inject constructor(
 
     private val _status = MutableStateFlow("")
     val status: StateFlow<String> = _status.asStateFlow()
+
+    init {
+        fitchListSelectedMovies()
+    }
+
 
     fun fitchListSelectedMovies() {
         viewModelScope.launch {
@@ -45,7 +52,12 @@ class SelectedMovieViewModel @Inject constructor(
         }
     }
 
-
+    fun deleteSelectedMovie(selectedMovie: SelectedMovie) {
+        viewModelScope.launch {
+            deleteSelectedFilmUseCase(selectedMovie)
+            fitchListSelectedMovies()
+        }
+    }
 
 
 }

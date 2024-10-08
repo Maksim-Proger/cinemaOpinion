@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion.data.localdb.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.pozmaxpav.cinemaopinion.data.localdb.entities.SelectedMovieEntity
@@ -16,5 +17,8 @@ interface SelectedMovieDao {
 
     @Query("SELECT * FROM selected_films")
     suspend fun getListSelectedFilms() : List<SelectedMovieEntity>
+
+    @Delete
+    suspend fun deleteFilm(selectedMovie: SelectedMovieEntity)
 
 }

@@ -21,4 +21,8 @@ class SelectedMovieRepositoryImpl @Inject constructor(
     override suspend fun getListSelectedFilms(): List<SelectedMovie> {
         return selectedMovieDao.getListSelectedFilms().toDomain()
     }
+
+    override suspend fun deleteFilm(selectedMovie: SelectedMovie) {
+        selectedMovieDao.deleteFilm(selectedMovie.toEntity())
+    }
 }
