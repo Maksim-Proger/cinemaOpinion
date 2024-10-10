@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Cinema Opinion"
 include(":app")
+include(":introductoryscreens")

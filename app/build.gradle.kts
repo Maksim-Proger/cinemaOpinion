@@ -16,7 +16,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "ver5:08.10.2024"
+        versionName = "ver6:10.10.2024"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -54,6 +54,9 @@ android {
 }
 
 dependencies {
+
+    // Module
+    implementation(project(":introductoryscreens"))
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
@@ -95,6 +98,9 @@ dependencies {
     // Room
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
