@@ -1,10 +1,16 @@
 package com.pozmaxpav.cinemaopinion.di
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import com.example.introductoryscreens.domain.LocalUserManager
+import com.example.introductoryscreens.domain.usecases.AppEntryUseCases
+import com.example.introductoryscreens.domain.usecases.ReadAppEntry
+import com.example.introductoryscreens.domain.usecases.SaveAppEntry
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
+import com.pozmaxpav.cinemaopinion.data.localdatastore.LocalUserManagerImpl
 import com.pozmaxpav.cinemaopinion.data.localdb.appdb.AppDatabase
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.SelectedMovieDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.UserDao
@@ -213,4 +219,20 @@ object AppModule {
     fun provideGetMovieUseCase(firebaseRepository: FirebaseRepository): GetMovieUseCase {
         return GetMovieUseCase(firebaseRepository)
     }
+
+    // IntroductionScreens
+    @Provides
+    @Singleton
+    fun provideLocalUserManager(
+        application: Application
+    ) : LocalUserManager = LocalUserManagerImpl(application)
+
+    @Provides
+    @Singleton
+    fun provideAppEntryUseCases(
+        localUserManager: LocalUserManager
+    ) = AppEntryUseCases(
+        readAppEntry = ReadAppEntry(localUserManager),
+        saveAppEntry = SaveAppEntry(localUserManager)
+    )
 }

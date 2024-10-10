@@ -21,7 +21,7 @@ fun DatePickerFunction( // TODO: надо убрать выбор дня, тол
         config = CalendarConfig(
             monthSelection = true,
             yearSelection = true,
-            style = CalendarStyle.MONTH
+            style = CalendarStyle.WEEK
         ),
         selection = CalendarSelection.Date { date ->
             onDateSelected(date)
