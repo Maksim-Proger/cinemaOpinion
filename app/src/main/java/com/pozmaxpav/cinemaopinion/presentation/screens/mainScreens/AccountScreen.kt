@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.ArtTrack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -65,6 +66,7 @@ fun AccountScreen(
     var onAddingNewUserScreenButtonClick by remember { mutableStateOf(false) }
     var showSelectedMovies by remember { mutableStateOf(false) }
     var showSelectedGeneralMovies by remember { mutableStateOf(false) }
+    var showSeriesControlScreen by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -97,6 +99,15 @@ fun AccountScreen(
             )
             BackHandler {
                 showSelectedGeneralMovies = false
+            }
+        }
+
+        if (showSeriesControlScreen) {
+            SeriesControlScreen(
+                onClickCloseButton = {showSeriesControlScreen = false}
+            )
+            BackHandler {
+                showSeriesControlScreen = false
             }
         }
 
@@ -207,6 +218,15 @@ fun AccountScreen(
                         ) {
                             showSelectedGeneralMovies = true
                         }
+                        Spacer(modifier = Modifier.height(20.dp))
+                        AccountListItem(
+                            icon = painterResource(id = R.drawable.ic_movie_list),
+                            contentDescription = "null",
+                            title = "test"
+                        ) {
+                            showSeriesControlScreen = true
+                        }
+
                     }
                 }
             }

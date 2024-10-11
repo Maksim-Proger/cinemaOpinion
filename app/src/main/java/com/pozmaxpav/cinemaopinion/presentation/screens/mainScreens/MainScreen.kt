@@ -254,9 +254,6 @@ fun MainScreen(navController: NavHostController) {
                     query = query,
                     onQueryChange = { newQuery -> query = newQuery },
                     onSearch = { searchQuery ->
-
-                        Log.d("@@@", "CustomSearchBar = $currentPage")
-
                         viewModel.fetchSearchMovies(searchQuery, currentPage)
                         saveSearchQuery = searchQuery
                         searchHistory.add(searchQuery)
@@ -306,7 +303,6 @@ fun MainScreen(navController: NavHostController) {
                     }
 
                     // TODO: При поиске не переключает на последнюю страницу. ПРОВЕРИТЬ!
-                    // Добавляем новый элемент
                     if (showNextPageButton) {
                         item {
                             Row(

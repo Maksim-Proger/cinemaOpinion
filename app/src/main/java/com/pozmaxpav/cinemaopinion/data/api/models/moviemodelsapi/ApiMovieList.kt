@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.data.api.models
+package com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi
 
 data class ApiMovieList(
     val total: Int,

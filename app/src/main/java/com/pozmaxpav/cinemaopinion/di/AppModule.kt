@@ -13,14 +13,17 @@ import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
 import com.pozmaxpav.cinemaopinion.data.localdatastore.LocalUserManagerImpl
 import com.pozmaxpav.cinemaopinion.data.localdb.appdb.AppDatabase
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.SelectedMovieDao
+import com.pozmaxpav.cinemaopinion.data.localdb.dao.SeriesControlDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.UserDao
 import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SelectedMovieRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.data.repository.UserRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.FirebaseRepositoryImpl
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.SelectedMovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.SeriesControlRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.UserRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
@@ -31,6 +34,10 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.DeleteSelectedFil
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetFilmByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetListSelectedFilmsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.InsertFilmUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCDeleteMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetListMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetMovieByIdUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCInsertUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.theme.GetModeActivationSystemTheme
 import com.pozmaxpav.cinemaopinion.domain.usecase.theme.GetModeApplicationThemeUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.GetUserUseCase
@@ -235,4 +242,41 @@ object AppModule {
         readAppEntry = ReadAppEntry(localUserManager),
         saveAppEntry = SaveAppEntry(localUserManager)
     )
+
+    // SeriesControl
+    @Provides
+    @Singleton
+    fun providesSeriesControlDao(appDatabase: AppDatabase): SeriesControlDao {
+        return appDatabase.seriesControlDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesSeriesControlRepository(seriesControlDao: SeriesControlDao): SeriesControlRepository {
+        return SeriesControlRepositoryImpl(seriesControlDao)
+    }
+
+    @Provides
+    @Singleton
+    fun providesSCDeleteMovieUseCase(seriesControlRepository: SeriesControlRepository): SCDeleteMovieUseCase {
+        return SCDeleteMovieUseCase(seriesControlRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesSCGetListMoviesUseCase(seriesControlRepository: SeriesControlRepository): SCGetListMoviesUseCase {
+        return SCGetListMoviesUseCase(seriesControlRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesSCGetMovieByIdUseCase(seriesControlRepository: SeriesControlRepository): SCGetMovieByIdUseCase {
+        return SCGetMovieByIdUseCase(seriesControlRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesSCInsertUseCase(seriesControlRepository: SeriesControlRepository): SCInsertUseCase {
+        return SCInsertUseCase(seriesControlRepository)
+    }
 }
