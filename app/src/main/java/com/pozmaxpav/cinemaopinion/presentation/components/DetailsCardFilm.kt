@@ -176,6 +176,8 @@ fun DetailsCardFilm(
                         onClick = {
                             viewModelFirebase.saveMovie(movie.nameRu.toString())
                             showToast(context, addToGeneralList)
+
+                            onClick()
                         },
                     ) {
                         Text(
