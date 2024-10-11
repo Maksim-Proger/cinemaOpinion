@@ -33,7 +33,6 @@ class SelectedMovieViewModel @Inject constructor(
         fitchListSelectedMovies()
     }
 
-
     fun fitchListSelectedMovies() {
         viewModelScope.launch {
             val movies = getListSelectedFilmsUseCase()

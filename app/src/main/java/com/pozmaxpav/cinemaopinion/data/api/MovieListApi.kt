@@ -1,8 +1,8 @@
 package com.pozmaxpav.cinemaopinion.data.api
 
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieList
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieTopList
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieSearchList
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieList
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieTopList
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearchList
 import com.pozmaxpav.cinemaopinion.utilits.API_KEY
 import retrofit2.http.GET
 import retrofit2.http.Headers

@@ -53,8 +53,8 @@ fun OnBoardingPage(
                 style = TextStyle(
                     fontFamily = introductionScreensFontFamily,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 35.sp,
-                    lineHeight = 24.sp,
+                    fontSize = 55.sp,
+                    lineHeight = 55.sp,
                     letterSpacing = 0.5.sp
                 ),
                 color = TextColor
@@ -65,9 +65,9 @@ fun OnBoardingPage(
                 modifier = Modifier.padding(horizontal = MediumPadding2),
                 style = TextStyle(
                     fontFamily = introductionScreensFontFamily,
-                    fontSize = 16.sp,
+                    fontSize = 26.sp,
                     fontWeight = FontWeight.Normal,
-                    lineHeight = 24.sp,
+                    lineHeight = 34.sp,
                     letterSpacing = 0.5.sp
                 ),
                 color = TextColor
@@ -80,6 +80,6 @@ fun OnBoardingPage(
 @Composable
 fun PreviewFun() {
     OnBoardingPage(
-        page = pages[0]
+        page = pages[2]
     )
 }

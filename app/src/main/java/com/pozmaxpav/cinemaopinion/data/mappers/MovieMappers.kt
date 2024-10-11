@@ -1,13 +1,13 @@
 package com.pozmaxpav.cinemaopinion.data.mappers
 
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiCountry
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiGenre
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovie
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieList
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieSearch
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieTop
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieTopList
-import com.pozmaxpav.cinemaopinion.data.api.models.ApiMovieSearchList
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiCountry
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiGenre
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovie
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieList
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearch
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieTop
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieTopList
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.Country
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData

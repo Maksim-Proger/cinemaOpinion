@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase
 
-import android.util.Log
 import com.google.firebase.database.DatabaseReference
 import com.pozmaxpav.cinemaopinion.data.api.models.modelfirebase.FilmData
 import com.pozmaxpav.cinemaopinion.data.mappers.toData
@@ -13,6 +12,7 @@ import javax.inject.Inject
 class FirebaseRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference
 ) : FirebaseRepository {
+
     override suspend fun saveMovie(title: String) {
         val filmData = FilmDomain(titleFilm = title).toData() // Преобразуем FilmDomain в FilmData
         val key = databaseReference.child("list_movies").push().key
@@ -22,7 +22,9 @@ class FirebaseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removeMovie(title: String) { // TODO: Надо проверить работает ли.
-        val snapshot = databaseReference.child("list_movies").orderByChild("titleFilm").equalTo(title).get().await()
+        val snapshot =
+            databaseReference.child("list_movies").orderByChild("titleFilm").equalTo(title).get()
+                .await()
         for (filmSnapshot in snapshot.children) {
             filmSnapshot.ref.removeValue().await()
         }
