@@ -31,4 +31,8 @@ class SeriesControlRepositoryImpl @Inject constructor(
         seriesControlDao.deleteMovie(movie.toEntity())
     }
 
+    override suspend fun updateMovie(movie: SeriesControlModel) {
+        seriesControlDao.updateMovie(movie.toEntity())
+    }
+
 }
