@@ -66,48 +66,31 @@ fun SeriesControlScreen(
 ) {
     var selectedNote by remember { mutableStateOf<SeriesControlModel?>(null) }
     val listMovies by viewModel.listMovies.collectAsState()
-    var openBottomSheet by remember { mutableStateOf(false) }
-    var openBottomSheet2 by remember { mutableStateOf(false) }
-    val (titleMovie, setTitleMovie) = remember { mutableStateOf("") }
-    val context = LocalContext.current
+    var openBottomSheetAdd by remember { mutableStateOf(false) }
+    var openBottomSheetChange by remember { mutableStateOf(false) }
 
-    if (openBottomSheet) {
+    if (openBottomSheetAdd) {
         MyBottomSheet(
             onClose = {
-                openBottomSheet = false
+                openBottomSheetAdd = false
             },
             content = {
-                CustomTextField(
-                    value = titleMovie,
-                    onValueChange = setTitleMovie,
-                    placeholder = { Text("Введите название фильма/сериала") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.outline
-                        )
-                    },
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            viewModel.insertMovie(titleMovie)
-                            showToast(context, "Элемент добавлен")
-                        }
-                    )
-                )
+                AddItem {
+                    openBottomSheetAdd = false
+                }
             },
             fraction = 0.3f
         )
         BackHandler {
-            openBottomSheet = false
+            openBottomSheetAdd = false
         }
     }
 
     Scaffold(
-        modifier = Modifier.padding(vertical = 25.dp),
         topBar = {
             IconButton(
-                onClick = onClickCloseButton
+                onClick = onClickCloseButton,
+                modifier = Modifier.padding(vertical = 25.dp),
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
@@ -120,25 +103,25 @@ fun SeriesControlScreen(
                 imageIcon = Icons.Default.Add,
                 contentDescription = "Кнопка добавить",
                 textFloatingButton = "Добавить",
-                onButtonClick = { openBottomSheet = true },
+                onButtonClick = { openBottomSheetAdd = true },
                 expanded = true
             )
         },
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
 
-        if (openBottomSheet2) {
+        if (openBottomSheetChange) {
             MyBottomSheet(
-                onClose = { openBottomSheet2 = false },
+                onClose = { openBottomSheetChange = false },
                 content = {
                     ChangeItem(movie = selectedNote!!) {
-                        openBottomSheet2 = false
+                        openBottomSheetChange = false
                     }
                 },
                 fraction = 0.5f
             )
             BackHandler {
-                openBottomSheet2 = false
+                openBottomSheetChange = false
             }
         }
 
@@ -175,7 +158,7 @@ fun SeriesControlScreen(
                         ) {
                             Item(movie) {
                                 selectedNote = movie
-                                openBottomSheet2 = true
+                                openBottomSheetChange = true
                             }
                         }
 
@@ -221,6 +204,35 @@ private fun Item(
             style = MaterialTheme.typography.titleMedium
         )
     }
+}
+
+@Composable
+private fun AddItem(
+    viewModel: SeriesControlViewModel = hiltViewModel(),
+    onClickCloseButton: () -> Unit
+) {
+    val (titleMovie, setTitleMovie) = remember { mutableStateOf("") }
+    val context = LocalContext.current
+    CustomTextField(
+        value = titleMovie,
+        onValueChange = setTitleMovie,
+        placeholder = { Text("Введите название фильма/сериала") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.outline
+            )
+        },
+        keyboardActions = KeyboardActions(
+            onDone = {
+                viewModel.insertMovie(titleMovie)
+                showToast(context, "Элемент добавлен")
+                setTitleMovie("")
+                onClickCloseButton()
+            }
+        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

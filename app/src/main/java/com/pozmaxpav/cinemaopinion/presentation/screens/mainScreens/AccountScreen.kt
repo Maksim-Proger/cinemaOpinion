@@ -115,7 +115,7 @@ fun AccountScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 30.dp)
-                .fillMaxHeight(0.5f)
+                .fillMaxHeight(0.7f)
                 .graphicsLayer(alpha = 0.95f),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.tertiary,

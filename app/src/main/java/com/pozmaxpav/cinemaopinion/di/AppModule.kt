@@ -15,6 +15,7 @@ import com.pozmaxpav.cinemaopinion.data.localdb.appdb.AppDatabase
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.SelectedMovieDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.SeriesControlDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.UserDao
+import com.pozmaxpav.cinemaopinion.data.localdb.migration.DatabaseMigrations
 import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SelectedMovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SeriesControlRepositoryImpl
@@ -119,7 +120,9 @@ object AppModule {
             context,
             AppDatabase::class.java,
             "user_database"
-        ).build()
+        )
+            .addMigrations(DatabaseMigrations.MIGRATION_1_2)
+            .build()
     }
 
     @Provides
