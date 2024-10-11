@@ -7,6 +7,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCDeleteMovieUse
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetListMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetMovieByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCInsertUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCUpdateMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,8 @@ class SeriesControlViewModel @Inject constructor(
     private val deleteMovieUseCase: SCDeleteMovieUseCase,
     private val getListMoviesUseCase: SCGetListMoviesUseCase,
     private val getMovieByIdUseCase: SCGetMovieByIdUseCase,
-    private val insertUseCase: SCInsertUseCase
+    private val insertUseCase: SCInsertUseCase,
+    private val updateMovieUseCase: SCUpdateMovieUseCase
 ) : ViewModel() {
 
     private val _listMovies = MutableStateFlow<List<SeriesControlModel>>(emptyList())
@@ -36,7 +38,7 @@ class SeriesControlViewModel @Inject constructor(
         }
     }
 
-    fun insertMovies(title: String, season: Int = 0, series: Int = 0) {
+    fun insertMovie(title: String, season: Int = 0, series: Int = 0) {
         viewModelScope.launch {
             val movie = SeriesControlModel(
                 id = 0, // Это значение будет игнорироваться, так как id автоинкрементный
@@ -48,4 +50,18 @@ class SeriesControlViewModel @Inject constructor(
         }
     }
 
+    fun updateMovie(id: Int, season: Int, series: Int) {
+        viewModelScope.launch {
+            val movie = getMovieByIdUseCase(id)
+            val updatedMovie = movie!!.copy(season = season, series = series) // Обновляем нужные параметры
+            updateMovieUseCase(updatedMovie)
+        }
+    }
+
+    fun deleteMovie(id: Int) {
+        viewModelScope.launch {
+            val movie = getMovieByIdUseCase(id)
+            deleteMovieUseCase(movie!!)
+        }
+    }
 }

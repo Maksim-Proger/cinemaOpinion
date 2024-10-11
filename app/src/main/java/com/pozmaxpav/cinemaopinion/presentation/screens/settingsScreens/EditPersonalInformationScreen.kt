@@ -110,7 +110,6 @@ fun EditPersonalInformationScreen(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { padding ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()

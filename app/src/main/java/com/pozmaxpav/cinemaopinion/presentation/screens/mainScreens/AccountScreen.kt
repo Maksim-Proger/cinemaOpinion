@@ -94,8 +94,8 @@ fun AccountScreen(
         }
 
         if (showSelectedGeneralMovies) {
-            ListSelectedGeneralMovies (
-                onClickCloseButton = {showSelectedGeneralMovies = false}
+            ListSelectedGeneralMovies(
+                onClickCloseButton = { showSelectedGeneralMovies = false }
             )
             BackHandler {
                 showSelectedGeneralMovies = false
@@ -104,7 +104,7 @@ fun AccountScreen(
 
         if (showSeriesControlScreen) {
             SeriesControlScreen(
-                onClickCloseButton = {showSeriesControlScreen = false}
+                onClickCloseButton = { showSeriesControlScreen = false }
             )
             BackHandler {
                 showSeriesControlScreen = false
@@ -192,7 +192,8 @@ fun AccountScreen(
                             } else {
                                 Button(
                                     onClick = {
-                                        onAddingNewUserScreenButtonClick = !onAddingNewUserScreenButtonClick
+                                        onAddingNewUserScreenButtonClick =
+                                            !onAddingNewUserScreenButtonClick
                                     }
                                 ) {
                                     Text(text = "Войти")
@@ -222,7 +223,7 @@ fun AccountScreen(
                         AccountListItem(
                             icon = painterResource(id = R.drawable.ic_movie_list),
                             contentDescription = "null",
-                            title = "test"
+                            title = "Контроль серий"
                         ) {
                             showSeriesControlScreen = true
                         }

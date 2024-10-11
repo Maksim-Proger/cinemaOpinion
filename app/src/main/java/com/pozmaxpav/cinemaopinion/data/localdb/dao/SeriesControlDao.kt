@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.pozmaxpav.cinemaopinion.data.localdb.entities.SeriesControlEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -21,5 +22,8 @@ interface SeriesControlDao {
 
     @Delete
     suspend fun deleteMovie(movie: SeriesControlEntity)
+
+    @Update
+    suspend fun updateMovie(movie: SeriesControlEntity)
 
 }

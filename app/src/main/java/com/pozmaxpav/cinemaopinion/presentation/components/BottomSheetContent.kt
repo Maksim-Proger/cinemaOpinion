@@ -44,7 +44,7 @@ fun MyBottomSheet(
 
     ModalBottomSheet(
         sheetState = bottomSheetState,
-        onDismissRequest = onClose, // Закрываем лист при нажатии вне его
+        onDismissRequest = onClose, // Закрываем BottomSheet при нажатии вне его
         dragHandle = {
             BottomSheetDefaults.DragHandle()
         }

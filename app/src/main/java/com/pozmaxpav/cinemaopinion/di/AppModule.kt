@@ -38,6 +38,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCDeleteMovieUse
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetListMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetMovieByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCInsertUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCUpdateMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.theme.GetModeActivationSystemTheme
 import com.pozmaxpav.cinemaopinion.domain.usecase.theme.GetModeApplicationThemeUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.GetUserUseCase
@@ -278,5 +279,11 @@ object AppModule {
     @Singleton
     fun providesSCInsertUseCase(seriesControlRepository: SeriesControlRepository): SCInsertUseCase {
         return SCInsertUseCase(seriesControlRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesSCUpdateMovieUseCase(seriesControlRepository: SeriesControlRepository): SCUpdateMovieUseCase {
+        return SCUpdateMovieUseCase(seriesControlRepository)
     }
 }
