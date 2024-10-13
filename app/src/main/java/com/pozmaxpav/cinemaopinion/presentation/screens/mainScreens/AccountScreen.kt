@@ -71,7 +71,6 @@ fun AccountScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
     ) {
 
         if (onAddingNewUserScreenButtonClick) {
@@ -114,7 +113,7 @@ fun AccountScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 30.dp)
+                .padding(vertical = 50.dp, horizontal = 16.dp)
                 .fillMaxHeight(0.7f)
                 .graphicsLayer(alpha = 0.95f),
             colors = CardDefaults.cardColors(
