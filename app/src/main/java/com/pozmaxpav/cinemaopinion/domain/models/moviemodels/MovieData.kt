@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.models.moviemodels
 
-sealed class MovieData {
+sealed class MovieData : UnifyingId {
     abstract val nameRu: String?
     abstract val posterUrl: String?
     abstract val year: String?
@@ -16,7 +16,9 @@ sealed class MovieData {
         override val posterUrl: String,
         override val year: String,
         override val countries: List<Country>
-    ) : MovieData()
+    ) : MovieData() {
+        override val id: Int get() = kinopoiskId
+    }
 
     data class MovieTop(
         val filmId: Int,
@@ -26,7 +28,9 @@ sealed class MovieData {
         override val posterUrl: String,
         override val year: String,
         override val countries: List<Country>
-    ) : MovieData()
+    ) : MovieData() {
+        override val id: Int get() = filmId
+    }
 
     data class MovieSearch(
         val kinopoiskId: Int,
@@ -36,6 +40,8 @@ sealed class MovieData {
         override val posterUrl: String,
         override val year: String,
         override val countries: List<Country>
-    ) : MovieData()
+    ) : MovieData() {
+        override val id: Int get() = kinopoiskId
+    }
 
 }
