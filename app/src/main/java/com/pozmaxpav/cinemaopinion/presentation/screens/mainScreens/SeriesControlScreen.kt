@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -86,6 +88,21 @@ fun SeriesControlScreen(
         }
     }
 
+    if (openBottomSheetChange) {
+        MyBottomSheet(
+            onClose = { openBottomSheetChange = false },
+            content = {
+                ChangeItem(movie = selectedNote!!) {
+                    openBottomSheetChange = false
+                }
+            },
+            fraction = 0.5f
+        )
+        BackHandler {
+            openBottomSheetChange = false
+        }
+    }
+
     Scaffold(
         topBar = {
             IconButton(
@@ -109,22 +126,6 @@ fun SeriesControlScreen(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
-
-        if (openBottomSheetChange) {
-            MyBottomSheet(
-                onClose = { openBottomSheetChange = false },
-                content = {
-                    ChangeItem(movie = selectedNote!!) {
-                        openBottomSheetChange = false
-                    }
-                },
-                fraction = 0.5f
-            )
-            BackHandler {
-                openBottomSheetChange = false
-            }
-        }
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -132,7 +133,6 @@ fun SeriesControlScreen(
             contentPadding = PaddingValues(10.dp)
         ) {
             items(listMovies, key = { it.id }) { movie ->
-
                 var isVisible by remember { mutableStateOf(true) }
                 AnimatedVisibility(
                     visible = isVisible,
@@ -146,10 +146,9 @@ fun SeriesControlScreen(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-
                         Card(
                             modifier = Modifier
-                                .weight(0.9f)
+                                .weight(0.95f)
                                 .wrapContentHeight(),
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.secondary,
@@ -161,12 +160,10 @@ fun SeriesControlScreen(
                                 openBottomSheetChange = true
                             }
                         }
-
                         Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-
                         IconButton(
                             modifier = Modifier
-                                .weight(0.1f),
+                                .weight(0.05f),
                             onClick = {
                                 isVisible = false // Скрываем элемент перед удалением
                                 CoroutineScope(Dispatchers.Main).launch {
@@ -185,6 +182,7 @@ fun SeriesControlScreen(
                 }
                 Spacer(modifier = Modifier.padding(vertical = 5.dp))
             }
+            item { Spacer(Modifier.padding(45.dp)) }
         }
     }
 }
@@ -197,11 +195,11 @@ private fun Item(
     Row(
         modifier = Modifier
             .clickable { onClick() }
-            .padding(16.dp)
+            .padding(10.dp)
     ) {
         Text(
             text = "${movie.title} - ${movie.season} сезон ${movie.series} серия",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }
@@ -256,6 +254,7 @@ private fun ChangeItem(
             .padding(horizontal = 15.dp, vertical = 15.dp),
         value = season,
         onValueChange = setSeason,
+        shape = RoundedCornerShape(16.dp),
         placeholder = { Text("Укажите сезон") },
         trailingIcon =  if (season.isNotEmpty()) {
             {
@@ -292,6 +291,7 @@ private fun ChangeItem(
             .padding(horizontal = 15.dp, vertical = 15.dp),
         value = series,
         onValueChange = setSeries,
+        shape = RoundedCornerShape(16.dp),
         placeholder = { Text("Укажите серию") },
         trailingIcon =  if (series.isNotEmpty()) {
             {
@@ -322,13 +322,18 @@ private fun ChangeItem(
         )
     )
 
-    Button(
-        onClick = {
-            viewModel.updateMovie(movie.id, season.toInt(), series.toInt())
-            onClick()
-        }
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(end = 15.dp),
+        horizontalArrangement = Arrangement.End
     ) {
-        Text(text = "Сохранить")
+        Button(
+            onClick = {
+                viewModel.updateMovie(movie.id, season.toInt(), series.toInt())
+                onClick()
+            }
+        ) {
+            Text(text = "Сохранить")
+        }
     }
 }
 

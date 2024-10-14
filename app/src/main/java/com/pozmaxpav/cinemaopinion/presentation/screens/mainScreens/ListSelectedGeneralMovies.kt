@@ -63,7 +63,7 @@ fun ListSelectedGeneralMovies(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(vertical = 45.dp)
+            .padding(vertical = 45.dp, horizontal = 16.dp)
     ) {
         Card(
             modifier = Modifier.weight(1f),
