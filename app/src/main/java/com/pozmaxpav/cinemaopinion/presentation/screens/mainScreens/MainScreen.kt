@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -10,7 +9,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -18,20 +16,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.NavigateBefore
-import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.UnifyingId
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
@@ -167,7 +160,6 @@ fun MainScreen(navController: NavHostController) {
                 }
             }
         },
-
         floatingActionButton = {
             if (!onAccountButtonClick && !searchBarActive && selectedMovie == null) {
                 FabButtonWithMenu(
@@ -296,13 +288,14 @@ fun MainScreen(navController: NavHostController) {
                         .padding(padding),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    items(moviesToDisplay) { movie -> // TODO: Подумать, можно ли все прировнять к общему ID?
+                    items(moviesToDisplay, key = { (it as UnifyingId).id }) { movie ->
                         MovieItem(movie = movie) {
                             selectedMovie = movie
                         }
                     }
 
                     // TODO: При поиске не переключает на последнюю страницу. ПРОВЕРИТЬ!
+                    //  Проблема с переключением, переключает даже на отрицательные и несуществующие страницы.
                     if (showNextPageButton) {
                         item {
                             Row(
@@ -348,7 +341,6 @@ fun MainScreen(navController: NavHostController) {
                                     )
                                 }
                             }
-
                         }
                     }
                 }
