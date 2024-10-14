@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -45,8 +47,9 @@ fun MyBottomSheet(
     ModalBottomSheet(
         sheetState = bottomSheetState,
         onDismissRequest = onClose, // Закрываем BottomSheet при нажатии вне его
+        shape = RoundedCornerShape(16.dp),
         dragHandle = {
-            BottomSheetDefaults.DragHandle()
+            BottomSheetDefaults.DragHandle(Modifier.size(0.dp)) // Убираем DragHandle
         }
     ) {
         Column(
