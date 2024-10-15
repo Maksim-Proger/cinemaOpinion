@@ -34,7 +34,8 @@ sealed class MovieData : UnifyingId {
 
     data class MovieSearch(
         val kinopoiskId: Int,
-        val rating: String?,
+        val ratingKinopoisk: String?,
+        val ratingImdb: String?,
 
         override val nameRu: String,
         override val posterUrl: String,

@@ -73,9 +73,11 @@ fun MainScreen(navController: NavHostController) {
     var searchCompleted by remember { mutableStateOf(false) } // Флаг для отображения списка фильмов после поиска
     val searchHistory = mutableListOf<String>()
 
+    // Состояния для открытия страниц
     var onFilterButtonClick by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
 
+    // Заголовок для AppBar
     var titleTopBarState by remember { mutableStateOf(false) }
 
     // Работаем с ViewModel
@@ -92,11 +94,11 @@ fun MainScreen(navController: NavHostController) {
 
     // Логика переключения страницы
     var currentPage by remember { mutableIntStateOf(1) }
-    var showNextPageButton by remember { mutableStateOf(false) }
+    var showPageSwitchingButtons by remember { mutableStateOf(false) }
     var saveSearchQuery by remember { mutableStateOf("") }
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
-    var selectedMovie by remember { mutableStateOf<MovieData?>(null) } // TODO: надо разобраться как это работает
+    var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
@@ -112,7 +114,7 @@ fun MainScreen(navController: NavHostController) {
         }
     }
 
-    // TODO: Добавить проверку, чтобы не пытался переключить на несуществующую страницу и добавить для поиска
+    // TODO: Добавить для поиска
     // Эффект, который будет зависеть от состояния списка (для переключения страницы)
     LaunchedEffect(Unit) {
         snapshotFlow { listState.layoutInfo } // Создаем поток, который будет отслеживать изменения в состоянии layoutInfo списка
@@ -124,7 +126,9 @@ fun MainScreen(navController: NavHostController) {
 
                 // Если достигнут конец списка, показываем кнопку "Следующая страница"
                 // Устанавливаем showNextPageButton в true, если последний видимый элемент - это последний элемент списка и фильтр активен
-                showNextPageButton = lastVisibleItemIndex >= totalItems - 1 && onFilterButtonClick or searchCompleted // TODO: Разобраться с логическими условиями в Kotlin
+                showPageSwitchingButtons =
+                    lastVisibleItemIndex >= totalItems - 1 &&
+                            onFilterButtonClick or searchCompleted // TODO: Разобраться с логическими условиями в Kotlin
             }
     }
 
@@ -281,6 +285,16 @@ fun MainScreen(navController: NavHostController) {
                     else -> premiereMovies.value?.items ?: emptyList()
                 }
 
+                val countPages: Int = when {
+                    searchCompleted -> searchMovies.value?.total ?: 0
+                    onFilterButtonClick -> topListMovies.value?.pagesCount ?: 0
+                    else -> premiereMovies.value?.total ?: 0
+                }
+
+                // Проверяем возможность активации кнопок для навигации
+                val canGoBack = currentPage > 1
+                val canGoForward = currentPage < countPages
+
                 LazyColumn(
                     state = listState,
                     modifier = Modifier
@@ -295,50 +309,52 @@ fun MainScreen(navController: NavHostController) {
                     }
 
                     // TODO: При поиске не переключает на последнюю страницу. ПРОВЕРИТЬ!
-                    //  Проблема с переключением, переключает даже на отрицательные и несуществующие страницы.
-                    if (showNextPageButton) {
+                    if (showPageSwitchingButtons) {
                         item {
                             Row(
                                 modifier = Modifier
                                     .wrapContentWidth()
                                     .padding(vertical = 16.dp)
                             ) {
-                                IconButton (
-                                    onClick = {
-                                        currentPage--
-                                        if (onFilterButtonClick) {
-                                            viewModel.fetchTopListMovies(currentPage)
-                                        } else if (searchCompleted) {
-                                            viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
-                                        }
-                                    },
-                                    modifier = Modifier.wrapContentWidth()
-                                ) {
-                                    Icon(
-                                        // TODO: Поправить содержание
-                                        painter = painterResource(R.drawable.ic_previous_page),
-                                        contentDescription = stringResource(id = R.string.description_icon_home_button),
-                                        tint = MaterialTheme.colorScheme.onPrimary
-                                    )
+                                if (canGoBack) {
+                                    IconButton (
+                                        onClick = {
+                                            currentPage--
+                                            if (onFilterButtonClick) {
+                                                viewModel.fetchTopListMovies(currentPage)
+                                            } else if (searchCompleted) {
+                                                viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                            }
+                                        },
+                                        modifier = Modifier.wrapContentWidth()
+                                    ) {
+                                        Icon(
+                                            // TODO: Поправить содержание
+                                            painter = painterResource(R.drawable.ic_previous_page),
+                                            contentDescription = stringResource(id = R.string.description_icon_home_button),
+                                            tint = MaterialTheme.colorScheme.onPrimary
+                                        )
+                                    }
                                 }
-
-                                IconButton(
-                                    onClick = {
-                                        currentPage++
-                                        if (onFilterButtonClick) {
-                                            viewModel.fetchTopListMovies(currentPage)
-                                        } else if (searchCompleted) {
-                                            viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
-                                        }
-                                    },
-                                    modifier = Modifier.wrapContentWidth()
-                                ) {
-                                    Icon(
-                                        // TODO: Поправить содержание
-                                        painter = painterResource(R.drawable.ic_next_page),
-                                        contentDescription = stringResource(id = R.string.description_icon_home_button),
-                                        tint = MaterialTheme.colorScheme.onPrimary
-                                    )
+                                if (canGoForward) {
+                                    IconButton(
+                                        onClick = {
+                                            currentPage++
+                                            if (onFilterButtonClick) {
+                                                viewModel.fetchTopListMovies(currentPage)
+                                            } else if (searchCompleted) {
+                                                viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                            }
+                                        },
+                                        modifier = Modifier.wrapContentWidth()
+                                    ) {
+                                        Icon(
+                                            // TODO: Поправить содержание
+                                            painter = painterResource(R.drawable.ic_next_page),
+                                            contentDescription = stringResource(id = R.string.description_icon_home_button),
+                                            tint = MaterialTheme.colorScheme.onPrimary
+                                        )
+                                    }
                                 }
                             }
                         }

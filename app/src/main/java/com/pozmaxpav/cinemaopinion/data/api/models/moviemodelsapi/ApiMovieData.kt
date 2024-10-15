@@ -22,7 +22,8 @@ data class ApiMovieTop(
 
 data class ApiMovieSearch(
     val kinopoiskId: Int,
-    val rating: String,
+    val ratingKinopoisk: String?,
+    val ratingImdb: String?,
     val nameRu: String,
     val posterUrl: String,
     val year: String,

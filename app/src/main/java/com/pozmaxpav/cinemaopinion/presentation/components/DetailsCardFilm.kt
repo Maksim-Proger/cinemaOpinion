@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -133,7 +134,22 @@ fun DetailsCardFilm(
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
-                        is MovieData.MovieSearch -> {}
+                        is MovieData.MovieSearch -> {
+                            Text(
+                                text = "Год производства: ${movie.year}",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Рейтинг Kinopoisk: ${movie.ratingKinopoisk ?: "Нет данных о рейтинге"}",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Рейтинг Imdb: ${movie.ratingImdb ?: "Нет данных о рейтинге"}",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
                     }
                 }
 
