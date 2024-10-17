@@ -191,7 +191,7 @@ fun MovieData.toSelectedMovie(): SelectedMovie {
         )
         is MovieData.MovieSearch -> SelectedMovie(
             id = this.kinopoiskId,
-            nameFilm = this.nameRu,
+            nameFilm = this.nameRu?: "Нет названия",
             posterUrl = this.posterUrl
         )
     }
@@ -210,4 +210,13 @@ fun returnToMainScreen(
         launchSingleTop = true
         restoreState = true
     }
+}
+
+// TODO: Подумать над методом еще
+fun parsYearsToString(range:ClosedFloatingPointRange<Float>): List<String> {
+    val yearsList = listOf<String>(
+        range.start.toInt().toString(),
+        range.endInclusive.toInt().toString()
+    )
+    return yearsList
 }

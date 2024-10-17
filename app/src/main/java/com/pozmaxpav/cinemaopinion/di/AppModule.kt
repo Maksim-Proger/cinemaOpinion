@@ -1,5 +1,5 @@
 package com.pozmaxpav.cinemaopinion.di
-
+// TODO: Почистить модуль
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
@@ -63,6 +63,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    // region API
+
     @Provides
     @Singleton
     fun provideGetMovieListApi() : MovieListApi {
@@ -86,6 +88,10 @@ object AppModule {
     fun provideMovieRepository(api: MovieListApi): MovieRepository {
         return MovieRepositoryImpl(api)
     }
+
+    // endregion
+
+    // region Theme
 
     @Provides
     @Singleton
@@ -113,6 +119,10 @@ object AppModule {
         return GetModeActivationSystemTheme(themeRepository)
     }
 
+    // endregion
+
+    // region Room
+
     @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
@@ -124,6 +134,10 @@ object AppModule {
             .addMigrations(DatabaseMigrations.MIGRATION_1_2)
             .build()
     }
+
+    // endregion
+
+    // region User
 
     @Provides
     @Singleton
@@ -155,7 +169,9 @@ object AppModule {
         return UpdateUserUseCase(userRepository)
     }
 
-    // SelectedFilm
+    // endregion
+
+    // region SelectedFilm
 
     @Provides
     @Singleton
@@ -193,7 +209,9 @@ object AppModule {
         return DeleteSelectedFilmUseCase(selectedMovieRepository)
     }
 
-    // Firebase
+    // endregion
+
+    // region Firebase
 
     @Provides
     @Singleton
@@ -231,7 +249,10 @@ object AppModule {
         return GetMovieUseCase(firebaseRepository)
     }
 
-    // IntroductionScreens
+    // endregion
+
+    // region IntroductionScreens
+
     @Provides
     @Singleton
     fun provideLocalUserManager(
@@ -247,7 +268,10 @@ object AppModule {
         saveAppEntry = SaveAppEntry(localUserManager)
     )
 
-    // SeriesControl
+    // endregion
+
+    // region SeriesControl
+
     @Provides
     @Singleton
     fun providesSeriesControlDao(appDatabase: AppDatabase): SeriesControlDao {
@@ -289,4 +313,6 @@ object AppModule {
     fun providesSCUpdateMovieUseCase(seriesControlRepository: SeriesControlRepository): SCUpdateMovieUseCase {
         return SCUpdateMovieUseCase(seriesControlRepository)
     }
+
+    // endregion
 }

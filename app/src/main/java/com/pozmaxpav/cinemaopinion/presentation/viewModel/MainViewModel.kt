@@ -1,11 +1,12 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
-
+// TODO: Почему тут нам надо вызывать execute?
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetPremiereMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchFilmsByFiltersUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetTopMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getPremiereMoviesUseCase: GetPremiereMoviesUseCase,
     private val getSearchMoviesUseCase: GetSearchMoviesUseCase,
-    private val getTopMoviesUseCase: GetTopMoviesUseCase
+    private val getTopMoviesUseCase: GetTopMoviesUseCase,
+    private val getSearchFilmsByFiltersUseCase: GetSearchFilmsByFiltersUseCase
 ) : ViewModel() {
 
     private val _premiereMovies = MutableStateFlow<MovieList?>(null)
@@ -63,4 +65,33 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+    
+    fun searchFilmsByFilters(
+        keyword: String?,
+        countries: Int?,
+        genres: Int?,
+        ratingFrom: Int?,
+        yearFrom: Int?,
+        yearTo: Int?,
+        page: Int
+    ) {
+        viewModelScope.launch {
+            try {
+                val movies = getSearchFilmsByFiltersUseCase.execute(
+                    keyword, countries, genres, ratingFrom, yearFrom, yearTo, page
+                )
+                _searchMovies.value = movies
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }
+
+
+
+
+
+
+
+
