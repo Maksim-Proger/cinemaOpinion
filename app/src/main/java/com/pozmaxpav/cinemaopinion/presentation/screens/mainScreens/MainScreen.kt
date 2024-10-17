@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -52,6 +53,8 @@ import com.pozmaxpav.cinemaopinion.presentation.components.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
+import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
+import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.formatYear
@@ -60,18 +63,24 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
+
+    // region Переменные
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     // DatePicker
     var showDatePicker by remember { mutableStateOf(false) }  // Состояние для показа DatePicker
-    // TODO: разобраться что в себе несет эта переменная
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) } // Состояние для выбранной даты
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) } // Значение выбранной даты
 
     // Блок поиска
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
     var searchCompleted by remember { mutableStateOf(false) } // Флаг для отображения списка фильмов после поиска
     val searchHistory = mutableListOf<String>()
+    // Расширенный поиск TODO: Надо проверить работает ли движение по страницам
+    var test by remember { mutableStateOf(CompositeRequest(null, null, null, null, null, null)) }
+    var testActive by remember { mutableStateOf(false) }
+    var testSendRequest by remember { mutableStateOf(false) } // Флаг для правильной отправки
 
     // Состояния для открытия страниц
     var onFilterButtonClick by remember { mutableStateOf(false) }
@@ -99,6 +108,9 @@ fun MainScreen(navController: NavHostController) {
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
+
+    // endregion
+    // region Launchers
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
@@ -132,6 +144,8 @@ fun MainScreen(navController: NavHostController) {
             }
     }
 
+    // endregion
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -153,10 +167,20 @@ fun MainScreen(navController: NavHostController) {
             }
 
             if (onAccountButtonClick) {
-                AccountScreen(
-                    navController,
-                    onClick = { onAccountButtonClick = false }
+//                AccountScreen(
+//                    navController,
+//                    onClick = { onAccountButtonClick = false }
+//                )
+
+                SearchFilterScreen(
+                    onClickClose = { onAccountButtonClick = false },
+                    onSendRequest = { testSendRequest = true },
+                    onSearch = { it ->
+                        test = it
+                        searchCompleted = true
+                    }
                 )
+
 
                 // Обработка нажатия системной кнопки "Назад"
                 BackHandler {
@@ -239,6 +263,20 @@ fun MainScreen(navController: NavHostController) {
             )
         }
     ) { padding ->
+
+        if (testSendRequest) {
+            test.let { compositeRequest  ->
+                viewModel.searchFilmsByFilters(
+                    compositeRequest.keyword,
+                    compositeRequest.countries,
+                    compositeRequest.genres,
+                    compositeRequest.ratingFrom,
+                    compositeRequest.yearFrom,
+                    compositeRequest.yearTo,
+                    currentPage)
+                testSendRequest = !testSendRequest
+            }
+        }
 
         AnimatedVisibility(
             visible = searchBarActive,

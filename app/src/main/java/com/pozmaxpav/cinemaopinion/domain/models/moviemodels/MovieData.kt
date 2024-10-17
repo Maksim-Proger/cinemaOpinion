@@ -37,7 +37,7 @@ sealed class MovieData : UnifyingId {
         val ratingKinopoisk: String?,
         val ratingImdb: String?,
 
-        override val nameRu: String,
+        override val nameRu: String?,
         override val posterUrl: String,
         override val year: String,
         override val countries: List<Country>

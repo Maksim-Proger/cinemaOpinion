@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie

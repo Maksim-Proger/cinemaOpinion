@@ -30,4 +30,16 @@ interface MovieListApi {
         @Query("page") page: Int
     ): ApiMovieSearchList
 
+    @Headers("X-API-KEY: $API_KEY")
+    @GET("/api/v2.2/films")
+    suspend fun searchFilmsByFilters(
+        @Query("keyword") keyword: String? = null,
+        @Query("countries") countries: Int? = null,
+        @Query("genres") genres: Int? = null,
+        @Query("ratingFrom") ratingFrom: Int? = null,
+        @Query("yearFrom") yearFrom: Int? = null,
+        @Query("yearTo") yearTo: Int? = null,
+        @Query("page") page: Int
+    ): ApiMovieSearchList
+
 }

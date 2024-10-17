@@ -84,7 +84,22 @@ fun MovieItem(
                         )
                     }
 
-                    is MovieData.MovieSearch -> {}
+                    is MovieData.MovieSearch -> {
+                        Text(
+                            text = movie.year,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(7.dp))
+                        Text(
+                            text = "Рейтинг Kinopoisk: ${movie.ratingKinopoisk ?: "Нет данных о рейтинге"}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(7.dp))
+                        Text(
+                            text = "Рейтинг Imdb: ${movie.ratingImdb ?: "Нет данных о рейтинге"}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
             }
         }

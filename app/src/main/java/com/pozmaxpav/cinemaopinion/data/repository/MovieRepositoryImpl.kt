@@ -22,4 +22,24 @@ class MovieRepositoryImpl @Inject constructor(private val api: MovieListApi) : M
         return api.searchFilms(keyword, page).toDomain()
     }
 
+    override suspend fun getSearchFilmsByFilters(
+        keyword: String?,
+        countries: Int?,
+        genres: Int?,
+        ratingFrom: Int?,
+        yearFrom: Int?,
+        yearTo: Int?,
+        page: Int
+    ): MovieSearchList {
+        return api.searchFilmsByFilters(
+            keyword,
+            countries,
+            genres,
+            ratingFrom,
+            yearFrom,
+            yearTo,
+            page
+        ).toDomain()
+    }
+
 }
