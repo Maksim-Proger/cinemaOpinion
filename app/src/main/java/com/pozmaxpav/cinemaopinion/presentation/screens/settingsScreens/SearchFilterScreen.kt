@@ -204,7 +204,7 @@ fun ShowListCountries(onCountrySelected: (Pair<Int, String>) -> Unit) {
         Pair(34, "Россия")
     )
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(vertical = 70.dp)
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -234,7 +234,7 @@ fun ShowListGenres(onGenreSelected: (Pair<Int, String>) -> Unit) {
     )
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(vertical = 70.dp)
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
