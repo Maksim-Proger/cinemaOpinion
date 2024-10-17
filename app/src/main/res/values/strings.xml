@@ -50,6 +50,7 @@
     <string name="description_icon_filter">Иконка фильтра</string>
     <string name="description_clear_text">Clear Text</string>
     <string name="description_icon_search">Иконка поиска</string>
+    <string name="description_icon_advanced_search">Иконка расширенного поиска</string>
     <string name="description_icon_edit">Icon Edit</string>
     <string name="description_icon_settings">Icon Strings</string>
     <string name="description_icon_exit">Icon Exit</string>

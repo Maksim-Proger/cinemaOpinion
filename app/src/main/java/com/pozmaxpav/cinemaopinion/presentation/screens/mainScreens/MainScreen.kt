@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -44,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.UnifyingId
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
@@ -53,7 +53,6 @@ import com.pozmaxpav.cinemaopinion.presentation.components.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
-import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
@@ -79,12 +78,12 @@ fun MainScreen(navController: NavHostController) {
     val searchHistory = mutableListOf<String>()
     // Расширенный поиск TODO: Надо проверить работает ли движение по страницам
     var test by remember { mutableStateOf(CompositeRequest(null, null, null, null, null, null)) }
-    var testActive by remember { mutableStateOf(false) }
-    var testSendRequest by remember { mutableStateOf(false) } // Флаг для правильной отправки
+    var sendRequestCompleted by remember { mutableStateOf(false) } // Флаг для правильной отправки
 
     // Состояния для открытия страниц
     var onFilterButtonClick by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
+    var onAdvancedSearchButtonClick by remember { mutableStateOf(false) }
 
     // Заголовок для AppBar
     var titleTopBarState by remember { mutableStateOf(false) }
@@ -161,31 +160,32 @@ fun MainScreen(navController: NavHostController) {
                         stringResource(id = R.string.top_app_bar_header_name_top_list_movies)
                     },
                     onSearchButtonClick = { searchBarActive = !searchBarActive },
+                    onAdvancedSearchButtonClick = { onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick },
                     onAccountButtonClick = { onAccountButtonClick = !onAccountButtonClick },
                     scrollBehavior = scrollBehavior
                 )
             }
 
             if (onAccountButtonClick) {
-//                AccountScreen(
-//                    navController,
-//                    onClick = { onAccountButtonClick = false }
-//                )
+                AccountScreen(
+                    navController,
+                    onClick = { onAccountButtonClick = false }
+                )
+                // Обработка нажатия системной кнопки "Назад"
+                BackHandler {
+                    onAccountButtonClick = false
+                }
+            }
 
+            if (onAdvancedSearchButtonClick) {
                 SearchFilterScreen(
-                    onClickClose = { onAccountButtonClick = false },
-                    onSendRequest = { testSendRequest = true },
+                    onClickClose = { onAdvancedSearchButtonClick = false },
+                    onSendRequest = { sendRequestCompleted = true },
                     onSearch = { it ->
                         test = it
                         searchCompleted = true
                     }
                 )
-
-
-                // Обработка нажатия системной кнопки "Назад"
-                BackHandler {
-                    onAccountButtonClick = false
-                }
             }
         },
         floatingActionButton = {
@@ -264,7 +264,7 @@ fun MainScreen(navController: NavHostController) {
         }
     ) { padding ->
 
-        if (testSendRequest) {
+        if (sendRequestCompleted) {
             test.let { compositeRequest  ->
                 viewModel.searchFilmsByFilters(
                     compositeRequest.keyword,
@@ -274,7 +274,7 @@ fun MainScreen(navController: NavHostController) {
                     compositeRequest.yearFrom,
                     compositeRequest.yearTo,
                     currentPage)
-                testSendRequest = !testSendRequest
+                sendRequestCompleted = !sendRequestCompleted
             }
         }
 
