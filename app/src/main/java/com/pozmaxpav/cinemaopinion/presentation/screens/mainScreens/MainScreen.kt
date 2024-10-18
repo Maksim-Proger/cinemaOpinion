@@ -171,7 +171,6 @@ fun MainScreen(navController: NavHostController) {
                     navController,
                     onClick = { onAccountButtonClick = false }
                 )
-                // Обработка нажатия системной кнопки "Назад"
                 BackHandler {
                     onAccountButtonClick = false
                 }
@@ -186,6 +185,9 @@ fun MainScreen(navController: NavHostController) {
                         searchCompleted = true
                     }
                 )
+                BackHandler {
+                    onAdvancedSearchButtonClick = false
+                }
             }
         },
         floatingActionButton = {

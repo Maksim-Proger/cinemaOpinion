@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ListItem
@@ -76,6 +77,7 @@ fun SearchFilterScreen(
             Text(
                 text = stringResource(R.string.title_for_advanced_search_screen),
                 style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
@@ -101,11 +103,14 @@ fun SearchFilterScreen(
                     Button(
                         onClick = {
                             showCountriesList = !showCountriesList
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
                     ) {
                         Text(
                             text = "Страна",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
@@ -140,11 +145,14 @@ fun SearchFilterScreen(
                     Button(
                         onClick = {
                             showGenresList = !showGenresList
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
                     ) {
                         Text(
                             text = "Жанр",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
@@ -177,7 +185,7 @@ fun SearchFilterScreen(
                             CompositeRequest(
                                 null,
                                 selectedCountry?.first,
-                                null,
+                                selectedGenre?.first,
                                 null,
                                 parsYearsToString(selectedRange)[0].toInt(),
                                 parsYearsToString(selectedRange)[1].toInt(),
@@ -187,7 +195,10 @@ fun SearchFilterScreen(
                         onSendRequest()
                     }
                 ) {
-                    Text(text = "Показать")
+                    Text(
+                        text = "Показать",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
             }
         }
@@ -260,8 +271,14 @@ fun RangeSliderToSelectDate(
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
-        Text(text = "Выбор диапазона годов: ${range.start.toInt()} - ${range.endInclusive.toInt()}")
+        Text(
+            text = "Выберите диапазон: ${range.start.toInt()} - ${range.endInclusive.toInt()}",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
         RangeSlider(
+            modifier = Modifier.padding(horizontal = 10.dp),
             value = range,
             onValueChange = onRangeChange,
             valueRange = 1900f..2024f,
