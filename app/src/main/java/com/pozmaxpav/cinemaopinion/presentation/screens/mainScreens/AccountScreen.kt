@@ -226,7 +226,6 @@ fun AccountScreen(
                         ) {
                             showSeriesControlScreen = true
                         }
-
                     }
                 }
             }
@@ -276,18 +275,6 @@ private fun AccountSettingMenu(navController: NavHostController) {
                 Icon(
                     Icons.Default.Settings,
                     contentDescription = stringResource(id = R.string.description_icon_settings),
-                    tint = MaterialTheme.colorScheme.onSecondary
-                )
-            }
-        )
-
-        MyDropdownMenuItem(
-            onAction = { /* Настроить навигацию */ },
-            title = stringResource(id = R.string.drop_down_menu_item_exit),
-            leadingIcon = {
-                Icon(
-                    Icons.Default.ExitToApp,
-                    contentDescription = stringResource(id = R.string.description_icon_exit),
                     tint = MaterialTheme.colorScheme.onSecondary
                 )
             }

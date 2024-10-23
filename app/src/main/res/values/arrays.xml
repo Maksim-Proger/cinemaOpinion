@@ -5,10 +5,4 @@
         <item>Светлая тема</item>
         <item>Как на устройстве</item>
     </string-array>
-
-    <string-array name="array_of_languages">
-        <item>Русский</item>
-        <item>Английский</item>
-        <item>Как на устройстве</item>
-    </string-array>
 </resources>
