@@ -191,7 +191,7 @@ fun MainScreen(navController: NavHostController) {
             }
         },
         floatingActionButton = {
-            if (!onAccountButtonClick && !searchBarActive && selectedMovie == null) {
+            if (!onAccountButtonClick && !searchBarActive && !onAdvancedSearchButtonClick && selectedMovie == null) {
                 FabButtonWithMenu(
                     imageIcon = Icons.Default.Settings,
                     contentDescription = "Меню настроек",

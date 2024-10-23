@@ -35,9 +35,6 @@ fun SettingsScreen(
     val myStringArray = stringArrayResource(R.array.my_string_array)
     val optionsList = myStringArray.toList()
 
-    val languagesArray = stringArrayResource(R.array.array_of_languages)
-    val languagesList = languagesArray.toList()
-
     Scaffold (
         topBar = {
             TopAppBar(
@@ -88,8 +85,6 @@ fun SettingsScreen(
                     }
                 }
             }
-//            HorizontalDivider()
-//            SettingsRadioButtons(languagesList)
         }
     }
 }
