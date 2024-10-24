@@ -4,6 +4,8 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -121,6 +124,66 @@ fun CustomTextField(
     )
 }
 
+@Composable
+fun SelectedItem(
+    movie: SelectedMovie,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .padding(16.dp)
+            .clickable { onClick() }
+    ) {
+        WorkerWithImageSelectedMovie(
+            movie = movie,
+            height = 90.dp
+        )
+        Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+        Text(
+            text = movie.nameFilm,
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+}
+
+// TODO: Доработать
+@Composable
+fun ShowSelectedMovie(
+    movie: SelectedMovie,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        Row(
+            modifier = Modifier
+                .padding(10.dp)
+                .clickable { onClick() }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            WorkerWithImageSelectedMovie(
+                movie = movie,
+                height = 90.dp
+            )
+            Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+            Text(
+                text = movie.nameFilm,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
 
 @Composable
 fun WorkerWithImage(

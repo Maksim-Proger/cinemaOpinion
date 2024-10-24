@@ -148,41 +148,51 @@ fun SeriesControlScreen(
                     ) {
                         Card(
                             modifier = Modifier
-                                .weight(0.95f)
+                                .fillMaxWidth()
                                 .wrapContentHeight(),
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.secondary,
                                 contentColor = MaterialTheme.colorScheme.onSecondary
                             )
                         ) {
-                            Item(movie) {
-                                selectedNote = movie
-                                openBottomSheetChange = true
-                            }
-                        }
-                        Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-                        IconButton(
-                            modifier = Modifier
-                                .weight(0.05f),
-                            onClick = {
-                                isVisible = false // Скрываем элемент перед удалением
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    delay(300)
-                                    viewModel.deleteMovie(movie.id)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(
+                                    modifier = Modifier.weight(0.9f)
+                                ) {
+                                    Item(movie) {
+                                        selectedNote = movie
+                                        openBottomSheetChange = true
+                                    }
+                                }
+
+                                IconButton(
+                                    onClick = {
+                                        isVisible = false // Скрываем элемент перед удалением
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            delay(300)
+                                            viewModel.deleteMovie(movie.id)
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
                                 }
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
                         }
                     }
                 }
                 Spacer(modifier = Modifier.padding(vertical = 5.dp))
             }
-            item { Spacer(Modifier.padding(45.dp)) } // TODO: С этим что-то не так
+            item { Spacer(Modifier.padding(45.dp)) }
         }
     }
 }

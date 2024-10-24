@@ -1,10 +1,8 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
-import com.pozmaxpav.cinemaopinion.domain.models.modelfirebase.FilmDomain
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
@@ -20,9 +18,6 @@ class FirebaseViewModel @Inject constructor(
     private val removeMovieUseCase: RemoveMovieUseCase,
     private val getMovieUseCase: GetMovieUseCase
 ) : ViewModel() {
-
-//    private val _movies = MutableStateFlow<List<FilmDomain>>(emptyList())
-//    val movies: StateFlow<List<FilmDomain>> = _movies
 
     private val _movies = MutableStateFlow<List<SelectedMovie>>(emptyList())
     val movies: StateFlow<List<SelectedMovie>> = _movies
@@ -56,7 +51,6 @@ class FirebaseViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 removeMovieUseCase(id)
-                _errorMessage.value = null
             } catch (e: Exception) {
                 _errorMessage.value = e.message
             }
