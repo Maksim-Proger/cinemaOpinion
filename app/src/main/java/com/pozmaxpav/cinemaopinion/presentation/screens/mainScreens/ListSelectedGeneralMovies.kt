@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,7 +42,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
-import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
+import com.pozmaxpav.cinemaopinion.utilits.SelectedItem
+import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -68,7 +70,7 @@ fun ListSelectedGeneralMovies(
     ) {
 
         if (selectedNote != null) {
-            ShowSelectedMovie2(
+            ShowSelectedMovie(
                 movie = selectedNote!!,
                 onClick = { selectedNote = null }
             )
@@ -107,35 +109,43 @@ fun ListSelectedGeneralMovies(
                             ) {
                                 Card(
                                     modifier = Modifier
-                                        .weight(0.9f)
                                         .wrapContentHeight(),
                                     colors = CardDefaults.cardColors(
                                         containerColor = MaterialTheme.colorScheme.secondary,
                                         contentColor = MaterialTheme.colorScheme.onSecondary
                                     )
                                 ) {
-                                    SelectedItem(movie = movie) {
-                                        selectedNote = movie
-                                    }
-                                }
-                                Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .wrapContentHeight(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.weight(0.9f)
+                                        ) {
+                                            SelectedItem(movie = movie) {
+                                                selectedNote = movie
+                                            }
+                                        }
 
-                                IconButton(
-                                    modifier = Modifier
-                                        .weight(0.1f),
-                                    onClick = {
-                                        isVisible = false // Скрываем элемент перед удалением
-                                        CoroutineScope(Dispatchers.Main).launch {
-                                            delay(300)
-                                            viewModel.removeMovie(movie.id.toDouble())
+                                        IconButton(
+                                            onClick = {
+                                                isVisible = false // Скрываем элемент перед удалением
+                                                CoroutineScope(Dispatchers.Main).launch {
+                                                    delay(300)
+                                                    viewModel.removeMovie(movie.id.toDouble())
+                                                }
+                                            }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Close,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
                                         }
                                     }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
                                 }
                             }
                         }
@@ -147,6 +157,7 @@ fun ListSelectedGeneralMovies(
 
         Spacer(modifier = Modifier.padding(15.dp))
 
+        // region Кнопка закрыть
         Card(
             modifier = Modifier
                 .clickable(onClick = { onClickCloseButton() }),
@@ -166,44 +177,8 @@ fun ListSelectedGeneralMovies(
                 )
             }
         }
+        // endregion
     }
 }
 
-// TODO: Доработать
-@Composable
-fun ShowSelectedMovie2(
-    movie: SelectedMovie,
-    onClick: () -> Unit,
-) {
-    Card(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(10.dp)
-                .clickable { onClick() }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
-            WorkerWithImageSelectedMovie(
-                movie = movie,
-                height = 90.dp
-            )
-            Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-            Text(
-                text = movie.nameFilm,
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    }
-}
 

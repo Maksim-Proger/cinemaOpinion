@@ -101,7 +101,7 @@ fun MainScreen(navController: NavHostController) {
     var scrollToTop by remember { mutableStateOf(false) }
 
     // Логика переключения страницы
-    var currentPage by remember { mutableIntStateOf(1) }
+    var currentPage by remember { mutableIntStateOf(1) } // TODO: Есть проблема при повторном поиске
     var showPageSwitchingButtons by remember { mutableStateOf(false) }
     var saveSearchQuery by remember { mutableStateOf("") }
 
