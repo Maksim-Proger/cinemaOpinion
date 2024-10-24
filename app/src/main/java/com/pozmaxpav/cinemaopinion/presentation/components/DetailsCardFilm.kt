@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -190,9 +189,8 @@ fun DetailsCardFilm(
                             contentColor = MaterialTheme.colorScheme.onSecondary
                         ),
                         onClick = {
-                            viewModelFirebase.saveMovie(movie.nameRu.toString())
+                            viewModelFirebase.saveMovie(movie.toSelectedMovie())
                             showToast(context, addToGeneralList)
-
                             onClick()
                         },
                     ) {

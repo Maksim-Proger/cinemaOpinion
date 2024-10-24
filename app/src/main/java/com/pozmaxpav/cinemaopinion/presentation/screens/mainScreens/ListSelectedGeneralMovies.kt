@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
@@ -19,8 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -36,12 +35,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
+import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -54,6 +54,7 @@ fun ListSelectedGeneralMovies(
 ) {
 
     val listMovies by viewModel.movies.collectAsState()
+    var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.getMovies()
@@ -65,76 +66,81 @@ fun ListSelectedGeneralMovies(
             .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 45.dp, horizontal = 16.dp)
     ) {
-        Card(
-            modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer
+
+        if (selectedNote != null) {
+            ShowSelectedMovie2(
+                movie = selectedNote!!,
+                onClick = { selectedNote = null }
             )
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(10.dp)
+            BackHandler {
+                selectedNote = null
+            }
+        } else {
+            Card(
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                )
             ) {
-                items(listMovies) { movie ->
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(10.dp)
+                ) {
+                    items(listMovies) { movie ->
 
-                    var isVisible by remember { mutableStateOf(true) } // Состояние видимости
+                        var isVisible by remember { mutableStateOf(true) } // Состояние видимости
 
-                    AnimatedVisibility(
-                        visible = isVisible,
-                        exit = slideOutHorizontally(
-                            targetOffsetX = { -it }, // Уходит влево
-                            animationSpec = tween(durationMillis = 300) // Длительность анимации
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                        AnimatedVisibility(
+                            visible = isVisible,
+                            exit = slideOutHorizontally(
+                                targetOffsetX = { -it }, // Уходит влево
+                                animationSpec = tween(durationMillis = 300) // Длительность анимации
+                            )
                         ) {
-                            Card(
+                            Row(
                                 modifier = Modifier
-                                    .weight(0.9f)
-                                    .wrapContentHeight(),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                    contentColor = MaterialTheme.colorScheme.onSecondary
-                                )
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(
+                                Card(
                                     modifier = Modifier
-                                        .padding(16.dp)
+                                        .weight(0.9f)
+                                        .wrapContentHeight(),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.secondary,
+                                        contentColor = MaterialTheme.colorScheme.onSecondary
+                                    )
                                 ) {
-                                    Text(
-                                        text = movie.titleFilm,
-                                        style = MaterialTheme.typography.bodyLarge
+                                    SelectedItem(movie = movie) {
+                                        selectedNote = movie
+                                    }
+                                }
+                                Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+
+                                IconButton(
+                                    modifier = Modifier
+                                        .weight(0.1f),
+                                    onClick = {
+                                        isVisible = false // Скрываем элемент перед удалением
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            delay(300)
+                                            viewModel.removeMovie(movie.id.toDouble())
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-
-                            IconButton(
-                                modifier = Modifier
-                                    .weight(0.1f),
-                                onClick = {
-                                    isVisible = false // Скрываем элемент перед удалением
-                                    CoroutineScope(Dispatchers.Main).launch {
-                                        delay(300)
-                                        viewModel.removeMovie(movie.titleFilm)
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
                         }
+                        Spacer(Modifier.padding(5.dp))
                     }
-                    Spacer(Modifier.padding(5.dp))
                 }
             }
         }
@@ -162,3 +168,42 @@ fun ListSelectedGeneralMovies(
         }
     }
 }
+
+// TODO: Доработать
+@Composable
+fun ShowSelectedMovie2(
+    movie: SelectedMovie,
+    onClick: () -> Unit,
+) {
+    Card(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(10.dp)
+                .clickable { onClick() }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            WorkerWithImageSelectedMovie(
+                movie = movie,
+                height = 90.dp
+            )
+            Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+            Text(
+                text = movie.nameFilm,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
+

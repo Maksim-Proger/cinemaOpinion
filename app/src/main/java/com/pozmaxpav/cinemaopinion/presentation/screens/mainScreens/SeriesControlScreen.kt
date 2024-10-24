@@ -182,7 +182,7 @@ fun SeriesControlScreen(
                 }
                 Spacer(modifier = Modifier.padding(vertical = 5.dp))
             }
-            item { Spacer(Modifier.padding(45.dp)) }
+            item { Spacer(Modifier.padding(45.dp)) } // TODO: С этим что-то не так
         }
     }
 }

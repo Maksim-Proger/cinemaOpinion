@@ -1,7 +1,9 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.modelfirebase.FilmDomain
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
@@ -19,8 +21,11 @@ class FirebaseViewModel @Inject constructor(
     private val getMovieUseCase: GetMovieUseCase
 ) : ViewModel() {
 
-    private val _movies = MutableStateFlow<List<FilmDomain>>(emptyList())
-    val movies: StateFlow<List<FilmDomain>> = _movies
+//    private val _movies = MutableStateFlow<List<FilmDomain>>(emptyList())
+//    val movies: StateFlow<List<FilmDomain>> = _movies
+
+    private val _movies = MutableStateFlow<List<SelectedMovie>>(emptyList())
+    val movies: StateFlow<List<SelectedMovie>> = _movies
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> get() = _errorMessage
@@ -36,10 +41,10 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun saveMovie(title: String) {
+    fun saveMovie(selectedMovie: SelectedMovie) {
         viewModelScope.launch {
             try {
-                saveMovieUseCase(title)
+                saveMovieUseCase(selectedMovie)
                 _errorMessage.value = null // Зачем это нам?
             } catch (e: Exception) {
                 _errorMessage.value = e.message
@@ -47,10 +52,10 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun removeMovie(title: String) {
+    fun removeMovie(id: Double) {
         viewModelScope.launch {
             try {
-                removeMovieUseCase(title)
+                removeMovieUseCase(id)
                 _errorMessage.value = null
             } catch (e: Exception) {
                 _errorMessage.value = e.message
