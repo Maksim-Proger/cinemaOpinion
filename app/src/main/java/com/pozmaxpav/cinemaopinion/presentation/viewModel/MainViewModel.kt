@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.information.Information
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetPremiereMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchFilmsByFiltersUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetTopMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.movies.information.GetMovieInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +23,8 @@ class MainViewModel @Inject constructor(
     private val getPremiereMoviesUseCase: GetPremiereMoviesUseCase,
     private val getSearchMoviesUseCase: GetSearchMoviesUseCase,
     private val getTopMoviesUseCase: GetTopMoviesUseCase,
-    private val getSearchFilmsByFiltersUseCase: GetSearchFilmsByFiltersUseCase
+    private val getSearchFilmsByFiltersUseCase: GetSearchFilmsByFiltersUseCase,
+    private val getMovieInformationUseCase: GetMovieInformationUseCase
 ) : ViewModel() {
 
     private val _premiereMovies = MutableStateFlow<MovieList?>(null)
@@ -32,6 +35,20 @@ class MainViewModel @Inject constructor(
 
     private val _searchMovies = MutableStateFlow<MovieSearchList?>(null)
     val searchMovies: StateFlow<MovieSearchList?> get() = _searchMovies.asStateFlow()
+
+    private val _informationMovie = MutableStateFlow<Information?>(null)
+    val informationMovie: StateFlow<Information?> get() = _informationMovie.asStateFlow()
+
+    fun getInformationMovie(movieId: Int) {
+        viewModelScope.launch {
+            try {
+                val info = getMovieInformationUseCase(movieId)
+                _informationMovie.value = info
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     fun fetchPremiersMovies(year: Int, month: String) {
         viewModelScope.launch {

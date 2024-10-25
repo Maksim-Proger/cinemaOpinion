@@ -9,6 +9,7 @@ import com.example.introductoryscreens.domain.usecases.ReadAppEntry
 import com.example.introductoryscreens.domain.usecases.SaveAppEntry
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.pozmaxpav.cinemaopinion.data.api.GetMovieInformationApi
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
 import com.pozmaxpav.cinemaopinion.data.localdatastore.LocalUserManagerImpl
 import com.pozmaxpav.cinemaopinion.data.localdb.appdb.AppDatabase
@@ -16,12 +17,14 @@ import com.pozmaxpav.cinemaopinion.data.localdb.dao.SelectedMovieDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.SeriesControlDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.UserDao
 import com.pozmaxpav.cinemaopinion.data.localdb.migration.DatabaseMigrations
+import com.pozmaxpav.cinemaopinion.data.repository.GetMovieInformationApiRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SelectedMovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.data.repository.UserRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.FirebaseRepositoryImpl
+import com.pozmaxpav.cinemaopinion.domain.repository.GetMovieInformationApiRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.SelectedMovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.SeriesControlRepository
@@ -87,6 +90,30 @@ object AppModule {
     @Singleton
     fun provideMovieRepository(api: MovieListApi): MovieRepository {
         return MovieRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetMovieInformationApi(): GetMovieInformationApi {
+        return Retrofit
+            .Builder()
+            .client(
+                OkHttpClient.Builder().addInterceptor(
+                    HttpLoggingInterceptor().also {
+                        it.level = HttpLoggingInterceptor.Level.BODY
+                    }
+                ).build()
+            )
+            .baseUrl("https://api.kinopoisk.dev")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create<GetMovieInformationApi>()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetMovieInformationApiRepository(api: GetMovieInformationApi): GetMovieInformationApiRepository {
+        return GetMovieInformationApiRepositoryImpl(api)
     }
 
     // endregion
