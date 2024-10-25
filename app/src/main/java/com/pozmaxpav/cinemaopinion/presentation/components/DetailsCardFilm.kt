@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -31,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 import com.pozmaxpav.cinemaopinion.utilits.formatCountries
@@ -47,9 +50,11 @@ fun DetailsCardFilm(
     onClick: () -> Unit,
     padding: PaddingValues,
     viewModel: SelectedMovieViewModel = hiltViewModel(),
-    viewModelFirebase: FirebaseViewModel = hiltViewModel()
+    viewModelFirebase: FirebaseViewModel = hiltViewModel(),
+    viewModelMain: MainViewModel = hiltViewModel()
 ) {
     val statusExist by viewModel.status.collectAsState()
+    val info by viewModelMain.informationMovie.collectAsState()
     val context = LocalContext.current
     Column(
         modifier = Modifier
@@ -110,8 +115,12 @@ fun DetailsCardFilm(
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(modifier = Modifier.height(4.dp))
+
                     when(movie) {
                         is MovieData.Movie -> {
+
+                            viewModelMain.getInformationMovie(movie.id)
+
                             Text(
                                 text = "Премьера в России: ${movie.premiereRu}",
                                 style = MaterialTheme.typography.bodyLarge
@@ -121,6 +130,19 @@ fun DetailsCardFilm(
                                 text = "Жанр: ${formatGenres(movie.genres)}",
                                 style = MaterialTheme.typography.bodyLarge
                             )
+                            Spacer(modifier = Modifier.padding(15.dp))
+
+                            val scrollState = rememberScrollState() // TODO: Это можно убрать?
+                            Column(
+                                modifier = Modifier
+                                    .height(150.dp)
+                                    .verticalScroll(scrollState)
+                            ) {
+                                Text(
+                                    text = info?.description ?: "Нет описания",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
                         }
                         is MovieData.MovieTop -> {
                             Text(
