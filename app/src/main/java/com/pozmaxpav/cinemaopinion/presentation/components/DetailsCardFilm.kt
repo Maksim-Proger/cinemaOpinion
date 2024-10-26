@@ -101,29 +101,33 @@ fun DetailsCardFilm(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp, horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    WorkerWithImage(movie, 250.dp)
+                    WorkerWithImage(movie, 200.dp)
+                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Название фильма: ${movie.nameRu ?: stringResource(id = R.string.no_movie_title)}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Страна: ${formatCountries(movie.countries)}",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.padding(16.dp))
+                Spacer(modifier = Modifier.padding(5.dp))
 
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .padding(16.dp)
+                        .fillMaxWidth()
                 ) {
-                    Text(
-                        text = "Название фильма: ${movie.nameRu ?: stringResource(id = R.string.no_movie_title)}",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Страна: ${formatCountries(movie.countries)}",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-
                     when(movie) {
                         is MovieData.Movie -> {
                             Text(
@@ -136,18 +140,11 @@ fun DetailsCardFilm(
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Spacer(modifier = Modifier.padding(15.dp))
+                            ExpandedCard(
+                                title = "Описание",
+                                description = info?.description ?: "К сожалению, суточный лимит закончился"
+                            )
 
-                            val scrollState = rememberScrollState() // TODO: Это можно убрать?
-                            Column(
-                                modifier = Modifier
-                                    .height(170.dp)
-                                    .verticalScroll(scrollState)
-                            ) {
-                                Text(
-                                    text = info?.description ?: "К сожалению, суточный лимит закончился",
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
                         }
                         is MovieData.MovieTop -> {
                             Text(
@@ -160,18 +157,10 @@ fun DetailsCardFilm(
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Spacer(modifier = Modifier.padding(15.dp))
-
-                            val scrollState = rememberScrollState() // TODO: Это можно убрать?
-                            Column(
-                                modifier = Modifier
-                                    .height(170.dp)
-                                    .verticalScroll(scrollState)
-                            ) {
-                                Text(
-                                    text = info?.description ?: "К сожалению, суточный лимит закончился",
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
+                            ExpandedCard(
+                                title = "Описание",
+                                description = info?.description ?: "К сожалению, суточный лимит закончился"
+                            )
                         }
                         is MovieData.MovieSearch -> {
                             Text(
@@ -189,22 +178,15 @@ fun DetailsCardFilm(
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Spacer(modifier = Modifier.padding(15.dp))
-
-                            val scrollState = rememberScrollState() // TODO: Это можно убрать?
-                            Column(
-                                modifier = Modifier
-                                    .height(170.dp)
-                                    .verticalScroll(scrollState)
-                            ) {
-                                Text(
-                                    text = info?.description ?: "К сожалению, суточный лимит закончился",
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
+                            ExpandedCard(
+                                title = "Описание",
+                                description = info?.description ?: "К сожалению, суточный лимит закончился"
+                            )
                         }
                     }
                 }
 
+                // region Этот кусок пока мешает
                 Spacer(modifier = Modifier.padding(16.dp))
 
                 Row(
@@ -253,6 +235,7 @@ fun DetailsCardFilm(
                         )
                     }
                 }
+                // endregion
             }
         }
     }
