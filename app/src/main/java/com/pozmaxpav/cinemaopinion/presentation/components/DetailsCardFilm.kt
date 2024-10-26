@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -54,8 +55,15 @@ fun DetailsCardFilm(
     viewModelMain: MainViewModel = hiltViewModel()
 ) {
     val statusExist by viewModel.status.collectAsState()
-    val info by viewModelMain.informationMovie.collectAsState()
     val context = LocalContext.current
+
+    val info by viewModelMain.informationMovie.collectAsState()
+    // Выполняем запрос к API только при изменении `movie.id`
+    // Это нужно, чтобы не было многократного запроса к Api
+    LaunchedEffect(movie.id) {
+        viewModelMain.getInformationMovie(movie.id)
+    }
+
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -118,9 +126,6 @@ fun DetailsCardFilm(
 
                     when(movie) {
                         is MovieData.Movie -> {
-
-                            viewModelMain.getInformationMovie(movie.id)
-
                             Text(
                                 text = "Премьера в России: ${movie.premiereRu}",
                                 style = MaterialTheme.typography.bodyLarge
@@ -135,11 +140,11 @@ fun DetailsCardFilm(
                             val scrollState = rememberScrollState() // TODO: Это можно убрать?
                             Column(
                                 modifier = Modifier
-                                    .height(150.dp)
+                                    .height(170.dp)
                                     .verticalScroll(scrollState)
                             ) {
                                 Text(
-                                    text = info?.description ?: "Нет описания",
+                                    text = info?.description ?: "К сожалению, суточный лимит закончился",
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                             }
@@ -154,6 +159,19 @@ fun DetailsCardFilm(
                                 text = "Рейтинг: ${movie.rating}",
                                 style = MaterialTheme.typography.bodyLarge
                             )
+                            Spacer(modifier = Modifier.padding(15.dp))
+
+                            val scrollState = rememberScrollState() // TODO: Это можно убрать?
+                            Column(
+                                modifier = Modifier
+                                    .height(170.dp)
+                                    .verticalScroll(scrollState)
+                            ) {
+                                Text(
+                                    text = info?.description ?: "К сожалению, суточный лимит закончился",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
                         }
                         is MovieData.MovieSearch -> {
                             Text(
@@ -170,6 +188,19 @@ fun DetailsCardFilm(
                                 text = "Рейтинг Imdb: ${movie.ratingImdb ?: "Нет данных о рейтинге"}",
                                 style = MaterialTheme.typography.bodyLarge
                             )
+                            Spacer(modifier = Modifier.padding(15.dp))
+
+                            val scrollState = rememberScrollState() // TODO: Это можно убрать?
+                            Column(
+                                modifier = Modifier
+                                    .height(170.dp)
+                                    .verticalScroll(scrollState)
+                            ) {
+                                Text(
+                                    text = info?.description ?: "К сожалению, суточный лимит закончился",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
                         }
                     }
                 }
