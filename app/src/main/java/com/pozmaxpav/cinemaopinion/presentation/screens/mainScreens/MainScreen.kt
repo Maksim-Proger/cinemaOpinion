@@ -342,7 +342,10 @@ fun MainScreen(navController: NavHostController) {
                         .padding(padding),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    items(moviesToDisplay, key = { (it as UnifyingId).id }) { movie ->
+                    items(moviesToDisplay, key = {
+//                        (it as UnifyingId).id // Эта запись избыточна
+                        it.id
+                    }) { movie ->
                         MovieItem(movie = movie) {
                             selectedMovie = movie
                         }
