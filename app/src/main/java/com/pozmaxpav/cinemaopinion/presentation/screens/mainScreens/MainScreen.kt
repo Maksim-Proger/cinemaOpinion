@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -45,7 +46,6 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.UnifyingId
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
@@ -101,7 +101,7 @@ fun MainScreen(navController: NavHostController) {
     var scrollToTop by remember { mutableStateOf(false) }
 
     // Логика переключения страницы
-    var currentPage by remember { mutableIntStateOf(1) } // TODO: Есть проблема при повторном поиске
+    var currentPage by remember { mutableIntStateOf(1) }
     var showPageSwitchingButtons by remember { mutableStateOf(false) }
     var saveSearchQuery by remember { mutableStateOf("") }
 
@@ -290,6 +290,7 @@ fun MainScreen(navController: NavHostController) {
                     query = query,
                     onQueryChange = { newQuery -> query = newQuery },
                     onSearch = { searchQuery ->
+                        currentPage = 1
                         viewModel.fetchSearchMovies(searchQuery, currentPage)
                         saveSearchQuery = searchQuery
                         searchHistory.add(searchQuery)
@@ -351,7 +352,6 @@ fun MainScreen(navController: NavHostController) {
                         }
                     }
 
-                    // TODO: При поиске не переключает на последнюю страницу. ПРОВЕРИТЬ!
                     if (showPageSwitchingButtons) {
                         item {
                             Row(

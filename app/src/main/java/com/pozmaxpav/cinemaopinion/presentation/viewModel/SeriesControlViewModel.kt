@@ -32,36 +32,52 @@ class SeriesControlViewModel @Inject constructor(
 
     private fun getListMovies() {
         viewModelScope.launch {
-            getListMoviesUseCase().collect { movies ->
-                _listMovies.value = movies
+            try {
+                getListMoviesUseCase().collect { movies ->
+                    _listMovies.value = movies
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
 
     fun insertMovie(title: String, season: Int = 0, series: Int = 0) {
         viewModelScope.launch {
-            val movie = SeriesControlModel(
-                id = 0, // Это значение будет игнорироваться, так как id автоинкрементный
-                title = title,
-                season = season,
-                series = series
-            )
-            insertUseCase(movie)
+            try {
+                val movie = SeriesControlModel(
+                    id = 0, // Это значение будет игнорироваться, так как id автоинкрементный
+                    title = title,
+                    season = season,
+                    series = series
+                )
+                insertUseCase(movie)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     fun updateMovie(id: Int, season: Int, series: Int) {
         viewModelScope.launch {
-            val movie = getMovieByIdUseCase(id)
-            val updatedMovie = movie!!.copy(season = season, series = series) // Обновляем нужные параметры
-            updateMovieUseCase(updatedMovie)
+            try {
+                val movie = getMovieByIdUseCase(id)
+                val updatedMovie = movie!!.copy(season = season, series = series) // Обновляем нужные параметры
+                updateMovieUseCase(updatedMovie)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     fun deleteMovie(id: Int) {
         viewModelScope.launch {
-            val movie = getMovieByIdUseCase(id)
-            deleteMovieUseCase(movie!!)
+            try {
+                val movie = getMovieByIdUseCase(id)
+                deleteMovieUseCase(movie!!)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

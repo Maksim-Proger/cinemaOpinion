@@ -86,7 +86,7 @@ fun MovieItem(
 
                     is MovieData.MovieSearch -> {
                         Text(
-                            text = movie.year,
+                            text = movie.year ?: "Нет данных о дате",
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(modifier = Modifier.height(7.dp))
