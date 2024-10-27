@@ -25,11 +25,16 @@ class UserViewModel @Inject constructor(
     fun addUser(firstName: String, lastName: String) {
         val newUser = User(0, firstName, lastName)
         viewModelScope.launch {
-            insertUserUseCase(newUser)
-            fitchUser()
+            try {
+                insertUserUseCase(newUser)
+                fitchUser()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
+    // TODO: Разобраться что тут у меня!
     fun fitchUser() {
         viewModelScope.launch {
             try {
@@ -37,17 +42,22 @@ class UserViewModel @Inject constructor(
                 _users.value = user // user может быть null
             } catch (e: Exception) {
                 _users.value = null
+                e.printStackTrace()
             }
         }
     }
 
     fun updateUser(firstName: String, lastName: String) {
         viewModelScope.launch {
-            val user = getUserUseCase()
-            val currentUser = user?.id
-            if (currentUser != null) {
-                val updatedUser = User(currentUser, firstName, lastName)
-                updateUserUseCase.invoke(updatedUser)
+            try {
+                val user = getUserUseCase()
+                val currentUser = user?.id
+                if (currentUser != null) {
+                    val updatedUser = User(currentUser, firstName, lastName)
+                    updateUserUseCase.invoke(updatedUser)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

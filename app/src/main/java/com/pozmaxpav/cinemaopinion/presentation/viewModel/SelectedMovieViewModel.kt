@@ -34,26 +34,39 @@ class SelectedMovieViewModel @Inject constructor(
 
     fun fitchListSelectedMovies() {
         viewModelScope.launch {
-            val movies = getListSelectedFilmsUseCase()
-            _selectedMovies.value = movies
+            try {
+                val movies = getListSelectedFilmsUseCase()
+                _selectedMovies.value = movies
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
         }
     }
 
     fun addSelectedMovie(selectedMovie: SelectedMovie) {
         viewModelScope.launch {
-            val existMovie = getFilmById(selectedMovie.id)
-            if (existMovie == null) {
-                insertFilmUseCase.invoke(selectedMovie)
-            } else {
-                _status.value = "error"
+            try {
+                val existMovie = getFilmById(selectedMovie.id)
+                if (existMovie == null) {
+                    insertFilmUseCase.invoke(selectedMovie)
+                } else {
+                    _status.value = "error"
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
 
     fun deleteSelectedMovie(selectedMovie: SelectedMovie) {
         viewModelScope.launch {
-            deleteSelectedFilmUseCase(selectedMovie)
-            fitchListSelectedMovies()
+            try {
+                deleteSelectedFilmUseCase(selectedMovie)
+                fitchListSelectedMovies()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

@@ -22,10 +22,11 @@ data class ApiMovieTop(
 
 data class ApiMovieSearch(
     val kinopoiskId: Int,
-    val ratingKinopoisk: String?,
-    val ratingImdb: String?,
+    val ratingKinopoisk: Double?,
+    val ratingImdb: Double?,
     val nameRu: String?,
     val posterUrl: String,
-    val year: String,
+    val year: String?,
     val countries: List<ApiCountry>
 )
+

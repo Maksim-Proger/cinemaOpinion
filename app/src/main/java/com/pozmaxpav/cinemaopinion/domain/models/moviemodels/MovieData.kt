@@ -34,12 +34,12 @@ sealed class MovieData : UnifyingId {
 
     data class MovieSearch(
         val kinopoiskId: Int,
-        val ratingKinopoisk: String?,
-        val ratingImdb: String?,
+        val ratingKinopoisk: Double?,
+        val ratingImdb: Double?,
 
         override val nameRu: String?,
         override val posterUrl: String,
-        override val year: String,
+        override val year: String?,
         override val countries: List<Country>
     ) : MovieData() {
         override val id: Int get() = kinopoiskId
