@@ -54,7 +54,6 @@ fun ListSelectedMovies(
     viewModel: SelectedMovieViewModel = hiltViewModel(),
     onClickCloseButton: () -> Unit
 ) {
-
     val listSelectedMovies by viewModel.selectedMovies.collectAsState()
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
 
@@ -129,7 +128,6 @@ fun ListSelectedMovies(
                                                 selectedNote = movie
                                             }
                                         }
-
                                         IconButton(
                                             onClick = {
                                                 isVisible = false // Скрываем элемент перед удалением
@@ -160,7 +158,11 @@ fun ListSelectedMovies(
         // region Кнопка закрыть
         Card(
             modifier = Modifier
-                .clickable(onClick = { onClickCloseButton() }),
+                .clickable(
+                    onClick = {
+                        onClickCloseButton()
+                    }
+                ),
             shape = RoundedCornerShape(8.dp),
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(

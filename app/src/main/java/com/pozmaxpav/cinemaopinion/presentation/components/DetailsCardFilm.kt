@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -186,7 +184,6 @@ fun DetailsCardFilm(
                     }
                 }
 
-                // region Этот кусок пока мешает
                 Spacer(modifier = Modifier.padding(16.dp))
 
                 Row(
@@ -235,7 +232,6 @@ fun DetailsCardFilm(
                         )
                     }
                 }
-                // endregion
             }
         }
     }

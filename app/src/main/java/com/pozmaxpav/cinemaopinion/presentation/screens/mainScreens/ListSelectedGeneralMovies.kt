@@ -160,7 +160,11 @@ fun ListSelectedGeneralMovies(
         // region Кнопка закрыть
         Card(
             modifier = Modifier
-                .clickable(onClick = { onClickCloseButton() }),
+                .clickable(
+                    onClick = {
+                        onClickCloseButton()
+                    }
+                ),
             shape = RoundedCornerShape(8.dp),
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(
