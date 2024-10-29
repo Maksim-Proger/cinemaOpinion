@@ -125,7 +125,6 @@ fun MainScreen(navController: NavHostController) {
         }
     }
 
-    // TODO: Добавить для поиска
     // Эффект, который будет зависеть от состояния списка (для переключения страницы)
     LaunchedEffect(Unit) {
         snapshotFlow { listState.layoutInfo } // Создаем поток, который будет отслеживать изменения в состоянии layoutInfo списка
