@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -153,10 +154,11 @@ fun SelectedItem(
     }
 }
 
-// TODO: Доработать
 @Composable
 fun ShowSelectedMovie(
     movie: SelectedMovie,
+    content: @Composable () -> Unit,
+    openBottomSheet: () -> Unit,
     onClick: () -> Unit
 ) {
     Column(
@@ -219,7 +221,9 @@ fun ShowSelectedMovie(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Button(
-                        onClick = {/* TODO: Добавить действие */}
+                        onClick = {
+                            openBottomSheet()
+                        }
                     ) {
                         Text(
                             text = "Оставить комментарий",
@@ -227,9 +231,64 @@ fun ShowSelectedMovie(
                         )
                     }
                 }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)// TODO: Убрать это!
+                ){
+                    content()
+                }
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomTextFieldForComments(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
+) {
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 15.dp),
+        value = value,
+        shape = RoundedCornerShape(16.dp),
+        onValueChange = onValueChange,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+            focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
+        ),
+        placeholder = placeholder,
+        leadingIcon = leadingIcon,
+        trailingIcon =  if (value.isNotEmpty()) {
+            {
+                IconButton(onClick = { onValueChange("") }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.description_clear_text),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        } else null,
+        keyboardOptions = KeyboardOptions(
+            // Указываем какой тип клавиатуры будет использоваться.
+            keyboardType = KeyboardType.Text,
+            // Указываем, каким образом будет обрабатываться нажатие клавиши Enter.
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = keyboardActions,
+    )
 }
 
 @Composable
