@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,14 +38,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
+import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.SelectedItem
 import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
+import com.pozmaxpav.cinemaopinion.utilits.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -56,6 +62,9 @@ fun ListSelectedMovies(
 ) {
     val listSelectedMovies by viewModel.selectedMovies.collectAsState()
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
+    var openBottomSheetComments by remember { mutableStateOf(false) }
+    var (comment, setComment) = remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.fitchListSelectedMovies()
@@ -68,11 +77,49 @@ fun ListSelectedMovies(
             .padding(vertical = 45.dp, horizontal = 16.dp)
     ) {
 
-        if (selectedNote != null) {
-            ShowSelectedMovie(
-                movie = selectedNote!!,
-                onClick = { selectedNote = null }
+        if (openBottomSheetComments) {
+            MyBottomSheet(
+                onClose = {
+                    openBottomSheetComments = !openBottomSheetComments
+                },
+                content = {
+                    CustomTextFieldForComments(
+                        value = comment,
+                        onValueChange = setComment,
+                        placeholder = {
+                            Text(
+                                text = "Оставьте свой комментарий"
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.outline
+                            )
+                        },
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                // TODO: Добавить вызов метода добавления комментария
+                                showToast(context, "Комментарий добавлен")
+                                setComment("")
+                            }
+                        )
+                    )
+                },
+                fraction = 0.7f
             )
+            BackHandler {
+                openBottomSheetComments = !openBottomSheetComments
+            }
+        }
+
+        if (selectedNote != null) {
+//            ShowSelectedMovie(
+//                movie = selectedNote!!,
+//                onClick = { selectedNote = null },
+//                openBottomSheet = { openBottomSheetComments = !openBottomSheetComments }
+//            )
             BackHandler {
                 selectedNote = null
             }

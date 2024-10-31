@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,18 +38,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
+import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
+import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.SelectedItem
 import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
+import com.pozmaxpav.cinemaopinion.utilits.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ListSelectedGeneralMovies(
@@ -56,7 +67,11 @@ fun ListSelectedGeneralMovies(
 ) {
 
     val listMovies by viewModel.movies.collectAsState()
+    val listComments by viewModel.comments.collectAsState()
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
+    var openBottomSheetComments by remember { mutableStateOf(false) }
+    var (comment, setComment) = remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.getMovies()
@@ -69,14 +84,62 @@ fun ListSelectedGeneralMovies(
             .padding(vertical = 45.dp, horizontal = 16.dp)
     ) {
 
+        if (openBottomSheetComments) {
+            MyBottomSheet(
+                onClose = {
+                    openBottomSheetComments = !openBottomSheetComments
+                },
+                content = {
+                    CustomTextFieldForComments(
+                        value = comment,
+                        onValueChange = setComment,
+                        placeholder = {
+                            Text(
+                                text = "Оставьте свой комментарий"
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.outline
+                            )
+                        },
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                viewModel.addComment(
+                                    selectedNote!!.id.toDouble(),
+                                    comment
+                                )
+                                showToast(context, "Комментарий добавлен")
+                                setComment("")
+                            }
+                        )
+                    )
+                },
+                fraction = 0.7f
+            )
+            BackHandler {
+                openBottomSheetComments = !openBottomSheetComments
+            }
+        }
+
         if (selectedNote != null) {
             ShowSelectedMovie(
                 movie = selectedNote!!,
-                onClick = { selectedNote = null }
+                content = {
+                    ShowCommentList(
+                        listComments,
+                        selectedNote!!.id.toDouble()
+                    )
+                },
+                onClick = { selectedNote = null },
+                openBottomSheet = { openBottomSheetComments = !openBottomSheetComments }
             )
             BackHandler {
                 selectedNote = null
             }
+
         } else {
             Card(
                 modifier = Modifier.weight(1f),
@@ -185,4 +248,41 @@ fun ListSelectedGeneralMovies(
     }
 }
 
+@Composable
+fun ShowCommentList(
+    listComments: List<DomainComment>,
+    id: Double,
+    viewModel: FirebaseViewModel = hiltViewModel(),
+) {
+
+    LaunchedEffect(Unit) {
+        viewModel.getComments(id)
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        items(listComments) { comment ->
+            Card(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .padding(vertical = 7.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                )
+            ) {
+                Column(modifier = Modifier.padding(8.dp)) {
+                    Text(text = comment.username, fontWeight = FontWeight.Bold)
+                    Text(text = comment.commentText)
+                    Text(text = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault()).format(Date(comment.timestamp)))
+                }
+            }
+        }
+    }
+}
 
