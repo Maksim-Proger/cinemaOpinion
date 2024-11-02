@@ -9,4 +9,5 @@ interface FirebaseRepository {
     suspend fun getMovie(): List<SelectedMovie>
     suspend fun addCommentToMovie(movieId: Double, comment: DomainComment)
     suspend fun getCommentsForMovie(movieId: Double): List<DomainComment>
+    suspend fun observeCommentsForMovie(movieId: Double, onCommentsUpdated: (List<DomainComment>) -> Unit)
 }

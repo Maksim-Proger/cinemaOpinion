@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
+import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.AddCommentUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetCommentsForMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.ObserveCommentsForMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +24,8 @@ class FirebaseViewModel @Inject constructor(
     private val removeMovieUseCase: RemoveMovieUseCase,
     private val getMovieUseCase: GetMovieUseCase,
     private val addCommentUseCase: AddCommentUseCase,
-    private val getCommentsForMovieUseCase: GetCommentsForMovieUseCase
+    private val getCommentsForMovieUseCase: GetCommentsForMovieUseCase,
+    private val observeCommentsForMovieUseCase: ObserveCommentsForMovieUseCase
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<SelectedMovie>>(emptyList())
@@ -45,10 +48,22 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun addComment(movieId: Double, commentUser: String) {
+    fun observeComments(movieId: Double) {
+        viewModelScope.launch {
+            observeCommentsForMovieUseCase(movieId) { updatedComments ->
+                _comments.value = updatedComments
+            }
+        }
+    }
+
+    fun addComment(
+        movieId: Double,
+        username: String,
+        commentUser: String
+    ) {
         val comment = DomainComment(
             commentId = "", // TODO: Как-то странно это!!!!
-            username = "МаксимМаксим",
+            username = username,
             commentText = commentUser,
             timestamp = System.currentTimeMillis()
         )

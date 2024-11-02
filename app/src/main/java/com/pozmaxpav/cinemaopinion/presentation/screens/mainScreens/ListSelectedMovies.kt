@@ -47,8 +47,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
-import com.pozmaxpav.cinemaopinion.utilits.SelectedItem
-import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
+import com.pozmaxpav.cinemaopinion.utilits.MovieGeneralItem
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -171,7 +170,7 @@ fun ListSelectedMovies(
                                         Row(
                                             modifier = Modifier.weight(0.9f)
                                         ) {
-                                            SelectedItem(movie = movie) {
+                                            MovieGeneralItem(movie = movie) {
                                                 selectedNote = movie
                                             }
                                         }
