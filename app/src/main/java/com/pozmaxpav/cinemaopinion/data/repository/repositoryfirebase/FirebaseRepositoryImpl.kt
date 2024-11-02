@@ -1,7 +1,10 @@
 package com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase
 
 import android.util.Log
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.pozmaxpav.cinemaopinion.data.firebase.mappers.toData
 import com.pozmaxpav.cinemaopinion.data.firebase.mappers.toDomain
 import com.pozmaxpav.cinemaopinion.data.firebase.models.DataComment
@@ -64,10 +67,7 @@ class FirebaseRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun addCommentToMovie(
-        movieId: Double,
-        comment: DomainComment
-    ) {
+    override suspend fun addCommentToMovie(movieId: Double, comment: DomainComment) {
         // Поиск фильма по его ID
         val snapshot = databaseReference
             .child(NODE_LIST_MOVIES)
@@ -125,6 +125,33 @@ class FirebaseRepositoryImpl @Inject constructor(
 
        return commentsSnapshot
     }
+
+    override suspend fun observeCommentsForMovie(movieId: Double, onCommentsUpdated: (List<DomainComment>) -> Unit) {
+        databaseReference
+            .child(NODE_LIST_MOVIES)
+            .orderByChild("id")
+            .equalTo(movieId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val movieSnapshot = snapshot.children.firstOrNull()
+                    movieSnapshot?.child(NODE_COMMENTS)?.ref?.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(commentsSnapshot: DataSnapshot) {
+                            val comments = commentsSnapshot.children.mapNotNull { it.getValue(DataComment::class.java)?.toDomain() }
+                            onCommentsUpdated(comments)
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Log.e("FirebaseRepositoryImpl", "Error fetching comments: ${error.message}")
+                        }
+                    })
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseRepositoryImpl", "Error fetching movie: ${error.message}")
+                }
+            })
+    }
+
 }
 
 

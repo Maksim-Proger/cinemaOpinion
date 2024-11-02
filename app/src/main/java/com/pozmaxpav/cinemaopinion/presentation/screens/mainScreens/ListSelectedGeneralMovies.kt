@@ -48,8 +48,9 @@ import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
-import com.pozmaxpav.cinemaopinion.utilits.SelectedItem
+import com.pozmaxpav.cinemaopinion.utilits.MovieGeneralItem
 import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import kotlinx.coroutines.CoroutineScope
@@ -63,18 +64,21 @@ import java.util.Locale
 @Composable
 fun ListSelectedGeneralMovies(
     viewModel: FirebaseViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
     onClickCloseButton: () -> Unit
 ) {
-
     val listMovies by viewModel.movies.collectAsState()
     val listComments by viewModel.comments.collectAsState()
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var (comment, setComment) = remember { mutableStateOf("") }
     val context = LocalContext.current
+    val user by userViewModel.users.collectAsState()
+    var username by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         viewModel.getMovies()
+        userViewModel.fitchUser()
     }
 
     Column(
@@ -83,6 +87,14 @@ fun ListSelectedGeneralMovies(
             .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 45.dp, horizontal = 16.dp)
     ) {
+
+        if (user != null) {
+            user.let { userInfo ->
+                username = userInfo?.firstName ?: "Таинственный пользователь"
+            }
+        } else {
+            username = "Таинственный пользователь"
+        }
 
         if (openBottomSheetComments) {
             MyBottomSheet(
@@ -109,10 +121,12 @@ fun ListSelectedGeneralMovies(
                             onDone = {
                                 viewModel.addComment(
                                     selectedNote!!.id.toDouble(),
+                                    username,
                                     comment
                                 )
                                 showToast(context, "Комментарий добавлен")
                                 setComment("")
+                                openBottomSheetComments = !openBottomSheetComments
                             }
                         )
                     )
@@ -188,14 +202,15 @@ fun ListSelectedGeneralMovies(
                                         Row(
                                             modifier = Modifier.weight(0.9f)
                                         ) {
-                                            SelectedItem(movie = movie) {
+                                            MovieGeneralItem(movie = movie) {
                                                 selectedNote = movie
                                             }
                                         }
 
                                         IconButton(
                                             onClick = {
-                                                isVisible = false // Скрываем элемент перед удалением
+                                                isVisible =
+                                                    false // Скрываем элемент перед удалением
                                                 CoroutineScope(Dispatchers.Main).launch {
                                                     delay(300)
                                                     viewModel.removeMovie(movie.id.toDouble())
@@ -259,6 +274,10 @@ fun ShowCommentList(
         viewModel.getComments(id)
     }
 
+    LaunchedEffect(id) {
+        viewModel.observeComments(id)
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
@@ -279,7 +298,15 @@ fun ShowCommentList(
                 Column(modifier = Modifier.padding(8.dp)) {
                     Text(text = comment.username, fontWeight = FontWeight.Bold)
                     Text(text = comment.commentText)
-                    Text(text = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault()).format(Date(comment.timestamp)))
+                    Text(
+                        text =
+                        SimpleDateFormat(
+                            "dd.MM.yyyy HH:mm",
+                            Locale.getDefault()
+                        ).format(
+                            Date(comment.timestamp)
+                        )
+                    )
                 }
             }
         }

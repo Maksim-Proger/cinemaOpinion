@@ -22,7 +22,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +36,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -133,7 +131,7 @@ fun CustomTextField(
 }
 
 @Composable
-fun SelectedItem(
+fun MovieGeneralItem(
     movie: SelectedMovie,
     onClick: () -> Unit
 ) {
@@ -163,12 +161,11 @@ fun ShowSelectedMovie(
 ) {
     Column(
         modifier = Modifier
-            .wrapContentSize()
+            .fillMaxSize()
     ) {
         Card(
             modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(16.dp),
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(
@@ -188,56 +185,52 @@ fun ShowSelectedMovie(
                 )
             }
 
-            Column(
+            Row(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp, horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp, horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    WorkerWithImageSelectedMovie(
-                        movie = movie,
-                        height = 200.dp
-                    )
-                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Text(
-                            text = movie.nameFilm,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp, horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Button(
-                        onClick = {
-                            openBottomSheet()
-                        }
-                    ) {
-                        Text(
-                            text = "Оставить комментарий",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
+                WorkerWithImageSelectedMovie(
+                    movie = movie,
+                    height = 200.dp
+                )
+                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(250.dp)// TODO: Убрать это!
-                ){
-                    content()
+                ) {
+                    Text(
+                        text = movie.nameFilm,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp, horizontal = 16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    onClick = {
+                        openBottomSheet()
+                    }
+                ) {
+                    Text(
+                        text = "Оставить комментарий",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ){
+                content()
             }
         }
     }
