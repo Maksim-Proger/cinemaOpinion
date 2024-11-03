@@ -5,6 +5,7 @@ import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsList
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
 import javax.inject.Inject
 
@@ -40,6 +41,10 @@ class MovieRepositoryImpl @Inject constructor(private val api: MovieListApi) : M
             yearTo,
             page
         ).toDomain()
+    }
+
+    override suspend fun getMediaNews(page: Int): NewsList {
+        return api.getMediaNews(page).toDomain()
     }
 
 }

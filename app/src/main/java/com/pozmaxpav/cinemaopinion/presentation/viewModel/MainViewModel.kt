@@ -1,17 +1,20 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 // TODO: Почему тут нам надо вызывать execute?
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.information.Information
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsList
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetPremiereMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchFilmsByFiltersUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetTopMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.information.GetMovieInformationUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.movies.news.GetMediaNewsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,10 +28,11 @@ class MainViewModel @Inject constructor(
     private val getSearchMoviesUseCase: GetSearchMoviesUseCase,
     private val getTopMoviesUseCase: GetTopMoviesUseCase,
     private val getSearchFilmsByFiltersUseCase: GetSearchFilmsByFiltersUseCase,
-    private val getMovieInformationUseCase: GetMovieInformationUseCase
+    private val getMovieInformationUseCase: GetMovieInformationUseCase,
+    private val getMediaNewsUseCase: GetMediaNewsUseCase
 ) : ViewModel() {
 
-    private val _premiereMovies = MutableStateFlow<MovieList?>(null)
+    private val _premiereMovies = MutableStateFlow<MovieList?>(null) // TODO: А зачем нам тут вопрос?
     val premiersMovies: StateFlow<MovieList?> get() = _premiereMovies.asStateFlow()
 
     private val _topListMovies = MutableStateFlow<MovieTopList?>(null)
@@ -39,6 +43,20 @@ class MainViewModel @Inject constructor(
 
     private val _informationMovie = MutableStateFlow<Information?>(null)
     val informationMovie: StateFlow<Information?> get() = _informationMovie.asStateFlow()
+
+    private val _mediaNews = MutableStateFlow<NewsList?>(null)
+    val mediaNews: StateFlow<NewsList?> get() = _mediaNews.asStateFlow()
+
+    fun getMediaNews(page:Int) {
+        viewModelScope.launch {
+            try {
+                val news = getMediaNewsUseCase(page)
+                _mediaNews.value = news
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     fun getInformationMovie(movieId: Int) {
         viewModelScope.launch {

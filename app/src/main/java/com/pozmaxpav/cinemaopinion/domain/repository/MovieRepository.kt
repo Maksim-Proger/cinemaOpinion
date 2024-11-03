@@ -3,6 +3,7 @@ package com.pozmaxpav.cinemaopinion.domain.repository
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsList
 
 interface MovieRepository {
     suspend fun getPremiereMovies(year: Int, month: String): MovieList
@@ -17,4 +18,5 @@ interface MovieRepository {
         yearTo: Int? = null,
         page: Int
     ): MovieSearchList
+    suspend fun getMediaNews(page:Int): NewsList
 }

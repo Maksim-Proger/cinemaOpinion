@@ -46,7 +46,9 @@ import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.Country
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
 import java.time.DateTimeException
+import java.time.LocalDateTime
 import java.time.Month
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun AccountListItem(
@@ -336,6 +338,13 @@ fun formatMonth(fullDate: String): String {
 fun formatYear(fullDate: String) : Int {
     val listDate: List<String> = fullDate.split("-")
     return listDate[0].toInt()
+}
+
+fun formatDate(date: String) : String {
+    val formatterInput = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+    val formatterOutput = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
+    val dateTime = LocalDateTime.parse(date, formatterInput)
+    return dateTime.format(formatterOutput)
 }
 
 // Кастуем объект MovieData в SelectedMovie
