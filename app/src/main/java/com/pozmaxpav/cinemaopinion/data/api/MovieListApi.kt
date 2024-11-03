@@ -3,6 +3,7 @@ package com.pozmaxpav.cinemaopinion.data.api
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieList
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieTopList
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearchList
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.news.ApiNewsList
 import com.pozmaxpav.cinemaopinion.utilits.API_KEY
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -41,5 +42,11 @@ interface MovieListApi {
         @Query("yearTo") yearTo: Int? = null,
         @Query("page") page: Int
     ): ApiMovieSearchList
+
+    @Headers("X-API-KEY: $API_KEY")
+    @GET("/api/v1/media_posts")
+    suspend fun getMediaNews(
+        @Query("page") page: Int
+    ): ApiNewsList
 
 }

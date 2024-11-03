@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -53,6 +54,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
+import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
@@ -103,7 +105,7 @@ fun MainScreen(navController: NavHostController) {
     // Логика переключения страницы
     var currentPage by remember { mutableIntStateOf(1) }
     var showPageSwitchingButtons by remember { mutableStateOf(false) }
-    var saveSearchQuery by remember { mutableStateOf("") }
+    var saveSearchQuery by remember { mutableStateOf("") } // Сохраняем содержание поиска
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
@@ -231,6 +233,26 @@ fun MainScreen(navController: NavHostController) {
                                 }
                             )
                         }
+
+                        MyDropdownMenuItem(
+                            onAction = {
+                                navController.navigate(Route.MediaNewsScreen.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                            title = "Интересное",
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.Newspaper,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                        )
 
                         if (isScrolling.value) {
                             MyDropdownMenuItem(
