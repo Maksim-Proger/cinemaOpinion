@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase
 
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 
 interface FirebaseRepository {
@@ -10,4 +11,6 @@ interface FirebaseRepository {
     suspend fun addCommentToMovie(movieId: Double, comment: DomainComment)
     suspend fun getCommentsForMovie(movieId: Double): List<DomainComment>
     suspend fun observeCommentsForMovie(movieId: Double, onCommentsUpdated: (List<DomainComment>) -> Unit)
+    suspend fun savingChangeRecord(domainChangelogModel: DomainChangelogModel)
+    suspend fun getRecordsOfChanges(): List<DomainChangelogModel>
 }

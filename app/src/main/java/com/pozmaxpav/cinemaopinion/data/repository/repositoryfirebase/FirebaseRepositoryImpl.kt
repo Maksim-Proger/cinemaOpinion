@@ -9,9 +9,11 @@ import com.pozmaxpav.cinemaopinion.data.firebase.mappers.toData
 import com.pozmaxpav.cinemaopinion.data.firebase.mappers.toDomain
 import com.pozmaxpav.cinemaopinion.data.firebase.models.DataComment
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
 import com.pozmaxpav.cinemaopinion.utilits.NODE_COMMENTS
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -150,6 +152,35 @@ class FirebaseRepositoryImpl @Inject constructor(
                     Log.e("FirebaseRepositoryImpl", "Error fetching movie: ${error.message}")
                 }
             })
+    }
+
+    override suspend fun savingChangeRecord(domainChangelogModel: DomainChangelogModel) {
+        val key = databaseReference.child(NODE_LIST_CHANGES).push().key
+        key?.let {
+            val record = DomainChangelogModel(
+                noteId = it,
+                username = domainChangelogModel.username,
+                noteText = domainChangelogModel.noteText,
+                timestamp = domainChangelogModel.timestamp
+            )
+
+            databaseReference.child(NODE_LIST_CHANGES).child(it).setValue(record).await()
+        } ?: throw Exception("Failed to generate key")
+    }
+
+    override suspend fun getRecordsOfChanges(): List<DomainChangelogModel> {
+        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
+        return snapshot.children.mapNotNull { childSnapshot ->
+            childSnapshot.getValue(DomainChangelogModel::class.java)
+        }
+            .map {
+                DomainChangelogModel(
+                    noteId = it.noteId,
+                    username = it.username,
+                    noteText = it.noteText,
+                    timestamp = it.timestamp
+                )
+            }
     }
 
 }

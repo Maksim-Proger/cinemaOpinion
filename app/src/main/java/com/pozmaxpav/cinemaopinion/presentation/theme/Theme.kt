@@ -13,7 +13,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
 
@@ -52,11 +51,11 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun CinemaOpinionTheme(
+    themeViewModel: ThemeViewModel,
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
-    val themeViewModel: ThemeViewModel = hiltViewModel()
     val isDarkThemeActive by themeViewModel.isDarkThemeActive.collectAsState()
     val isSystemThemeActive by themeViewModel.isSystemThemeActive.collectAsState()
     val isSystemInDarkMode = isSystemInDarkTheme()
@@ -73,7 +72,6 @@ fun CinemaOpinionTheme(
         isDarkThemeActive -> DarkColorScheme
         else -> LightColorScheme
     }
-
     SideEffect {
         systemController.setSystemBarsColor(
             color = Color.Transparent,

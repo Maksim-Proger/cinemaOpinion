@@ -124,6 +124,10 @@ fun ListSelectedGeneralMovies(
                                     username,
                                     comment
                                 )
+                                viewModel.savingChangeRecord(
+                                    username,
+                                    "добавил(а) комментарий к фильму: ${selectedNote!!.nameFilm}"
+                                )
                                 showToast(context, "Комментарий добавлен")
                                 setComment("")
                                 openBottomSheetComments = !openBottomSheetComments
@@ -215,6 +219,10 @@ fun ListSelectedGeneralMovies(
                                                     delay(300)
                                                     viewModel.removeMovie(movie.id.toDouble())
                                                 }
+                                                viewModel.savingChangeRecord(
+                                                    username,
+                                                    "удалил(а) фильм: ${movie.nameFilm}"
+                                                )
                                             }
                                         ) {
                                             Icon(
@@ -295,7 +303,7 @@ fun ShowCommentList(
                     contentColor = MaterialTheme.colorScheme.onSecondary
                 )
             ) {
-                Column(modifier = Modifier.padding(8.dp)) {
+                Column(modifier = Modifier.padding(8.dp)) { // TODO: Переделать стили
                     Text(text = comment.username, fontWeight = FontWeight.Bold)
                     Text(text = comment.commentText)
                     Text(
