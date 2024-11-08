@@ -3,6 +3,7 @@ package com.pozmaxpav.cinemaopinion.presentation.components
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ManageSearch
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ fun CustomTopAppBar(
     onSearchButtonClick: () -> Unit,
     onAdvancedSearchButtonClick: () -> Unit,
     onAccountButtonClick: () -> Unit,
+    onAction: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior
 ) {
     TopAppBar(
@@ -46,6 +48,15 @@ fun CustomTopAppBar(
                 Icon(
                     imageVector = Icons.Default.ManageSearch,
                     contentDescription = stringResource(id = R.string.description_icon_advanced_search),
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+            IconButton(
+                onClick = { onAction() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = stringResource(id = R.string.description_icon_account),
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
