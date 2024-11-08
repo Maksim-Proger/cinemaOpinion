@@ -169,7 +169,16 @@ fun MainScreen(navController: NavHostController) {
                     onSearchButtonClick = { searchBarActive = !searchBarActive },
                     onAdvancedSearchButtonClick = { onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick },
                     onAccountButtonClick = { onAccountButtonClick = !onAccountButtonClick },
-                    scrollBehavior = scrollBehavior
+                    scrollBehavior = scrollBehavior,
+                    onAction = {
+                        navController.navigate(Route.ListOfChangesScreen.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
             }
 
@@ -242,14 +251,7 @@ fun MainScreen(navController: NavHostController) {
 
                         MyCustomDropdownMenuItem(
                             onAction = {
-//                                navController.navigate(Route.MediaNewsScreen.route) {
-//                                    popUpTo(navController.graph.startDestinationId) {
-//                                        saveState = true
-//                                    }
-//                                    launchSingleTop = true
-//                                    restoreState = true
-//                                }
-                                navController.navigate(Route.ListOfChangesScreen.route) {
+                                navController.navigate(Route.MediaNewsScreen.route) {
                                     popUpTo(navController.graph.startDestinationId) {
                                         saveState = true
                                     }

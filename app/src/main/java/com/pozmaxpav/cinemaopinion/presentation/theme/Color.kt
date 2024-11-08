@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 
 val DarkRedError = Color(0xFFC30052)
 val LightRed = Color(0xFFFF84B7)
+val SpecialHorizontalDividerColor = Color(0xFF83891a)
 
 // Light Theme Colors
 val LightBackground = Color(0xFFEBE5D9)

@@ -32,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.theme.SpecialHorizontalDividerColor
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.utilits.returnToMainScreen
 import java.text.SimpleDateFormat
@@ -101,7 +102,7 @@ fun ListOfChangesScreen(
                         Text(
                             text =
                             SimpleDateFormat(
-                                "dd.MM.yyyy HH:mm",
+                                "dd.MM.yyyy",
                                 Locale.getDefault()
                             ).format(
                                 Date(it.timestamp)
@@ -111,7 +112,11 @@ fun ListOfChangesScreen(
                     Text(
                         text = "${it.username} ${it.noteText}"
                     )
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .padding(vertical = 5.dp),
+                        color = SpecialHorizontalDividerColor
+                    )
                 }
             }
         }
