@@ -9,4 +9,5 @@ sealed class Route(
     data object EditPersonalInformationScreen : Route(route = "edit_personal_information_screen")
     data object SettingsScreen : Route(route = "settings_screen")
     data object MediaNewsScreen : Route(route = "media_news_screen")
+    data object ListOfChangesScreen : Route(route = "list_of_changes_screen")
 }

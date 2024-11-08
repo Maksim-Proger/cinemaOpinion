@@ -53,10 +53,12 @@ import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
 import com.pozmaxpav.cinemaopinion.presentation.components.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.formatYear
 import java.time.LocalDate
@@ -66,7 +68,6 @@ import java.time.LocalDate
 fun MainScreen(navController: NavHostController) {
 
     // region Переменные
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     // DatePicker
@@ -92,9 +93,14 @@ fun MainScreen(navController: NavHostController) {
 
     // Работаем с ViewModel
     val viewModel: MainViewModel = hiltViewModel()
+    val userViewModel:UserViewModel = hiltViewModel()
     val premiereMovies = viewModel.premiersMovies.collectAsState()
     val topListMovies = viewModel.topListMovies.collectAsState()
     val searchMovies = viewModel.searchMovies.collectAsState()
+    val user by userViewModel.users.collectAsState()
+
+    // Получаем username
+    var username by remember { mutableStateOf("") }
 
     // Работаем с Fab
     val listState = rememberLazyListState()
@@ -112,11 +118,11 @@ fun MainScreen(navController: NavHostController) {
 
     // endregion
     // region Launchers
-
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
         viewModel.fetchPremiersMovies(2023, "July")
         viewModel.fetchTopListMovies(currentPage)
+        userViewModel.fitchUser()
     }
 
     // Эффект, который реагирует на изменение scrollToTop и прокручивает список
@@ -198,7 +204,7 @@ fun MainScreen(navController: NavHostController) {
                     contentDescription = "Меню настроек",
                     textFloatingButton = "Настройки",
                     content = {
-                        MyDropdownMenuItem(
+                        MyCustomDropdownMenuItem(
                             onAction = {
                                 onFilterButtonClick = !onFilterButtonClick
                                 titleTopBarState = !titleTopBarState
@@ -219,7 +225,7 @@ fun MainScreen(navController: NavHostController) {
                         )
 
                         if (!titleTopBarState) {
-                            MyDropdownMenuItem(
+                            MyCustomDropdownMenuItem(
                                 onAction = {
                                     showDatePicker = !showDatePicker
                                 },
@@ -234,9 +240,16 @@ fun MainScreen(navController: NavHostController) {
                             )
                         }
 
-                        MyDropdownMenuItem(
+                        MyCustomDropdownMenuItem(
                             onAction = {
-                                navController.navigate(Route.MediaNewsScreen.route) {
+//                                navController.navigate(Route.MediaNewsScreen.route) {
+//                                    popUpTo(navController.graph.startDestinationId) {
+//                                        saveState = true
+//                                    }
+//                                    launchSingleTop = true
+//                                    restoreState = true
+//                                }
+                                navController.navigate(Route.ListOfChangesScreen.route) {
                                     popUpTo(navController.graph.startDestinationId) {
                                         saveState = true
                                     }
@@ -255,7 +268,7 @@ fun MainScreen(navController: NavHostController) {
                         )
 
                         if (isScrolling.value) {
-                            MyDropdownMenuItem(
+                            MyCustomDropdownMenuItem(
                                 onAction = { scrollToTop = true },
                                 title = "Вверх",
                                 leadingIcon = {
@@ -286,6 +299,14 @@ fun MainScreen(navController: NavHostController) {
             )
         }
     ) { padding ->
+
+        if (user != null) {
+            user.let { userInfo ->
+                username = userInfo?.firstName ?: "Таинственный пользователь"
+            }
+        } else {
+            username = "Таинственный пользователь"
+        }
 
         if (sendRequestCompleted) {
             test.let { compositeRequest  ->
@@ -333,7 +354,8 @@ fun MainScreen(navController: NavHostController) {
                     stringResource(R.string.movie_has_been_added_to_general_list),
                     selectedMovie!!,
                     onClick = { selectedMovie = null },
-                    padding
+                    padding,
+                    user = username
                 )
                 BackHandler {
                     selectedMovie = null

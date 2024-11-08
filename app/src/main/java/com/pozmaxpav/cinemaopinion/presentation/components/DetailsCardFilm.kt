@@ -48,6 +48,7 @@ fun DetailsCardFilm(
     movie: MovieData,
     onClick: () -> Unit,
     padding: PaddingValues,
+    user: String,
     viewModel: SelectedMovieViewModel = hiltViewModel(),
     viewModelFirebase: FirebaseViewModel = hiltViewModel(),
     viewModelMain: MainViewModel = hiltViewModel()
@@ -221,6 +222,10 @@ fun DetailsCardFilm(
                             contentColor = MaterialTheme.colorScheme.onSecondary
                         ),
                         onClick = {
+                            viewModelFirebase.savingChangeRecord(
+                                user,
+                                "добавил(а) фильм: ${movie.nameRu}"
+                            )
                             viewModelFirebase.saveMovie(movie.toSelectedMovie())
                             showToast(context, addToGeneralList)
                             onClick()

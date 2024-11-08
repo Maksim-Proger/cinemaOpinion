@@ -9,14 +9,17 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.introductoryscreens.ui.onboarding.OnBoardingScreen
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListOfChangesScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MediaNewsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.EditPersonalInformationScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SettingsScreen
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.introduction.OnBoardingViewModel
 
 @Composable
 fun NavGraph(
+    themeViewModel: ThemeViewModel,
     startDestination: String
 ) {
     val navController = rememberNavController()
@@ -51,6 +54,12 @@ fun NavGraph(
             )
         }
 
+        composable(Route.ListOfChangesScreen.route) {
+            ListOfChangesScreen(
+                navController
+            )
+        }
+
         composable(Route.EditPersonalInformationScreen.route) {
             EditPersonalInformationScreen(
                 stringResource(R.string.edit_personal_information), // TODO: подумать как иначе передать стрингу
@@ -61,7 +70,7 @@ fun NavGraph(
         composable(
             Route.SettingsScreen.route
         ) {
-            SettingsScreen(navController)
+            SettingsScreen(themeViewModel, navController)
         }
 
     }
