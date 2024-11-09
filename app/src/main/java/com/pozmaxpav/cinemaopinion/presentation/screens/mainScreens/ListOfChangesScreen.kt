@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -78,46 +80,58 @@ fun ListOfChangesScreen(
             )
         },
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(10.dp)
-        ) {
-            items(list) { it ->
-                Column(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .fillMaxWidth()
-                ) {
-                    Row(
+        if (list.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentPadding = PaddingValues(10.dp)
+            ) {
+                itemsIndexed(list.reversed()) { index, it ->
+                    Column(
                         modifier = Modifier
+                            .wrapContentHeight()
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.End
                     ) {
-                        Text(
-                            text = "Изменения от: "
-                        )
-                        Text(
-                            text =
-                            SimpleDateFormat(
-                                "dd.MM.yyyy",
-                                Locale.getDefault()
-                            ).format(
-                                Date(it.timestamp)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = "Изменения от: "
                             )
+                            Text(
+                                text =
+                                SimpleDateFormat(
+                                    "dd.MM.yyyy",
+                                    Locale.getDefault()
+                                ).format(
+                                    Date(it.timestamp)
+                                )
+                            )
+                        }
+                        Text(
+                            text = "${it.username} ${it.noteText}"
+                        )
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .padding(vertical = 5.dp),
+                            color = SpecialHorizontalDividerColor
                         )
                     }
-                    Text(
-                        text = "${it.username} ${it.noteText}"
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .padding(vertical = 5.dp),
-                        color = SpecialHorizontalDividerColor
-                    )
                 }
+            }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Ничего не произошло..."
+                )
             }
         }
     }

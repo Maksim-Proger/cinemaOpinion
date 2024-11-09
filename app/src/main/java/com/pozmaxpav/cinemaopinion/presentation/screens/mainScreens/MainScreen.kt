@@ -51,6 +51,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
 import com.pozmaxpav.cinemaopinion.presentation.components.DetailsCardFilm
+import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
@@ -208,83 +209,82 @@ fun MainScreen(navController: NavHostController) {
         },
         floatingActionButton = {
             if (!onAccountButtonClick && !searchBarActive && !onAdvancedSearchButtonClick && selectedMovie == null) {
-                FabButtonWithMenu(
-                    imageIcon = Icons.Default.Settings,
-                    contentDescription = "Меню настроек",
-                    textFloatingButton = "Настройки",
-                    content = {
-                        MyCustomDropdownMenuItem(
-                            onAction = {
-                                onFilterButtonClick = !onFilterButtonClick
-                                titleTopBarState = !titleTopBarState
-                                searchCompleted = false
-                            },
-                            title = if (!titleTopBarState) {
-                                stringResource(id = R.string.drop_down_menu_item_premiere_movies)
-                            } else {
-                                stringResource(id = R.string.drop_down_menu_item_topList_movies)
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_movies),
-                                    contentDescription = stringResource(id = R.string.description_icon_settings),
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        )
-
-                        if (!titleTopBarState) {
+                if (isScrolling.value) {
+                    FabButton(
+                        imageIcon = Icons.Default.ArrowUpward,
+                        contentDescription = "Кнопка поднять список вверх",
+                        textFloatingButton = "",
+                        onButtonClick = {
+                            scrollToTop = true
+                        },
+                        expanded = false
+                    )
+                } else {
+                    FabButtonWithMenu(
+                        imageIcon = Icons.Default.Settings,
+                        contentDescription = "Меню настроек",
+                        textFloatingButton = "Настройки",
+                        content = {
                             MyCustomDropdownMenuItem(
                                 onAction = {
-                                    showDatePicker = !showDatePicker
+                                    onFilterButtonClick = !onFilterButtonClick
+                                    titleTopBarState = !titleTopBarState
+                                    searchCompleted = false
                                 },
-                                title = stringResource(id = R.string.drop_down_menu_item_select_date),
+                                title = if (!titleTopBarState) {
+                                    stringResource(id = R.string.drop_down_menu_item_premiere_movies)
+                                } else {
+                                    stringResource(id = R.string.drop_down_menu_item_topList_movies)
+                                },
                                 leadingIcon = {
                                     Icon(
-                                        Icons.Default.DateRange,
-                                        contentDescription = stringResource(id = R.string.drop_down_menu_item_select_date),
+                                        painter = painterResource(id = R.drawable.ic_movies),
+                                        contentDescription = stringResource(id = R.string.description_icon_settings),
                                         tint = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
                             )
-                        }
 
-                        MyCustomDropdownMenuItem(
-                            onAction = {
-                                navController.navigate(Route.MediaNewsScreen.route) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
+                            if (!titleTopBarState) {
+                                MyCustomDropdownMenuItem(
+                                    onAction = {
+                                        showDatePicker = !showDatePicker
+                                    },
+                                    title = stringResource(id = R.string.drop_down_menu_item_select_date),
+                                    leadingIcon = {
+                                        Icon(
+                                            Icons.Default.DateRange,
+                                            contentDescription = stringResource(id = R.string.drop_down_menu_item_select_date),
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            title = "Интересное",
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Default.Newspaper,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
-                        )
-
-                        if (isScrolling.value) {
-                            MyCustomDropdownMenuItem(
-                                onAction = { scrollToTop = true },
-                                title = "Вверх",
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Default.ArrowUpward,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                            )
-                        }
-                    },
-                    expanded = isExpanded
-                )
+                            // region Доработать
+//                        MyCustomDropdownMenuItem(
+//                            onAction = {
+//                                navController.navigate(Route.MediaNewsScreen.route) {
+//                                    popUpTo(navController.graph.startDestinationId) {
+//                                        saveState = true
+//                                    }
+//                                    launchSingleTop = true
+//                                    restoreState = true
+//                                }
+//                            },
+//                            title = "Интересное",
+//                            leadingIcon = {
+//                                Icon(
+//                                    Icons.Default.Newspaper,
+//                                    contentDescription = null,
+//                                    tint = MaterialTheme.colorScheme.onSecondary
+//                                )
+//                            }
+//                        )
+                            // endregion
+                        },
+                        expanded = isExpanded
+                    )
+                }
             }
 
             // Получение выбранной даты TODO: Доработать, нужен только месяц и год!!!
