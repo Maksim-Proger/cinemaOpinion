@@ -165,8 +165,7 @@ fun ShowSelectedMovie(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+                .fillMaxSize(),
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -370,7 +369,7 @@ fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
-fun returnToMainScreen(
+fun navigateFunction(
     navController: NavHostController,
     route: String
 ) {

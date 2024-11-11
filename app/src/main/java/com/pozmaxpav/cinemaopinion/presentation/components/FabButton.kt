@@ -16,7 +16,7 @@ fun FabButton(
     expanded: Boolean
 ) {
     ExtendedFloatingActionButton(
-        onClick = onButtonClick,
+        onClick = onButtonClick, // TODO: Надо еще раз почитать чем отличается такая передача от onButtonClick()
         icon = {
             Icon(
                 imageVector = imageIcon,
