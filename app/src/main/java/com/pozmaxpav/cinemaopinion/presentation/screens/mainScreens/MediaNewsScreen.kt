@@ -39,7 +39,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsModel
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatDate
-import com.pozmaxpav.cinemaopinion.utilits.returnToMainScreen
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
 // TODO: Доработать! Надо запускать с последней страницы
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,7 +69,7 @@ fun MediaNewsScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        returnToMainScreen(navController, Route.MainScreen.route)
+                        navigateFunction(navController, Route.MainScreen.route)
                     }) {
                         Icon(
                             imageVector = Icons.Default.Home,

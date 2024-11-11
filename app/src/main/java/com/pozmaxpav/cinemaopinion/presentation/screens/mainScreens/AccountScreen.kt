@@ -50,6 +50,7 @@ import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.AddingNewUserScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
 @Composable
 fun AccountScreen(
@@ -66,7 +67,6 @@ fun AccountScreen(
     var onAddingNewUserScreenButtonClick by remember { mutableStateOf(false) }
     var showSelectedMovies by remember { mutableStateOf(false) }
     var showSelectedGeneralMovies by remember { mutableStateOf(false) }
-    var showSeriesControlScreen by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -98,15 +98,6 @@ fun AccountScreen(
             )
             BackHandler {
                 showSelectedGeneralMovies = false
-            }
-        }
-
-        if (showSeriesControlScreen) {
-            SeriesControlScreen(
-                onClickCloseButton = { showSeriesControlScreen = false }
-            )
-            BackHandler {
-                showSeriesControlScreen = false
             }
         }
 
@@ -203,6 +194,7 @@ fun AccountScreen(
                         Spacer(modifier = Modifier.height(20.dp))
                         HorizontalDivider()
                         Spacer(modifier = Modifier.height(20.dp))
+
                         AccountListItem(
                             icon = painterResource(id = R.drawable.ic_movie_list),
                             contentDescription = stringResource(id = R.string.description_icon_movie_list),
@@ -224,7 +216,7 @@ fun AccountScreen(
                             contentDescription = "null",
                             title = "Контроль серий"
                         ) {
-                            showSeriesControlScreen = true
+                            navigateFunction(navController, Route.SeriesControlScreen.route)
                         }
                     }
                 }
@@ -240,13 +232,7 @@ private fun AccountSettingMenu(navController: NavHostController) {
 
         MyDropdownMenuItem(
             onAction = { // TODO: Надо детальнее разобраться в этой навигации
-                navController.navigate(Route.EditPersonalInformationScreen.route) {
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                navigateFunction(navController, Route.EditPersonalInformationScreen.route)
                 closeMenu() // Закрываем меню после навигации
             },
             title = stringResource(id = R.string.drop_down_menu_item_edit),
@@ -261,13 +247,7 @@ private fun AccountSettingMenu(navController: NavHostController) {
 
         MyDropdownMenuItem(
             onAction = {
-                navController.navigate(Route.SettingsScreen.route) {
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                navigateFunction(navController, Route.SettingsScreen.route)
                 closeMenu()
             },
             title = stringResource(id = R.string.drop_down_menu_item_settings),

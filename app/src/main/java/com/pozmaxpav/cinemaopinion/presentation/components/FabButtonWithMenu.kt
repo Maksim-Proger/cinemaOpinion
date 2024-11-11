@@ -65,7 +65,7 @@ fun FabButtonWithMenu(
 fun MyCustomDropdownMenuItem(
     onAction: () -> Unit,
     title: String,
-    leadingIcon: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null, // TODO: Что это за запись такая?,
 ) {
     Row(
         modifier = Modifier

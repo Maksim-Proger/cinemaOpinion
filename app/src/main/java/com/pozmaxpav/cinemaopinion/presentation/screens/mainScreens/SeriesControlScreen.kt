@@ -49,12 +49,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SeriesControlModel
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
+import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SeriesControlViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +66,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SeriesControlScreen(
-    onClickCloseButton: () -> Unit,
+    navController: NavHostController,
     viewModel: SeriesControlViewModel = hiltViewModel()
 ) {
     var selectedNote by remember { mutableStateOf<SeriesControlModel?>(null) }
@@ -106,7 +109,9 @@ fun SeriesControlScreen(
     Scaffold(
         topBar = {
             IconButton(
-                onClick = onClickCloseButton,
+                onClick = {
+                    navigateFunction(navController, Route.MainScreen.route)
+                },
                 modifier = Modifier.padding(vertical = 25.dp),
             ) {
                 Icon(

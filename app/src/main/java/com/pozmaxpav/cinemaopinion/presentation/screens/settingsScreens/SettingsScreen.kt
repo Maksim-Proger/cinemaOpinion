@@ -23,7 +23,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsRadioButtons
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
-import com.pozmaxpav.cinemaopinion.utilits.returnToMainScreen
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +46,7 @@ fun SettingsScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        returnToMainScreen(navController, Route.MainScreen.route)
+                        navigateFunction(navController, Route.MainScreen.route)
                     }) {
                         Icon(
                             imageVector = Icons.Default.Home,

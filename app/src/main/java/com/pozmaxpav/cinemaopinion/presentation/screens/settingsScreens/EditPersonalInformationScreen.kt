@@ -36,7 +36,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
-import com.pozmaxpav.cinemaopinion.utilits.returnToMainScreen
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +79,7 @@ fun EditPersonalInformationScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        returnToMainScreen(navController, Route.MainScreen.route)
+                        navigateFunction(navController, Route.MainScreen.route)
                     }) {
                         Icon(
                             imageVector = Icons.Default.Home,
@@ -102,7 +102,7 @@ fun EditPersonalInformationScreen(
                     // Обновление пользователя в базе данных
                     viewModel.updateUser(firstName, lastName)
 
-                    returnToMainScreen(navController, Route.MainScreen.route)
+                    navigateFunction(navController, Route.MainScreen.route)
                     showToast(context, nameToast)
                 },
                 expanded = true

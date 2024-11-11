@@ -12,6 +12,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListOfChangesScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MediaNewsScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.SeriesControlScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.EditPersonalInformationScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SettingsScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
@@ -65,6 +66,10 @@ fun NavGraph(
                 stringResource(R.string.edit_personal_information), // TODO: подумать как иначе передать стрингу
                 navController
             )
+        }
+
+        composable(Route.SeriesControlScreen.route) {
+            SeriesControlScreen(navController)
         }
 
         composable(

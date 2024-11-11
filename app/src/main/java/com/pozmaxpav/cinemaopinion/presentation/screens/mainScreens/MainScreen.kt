@@ -156,31 +156,33 @@ fun MainScreen(navController: NavHostController) {
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            AnimatedVisibility(
-                visible = !searchBarActive,
-                enter = slideInVertically() + fadeIn(),
-                exit = slideOutVertically() + fadeOut()
-            ) {
-                CustomTopAppBar(
-                    title = if (!titleTopBarState) {
-                        stringResource(id = R.string.top_app_bar_header_name_all_movies)
-                    } else {
-                        stringResource(id = R.string.top_app_bar_header_name_top_list_movies)
-                    },
-                    onSearchButtonClick = { searchBarActive = !searchBarActive },
-                    onAdvancedSearchButtonClick = { onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick },
-                    onAccountButtonClick = { onAccountButtonClick = !onAccountButtonClick },
-                    scrollBehavior = scrollBehavior,
-                    onAction = {
-                        navController.navigate(Route.ListOfChangesScreen.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
+            if (!onAccountButtonClick) {
+                AnimatedVisibility(
+                    visible = !searchBarActive,
+                    enter = slideInVertically() + fadeIn(),
+                    exit = slideOutVertically() + fadeOut()
+                ) {
+                    CustomTopAppBar(
+                        title = if (!titleTopBarState) {
+                            stringResource(id = R.string.top_app_bar_header_name_all_movies)
+                        } else {
+                            stringResource(id = R.string.top_app_bar_header_name_top_list_movies)
+                        },
+                        onSearchButtonClick = { searchBarActive = !searchBarActive },
+                        onAdvancedSearchButtonClick = { onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick },
+                        onAccountButtonClick = { onAccountButtonClick = !onAccountButtonClick },
+                        scrollBehavior = scrollBehavior,
+                        onAction = {
+                            navController.navigate(Route.ListOfChangesScreen.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
-                    }
-                )
+                    )
+                }
             }
 
             if (onAccountButtonClick) {
@@ -209,22 +211,12 @@ fun MainScreen(navController: NavHostController) {
         },
         floatingActionButton = {
             if (!onAccountButtonClick && !searchBarActive && !onAdvancedSearchButtonClick && selectedMovie == null) {
-                if (isScrolling.value) {
-                    FabButton(
-                        imageIcon = Icons.Default.ArrowUpward,
-                        contentDescription = "Кнопка поднять список вверх",
-                        textFloatingButton = "",
-                        onButtonClick = {
-                            scrollToTop = true
-                        },
-                        expanded = false
-                    )
-                } else {
-                    FabButtonWithMenu(
-                        imageIcon = Icons.Default.Settings,
-                        contentDescription = "Меню настроек",
-                        textFloatingButton = "Настройки",
-                        content = {
+                FabButtonWithMenu(
+                    imageIcon = if (isScrolling.value) Icons.Default.ArrowUpward else Icons.Default.Settings,
+                    contentDescription = "Меню настроек",
+                    textFloatingButton = if (isScrolling.value) "" else "Настройки",
+                    content = {
+                        if (!isScrolling.value) {
                             MyCustomDropdownMenuItem(
                                 onAction = {
                                     onFilterButtonClick = !onFilterButtonClick
@@ -281,10 +273,15 @@ fun MainScreen(navController: NavHostController) {
 //                            }
 //                        )
                             // endregion
-                        },
-                        expanded = isExpanded
-                    )
-                }
+                        }
+                    },
+                    onButtonClick = { // TODO: Надо еще раз подумать на этой кнопкой, не хочу чтобы при поднятии вверх открывалось меню.
+                        if (isScrolling.value) {
+                            scrollToTop = true
+                        }
+                    },
+                    expanded = isExpanded
+                )
             }
 
             // Получение выбранной даты TODO: Доработать, нужен только месяц и год!!!
