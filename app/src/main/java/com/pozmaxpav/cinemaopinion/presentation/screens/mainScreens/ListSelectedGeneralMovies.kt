@@ -146,7 +146,7 @@ fun ListSelectedGeneralMovies(
             ShowSelectedMovie(
                 movie = selectedNote!!,
                 content = {
-                    ShowCommentList(
+                    ShowCommentGeneralList(
                         listComments,
                         selectedNote!!.id.toDouble()
                     )
@@ -272,7 +272,7 @@ fun ListSelectedGeneralMovies(
 }
 
 @Composable
-fun ShowCommentList(
+fun ShowCommentGeneralList(
     listComments: List<DomainComment>,
     id: Double,
     viewModel: FirebaseViewModel = hiltViewModel(),
