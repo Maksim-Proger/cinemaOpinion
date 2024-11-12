@@ -1,5 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.icu.text.SimpleDateFormat
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -40,26 +42,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.CommentPersonalListModel
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.CommentPersonalListViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.MovieGeneralItem
+import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ListSelectedMovies(
     viewModel: SelectedMovieViewModel = hiltViewModel(),
+    viewModelComments: CommentPersonalListViewModel = hiltViewModel(),
     onClickCloseButton: () -> Unit
 ) {
     val listSelectedMovies by viewModel.selectedMovies.collectAsState()
+    val listComments by viewModelComments.comments.collectAsState()
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var (comment, setComment) = remember { mutableStateOf("") }
@@ -99,9 +109,13 @@ fun ListSelectedMovies(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                // TODO: Добавить вызов метода добавления комментария
+                                viewModelComments.insertComment(
+                                    selectedNote!!.id.toDouble(),
+                                    comment
+                                )
                                 showToast(context, "Комментарий добавлен")
                                 setComment("")
+                                openBottomSheetComments = !openBottomSheetComments
                             }
                         )
                     )
@@ -114,11 +128,17 @@ fun ListSelectedMovies(
         }
 
         if (selectedNote != null) {
-//            ShowSelectedMovie(
-//                movie = selectedNote!!,
-//                onClick = { selectedNote = null },
-//                openBottomSheet = { openBottomSheetComments = !openBottomSheetComments }
-//            )
+            ShowSelectedMovie(
+                movie = selectedNote!!,
+                onClick = { selectedNote = null },
+                openBottomSheet = { openBottomSheetComments = !openBottomSheetComments },
+                content = {
+                    ShowListComments(
+                        listComments,
+                        selectedNote!!.id.toDouble()
+                    )
+                }
+            )
             BackHandler {
                 selectedNote = null
             }
@@ -226,5 +246,67 @@ fun ListSelectedMovies(
             }
         }
         // endregion
+    }
+}
+
+@Composable
+private fun ShowListComments(
+    listComments: List<CommentPersonalListModel>,
+    id: Double,
+    viewModelComments: CommentPersonalListViewModel = hiltViewModel()
+) {
+
+    LaunchedEffect(Unit) {
+        viewModelComments.getCommentsList()
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        if (listComments.isNotEmpty()) {
+            items(listComments) { comment ->
+                Card(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth()
+                        .padding(vertical = 7.dp),
+                    elevation = CardDefaults.cardElevation(8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
+                    )
+                ) {
+                    if (id == comment.movieId) {
+                        Column(modifier = Modifier.padding(8.dp)) { // TODO: Переделать стили
+                            Text(
+                                text = comment.commentText,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = comment.commentText
+                            )
+                            Text(
+                                text = SimpleDateFormat(
+                                    "dd.MM.yyyy HH:mm",
+                                    Locale.getDefault()
+                                ).format(
+                                    Date(comment.timestamp)
+                                )
+
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+//        else {
+//            Text(
+//                text = "Комментариев нет",
+//                fontWeight = FontWeight.Bold
+//            )
+//        }
     }
 }

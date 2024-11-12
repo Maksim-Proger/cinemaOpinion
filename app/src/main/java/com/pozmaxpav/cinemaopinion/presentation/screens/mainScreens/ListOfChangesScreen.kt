@@ -34,6 +34,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.theme.CommentAddedColor
+import com.pozmaxpav.cinemaopinion.presentation.theme.FilmAddedColor
+import com.pozmaxpav.cinemaopinion.presentation.theme.FilmDeleteColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.SpecialHorizontalDividerColor
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -57,7 +60,7 @@ fun ListOfChangesScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text( // TODO: Исправить наполнение
+                    Text(
                         text = "Последние изменения",
                         style = MaterialTheme.typography.displayLarge,
                         color = MaterialTheme.colorScheme.onPrimary
@@ -145,9 +148,13 @@ fun ListOfChangesScreen(
 
 fun colorMethod(text: String) : Color  { // TODO: Изменить цвета на нормальные
     return when {
-        text.contains("добавил(а) комментарий к фильму") -> Color.Green
-        text.contains("удалил(а) фильм") -> Color.Red
-        text.contains("добавил(а) фильм") -> Color.Blue
+        text.contains("добавил(а) комментарий к фильму") -> CommentAddedColor
+        text.contains("удалил(а) фильм") -> FilmDeleteColor
+        text.contains("добавил(а) фильм") -> FilmAddedColor
         else -> Color.Transparent
     }
+}
+
+fun instructionsForColors() {
+    // TODO: Написать инструкцию по цветам
 }

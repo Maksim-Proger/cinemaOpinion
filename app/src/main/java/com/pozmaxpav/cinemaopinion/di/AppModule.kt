@@ -13,10 +13,12 @@ import com.pozmaxpav.cinemaopinion.data.api.GetMovieInformationApi
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
 import com.pozmaxpav.cinemaopinion.data.localdatastore.LocalUserManagerImpl
 import com.pozmaxpav.cinemaopinion.data.localdb.appdb.AppDatabase
+import com.pozmaxpav.cinemaopinion.data.localdb.dao.CommentPersonalListDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.SelectedMovieDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.SeriesControlDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.UserDao
 import com.pozmaxpav.cinemaopinion.data.localdb.migration.DatabaseMigrations
+import com.pozmaxpav.cinemaopinion.data.repository.CommentPersonalListRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.GetMovieInformationApiRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SelectedMovieRepositoryImpl
@@ -24,6 +26,7 @@ import com.pozmaxpav.cinemaopinion.data.repository.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.data.repository.UserRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.FirebaseRepositoryImpl
+import com.pozmaxpav.cinemaopinion.domain.repository.CommentPersonalListRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.GetMovieInformationApiRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.SelectedMovieRepository
@@ -295,6 +298,18 @@ object AppModule {
         saveAppEntry = SaveAppEntry(localUserManager)
     )
 
+    // endregion
+
+    // region CommentPersonalList
+    @Provides
+    fun provideCommentPersonalListDao(appDatabase: AppDatabase): CommentPersonalListDao {
+        return appDatabase.commentPersonalListDao()
+    }
+
+    @Provides
+    fun provideCommentPersonalListRepository(commentPersonalListDao: CommentPersonalListDao): CommentPersonalListRepository {
+        return CommentPersonalListRepositoryImpl(commentPersonalListDao)
+    }
     // endregion
 
     // region SeriesControl
