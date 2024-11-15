@@ -34,6 +34,7 @@ interface MovieListApi {
     @Headers("X-API-KEY: $API_KEY")
     @GET("/api/v2.2/films")
     suspend fun searchFilmsByFilters(
+        @Query("type") type: String? = null,
         @Query("keyword") keyword: String? = null,
         @Query("countries") countries: Int? = null,
         @Query("genres") genres: Int? = null,

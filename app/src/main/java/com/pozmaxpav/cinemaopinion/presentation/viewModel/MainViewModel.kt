@@ -103,6 +103,7 @@ class MainViewModel @Inject constructor(
     }
     
     fun searchFilmsByFilters(
+        type: String?,
         keyword: String?,
         countries: Int?,
         genres: Int?,
@@ -114,7 +115,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val movies = getSearchFilmsByFiltersUseCase.execute(
-                    keyword, countries, genres, ratingFrom, yearFrom, yearTo, page
+                    type, keyword, countries, genres, ratingFrom, yearFrom, yearTo, page
                 )
                 _searchMovies.value = movies
             } catch (e: Exception) {
