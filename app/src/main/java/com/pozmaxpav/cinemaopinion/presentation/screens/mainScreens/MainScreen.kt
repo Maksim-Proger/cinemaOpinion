@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -19,7 +18,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -51,17 +49,16 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
 import com.pozmaxpav.cinemaopinion.presentation.components.DetailsCardFilm
-import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
-import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.formatYear
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,9 +77,9 @@ fun MainScreen(navController: NavHostController) {
     var searchBarActive by remember { mutableStateOf(false) }
     var searchCompleted by remember { mutableStateOf(false) } // Флаг для отображения списка фильмов после поиска
     val searchHistory = mutableListOf<String>()
-    // Расширенный поиск TODO: Надо проверить работает ли движение по страницам
-    var test by remember { mutableStateOf(CompositeRequest(null, null, null, null, null, null)) }
-    var sendRequestCompleted by remember { mutableStateOf(false) } // Флаг для правильной отправки
+    // Расширенный поиск
+    var requestBody by remember { mutableStateOf(CompositeRequest(null, null, null, null, null, null, null)) }
+    var sendRequestCompleted by remember { mutableStateOf(false) } // Флаг для предотвращения повторной отправки запроса
 
     // Состояния для открытия страниц
     var onFilterButtonClick by remember { mutableStateOf(false) }
@@ -172,15 +169,7 @@ fun MainScreen(navController: NavHostController) {
                         onAdvancedSearchButtonClick = { onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick },
                         onAccountButtonClick = { onAccountButtonClick = !onAccountButtonClick },
                         scrollBehavior = scrollBehavior,
-                        onAction = {
-                            navController.navigate(Route.ListOfChangesScreen.route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
+                        onTransitionAction = { navigateFunction(navController, Route.ListOfChangesScreen.route) }
                     )
                 }
             }
@@ -200,7 +189,7 @@ fun MainScreen(navController: NavHostController) {
                     onClickClose = { onAdvancedSearchButtonClick = false },
                     onSendRequest = { sendRequestCompleted = true },
                     onSearch = { it ->
-                        test = it
+                        requestBody = it
                         searchCompleted = true
                     }
                 )
@@ -308,8 +297,9 @@ fun MainScreen(navController: NavHostController) {
         }
 
         if (sendRequestCompleted) {
-            test.let { compositeRequest  ->
+            requestBody.let { compositeRequest  ->
                 viewModel.searchFilmsByFilters(
+                    compositeRequest.type,
                     compositeRequest.keyword,
                     compositeRequest.countries,
                     compositeRequest.genres,
@@ -337,6 +327,7 @@ fun MainScreen(navController: NavHostController) {
                         searchHistory.add(searchQuery)
                         searchCompleted = true
                         searchBarActive = false
+                        titleTopBarState = true
                     },
                     active = searchBarActive,
                     onActiveChange = { isActive -> searchBarActive = isActive },

@@ -10,6 +10,7 @@ interface MovieRepository {
     suspend fun getTopMovies(page: Int): MovieTopList
     suspend fun getSearchMovies(keyword: String, page: Int): MovieSearchList
     suspend fun getSearchFilmsByFilters(
+        type: String? = null,
         keyword: String? = null,
         countries: Int? = null,
         genres: Int? = null,

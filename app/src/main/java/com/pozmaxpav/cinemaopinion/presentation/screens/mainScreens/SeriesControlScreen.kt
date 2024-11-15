@@ -20,7 +20,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -34,6 +33,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -52,6 +52,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SeriesControlModel
+import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -64,11 +65,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SeriesControlScreen(
     navController: NavHostController,
     viewModel: SeriesControlViewModel = hiltViewModel()
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var selectedNote by remember { mutableStateOf<SeriesControlModel?>(null) }
     val listMovies by viewModel.listMovies.collectAsState()
     var openBottomSheetAdd by remember { mutableStateOf(false) }
@@ -108,17 +111,13 @@ fun SeriesControlScreen(
 
     Scaffold(
         topBar = {
-            IconButton(
-                onClick = {
+            ClassicTopAppBar(
+                title = "Контроль серий",
+                scrollBehavior = scrollBehavior,
+                onTransitionAction = {
                     navigateFunction(navController, Route.MainScreen.route)
-                },
-                modifier = Modifier.padding(vertical = 25.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = null
-                )
-            }
+                }
+            )
         },
         floatingActionButton = {
             FabButton(

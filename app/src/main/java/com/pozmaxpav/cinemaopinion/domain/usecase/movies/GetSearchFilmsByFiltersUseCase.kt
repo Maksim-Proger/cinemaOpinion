@@ -8,6 +8,7 @@ class GetSearchFilmsByFiltersUseCase @Inject constructor(
     private val repository: MovieRepository
 ) {
     suspend fun execute(
+        type: String? = null,
         keyword: String? = null,
         countries: Int? = null,
         genres: Int? = null,
@@ -17,6 +18,7 @@ class GetSearchFilmsByFiltersUseCase @Inject constructor(
         page: Int
     ): MovieSearchList {
         return repository.getSearchFilmsByFilters(
+            type,
             keyword,
             countries,
             genres,

@@ -1,8 +1,9 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ManageSearch
+import androidx.compose.material.icons.filled.ContentPasteSearch
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,7 +15,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,10 +27,12 @@ fun CustomTopAppBar(
     onSearchButtonClick: () -> Unit,
     onAdvancedSearchButtonClick: () -> Unit,
     onAccountButtonClick: () -> Unit,
-    onAction: () -> Unit,
+    onTransitionAction: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior
 ) {
     TopAppBar(
+        modifier = Modifier
+            .padding(vertical = 15.dp),
         scrollBehavior = scrollBehavior,
         title = {
             Text(
@@ -46,17 +51,15 @@ fun CustomTopAppBar(
             }
             IconButton(onClick = onAdvancedSearchButtonClick) {
                 Icon(
-                    imageVector = Icons.Default.ManageSearch,
+                    imageVector = Icons.Default.ContentPasteSearch,
                     contentDescription = stringResource(id = R.string.description_icon_advanced_search),
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
-            IconButton(
-                onClick = { onAction() }
-            ) {
+            IconButton(onClick = onTransitionAction) {
                 Icon(
                     imageVector = Icons.Default.Notifications,
-                    contentDescription = stringResource(id = R.string.description_icon_account),
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }

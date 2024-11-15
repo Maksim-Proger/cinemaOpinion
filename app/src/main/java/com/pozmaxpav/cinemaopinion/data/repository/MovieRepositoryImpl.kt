@@ -24,6 +24,7 @@ class MovieRepositoryImpl @Inject constructor(private val api: MovieListApi) : M
     }
 
     override suspend fun getSearchFilmsByFilters(
+        type: String?,
         keyword: String?,
         countries: Int?,
         genres: Int?,
@@ -33,6 +34,7 @@ class MovieRepositoryImpl @Inject constructor(private val api: MovieListApi) : M
         page: Int
     ): MovieSearchList {
         return api.searchFilmsByFilters(
+            type,
             keyword,
             countries,
             genres,

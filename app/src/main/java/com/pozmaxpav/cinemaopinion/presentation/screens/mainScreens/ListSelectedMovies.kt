@@ -285,9 +285,6 @@ private fun ShowListComments(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = comment.commentText
-                            )
-                            Text(
                                 text = SimpleDateFormat(
                                     "dd.MM.yyyy HH:mm",
                                     Locale.getDefault()
