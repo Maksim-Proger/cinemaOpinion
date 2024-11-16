@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,9 +15,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
@@ -60,7 +63,7 @@ fun SearchFilterScreen(
     onSendRequest: () -> Unit,
     onClickClose: () -> Unit,
 ) {
-
+    val scrollState = rememberScrollState()
     var showGenresList by remember { mutableStateOf(false) }
     var showCountriesList by remember { mutableStateOf(false) }
 
@@ -82,6 +85,7 @@ fun SearchFilterScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.tertiary)
+            .verticalScroll(scrollState)
     ) {
 
         if (showGenresList) {
@@ -89,16 +93,22 @@ fun SearchFilterScreen(
                 selectedGenre = genre
                 showGenresList = false
             }
+            BackHandler {
+                showGenresList = !showGenresList
+            }
         }
         if (showCountriesList) {
             ShowListCountries { country ->
                 selectedCountry = country
                 showCountriesList = false
             }
+            BackHandler{
+                showCountriesList = !showCountriesList
+            }
         }
 
         Column(
-            Modifier.padding(vertical = 70.dp)
+            Modifier.padding(vertical = 55.dp)
         ) {
 
             Text(
@@ -108,7 +118,7 @@ fun SearchFilterScreen(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
-            Spacer(modifier = Modifier.padding(vertical = 32.dp))
+            Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
             SelectType(
                 onSelectedType = { type ->
