@@ -26,12 +26,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
@@ -46,6 +48,7 @@ fun EditPersonalInformationScreen(
     navController: NavHostController,
     viewModel: UserViewModel = hiltViewModel()
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     LaunchedEffect(Unit) {
         viewModel.fitchUser()
@@ -68,29 +71,12 @@ fun EditPersonalInformationScreen(
     val context = LocalContext.current
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.top_app_bar_header_name_user_information),
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                },
-                actions = {
-                    IconButton(onClick = {
-                        navigateFunction(navController, Route.MainScreen.route)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = stringResource(id = R.string.description_icon_home_button),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+            ClassicTopAppBar(
+                title = stringResource(id = R.string.top_app_bar_header_name_user_information),
+                scrollBehavior = scrollBehavior,
+                onTransitionAction = { navigateFunction(navController, Route.MainScreen.route) }
             )
         },
         floatingActionButton = {

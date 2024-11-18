@@ -19,6 +19,7 @@ fun ApiNewsModel.toDomain(): NewsModel {
 fun ApiNewsList.toDomain(): NewsList {
     return NewsList(
         total = total,
+        totalPages = totalPages,
         items = items.map { it.toDomain() }
     )
 }

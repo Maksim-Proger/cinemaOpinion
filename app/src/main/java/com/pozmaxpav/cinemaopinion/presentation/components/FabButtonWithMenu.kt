@@ -29,7 +29,7 @@ fun FabButtonWithMenu(
     contentDescription: String,
     textFloatingButton: String,
     content: @Composable () -> Unit,
-    onButtonClick: () -> Unit = {}, // TODO: Что это за запись такая?,
+    onButtonClick: () -> Unit = {},
     expanded: Boolean
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -65,7 +65,7 @@ fun FabButtonWithMenu(
 fun MyCustomDropdownMenuItem(
     onAction: () -> Unit,
     title: String,
-    leadingIcon: @Composable (() -> Unit)? = null, // TODO: Что это за запись такая?,
+    leadingIcon: @Composable (() -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier
