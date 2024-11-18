@@ -15,10 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.ArtTrack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -141,7 +139,9 @@ fun AccountScreen(
                     AccountSettingMenu(navController)
 
                 }
+
                 Spacer(modifier = Modifier.padding(8.dp))
+
                 Card(
                     modifier = Modifier
                         .fillMaxSize()

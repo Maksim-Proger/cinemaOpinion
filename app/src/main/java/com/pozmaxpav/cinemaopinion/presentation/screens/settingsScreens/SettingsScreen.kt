@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsRadioButtons
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
@@ -31,33 +32,16 @@ fun SettingsScreen(
     themeViewModel: ThemeViewModel,
     navController: NavHostController
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val myStringArray = stringArrayResource(R.array.my_string_array)
     val optionsList = myStringArray.toList()
 
     Scaffold (
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.drop_down_menu_item_settings),
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                },
-                actions = {
-                    IconButton(onClick = {
-                        navigateFunction(navController, Route.MainScreen.route)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = stringResource(id = R.string.description_icon_home_button),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+            ClassicTopAppBar(
+                title = stringResource(id = R.string.drop_down_menu_item_settings),
+                scrollBehavior = scrollBehavior,
+                onTransitionAction = { navigateFunction(navController, Route.MainScreen.route) }
             )
         },
     ) { innerPadding ->

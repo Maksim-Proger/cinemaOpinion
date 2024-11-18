@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -242,25 +243,19 @@ fun MainScreen(navController: NavHostController) {
                                 )
                             }
                             // region Доработать
-//                        MyCustomDropdownMenuItem(
-//                            onAction = {
-//                                navController.navigate(Route.MediaNewsScreen.route) {
-//                                    popUpTo(navController.graph.startDestinationId) {
-//                                        saveState = true
-//                                    }
-//                                    launchSingleTop = true
-//                                    restoreState = true
-//                                }
-//                            },
-//                            title = "Интересное",
-//                            leadingIcon = {
-//                                Icon(
-//                                    Icons.Default.Newspaper,
-//                                    contentDescription = null,
-//                                    tint = MaterialTheme.colorScheme.onSecondary
-//                                )
-//                            }
-//                        )
+                        MyCustomDropdownMenuItem(
+                            onAction = {
+                                navigateFunction(navController, Route.MediaNewsScreen.route)
+                            },
+                            title = "Интересное (beta version)",
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.Newspaper,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                        )
                             // endregion
                         }
                     },

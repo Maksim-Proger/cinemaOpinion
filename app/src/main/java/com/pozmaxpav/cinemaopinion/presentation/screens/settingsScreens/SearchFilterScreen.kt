@@ -1,7 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,11 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
@@ -28,6 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -35,10 +33,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -48,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -55,15 +57,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
+import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.utilits.parsYearsToString
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchFilterScreen(
     onSearch: (CompositeRequest) -> Unit,
     onSendRequest: () -> Unit,
     onClickClose: () -> Unit,
 ) {
-    val scrollState = rememberScrollState()
+
+    // region Переменные
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var showGenresList by remember { mutableStateOf(false) }
     var showCountriesList by remember { mutableStateOf(false) }
 
@@ -80,13 +86,18 @@ fun SearchFilterScreen(
     // Переменные для хранения выбранного диапазона возможных годов
     var selectedRange by remember { mutableStateOf(1900f..2024f) } // Диапазон значений
     var sliderPosition by remember { mutableFloatStateOf(0f) }
+    // endregion
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.tertiary)
-            .verticalScroll(scrollState)
-    ) {
+    Scaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            ClassicTopAppBar(
+                title = stringResource(R.string.title_for_advanced_search_screen),
+                scrollBehavior = scrollBehavior,
+                onTransitionAction = onClickClose
+            )
+        }
+    ) { innerPadding ->
 
         if (showGenresList) {
             ShowListGenres { genre ->
@@ -108,17 +119,8 @@ fun SearchFilterScreen(
         }
 
         Column(
-            Modifier.padding(vertical = 55.dp)
+            Modifier.padding(innerPadding)
         ) {
-
-            Text(
-                text = stringResource(R.string.title_for_advanced_search_screen),
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-
-            Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
             SelectType(
                 onSelectedType = { type ->
@@ -252,7 +254,11 @@ fun SearchFilterScreen(
                         )
                         onClickClose()
                         onSendRequest()
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 ) {
                     Text(
                         text = "Показать",
@@ -289,6 +295,10 @@ fun SelectType(
                 FilterChip(
                     modifier = Modifier
                         .width(fixWidth),
+//                    colors = FilterChipDefaults.filterChipColors(
+//                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+//                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+//                    ),
                     selected = selected1,
                     onClick = {
                         selected1 = !selected1
@@ -421,7 +431,7 @@ fun SearchKeyword(
                 Text(
                     text = "Введите название фильма",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             },
             leadingIcon = {
@@ -454,6 +464,7 @@ fun SearchKeyword(
             ),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
+//                unfocusedContainerColor = MaterialTheme.colorScheme.surface
                 unfocusedContainerColor = MaterialTheme.colorScheme.tertiaryContainer
             ),
         )
@@ -483,7 +494,11 @@ fun ShowListCountries(onCountrySelected: (Pair<Int, String>) -> Unit) {
                     modifier = Modifier.clickable {
                         onCountrySelected(country)
                     },
-                    headlineContent = { Text(text = country.second) }
+                    headlineContent = {
+                        Text(
+                            text = country.second
+                        )
+                    }
                 )
             }
         }
@@ -533,7 +548,6 @@ fun RangeSliderToSelectDate(
         Text(
             text = "Выберите диапазон: ${range.start.toInt()} - ${range.endInclusive.toInt()}",
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         RangeSlider(
@@ -541,7 +555,11 @@ fun RangeSliderToSelectDate(
             value = range,
             onValueChange = onRangeChange,
             valueRange = 1900f..2024f,
-            steps = 124
+            steps = 124,
+            colors = SliderDefaults.colors(
+                thumbColor = MaterialTheme.colorScheme.secondary,
+                activeTickColor = MaterialTheme.colorScheme.tertiaryContainer
+            )
         )
     }
 }
@@ -555,18 +573,23 @@ fun SliderRatingFrom(
         modifier = Modifier
             .padding(16.dp)
     ) {
+
         Text(
             text = "Укажите минимальный рейтинг: $sliderPosition",
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
+
         Slider(
             modifier = Modifier.padding(horizontal = 10.dp),
             valueRange = 0f .. 10f,
             value = sliderPosition,
             onValueChange = sliderPositionResult,
-            steps = 9
+            steps = 9,
+            colors = SliderDefaults.colors(
+                thumbColor = MaterialTheme.colorScheme.secondary,
+                activeTickColor = MaterialTheme.colorScheme.tertiaryContainer
+            )
         )
     }
 }
