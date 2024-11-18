@@ -116,6 +116,7 @@ fun MainScreen(navController: NavHostController) {
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
 
     // endregion
+
     // region Launchers
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
@@ -371,10 +372,7 @@ fun MainScreen(navController: NavHostController) {
                         .padding(padding),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    items(moviesToDisplay, key = {
-//                        (it as UnifyingId).id // Эта запись избыточна
-                        it.id
-                    }) { movie ->
+                    items(moviesToDisplay, key = { it.id }) { movie ->
                         MovieItem(movie = movie) {
                             selectedMovie = movie
                         }
@@ -407,6 +405,7 @@ fun MainScreen(navController: NavHostController) {
                                         )
                                     }
                                 }
+
                                 if (canGoForward) {
                                     IconButton(
                                         onClick = {

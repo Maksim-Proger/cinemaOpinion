@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -275,6 +277,13 @@ fun SelectType(
     onSelectedType: (String) -> Unit
 ) {
     val fixWidth = 150.dp
+    val colors = FilterChipDefaults.filterChipColors(
+        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        selectedContainerColor = MaterialTheme.colorScheme.secondary,
+        selectedLabelColor = MaterialTheme.colorScheme.onSecondary,
+        selectedLeadingIconColor = Color.Green
+    )
     var selected1 by remember { mutableStateOf(false) }
     var selected2 by remember { mutableStateOf(false) }
     var selected3 by remember { mutableStateOf(false) }
@@ -295,16 +304,18 @@ fun SelectType(
                 FilterChip(
                     modifier = Modifier
                         .width(fixWidth),
-//                    colors = FilterChipDefaults.filterChipColors(
-//                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-//                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-//                    ),
+                    colors = colors,
                     selected = selected1,
                     onClick = {
                         selected1 = !selected1
                         onSelectedType("FILM")
                     },
-                    label = { Text(text = "Фильм") },
+                    label = {
+                        Text(
+                            text = "Фильм",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
                     leadingIcon = if (selected1) {
                         {
                             Icon(
@@ -318,12 +329,18 @@ fun SelectType(
                 FilterChip(
                     modifier = Modifier
                         .width(fixWidth),
+                    colors = colors,
                     selected = selected2,
                     onClick = {
                         selected2 = !selected2
                         onSelectedType("TV_SHOW")
                     },
-                    label = { Text(text = "Передача") },
+                    label = {
+                        Text(
+                            text = "Передача",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
                     leadingIcon = if (selected2) {
                         {
                             Icon(
@@ -345,12 +362,18 @@ fun SelectType(
                 FilterChip(
                     modifier = Modifier
                         .width(fixWidth),
+                    colors = colors,
                     selected = selected3,
                     onClick = {
                         selected3 = !selected3
                         onSelectedType("TV_SERIES")
                     },
-                    label = { Text(text = "Сериал") },
+                    label = {
+                        Text(
+                            text = "Сериал",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
                     leadingIcon = if (selected3) {
                         {
                             Icon(
@@ -365,12 +388,18 @@ fun SelectType(
                 FilterChip(
                     modifier = Modifier
                         .width(fixWidth),
+                    colors = colors,
                     selected = selected4,
                     onClick = {
                         selected4 = !selected4
                         onSelectedType("MINI_SERIES")
                     },
-                    label = { Text(text = "Мини сериал") },
+                    label = {
+                        Text(
+                            text = "Мини сериал",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
                     leadingIcon = if (selected4) {
                         {
                             Icon(
@@ -389,12 +418,18 @@ fun SelectType(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 49.dp),
+        colors = colors,
         selected = selected5,
         onClick = {
             selected5 = !selected5
             onSelectedType("ALL")
         },
-        label = { Text(text = "Показать все") },
+        label = {
+            Text(
+                text = "Показать все",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
         leadingIcon = if (selected5) {
             {
                 Icon(
