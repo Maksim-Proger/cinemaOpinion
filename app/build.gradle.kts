@@ -9,14 +9,14 @@ plugins {
 
 android {
     namespace = "com.pozmaxpav.cinemaopinion"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.pozmaxpav.cinemaopinion"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "ver14:13.11.2024"
+        versionName = "ver15:19.11.2024"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -54,6 +54,9 @@ android {
 }
 
 dependencies {
+
+    // WebView
+    implementation("androidx.webkit:webkit:1.12.1")
 
     // Module
     implementation(project(":introductoryscreens"))

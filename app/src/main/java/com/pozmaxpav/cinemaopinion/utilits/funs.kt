@@ -47,6 +47,7 @@ import java.time.DateTimeException
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun AccountListItem(
@@ -321,20 +322,18 @@ fun formatCountries(country: List<Country>): String {
     }
 }
 
-// TODO: доработать метод
-fun formatMonth(fullDate: String): String {
-    val listDate: List<String> = fullDate.split("-")
+fun formatMonth(month: String): String {
     return try {
-        Month.of(listDate[1].toInt()).name.capitalize()
+        Month.of(month.toInt())
+            .name
+            .replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+            }
     } catch (e: DateTimeException) {
         "Invalid month"
+    } catch (e: NumberFormatException) {
+        "Invalid month"
     }
-}
-
-// TODO: доработать метод
-fun formatYear(fullDate: String) : Int {
-    val listDate: List<String> = fullDate.split("-")
-    return listDate[0].toInt()
 }
 
 fun formatDate(date: String) : String {

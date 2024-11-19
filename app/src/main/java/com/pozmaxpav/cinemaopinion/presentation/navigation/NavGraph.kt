@@ -3,10 +3,12 @@ package com.pozmaxpav.cinemaopinion.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.introductoryscreens.ui.onboarding.OnBoardingScreen
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListOfChangesScreen
@@ -15,6 +17,7 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MediaNewsScr
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.SeriesControlScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.EditPersonalInformationScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SettingsScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.WebViewScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.introduction.OnBoardingViewModel
 
@@ -76,6 +79,13 @@ fun NavGraph(
             Route.SettingsScreen.route
         ) {
             SettingsScreen(themeViewModel, navController)
+        }
+
+        composable( // TODO: В Route это заносить не нужно?
+            "webView/{url}", // Шаблон маршрута с аргументом "url"
+            arguments = listOf(navArgument("url") { type = NavType.StringType })
+        ) {
+            WebViewScreen()
         }
 
     }
