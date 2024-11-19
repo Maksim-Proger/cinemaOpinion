@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,10 +18,10 @@ class IntroductionScreensViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _startDestination = MutableStateFlow(Route.AppStartNavigation.route)
-    val startDestination: StateFlow<String> = _startDestination
+    val startDestination: StateFlow<String> = _startDestination.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -30,7 +31,7 @@ class IntroductionScreensViewModel @Inject constructor(
                 } else {
                     Route.AppStartNavigation.route
                 }
-                delay(300) // Можно оставить задержку, если это необходимо
+                delay(300)
                 _isLoading.value = false
             }
         }
