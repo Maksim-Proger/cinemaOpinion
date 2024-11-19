@@ -58,9 +58,7 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFi
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
-import com.pozmaxpav.cinemaopinion.utilits.formatYear
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,8 +68,7 @@ fun MainScreen(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     // DatePicker
-    var showDatePicker by remember { mutableStateOf(false) }  // Состояние для показа DatePicker
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) } // Значение выбранной даты
+    var selectedDate by remember { mutableStateOf<Pair<Int, String>?>(null) } // Значение выбранной даты
 
     // Блок поиска
     var query by remember { mutableStateOf("") }
@@ -83,6 +80,7 @@ fun MainScreen(navController: NavHostController) {
     var sendRequestCompleted by remember { mutableStateOf(false) } // Флаг для предотвращения повторной отправки запроса
 
     // Состояния для открытия страниц
+    var showDatePicker by remember { mutableStateOf(false) }
     var onFilterButtonClick by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
     var onAdvancedSearchButtonClick by remember { mutableStateOf(false) }
@@ -199,9 +197,21 @@ fun MainScreen(navController: NavHostController) {
                     onAdvancedSearchButtonClick = false
                 }
             }
+
+            if (showDatePicker) {
+                DatePickerFunction(
+                    onCloseDatePicker = { showDatePicker = !showDatePicker },
+                    onDateSelected = { date ->
+                        selectedDate = date
+                    },
+                )
+                BackHandler {
+                    showDatePicker = !showDatePicker
+                }
+            }
         },
         floatingActionButton = {
-            if (!onAccountButtonClick && !searchBarActive && !onAdvancedSearchButtonClick && selectedMovie == null) {
+            if (!onAccountButtonClick && !searchBarActive && !onAdvancedSearchButtonClick && selectedMovie == null && !showDatePicker) {
                 FabButtonWithMenu(
                     imageIcon = if (isScrolling.value) Icons.Default.ArrowUpward else Icons.Default.Settings,
                     contentDescription = "Меню настроек",
@@ -243,7 +253,8 @@ fun MainScreen(navController: NavHostController) {
                                     }
                                 )
                             }
-                            // region Доработать
+
+                            // region Доработать MediaNewsScreen
                         MyCustomDropdownMenuItem(
                             onAction = {
                                 navigateFunction(navController, Route.MediaNewsScreen.route)
@@ -268,21 +279,14 @@ fun MainScreen(navController: NavHostController) {
                     expanded = isExpanded
                 )
             }
-
-            // Получение выбранной даты TODO: Доработать, нужен только месяц и год!!!
-            selectedDate?.let {
-                viewModel.fetchPremiersMovies(formatYear(it.toString()), formatMonth(it.toString()))
-            }
-
-            DatePickerFunction(
-                showDatePicker,
-                onDateSelected = { date ->
-                    selectedDate = date
-                    showDatePicker = !showDatePicker
-                }
-            )
         }
     ) { padding ->
+
+        if (selectedDate != null) {
+            selectedDate?.let {
+                viewModel.fetchPremiersMovies(it.first, formatMonth(it.second))
+            }
+        }
 
         if (user != null) {
             user.let { userInfo ->
