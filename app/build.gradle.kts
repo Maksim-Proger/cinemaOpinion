@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.pozmaxpav.cinemaopinion"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.pozmaxpav.cinemaopinion"
@@ -54,6 +54,9 @@ android {
 }
 
 dependencies {
+
+    // WebView
+    implementation("androidx.webkit:webkit:1.12.1")
 
     // Module
     implementation(project(":introductoryscreens"))

@@ -1,6 +1,8 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,13 +46,14 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatDate
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextDecoration
 import com.pozmaxpav.cinemaopinion.R
 
-// TODO: Доработать! Надо запускать с последней страницы
+// TODO: Доработать! Запуск происходит с последней страницы, но при открытии ссылки и потом возврата обратно, снова с первой.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaNewsScreen(
-    navController: NavHostController,
+    navController: NavHostController
 ) {
     val viewModel: MainViewModel = hiltViewModel()
     val mediaNewsList = viewModel.mediaNews.collectAsState()
@@ -61,9 +64,8 @@ fun MediaNewsScreen(
     // Логика переключения страниц
     val listState = rememberLazyListState()
     var currentPage by remember { mutableIntStateOf(1) }
-    var totalPages by remember { mutableStateOf(1) }
+    var totalPages by remember { mutableIntStateOf(1) }
     var showPageSwitchingButtons by remember { mutableStateOf(false) }
-
 
     LaunchedEffect(Unit) { // Первоначальный запрос для получения кол-ва страниц
         if (isFirstLoad) {
@@ -115,7 +117,7 @@ fun MediaNewsScreen(
             contentPadding = PaddingValues(5.dp)
         ) {
             items(newsToDisplay, key = { it.kinopoiskId }) { it ->
-                NewsItem(it)
+                NewsItem(it, navController)
             }
 
             if (showPageSwitchingButtons) {
@@ -166,7 +168,8 @@ fun MediaNewsScreen(
 
 @Composable
 fun NewsItem(
-    item: NewsModel
+    item: NewsModel,
+    navController: NavHostController
 ) {
     Column(
         modifier = Modifier
@@ -191,8 +194,15 @@ fun NewsItem(
         Spacer(Modifier.padding(vertical = 5.dp))
         Text(
             text = item.url ?: "Нет источника",
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.Blue
+            style = MaterialTheme.typography.bodySmall.copy(
+                textDecoration = TextDecoration.Underline // Подчеркиваем текст, чтобы он выглядел как ссылка
+            ),
+            color = Color.Blue,
+            modifier = Modifier
+                .clickable {
+                    val encodedUrl = Uri.encode(item.url) // Кодируем URL для передачи через NavController
+                    navController.navigate("webView/$encodedUrl") // Навигация к экрану WebView, передаем закодированный URL
+                }
         )
 
         HorizontalDivider(Modifier.padding(vertical = 7.dp))
