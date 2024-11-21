@@ -1,12 +1,12 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
+
+
 // TODO: Почему тут нам надо вызывать execute?
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.information.Information
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsList
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetPremiereMoviesUseCase
@@ -47,14 +47,31 @@ class MainViewModel @Inject constructor(
     private val _mediaNews = MutableStateFlow<NewsList?>(null)
     val mediaNews: StateFlow<NewsList?> get() = _mediaNews.asStateFlow()
 
+    // region Это можно использовать для анимации загрузки
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    //endregion
+
     fun getMediaNews(page:Int) {
         viewModelScope.launch {
+
+            // region Это можно использовать для анимации загрузки
+            if (_isLoading.value) return@launch // Если уже идет загрузка, пропускаем запрос
+            _isLoading.value = true
+            //endregion
+
             try {
                 val news = getMediaNewsUseCase(page)
                 _mediaNews.value = news
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+
+            // region Это можно использовать для анимации загрузки
+            finally {
+                _isLoading.value = false
+            }
+            //endregion
         }
     }
 
@@ -72,7 +89,7 @@ class MainViewModel @Inject constructor(
     fun fetchPremiersMovies(year: Int, month: String) {
         viewModelScope.launch {
             try {
-                val movies = getPremiereMoviesUseCase.execute(year, month)
+                val movies = getPremiereMoviesUseCase(year, month)
                 _premiereMovies.value = movies
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -83,7 +100,7 @@ class MainViewModel @Inject constructor(
     fun fetchTopListMovies(page: Int) {
         viewModelScope.launch {
             try {
-                val movies = getTopMoviesUseCase.execute(page)
+                val movies = getTopMoviesUseCase(page)
                 _topListMovies.value = movies
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -94,7 +111,7 @@ class MainViewModel @Inject constructor(
     fun fetchSearchMovies(keyword: String, page: Int) {
         viewModelScope.launch {
             try {
-                val movies = getSearchMoviesUseCase.execute(keyword, page)
+                val movies = getSearchMoviesUseCase(keyword, page)
                 _searchMovies.value = movies
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -114,7 +131,7 @@ class MainViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
-                val movies = getSearchFilmsByFiltersUseCase.execute(
+                val movies = getSearchFilmsByFiltersUseCase(
                     type, keyword, countries, genres, ratingFrom, yearFrom, yearTo, page
                 )
                 _searchMovies.value = movies

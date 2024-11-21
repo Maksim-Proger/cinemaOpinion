@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetTopMoviesUseCase @Inject constructor(
     private val repository: MovieRepository
 ) {
-    suspend fun execute(page: Int) : MovieTopList {
+    suspend operator fun invoke(page: Int) : MovieTopList {
         return repository.getTopMovies(page)
     }
 }

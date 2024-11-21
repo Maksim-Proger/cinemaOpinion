@@ -12,7 +12,9 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.ObserveCommentsForMov
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfChangesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.RemoveRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeRecordUseCase
+import com.pozmaxpav.cinemaopinion.utilits.deletingOldRecords
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +30,8 @@ class FirebaseViewModel @Inject constructor(
     private val getCommentsForMovieUseCase: GetCommentsForMovieUseCase,
     private val observeCommentsForMovieUseCase: ObserveCommentsForMovieUseCase,
     private val savingChangeRecordUseCase: SavingChangeRecordUseCase,
-    private val getRecordsOfChangesUseCase: GetRecordsOfChangesUseCase
+    private val getRecordsOfChangesUseCase: GetRecordsOfChangesUseCase,
+    private val removeRecordsOfChangesUseCase: RemoveRecordsOfChangesUseCase
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<SelectedMovie>>(emptyList())
@@ -43,11 +46,42 @@ class FirebaseViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> get() = _errorMessage
 
+    fun removeRecordsOfChanges(id: String) {
+        viewModelScope.launch {
+            try {
+                removeRecordsOfChangesUseCase(id)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    // Удаление записей из базы данных и списка
+    private fun removeOldRecords() {
+        viewModelScope.launch {
+            val currentList = _listOfChanges.value
+            val filteredList = mutableListOf<DomainChangelogModel>()
+
+            currentList.forEach { record ->
+                if (deletingOldRecords(record.timestamp)) {
+                    // Удаляем запись из базы данных
+                    removeRecordsOfChanges(record.noteId)
+                } else {
+                    filteredList.add(record)
+                }
+            }
+
+            // Обновляем список после удаления
+            _listOfChanges.value = filteredList
+        }
+    }
+
     fun getRecordsOfChanges() {
         viewModelScope.launch {
             try {
                 val list = getRecordsOfChangesUseCase()
                 _listOfChanges.value = list
+                removeOldRecords() // Удаляем старые записи
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -141,3 +175,4 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 }
+

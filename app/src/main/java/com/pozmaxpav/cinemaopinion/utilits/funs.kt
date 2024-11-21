@@ -48,6 +48,7 @@ import java.time.LocalDateTime
 import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.abs
 
 @Composable
 fun AccountListItem(
@@ -341,6 +342,13 @@ fun formatDate(date: String) : String {
     val formatterOutput = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
     val dateTime = LocalDateTime.parse(date, formatterInput)
     return dateTime.format(formatterOutput)
+}
+
+fun deletingOldRecords(timestamp: Long): Boolean {
+    val currentTimeMillis = System.currentTimeMillis() // Получаем текущую дату
+    val differenceInMillis = abs(currentTimeMillis - timestamp) // Рассчитываем разницу между текущим временем и входящей датой
+    val daysDifference = differenceInMillis / (1000 * 60 * 60 * 24) // Конвертируем разницу в дни
+    return daysDifference > 7
 }
 
 // Кастуем объект MovieData в SelectedMovie

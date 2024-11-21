@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetPremiereMoviesUseCase @Inject constructor(
     private val repository: MovieRepository
 ) {
-    suspend fun execute(year: Int, month: String) : MovieList {
+    suspend operator fun invoke(year: Int, month: String) : MovieList {
         return repository.getPremiereMovies(year, month)
     }
 }

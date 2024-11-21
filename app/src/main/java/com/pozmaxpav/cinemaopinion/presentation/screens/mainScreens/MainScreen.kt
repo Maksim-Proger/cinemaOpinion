@@ -59,7 +59,10 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+
+
 // TODO: Нужно проверить на утечку, первый раз у меня закончилась квота по запросам в день.
+// TODO: Надо настроить метод получения остатка запросов
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
@@ -69,6 +72,7 @@ fun MainScreen(navController: NavHostController) {
 
     // DatePicker
     var selectedDate by remember { mutableStateOf<Pair<Int, String>?>(null) } // Значение выбранной даты
+    var dateSelectionComplete by remember { mutableStateOf(false) } // Флаг подтверждения, что дата выбрана и можно отправлять запрос
 
     // Блок поиска
     var query by remember { mutableStateOf("") }
@@ -116,6 +120,7 @@ fun MainScreen(navController: NavHostController) {
     // endregion
 
     // region Launchers
+
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
         viewModel.fetchPremiersMovies(2023, "July")
@@ -200,7 +205,10 @@ fun MainScreen(navController: NavHostController) {
 
             if (showDatePicker) {
                 DatePickerFunction(
-                    onCloseDatePicker = { showDatePicker = !showDatePicker },
+                    onCloseDatePicker = {
+                        showDatePicker = !showDatePicker
+                        dateSelectionComplete = true
+                    },
                     onDateSelected = { date ->
                         selectedDate = date
                     },
@@ -240,9 +248,7 @@ fun MainScreen(navController: NavHostController) {
 
                             if (!titleTopBarState) {
                                 MyCustomDropdownMenuItem(
-                                    onAction = {
-                                        showDatePicker = !showDatePicker
-                                    },
+                                    onAction = { showDatePicker = !showDatePicker },
                                     title = stringResource(id = R.string.drop_down_menu_item_select_date),
                                     leadingIcon = {
                                         Icon(
@@ -282,9 +288,10 @@ fun MainScreen(navController: NavHostController) {
         }
     ) { padding ->
 
-        if (selectedDate != null) {
+        if (dateSelectionComplete) {
             selectedDate?.let {
                 viewModel.fetchPremiersMovies(it.first, formatMonth(it.second))
+                dateSelectionComplete = false
             }
         }
 
@@ -307,7 +314,7 @@ fun MainScreen(navController: NavHostController) {
                     compositeRequest.yearFrom,
                     compositeRequest.yearTo,
                     currentPage)
-                sendRequestCompleted = !sendRequestCompleted
+                sendRequestCompleted = false
             }
         }
 
