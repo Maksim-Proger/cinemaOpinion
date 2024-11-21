@@ -1,7 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,25 +30,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatDate
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextDecoration
-import com.pozmaxpav.cinemaopinion.R
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 
-// TODO: Доработать! Запуск происходит с последней страницы, но при открытии ссылки и потом возврата обратно, снова с первой.
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaNewsScreen(
@@ -59,7 +61,9 @@ fun MediaNewsScreen(
     val mediaNewsList = viewModel.mediaNews.collectAsState()
     val newsToDisplay: List<NewsModel> = mediaNewsList.value?.items ?: emptyList()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var isFirstLoad by remember { mutableStateOf(true) } // Флаг для предотвращения повторных запусков
+
+    // TODO: rememberSaveable = позволяет сохранять состояние между пересозданиями. Разобраться!
+    var isFirstLoad by rememberSaveable { mutableStateOf(true) } // Флаг для предотвращения повторных запусков
 
     // Логика переключения страниц
     val listState = rememberLazyListState()
@@ -67,24 +71,29 @@ fun MediaNewsScreen(
     var totalPages by remember { mutableIntStateOf(1) }
     var showPageSwitchingButtons by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) { // Первоначальный запрос для получения кол-ва страниц
+    // Единый LaunchedEffect для управления запросами // TODO: Разобраться!
+    LaunchedEffect(isFirstLoad) {
         if (isFirstLoad) {
-            viewModel.getMediaNews(currentPage)
+            // 1. Первый запрос для получения общего количества страниц
+            viewModel.getMediaNews(1) // Получаем первую страницу и totalPages
+
+            // Ждем обновления totalPages // TODO: Особенно с этим куском!
+            snapshotFlow { mediaNewsList.value?.totalPages }
+                .filterNotNull()
+                .firstOrNull()?.let { pages ->
+                    totalPages = pages
+                    if (pages > 1) {
+
+                        // 2. Переходим на последнюю страницу, если страниц больше одной
+                        currentPage = pages
+                        viewModel.getMediaNews(pages)
+                    }
+                }
             isFirstLoad = false
         }
     }
 
-    LaunchedEffect(mediaNewsList.value?.totalPages) { // Основной запрос с последней страницы
-        totalPages = mediaNewsList.value?.totalPages ?: 0
-        if (totalPages > 0 && currentPage == 1) {
-            currentPage = totalPages
-            viewModel.getMediaNews(currentPage)
-        }
-//        Log.d("@@@", totalPages.toString()) // TODO: Разобраться почему изначально выводится значение null
-        Log.d("@@@", totalPages.toString())
-        Log.d("@@@", currentPage.toString())
-    }
-
+    // Показываем кнопки при скролле
     LaunchedEffect(Unit) {
         snapshotFlow { listState.layoutInfo }
             .collect { layoutInfo ->

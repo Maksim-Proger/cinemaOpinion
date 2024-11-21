@@ -103,6 +103,9 @@ fun SettingsScreen(
 
             if (developerMode) {
                 Spacer(modifier = Modifier.padding(16.dp))
+                Text(
+                    text = "Технический комментарий"
+                )
                 TextField(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     value = developerComment,

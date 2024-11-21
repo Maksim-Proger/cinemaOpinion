@@ -183,6 +183,29 @@ class FirebaseRepositoryImpl @Inject constructor(
             }
     }
 
+    override suspend fun removeRecordsOfChanges(id: String) {
+        try {
+            val snapshot = databaseReference
+                .child(NODE_LIST_CHANGES)
+                .orderByKey()
+                .equalTo(id)
+                .get()
+                .await()
+
+            if (snapshot.exists() && snapshot.hasChildren()) {
+                // Проходим по всем найденным элементам
+                for (filmSnapshot in snapshot.children) {
+                    filmSnapshot.ref.removeValue().await() // Удаляем запись
+                }
+            } else {
+                Log.e("RemoveMovie", "No matching record found with id: $id")
+            }
+
+        } catch (e: Exception) {
+            Log.e("RemoveMovie", "Error: ${e.message}")
+        }
+    }
+
 }
 
 

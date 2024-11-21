@@ -13,4 +13,5 @@ interface FirebaseRepository {
     suspend fun observeCommentsForMovie(movieId: Double, onCommentsUpdated: (List<DomainComment>) -> Unit)
     suspend fun savingChangeRecord(domainChangelogModel: DomainChangelogModel)
     suspend fun getRecordsOfChanges(): List<DomainChangelogModel>
+    suspend fun removeRecordsOfChanges(id: String)
 }
