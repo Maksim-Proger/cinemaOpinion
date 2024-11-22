@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -69,7 +70,7 @@ fun DatePickerFunction(
                 ) {
                     Text( // TODO: Переработать стили
                         text = "Месяц",
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.displayMedium,
                         modifier = Modifier.padding(bottom = 8.dp),
                         textAlign = TextAlign.Center
                     )
@@ -90,10 +91,12 @@ fun DatePickerFunction(
                                     .clickable {
                                         selectedMonth = month + 1
                                     }
-                                    .background(if (selectedMonth == month + 1) Color.Gray else Color.Transparent),
-                                color = if (selectedMonth == month + 1) Color.Blue else Color.Black,
+                                    .background(
+                                        if (selectedMonth == month + 1) MaterialTheme.colorScheme.tertiaryContainer else Color.Transparent
+                                    ),
+                                color = if (selectedMonth == month + 1) MaterialTheme.colorScheme.onSurfaceVariant else Color.Black,
                                 textAlign = TextAlign.Center,
-                                fontSize = 18.sp
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                     }
@@ -104,7 +107,7 @@ fun DatePickerFunction(
                 ) {
                     Text( // TODO: Переработать стили
                         text = "Год",
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.displayMedium,
                         modifier = Modifier.padding(bottom = 8.dp),
                         textAlign = TextAlign.Center
                     )
@@ -112,7 +115,7 @@ fun DatePickerFunction(
                         contentPadding = PaddingValues(10.dp),
                         verticalArrangement = Arrangement.Center
                     ) {
-                        items(125) { index ->
+                        items((0..124).toList().reversed()) { index ->
                             val year = 1900 + index
                             Text(
                                 text = year.toString(),
@@ -121,16 +124,17 @@ fun DatePickerFunction(
                                     .clickable {
                                         selectedYear = year
                                     }
-                                    .background(if (selectedYear == year) Color.Gray else Color.Transparent),
-                                color = if (selectedYear == year) Color.Blue else Color.Black,
+                                    .background(
+                                        if (selectedYear == year) MaterialTheme.colorScheme.tertiaryContainer else Color.Transparent
+                                    ),
+                                color = if (selectedYear == year) MaterialTheme.colorScheme.onSurfaceVariant else Color.Black,
                                 textAlign = TextAlign.Center,
-                                fontSize = 18.sp
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                     }
                 }
             }
-
         }
 
         Spacer(modifier = Modifier.height(16.dp))

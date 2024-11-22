@@ -60,9 +60,6 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
-
-// TODO: Нужно проверить на утечку, первый раз у меня закончилась квота по запросам в день.
-// TODO: Надо настроить метод получения остатка запросов
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
@@ -260,21 +257,19 @@ fun MainScreen(navController: NavHostController) {
                                 )
                             }
 
-                            // region Доработать MediaNewsScreen
-                        MyCustomDropdownMenuItem(
-                            onAction = {
-                                navigateFunction(navController, Route.MediaNewsScreen.route)
-                            },
-                            title = "Интересное (beta version)",
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Default.Newspaper,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        )
-                            // endregion
+                            MyCustomDropdownMenuItem(
+                                onAction = {
+                                    navigateFunction(navController, Route.MediaNewsScreen.route)
+                                },
+                                title = "Интересное (beta version)",
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.Newspaper,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                }
+                            )
                         }
                     },
                     onButtonClick = { // TODO: Надо еще раз подумать на этой кнопкой, не хочу чтобы при поднятии вверх открывалось меню.
@@ -334,7 +329,6 @@ fun MainScreen(navController: NavHostController) {
                         searchHistory.add(searchQuery)
                         searchCompleted = true
                         searchBarActive = false
-                        titleTopBarState = true
                     },
                     active = searchBarActive,
                     onActiveChange = { isActive -> searchBarActive = isActive },
