@@ -92,6 +92,7 @@ fun AccountScreen(
 
         if (showSelectedGeneralMovies) {
             ListSelectedGeneralMovies(
+                navController,
                 onClickCloseButton = { showSelectedGeneralMovies = false }
             )
             BackHandler {

@@ -23,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -43,15 +44,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
+import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
-import com.pozmaxpav.cinemaopinion.utilits.MovieGeneralItem
+import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +68,7 @@ import java.util.Locale
 
 @Composable
 fun ListSelectedGeneralMovies(
+    navController: NavHostController,
     viewModel: FirebaseViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
     onClickCloseButton: () -> Unit
@@ -77,7 +83,8 @@ fun ListSelectedGeneralMovies(
     var username by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        viewModel.getMovies()
+        viewModel.getMovies(NODE_LIST_MOVIES)
+        viewModel.observeListMovies(NODE_LIST_MOVIES)
         userViewModel.fitchUser()
     }
 
@@ -151,6 +158,23 @@ fun ListSelectedGeneralMovies(
                         selectedNote!!.id.toDouble()
                     )
                 },
+                movieTransferButton = {
+                    Button(
+                        onClick = {
+                            viewModel.sendingToTheViewedFolder(selectedNote!!.id.toDouble())
+                            showToast(context, "Фильм успешно перенесен")
+                            viewModel.savingChangeRecord(
+                                username,
+                                "переместил(а) фильм: ${selectedNote!!.nameFilm}"
+                            )
+                        }
+                    ) {
+                        Text(
+                            text = "Просмотрен",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                },
                 onClick = { selectedNote = null },
                 openBottomSheet = { openBottomSheetComments = !openBottomSheetComments }
             )
@@ -206,9 +230,10 @@ fun ListSelectedGeneralMovies(
                                         Row(
                                             modifier = Modifier.weight(0.9f)
                                         ) {
-                                            MovieGeneralItem(movie = movie) {
-                                                selectedNote = movie
-                                            }
+                                            SelectedMovieItem(
+                                                movie = movie,
+                                                onClick = { selectedNote = movie }
+                                            )
                                         }
 
                                         IconButton(
@@ -244,27 +269,51 @@ fun ListSelectedGeneralMovies(
         Spacer(modifier = Modifier.padding(15.dp))
 
         // region Кнопка закрыть
-        Card(
-            modifier = Modifier
-                .clickable(
-                    onClick = {
-                        onClickCloseButton()
-                    }
-                ),
-            shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.list_selected_movies_button_close),
-                    style = MaterialTheme.typography.bodyLarge
+            Card(
+                modifier = Modifier
+                    .clickable(onClick = onClickCloseButton),
+                shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            ) {
+                Box(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.list_selected_movies_button_close),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+
+            Card(
+                modifier = Modifier
+                    .clickable {
+                        navigateFunction(navController, Route.ListWatchedMovies.route)
+                    },
+                shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            ) {
+                Box(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "Просмотренные фильмы",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
             }
         }
         // endregion
@@ -279,11 +328,11 @@ fun ShowCommentGeneralList(
 ) {
 
     LaunchedEffect(Unit) {
-        viewModel.getComments(id)
+        viewModel.getComments(NODE_LIST_MOVIES, id)
     }
 
     LaunchedEffect(id) {
-        viewModel.observeComments(id)
+        viewModel.observeComments(NODE_LIST_MOVIES, id)
     }
 
     LazyColumn(

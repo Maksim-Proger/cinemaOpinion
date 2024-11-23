@@ -11,4 +11,5 @@ sealed class Route(
     data object MediaNewsScreen : Route(route = "media_news_screen")
     data object ListOfChangesScreen : Route(route = "list_of_changes_screen")
     data object SeriesControlScreen : Route(route = "series_control_screen")
+    data object ListWatchedMovies : Route(route = "list_watched_movies")
 }
