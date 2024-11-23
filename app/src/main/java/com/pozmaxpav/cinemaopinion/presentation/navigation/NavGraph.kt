@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.example.introductoryscreens.ui.onboarding.OnBoardingScreen
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListOfChangesScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListWatchedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MediaNewsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.SeriesControlScreen
@@ -86,6 +87,14 @@ fun NavGraph(
             arguments = listOf(navArgument("url") { type = NavType.StringType })
         ) {
             WebViewScreen()
+        }
+
+        composable(
+            Route.ListWatchedMovies.route
+        ) {
+            ListWatchedMovies(
+                navController
+            )
         }
 
     }

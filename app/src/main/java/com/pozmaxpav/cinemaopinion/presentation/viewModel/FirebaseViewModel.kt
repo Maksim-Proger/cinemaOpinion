@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
@@ -9,8 +10,10 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.AddCommentUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetCommentsForMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.ObserveCommentsForMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.ObserveListMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SendingToTheViewedFolderUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.RemoveRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeRecordUseCase
@@ -26,12 +29,14 @@ class FirebaseViewModel @Inject constructor(
     private val saveMovieUseCase: SaveMovieUseCase,
     private val removeMovieUseCase: RemoveMovieUseCase,
     private val getMovieUseCase: GetMovieUseCase,
+    private val observeListMoviesUseCase: ObserveListMoviesUseCase,
     private val addCommentUseCase: AddCommentUseCase,
     private val getCommentsForMovieUseCase: GetCommentsForMovieUseCase,
     private val observeCommentsForMovieUseCase: ObserveCommentsForMovieUseCase,
     private val savingChangeRecordUseCase: SavingChangeRecordUseCase,
     private val getRecordsOfChangesUseCase: GetRecordsOfChangesUseCase,
-    private val removeRecordsOfChangesUseCase: RemoveRecordsOfChangesUseCase
+    private val removeRecordsOfChangesUseCase: RemoveRecordsOfChangesUseCase,
+    private val sendingToTheViewedFolderUseCase: SendingToTheViewedFolderUseCase
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<SelectedMovie>>(emptyList())
@@ -45,6 +50,16 @@ class FirebaseViewModel @Inject constructor(
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> get() = _errorMessage
+
+    fun sendingToTheViewedFolder(movieId: Double) {
+        viewModelScope.launch {
+            try {
+                sendingToTheViewedFolderUseCase(movieId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     fun removeRecordsOfChanges(id: String) {
         viewModelScope.launch {
@@ -104,10 +119,10 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun getComments(movieId: Double) {
+    fun getComments(dataSource: String, movieId: Double) {
         viewModelScope.launch {
             try {
-                val commentList = getCommentsForMovieUseCase(movieId)
+                val commentList = getCommentsForMovieUseCase(dataSource, movieId)
                 _comments.value = commentList
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -115,9 +130,9 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun observeComments(movieId: Double) {
+    fun observeComments(dataSource: String, movieId: Double) {
         viewModelScope.launch {
-            observeCommentsForMovieUseCase(movieId) { updatedComments ->
+            observeCommentsForMovieUseCase(dataSource, movieId) { updatedComments ->
                 _comments.value = updatedComments
             }
         }
@@ -143,10 +158,18 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun getMovies() {
+    fun observeListMovies(dataSource: String) {
+        viewModelScope.launch {
+            observeListMoviesUseCase(dataSource) { updateListMovies ->
+                _movies.value = updateListMovies
+            }
+        }
+    }
+
+    fun getMovies(dataSource: String) {
         viewModelScope.launch {
             try {
-                val moviesList = getMovieUseCase()
+                val moviesList = getMovieUseCase(dataSource)
                 _movies.value = moviesList
             } catch (e: Exception) {
                 _errorMessage.value = e.message

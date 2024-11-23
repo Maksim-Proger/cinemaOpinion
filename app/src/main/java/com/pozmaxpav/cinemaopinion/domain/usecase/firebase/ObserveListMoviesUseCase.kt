@@ -4,10 +4,10 @@ import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
 import javax.inject.Inject
 
-class GetMovieUseCase @Inject constructor(
+class ObserveListMoviesUseCase @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) {
-    suspend operator fun invoke(dataSource: String): List<SelectedMovie> {
-        return firebaseRepository.getMovie(dataSource)
+    suspend operator fun invoke(dataSource: String, onMoviesUpdated: (List<SelectedMovie>) -> Unit) {
+        firebaseRepository.observeListMovies(dataSource, onMoviesUpdated)
     }
 }

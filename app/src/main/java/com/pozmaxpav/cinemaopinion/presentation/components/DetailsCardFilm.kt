@@ -203,7 +203,7 @@ fun DetailsCardFilm(
                             val selectedMovie = movie.toSelectedMovie()
                             viewModel.addSelectedMovie(selectedMovie)
 
-                            if (statusExist == "error") {
+                            if (statusExist == "error") { // TODO: Проверка не работает
                                 showToast(context, errorToast)
                             } else showToast(context, addToPersonalList)
 

@@ -51,7 +51,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.CommentPersonalListViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
-import com.pozmaxpav.cinemaopinion.utilits.MovieGeneralItem
+import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import kotlinx.coroutines.CoroutineScope
@@ -189,13 +189,15 @@ fun ListSelectedMovies(
                                         Row(
                                             modifier = Modifier.weight(0.9f)
                                         ) {
-                                            MovieGeneralItem(movie = movie) {
-                                                selectedNote = movie
-                                            }
+                                            SelectedMovieItem(
+                                                movie = movie,
+                                                onClick = { selectedNote = movie }
+                                            )
                                         }
                                         IconButton(
                                             onClick = {
-                                                isVisible = false // Скрываем элемент перед удалением
+                                                isVisible =
+                                                    false // Скрываем элемент перед удалением
                                                 CoroutineScope(Dispatchers.Main).launch {
                                                     delay(300)
                                                     viewModel.deleteSelectedMovie(movie)

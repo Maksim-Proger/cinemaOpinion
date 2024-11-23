@@ -133,14 +133,19 @@ fun CustomTextField(
 }
 
 @Composable
-fun MovieGeneralItem(
+fun SelectedMovieItem(
     movie: SelectedMovie,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    showTopBar: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .padding(16.dp)
-            .clickable { onClick() }
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+                showTopBar()
+            }
     ) {
         WorkerWithImageSelectedMovie(
             movie = movie,
@@ -158,7 +163,8 @@ fun MovieGeneralItem(
 fun ShowSelectedMovie(
     movie: SelectedMovie,
     content: @Composable () -> Unit,
-    openBottomSheet: () -> Unit,
+    movieTransferButton: @Composable () -> Unit = {},
+    openBottomSheet: () -> Unit = {},
     onClick: () -> Unit
 ) {
     Column(
@@ -205,6 +211,8 @@ fun ShowSelectedMovie(
                         text = movie.nameFilm,
                         style = MaterialTheme.typography.bodyLarge
                     )
+                    Spacer(modifier = Modifier.padding(vertical = 16.dp))
+                    movieTransferButton()
                 }
             }
 

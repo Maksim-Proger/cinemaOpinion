@@ -15,6 +15,7 @@ import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.Firebase
 import com.pozmaxpav.cinemaopinion.utilits.NODE_COMMENTS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -55,8 +56,8 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMovie(): List<SelectedMovie> {
-        val snapshot = databaseReference.child("list_movies").get().await()
+    override suspend fun getMovie(dataSource: String): List<SelectedMovie> {
+        val snapshot = databaseReference.child(dataSource).get().await()
         return snapshot.children.mapNotNull { childSnapshot ->
             childSnapshot.getValue(SelectedMovie::class.java)
         }
@@ -67,6 +68,23 @@ class FirebaseRepositoryImpl @Inject constructor(
                     posterUrl = it.posterUrl
                 )
             }
+    }
+
+    override suspend fun observeListMovies(dataSource: String, onMoviesUpdated: (List<SelectedMovie>) -> Unit) {
+        databaseReference
+            .child(dataSource)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val movies = snapshot.children.mapNotNull { movieSnapshot ->
+                        movieSnapshot.getValue(SelectedMovie::class.java)
+                    }
+                    onMoviesUpdated(movies)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseRepositoryImpl", "Error fetching movies: ${error.message}")
+                }
+            })
     }
 
     override suspend fun addCommentToMovie(movieId: Double, comment: DomainComment) {
@@ -106,10 +124,10 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCommentsForMovie(movieId: Double): List<DomainComment> {
+    override suspend fun getCommentsForMovie(dataSource: String, movieId: Double): List<DomainComment> {
         // Ищем узел с нужным фильмом
         val movieSnapshot = databaseReference
-            .child("list_movies")
+            .child(dataSource)
             .orderByChild("id")
             .equalTo(movieId)
             .get()
@@ -120,7 +138,7 @@ class FirebaseRepositoryImpl @Inject constructor(
 
         // Если фильм найден, переходим к узлу comments
         val commentsSnapshot = movieNode
-            ?.child("comments")
+            ?.child(NODE_COMMENTS)
             ?.children
             ?.mapNotNull { it.getValue(DataComment::class.java)?.toDomain() }
             ?: emptyList() // Возвращаем пустой список, если фильм или комментарии не найдены
@@ -128,9 +146,9 @@ class FirebaseRepositoryImpl @Inject constructor(
        return commentsSnapshot
     }
 
-    override suspend fun observeCommentsForMovie(movieId: Double, onCommentsUpdated: (List<DomainComment>) -> Unit) {
+    override suspend fun observeCommentsForMovie(dataSource: String, movieId: Double, onCommentsUpdated: (List<DomainComment>) -> Unit) {
         databaseReference
-            .child(NODE_LIST_MOVIES)
+            .child(dataSource)
             .orderByChild("id")
             .equalTo(movieId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -203,6 +221,43 @@ class FirebaseRepositoryImpl @Inject constructor(
 
         } catch (e: Exception) {
             Log.e("RemoveMovie", "Error: ${e.message}")
+        }
+    }
+
+    override suspend fun sendingToTheViewedFolder(movieId: Double) {
+        try {
+            val snapshot = databaseReference
+                .child(NODE_LIST_MOVIES)
+                .orderByChild("id")
+                .equalTo(movieId)
+                .get()
+                .await()
+
+            if (snapshot.exists()) {
+                val movieSnapshot = snapshot.children.firstOrNull() // Берём первую подходящую запись
+                val movieKey = movieSnapshot?.key // Получаем ключ записи
+
+                if (movieSnapshot != null && movieKey != null) {
+                    val movieData = movieSnapshot.value // Получаем данные записи
+
+                    // Копируем запись в новую папку
+                    databaseReference
+                        .child(NODE_LIST_WATCHED_MOVIES)
+                        .child(movieKey)
+                        .setValue(movieData)
+                        .await()
+
+                    // Удаляем запись после переноса
+                    databaseReference
+                        .child(NODE_LIST_MOVIES)
+                        .child(movieKey)
+                        .removeValue()
+                        .await()
+                }
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
