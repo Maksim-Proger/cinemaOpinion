@@ -88,6 +88,7 @@ fun ListWatchedMovies(
             ) {
                 ShowSelectedMovie(
                     movie = selectedNote!!,
+                    buttonVisibility = false,
                     content = {
                         ShowCommentWatchedMoviesList(
                             listComments = comments,

@@ -129,6 +129,7 @@ fun ListSelectedMovies(
         if (selectedNote != null) {
             ShowSelectedMovie(
                 movie = selectedNote!!,
+                buttonVisibility = true,
                 onClick = { selectedNote = null },
                 openBottomSheet = { openBottomSheetComments = !openBottomSheetComments },
                 content = {

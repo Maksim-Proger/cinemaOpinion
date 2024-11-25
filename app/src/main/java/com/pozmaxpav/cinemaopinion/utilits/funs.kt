@@ -162,6 +162,7 @@ fun SelectedMovieItem(
 @Composable
 fun ShowSelectedMovie(
     movie: SelectedMovie,
+    buttonVisibility: Boolean,
     content: @Composable () -> Unit,
     movieTransferButton: @Composable () -> Unit = {},
     openBottomSheet: () -> Unit = {},
@@ -216,21 +217,23 @@ fun ShowSelectedMovie(
                 }
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Button(
-                    onClick = {
-                        openBottomSheet()
-                    }
+            if (buttonVisibility) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp, horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    Text(
-                        text = "Оставить комментарий",
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                    Button(
+                        onClick = {
+                            openBottomSheet()
+                        }
+                    ) {
+                        Text(
+                            text = "Оставить комментарий",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
                 }
             }
 
