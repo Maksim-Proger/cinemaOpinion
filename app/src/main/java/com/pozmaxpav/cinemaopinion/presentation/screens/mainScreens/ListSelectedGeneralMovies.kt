@@ -152,6 +152,7 @@ fun ListSelectedGeneralMovies(
         if (selectedNote != null) {
             ShowSelectedMovie(
                 movie = selectedNote!!,
+                buttonVisibility = true,
                 content = {
                     ShowCommentGeneralList(
                         listComments,
@@ -268,7 +269,7 @@ fun ListSelectedGeneralMovies(
 
         Spacer(modifier = Modifier.padding(15.dp))
 
-        // region Кнопка закрыть
+        // region Кнопки
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -310,7 +311,7 @@ fun ListSelectedGeneralMovies(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Просмотренные фильмы",
+                        text = "Просмотренные",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
