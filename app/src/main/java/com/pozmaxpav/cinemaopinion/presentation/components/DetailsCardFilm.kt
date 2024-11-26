@@ -57,6 +57,7 @@ fun DetailsCardFilm(
     val context = LocalContext.current
 
     val info by viewModelMain.informationMovie.collectAsState()
+
     // Выполняем запрос к API только при изменении `movie.id`
     // Это нужно, чтобы не было многократного запроса к Api
     LaunchedEffect(movie.id) {

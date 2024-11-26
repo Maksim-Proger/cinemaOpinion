@@ -2,6 +2,7 @@ package com.pozmaxpav.cinemaopinion.data.repository
 
 import com.pozmaxpav.cinemaopinion.data.mappers.toDomain
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData.MovieSearch
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
@@ -43,6 +44,10 @@ class MovieRepositoryImpl @Inject constructor(private val api: MovieListApi) : M
             yearTo,
             page
         ).toDomain()
+    }
+
+    override suspend fun getSearchMovieById(id: Int): MovieSearch {
+        return api.getSearchMovieById(id).toDomain()
     }
 
     override suspend fun getMediaNews(page: Int): NewsList {

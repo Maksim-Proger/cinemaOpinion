@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.repository
 
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData.MovieSearch
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
@@ -19,5 +20,6 @@ interface MovieRepository {
         yearTo: Int? = null,
         page: Int
     ): MovieSearchList
+    suspend fun getSearchMovieById(id: Int): MovieSearch
     suspend fun getMediaNews(page:Int): NewsList
 }

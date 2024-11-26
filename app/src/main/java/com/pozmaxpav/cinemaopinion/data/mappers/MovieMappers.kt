@@ -40,6 +40,13 @@ fun ApiMovie.toDomain(): MovieData.Movie {
     )
 }
 
+fun ApiMovieList.toDomain(): MovieList {
+    return MovieList(
+        total = total,
+        items = items.map { it.toDomain() }
+    )
+}
+
 fun ApiMovieTop.toDomain(): MovieData.MovieTop {
     return MovieData.MovieTop(
         filmId = filmId,
@@ -48,6 +55,13 @@ fun ApiMovieTop.toDomain(): MovieData.MovieTop {
         posterUrl = posterUrl,
         year = year,
         countries = countries.map { it.toDomain() }
+    )
+}
+
+fun ApiMovieTopList.toDomain(): MovieTopList {
+    return MovieTopList(
+        pagesCount = pagesCount,
+        films = films.map { it.toDomain() }
     )
 }
 
@@ -60,20 +74,6 @@ fun ApiMovieSearch.toDomain(): MovieData.MovieSearch {
         ratingKinopoisk = ratingKinopoisk,
         ratingImdb = ratingImdb,
         countries = countries.map { it.toDomain() }
-    )
-}
-
-fun ApiMovieList.toDomain(): MovieList {
-    return MovieList(
-        total = total,
-        items = items.map { it.toDomain() }
-    )
-}
-
-fun ApiMovieTopList.toDomain(): MovieTopList {
-    return MovieTopList(
-        pagesCount = pagesCount,
-        films = films.map { it.toDomain() }
     )
 }
 

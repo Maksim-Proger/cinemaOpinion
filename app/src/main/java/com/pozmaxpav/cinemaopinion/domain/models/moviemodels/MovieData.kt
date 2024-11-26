@@ -40,7 +40,7 @@ sealed class MovieData : UnifyingId {
         override val nameRu: String?,
         override val posterUrl: String,
         override val year: String?,
-        override val countries: List<Country>
+        override val countries: List<Country> = emptyList()
     ) : MovieData() {
         override val id: Int get() = kinopoiskId
     }
