@@ -136,6 +136,7 @@ fun ListWatchedMovies(
                             )
                         }
                     }
+                    Spacer(Modifier.padding(5.dp))
                 }
             }
         }

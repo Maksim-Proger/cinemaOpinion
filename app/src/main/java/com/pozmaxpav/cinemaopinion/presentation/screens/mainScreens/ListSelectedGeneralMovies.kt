@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
@@ -81,6 +82,7 @@ fun ListSelectedGeneralMovies(
     val context = LocalContext.current
     val user by userViewModel.users.collectAsState()
     var username by remember { mutableStateOf("") }
+    val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
         viewModel.getMovies(NODE_LIST_MOVIES)
@@ -193,6 +195,7 @@ fun ListSelectedGeneralMovies(
                 )
             ) {
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .fillMaxSize(),
                     contentPadding = PaddingValues(10.dp)
@@ -229,7 +232,9 @@ fun ListSelectedGeneralMovies(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Row(
-                                            modifier = Modifier.weight(0.9f)
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .weight(0.9f)
                                         ) {
                                             SelectedMovieItem(
                                                 movie = movie,

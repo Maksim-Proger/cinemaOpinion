@@ -4,6 +4,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 // TODO: Почему тут нам надо вызывать execute?
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData.MovieSearch
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
@@ -11,6 +12,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.information.Informa
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsList
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetPremiereMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchFilmsByFiltersUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMovieByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetTopMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.information.GetMovieInformationUseCase
@@ -29,7 +31,8 @@ class MainViewModel @Inject constructor(
     private val getTopMoviesUseCase: GetTopMoviesUseCase,
     private val getSearchFilmsByFiltersUseCase: GetSearchFilmsByFiltersUseCase,
     private val getMovieInformationUseCase: GetMovieInformationUseCase,
-    private val getMediaNewsUseCase: GetMediaNewsUseCase
+    private val getMediaNewsUseCase: GetMediaNewsUseCase,
+    private val getSearchMovieByIdUseCase: GetSearchMovieByIdUseCase
 ) : ViewModel() {
 
     private val _premiereMovies = MutableStateFlow<MovieList?>(null) // TODO: А зачем нам тут вопрос?
@@ -40,6 +43,9 @@ class MainViewModel @Inject constructor(
 
     private val _searchMovies = MutableStateFlow<MovieSearchList?>(null)
     val searchMovies: StateFlow<MovieSearchList?> get() = _searchMovies.asStateFlow()
+
+    private val _searchMovieById = MutableStateFlow<MovieSearch?>(null)
+    val searchMovieById: StateFlow<MovieSearch?> get() = _searchMovieById.asStateFlow()
 
     private val _informationMovie = MutableStateFlow<Information?>(null)
     val informationMovie: StateFlow<Information?> get() = _informationMovie.asStateFlow()
@@ -54,12 +60,10 @@ class MainViewModel @Inject constructor(
 
     fun getMediaNews(page:Int) {
         viewModelScope.launch {
-
             // region Это можно использовать для анимации загрузки
             if (_isLoading.value) return@launch // Если уже идет загрузка, пропускаем запрос
             _isLoading.value = true
             //endregion
-
             try {
                 val news = getMediaNewsUseCase(page)
                 _mediaNews.value = news
@@ -85,6 +89,17 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+    fun getSearchMovieById(id: Int) {
+        viewModelScope.launch {
+            try {
+                val searchMovie = getSearchMovieByIdUseCase(id)
+                _searchMovieById.value = searchMovie
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    } // TODO: Работает, но пока не задействован в приложении
 
     fun fetchPremiersMovies(year: Int, month: String) {
         viewModelScope.launch {
