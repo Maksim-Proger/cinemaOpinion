@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
@@ -177,10 +176,10 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun saveMovie(selectedMovie: SelectedMovie) {
+    fun saveMovie(dataSource: String, selectedMovie: SelectedMovie) {
         viewModelScope.launch {
             try {
-                saveMovieUseCase(selectedMovie)
+                saveMovieUseCase(dataSource, selectedMovie)
                 _errorMessage.value = null // Зачем это нам?
             } catch (e: Exception) {
                 _errorMessage.value = e.message

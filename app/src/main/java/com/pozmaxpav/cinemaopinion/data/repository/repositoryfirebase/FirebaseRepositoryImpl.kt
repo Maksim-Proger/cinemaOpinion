@@ -23,15 +23,15 @@ class FirebaseRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference
 ) : FirebaseRepository {
 
-    override suspend fun saveMovie(selectedMovie: SelectedMovie) {
+    override suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovie) {
         val filmData = SelectedMovie(
             selectedMovie.id,
             selectedMovie.nameFilm,
             selectedMovie.posterUrl,
         )
-        val key = databaseReference.child("list_movies").push().key
+        val key = databaseReference.child(dataSource).push().key
         key?.let {
-            databaseReference.child("list_movies").child(it).setValue(filmData).await()
+            databaseReference.child(dataSource).child(it).setValue(filmData).await()
         } ?: throw Exception("Failed to generate key")
     }
 

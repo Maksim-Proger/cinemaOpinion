@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,6 +60,7 @@ fun ListWatchedMovies(
     val comments by firebaseViewModel.comments.collectAsState()
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
     var showTopBar by remember { mutableStateOf(false) }
+    val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
         firebaseViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
@@ -109,6 +111,7 @@ fun ListWatchedMovies(
 
         } else {
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
