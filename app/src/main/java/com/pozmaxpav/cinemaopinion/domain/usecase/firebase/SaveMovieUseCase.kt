@@ -7,7 +7,7 @@ import javax.inject.Inject
 class SaveMovieUseCase @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) {
-    suspend operator fun invoke(selectedMovie: SelectedMovie) {
-        firebaseRepository.saveMovie(selectedMovie)
+    suspend operator fun invoke(dataSource: String, selectedMovie: SelectedMovie) {
+        firebaseRepository.saveMovie(dataSource, selectedMovie)
     }
 }

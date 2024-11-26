@@ -61,8 +61,10 @@ import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
@@ -99,9 +101,11 @@ fun MainScreen(navController: NavHostController) {
     // Работаем с ViewModel
     val viewModel: MainViewModel = hiltViewModel()
     val userViewModel:UserViewModel = hiltViewModel()
+    val firebaseViewModel: FirebaseViewModel = hiltViewModel()
     val premiereMovies = viewModel.premiersMovies.collectAsState()
     val topListMovies = viewModel.topListMovies.collectAsState()
     val searchMovies = viewModel.searchMovies.collectAsState()
+    val newYearMoviesList by firebaseViewModel.movies.collectAsState()
     val user by userViewModel.users.collectAsState()
 
     // Получаем username
@@ -130,6 +134,7 @@ fun MainScreen(navController: NavHostController) {
         viewModel.fetchPremiersMovies(2023, "July")
         viewModel.fetchTopListMovies(currentPage)
         userViewModel.fitchUser()
+        firebaseViewModel.getMovies(NODE_NEW_YEAR_LIST)
     }
 
     // Эффект, который реагирует на изменение scrollToTop и прокручивает список
@@ -383,7 +388,7 @@ fun MainScreen(navController: NavHostController) {
                         .padding(padding)
                 ) {
 
-                    // Новогоднее настроение SearchById TODO: Доработать
+                    // Новогоднее настроение SearchById
                     if (!isScrolling.value) {
                         LazyRow(
                             modifier = Modifier
@@ -391,9 +396,11 @@ fun MainScreen(navController: NavHostController) {
                                 .height(150.dp)
                                 .padding(horizontal = 16.dp)
                         ) {
-                            items(5) {
-                                Text(
-                                    text = "Картинка"
+                            items(newYearMoviesList) { movie ->
+                                AsyncImage(
+                                    model = movie.posterUrl,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Fit
                                 )
                             }
                         }

@@ -34,6 +34,8 @@ import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
+import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 import com.pozmaxpav.cinemaopinion.utilits.formatCountries
 import com.pozmaxpav.cinemaopinion.utilits.formatGenres
@@ -191,6 +193,34 @@ fun DetailsCardFilm(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        ),
+                        onClick = {
+//                            viewModelFirebase.savingChangeRecord(
+//                                user,
+//                                "Пополнил(а) коллекцию новогодней подборки: ${movie.nameRu}"
+//                            )
+                            viewModelFirebase.saveMovie(NODE_NEW_YEAR_LIST, movie.toSelectedMovie())
+//                            showToast(context, addToGeneralList)
+                            onClick()
+                        }
+                    ) {
+                        Text(
+                            text = "В новогоднюю коллекцию",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -227,7 +257,7 @@ fun DetailsCardFilm(
                                 user,
                                 "добавил(а) фильм: ${movie.nameRu}"
                             )
-                            viewModelFirebase.saveMovie(movie.toSelectedMovie())
+                            viewModelFirebase.saveMovie(NODE_LIST_MOVIES, movie.toSelectedMovie())
                             showToast(context, addToGeneralList)
                             onClick()
                         },
