@@ -184,13 +184,27 @@ fun ShowSelectedMovie(
             Row(
                 modifier = Modifier
                     .padding(10.dp)
-                    .clickable { onClick() }
+                    .clickable { onClick() },
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary
-                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    movieTransferButton()
+                }
             }
 
             Row(
@@ -213,7 +227,6 @@ fun ShowSelectedMovie(
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(modifier = Modifier.padding(vertical = 16.dp))
-                    movieTransferButton()
                 }
             }
 

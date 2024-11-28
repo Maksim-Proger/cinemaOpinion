@@ -17,9 +17,11 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfC
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.RemoveRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeRecordUseCase
 import com.pozmaxpav.cinemaopinion.utilits.deletingOldRecords
+import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,6 +39,9 @@ class FirebaseViewModel @Inject constructor(
     private val removeRecordsOfChangesUseCase: RemoveRecordsOfChangesUseCase,
     private val sendingToTheViewedFolderUseCase: SendingToTheViewedFolderUseCase
 ) : ViewModel() {
+
+    private val _state = MutableStateFlow<State>(State.Success)
+    val state: StateFlow<State> = _state.asStateFlow()
 
     private val _movies = MutableStateFlow<List<SelectedMovie>>(emptyList())
     val movies: StateFlow<List<SelectedMovie>> = _movies
@@ -120,9 +125,11 @@ class FirebaseViewModel @Inject constructor(
 
     fun getComments(dataSource: String, movieId: Double) {
         viewModelScope.launch {
+            _state.value = State.Loading
             try {
                 val commentList = getCommentsForMovieUseCase(dataSource, movieId)
                 _comments.value = commentList
+                _state.value = State.Success
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -167,9 +174,11 @@ class FirebaseViewModel @Inject constructor(
 
     fun getMovies(dataSource: String) {
         viewModelScope.launch {
+            _state.value = State.Loading
             try {
                 val moviesList = getMovieUseCase(dataSource)
                 _movies.value = moviesList
+                _state.value = State.Success
             } catch (e: Exception) {
                 _errorMessage.value = e.message
             }

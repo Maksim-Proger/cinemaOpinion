@@ -6,9 +6,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,6 +43,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -51,14 +55,18 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
+import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
+import com.pozmaxpav.cinemaopinion.presentation.components.DetailsCard
 import com.pozmaxpav.cinemaopinion.presentation.components.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
+import com.pozmaxpav.cinemaopinion.presentation.components.NewYearMovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.ProgressBar
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
@@ -67,6 +75,7 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilits.state.State
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,6 +120,9 @@ fun MainScreen(navController: NavHostController) {
     // Получаем username
     var username by remember { mutableStateOf("") }
 
+    // Работаем с состоянием
+    val state by viewModel.state.collectAsState()
+
     // Работаем с Fab
     val listState = rememberLazyListState()
     val isExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
@@ -125,15 +137,20 @@ fun MainScreen(navController: NavHostController) {
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
 
+    var selectedNewYearMovie by remember { mutableStateOf<SelectedMovie?>(null) }
+
     // endregion
 
     // region Launchers
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
-        viewModel.fetchPremiersMovies(2023, "July")
+        viewModel.fetchPremiersMovies(2024, "November")
         viewModel.fetchTopListMovies(currentPage)
         userViewModel.fitchUser()
+    }
+
+    LaunchedEffect(onAccountButtonClick) {
         firebaseViewModel.getMovies(NODE_NEW_YEAR_LIST)
     }
 
@@ -364,7 +381,18 @@ fun MainScreen(navController: NavHostController) {
                     selectedMovie = null
                 }
 
-            } else {
+            }
+            else if (selectedNewYearMovie != null) {
+                DetailsCard(
+                    selectedNewYearMovie!!,
+                    onCloseButton = { selectedNewYearMovie = null },
+                    padding
+                )
+                BackHandler {
+                    selectedNewYearMovie = null
+                }
+            }
+            else {
 
                 val moviesToDisplay: List<MovieData> = when {
                     searchCompleted -> searchMovies.value?.items ?: emptyList()
@@ -382,89 +410,117 @@ fun MainScreen(navController: NavHostController) {
                 val canGoBack = currentPage > 1
                 val canGoForward = currentPage < countPages
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                ) {
-
-                    // Новогоднее настроение SearchById
-                    if (!isScrolling.value) {
-                        LazyRow(
+                when (state) {
+                    is State.Loading -> {
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(150.dp)
-                                .padding(horizontal = 16.dp)
+                                .fillMaxSize()
+                                .padding(padding),
+                            contentAlignment = Alignment.Center // Центрируем содержимое
                         ) {
-                            items(newYearMoviesList) { movie ->
-                                AsyncImage(
-                                    model = movie.posterUrl,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Fit
-                                )
-                            }
+                            ProgressBar()
                         }
                     }
+                    is State.Success -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(padding)
+                        ) {
 
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
-                        contentPadding = PaddingValues(16.dp)
-                    ) {
-                        items(moviesToDisplay, key = { it.id }) { movie ->
-                            MovieItem(movie = movie) {
-                                selectedMovie = movie
-                            }
-                        }
-
-                        if (showPageSwitchingButtons) {
-                            item {
-                                Row(
-                                    modifier = Modifier
-                                        .wrapContentWidth()
-                                        .padding(vertical = 16.dp)
-                                ) {
-                                    if (canGoBack) {
-                                        IconButton (
-                                            onClick = {
-                                                currentPage--
-                                                if (onFilterButtonClick) {
-                                                    viewModel.fetchTopListMovies(currentPage)
-                                                } else if (searchCompleted) {
-                                                    viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
-                                                }
-                                            },
-                                            modifier = Modifier.wrapContentWidth()
-                                        ) {
-                                            Icon(
-                                                // TODO: Поправить содержание
-                                                painter = painterResource(R.drawable.ic_previous_page),
-                                                contentDescription = stringResource(id = R.string.description_icon_home_button),
-                                                tint = MaterialTheme.colorScheme.onPrimary
-                                            )
+                            AnimatedVisibility( // TODO: Доработать процесс скрытия
+                                visible = !isScrolling.value,
+                                enter = slideInVertically(),
+                                exit = slideOutVertically()
+                            ) {
+                                Column {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = "Почувствуй новый год!",
+                                            style = MaterialTheme.typography.displayMedium
+                                        )
+                                    }
+                                    LazyRow(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(150.dp)
+                                            .padding(horizontal = 16.dp)
+                                    ) {
+                                        items(newYearMoviesList, key = { it.id }) { newYearMovie ->
+                                            NewYearMovieItem(newYearMovie = newYearMovie) {
+                                                selectedNewYearMovie = newYearMovie
+                                            }
                                         }
                                     }
+                                }
+                            }
 
-                                    if (canGoForward) {
-                                        IconButton(
-                                            onClick = {
-                                                currentPage++
-                                                if (onFilterButtonClick) {
-                                                    viewModel.fetchTopListMovies(currentPage)
-                                                } else if (searchCompleted) {
-                                                    viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
-                                                }
-                                            },
-                                            modifier = Modifier.wrapContentWidth()
+                            LazyColumn(
+                                state = listState,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                items(moviesToDisplay, key = { it.id }) { movie ->
+                                    MovieItem(movie = movie) {
+                                        selectedMovie = movie
+                                    }
+                                }
+
+                                if (showPageSwitchingButtons) {
+                                    item {
+                                        Row(
+                                            modifier = Modifier
+                                                .wrapContentWidth()
+                                                .padding(vertical = 16.dp)
                                         ) {
-                                            Icon(
-                                                // TODO: Поправить содержание
-                                                painter = painterResource(R.drawable.ic_next_page),
-                                                contentDescription = stringResource(id = R.string.description_icon_home_button),
-                                                tint = MaterialTheme.colorScheme.onPrimary
-                                            )
+                                            if (canGoBack) {
+                                                IconButton (
+                                                    onClick = {
+                                                        currentPage--
+                                                        if (onFilterButtonClick) {
+                                                            viewModel.fetchTopListMovies(currentPage)
+                                                        } else if (searchCompleted) {
+                                                            viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                                        }
+                                                    },
+                                                    modifier = Modifier.wrapContentWidth()
+                                                ) {
+                                                    Icon(
+                                                        // TODO: Поправить содержание
+                                                        painter = painterResource(R.drawable.ic_previous_page),
+                                                        contentDescription = stringResource(id = R.string.description_icon_home_button),
+                                                        tint = MaterialTheme.colorScheme.onPrimary
+                                                    )
+                                                }
+                                            }
+
+                                            if (canGoForward) {
+                                                IconButton(
+                                                    onClick = {
+                                                        currentPage++
+                                                        if (onFilterButtonClick) {
+                                                            viewModel.fetchTopListMovies(currentPage)
+                                                        } else if (searchCompleted) {
+                                                            viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                                        }
+                                                    },
+                                                    modifier = Modifier.wrapContentWidth()
+                                                ) {
+                                                    Icon(
+                                                        // TODO: Поправить содержание
+                                                        painter = painterResource(R.drawable.ic_next_page),
+                                                        contentDescription = stringResource(id = R.string.description_icon_home_button),
+                                                        tint = MaterialTheme.colorScheme.onPrimary
+                                                    )
+                                                }
+                                            }
                                         }
                                     }
                                 }
