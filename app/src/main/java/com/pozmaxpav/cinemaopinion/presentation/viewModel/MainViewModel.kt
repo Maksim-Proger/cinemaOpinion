@@ -17,7 +17,9 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetTopMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.information.GetMovieInformationUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.news.GetMediaNewsUseCase
+import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,7 +37,10 @@ class MainViewModel @Inject constructor(
     private val getSearchMovieByIdUseCase: GetSearchMovieByIdUseCase
 ) : ViewModel() {
 
-    private val _premiereMovies = MutableStateFlow<MovieList?>(null) // TODO: А зачем нам тут вопрос?
+    private val _state = MutableStateFlow<State>(State.Success)
+    val state: StateFlow<State> = _state.asStateFlow()
+
+    private val _premiereMovies = MutableStateFlow<MovieList?>(null)
     val premiersMovies: StateFlow<MovieList?> get() = _premiereMovies.asStateFlow()
 
     private val _topListMovies = MutableStateFlow<MovieTopList?>(null)
@@ -53,29 +58,14 @@ class MainViewModel @Inject constructor(
     private val _mediaNews = MutableStateFlow<NewsList?>(null)
     val mediaNews: StateFlow<NewsList?> get() = _mediaNews.asStateFlow()
 
-    // region Это можно использовать для анимации загрузки
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-    //endregion
-
     fun getMediaNews(page:Int) {
         viewModelScope.launch {
-            // region Это можно использовать для анимации загрузки
-            if (_isLoading.value) return@launch // Если уже идет загрузка, пропускаем запрос
-            _isLoading.value = true
-            //endregion
             try {
                 val news = getMediaNewsUseCase(page)
                 _mediaNews.value = news
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-
-            // region Это можно использовать для анимации загрузки
-            finally {
-                _isLoading.value = false
-            }
-            //endregion
         }
     }
 
@@ -103,9 +93,12 @@ class MainViewModel @Inject constructor(
 
     fun fetchPremiersMovies(year: Int, month: String) {
         viewModelScope.launch {
+            _state.value = State.Loading
             try {
                 val movies = getPremiereMoviesUseCase(year, month)
+                delay(300) // Искусственная задержка
                 _premiereMovies.value = movies
+                _state.value = State.Success
             } catch (e: Exception) {
                 e.printStackTrace()
             }

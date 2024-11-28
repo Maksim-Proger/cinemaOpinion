@@ -2,6 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -38,12 +39,14 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.ProgressBar
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilits.state.State
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -61,8 +64,13 @@ fun ListWatchedMovies(
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
     var showTopBar by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
+    val state by firebaseViewModel.state.collectAsState() // TODO: Для комментариев нужна новая переменная состояния?
 
     LaunchedEffect(Unit) {
+        firebaseViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
+    }
+
+    LaunchedEffect(selectedNote) { // TODO: Надо наж этим еще подумать!
         firebaseViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
     }
 
@@ -108,38 +116,50 @@ fun ListWatchedMovies(
                     showTopBar = !showTopBar
                 }
             }
-
         } else {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentPadding = PaddingValues(10.dp)
-            ) {
-                items(listMovies) { movie ->
-                    Row(
+            when (state) {
+                is State.Loading -> {
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center // Центрируем содержимое
                     ) {
-                        Card(
-                            modifier = Modifier
-                                .wrapContentHeight()
-                                .fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary
-                            )
-                        ) {
-                            SelectedMovieItem(
-                                movie = movie,
-                                onClick = { selectedNote = movie },
-                                showTopBar = { showTopBar = !showTopBar }
-                            )
+                        ProgressBar()
+                    }
+                }
+                is State.Success -> {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentPadding = PaddingValues(10.dp)
+                    ) {
+                        items(listMovies) { movie ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Card(
+                                    modifier = Modifier
+                                        .wrapContentHeight()
+                                        .fillMaxWidth(),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.secondary,
+                                        contentColor = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                ) {
+                                    SelectedMovieItem(
+                                        movie = movie,
+                                        onClick = { selectedNote = movie },
+                                        showTopBar = { showTopBar = !showTopBar }
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.padding(5.dp))
                         }
                     }
-                    Spacer(Modifier.padding(5.dp))
                 }
             }
         }

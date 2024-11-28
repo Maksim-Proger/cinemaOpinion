@@ -50,6 +50,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
+import com.pozmaxpav.cinemaopinion.presentation.components.ProgressBar
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
@@ -59,6 +60,7 @@ import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
+import com.pozmaxpav.cinemaopinion.utilits.state.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -83,6 +85,7 @@ fun ListSelectedGeneralMovies(
     val user by userViewModel.users.collectAsState()
     var username by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
+    val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.getMovies(NODE_LIST_MOVIES)
@@ -194,79 +197,92 @@ fun ListSelectedGeneralMovies(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 )
             ) {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(10.dp)
-                ) {
-                    items(listMovies) { movie ->
-
-                        var isVisible by remember { mutableStateOf(true) } // Состояние видимости
-
-                        AnimatedVisibility(
-                            visible = isVisible,
-                            exit = slideOutHorizontally(
-                                targetOffsetX = { -it }, // Уходит влево
-                                animationSpec = tween(durationMillis = 300) // Длительность анимации
-                            )
+                when (state) {
+                    is State.Loading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center // Центрируем содержимое
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Card(
-                                    modifier = Modifier
-                                        .wrapContentHeight(),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                        contentColor = MaterialTheme.colorScheme.onSecondary
+                            ProgressBar()
+                        }
+                    }
+                    is State.Success -> {
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentPadding = PaddingValues(10.dp)
+                        ) {
+                            items(listMovies) { movie ->
+
+                                var isVisible by remember { mutableStateOf(true) } // Состояние видимости
+
+                                AnimatedVisibility(
+                                    visible = isVisible,
+                                    exit = slideOutHorizontally(
+                                        targetOffsetX = { -it }, // Уходит влево
+                                        animationSpec = tween(durationMillis = 300) // Длительность анимации
                                     )
                                 ) {
                                     Row(
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .wrapContentHeight(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                            .fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Row(
+                                        Card(
                                             modifier = Modifier
-                                                .fillMaxWidth()
-                                                .weight(0.9f)
-                                        ) {
-                                            SelectedMovieItem(
-                                                movie = movie,
-                                                onClick = { selectedNote = movie }
+                                                .wrapContentHeight(),
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = MaterialTheme.colorScheme.secondary,
+                                                contentColor = MaterialTheme.colorScheme.onSecondary
                                             )
-                                        }
-
-                                        IconButton(
-                                            onClick = {
-                                                isVisible =
-                                                    false // Скрываем элемент перед удалением
-                                                CoroutineScope(Dispatchers.Main).launch {
-                                                    delay(300)
-                                                    viewModel.removeMovie(movie.id.toDouble())
+                                        ) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .wrapContentHeight(),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .weight(0.9f)
+                                                ) {
+                                                    SelectedMovieItem(
+                                                        movie = movie,
+                                                        onClick = { selectedNote = movie }
+                                                    )
                                                 }
-                                                viewModel.savingChangeRecord(
-                                                    username,
-                                                    "удалил(а) фильм: ${movie.nameFilm}"
-                                                )
+
+                                                IconButton(
+                                                    onClick = {
+                                                        isVisible =
+                                                            false // Скрываем элемент перед удалением
+                                                        CoroutineScope(Dispatchers.Main).launch {
+                                                            delay(300)
+                                                            viewModel.removeMovie(movie.id.toDouble())
+                                                        }
+                                                        viewModel.savingChangeRecord(
+                                                            username,
+                                                            "удалил(а) фильм: ${movie.nameFilm}"
+                                                        )
+                                                    }
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Close,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.onSecondary
+                                                    )
+                                                }
                                             }
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Close,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
                                         }
                                     }
                                 }
+                                Spacer(Modifier.padding(5.dp))
                             }
                         }
-                        Spacer(Modifier.padding(5.dp))
                     }
                 }
             }
