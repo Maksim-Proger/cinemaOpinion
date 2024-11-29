@@ -67,6 +67,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.NewYearMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.ProgressBar
+import com.pozmaxpav.cinemaopinion.presentation.components.ShowDialogEvents
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
@@ -103,6 +104,7 @@ fun MainScreen(navController: NavHostController) {
     var onFilterButtonClick by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
     var onAdvancedSearchButtonClick by remember { mutableStateOf(false) }
+    var locationShowDialogEvents by remember { mutableStateOf(false) }
 
     // Заголовок для AppBar
     var titleTopBarState by remember { mutableStateOf(false) }
@@ -111,17 +113,17 @@ fun MainScreen(navController: NavHostController) {
     val viewModel: MainViewModel = hiltViewModel()
     val userViewModel:UserViewModel = hiltViewModel()
     val firebaseViewModel: FirebaseViewModel = hiltViewModel()
+    // Настраиваем слушателей переменных из ViewModels
     val premiereMovies = viewModel.premiersMovies.collectAsState()
     val topListMovies = viewModel.topListMovies.collectAsState()
     val searchMovies = viewModel.searchMovies.collectAsState()
     val newYearMoviesList by firebaseViewModel.movies.collectAsState()
     val user by userViewModel.users.collectAsState()
+    val state by viewModel.state.collectAsState()
+    val showDialogEvents by viewModel.seasonalFlagForAlertDialog.collectAsState()
 
     // Получаем username
     var username by remember { mutableStateOf("") }
-
-    // Работаем с состоянием
-    val state by viewModel.state.collectAsState()
 
     // Работаем с Fab
     val listState = rememberLazyListState()
@@ -136,7 +138,7 @@ fun MainScreen(navController: NavHostController) {
 
     // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
-
+    // Сохраняем выбранный новогодний фильм для отправки информации о нем в DetailsCard()
     var selectedNewYearMovie by remember { mutableStateOf<SelectedMovie?>(null) }
 
     // endregion
@@ -148,6 +150,7 @@ fun MainScreen(navController: NavHostController) {
         viewModel.fetchPremiersMovies(2024, "November")
         viewModel.fetchTopListMovies(currentPage)
         userViewModel.fitchUser()
+        viewModel.getStateSeasonalFlag()
     }
 
     LaunchedEffect(onAccountButtonClick) {
@@ -212,6 +215,13 @@ fun MainScreen(navController: NavHostController) {
                 )
                 BackHandler {
                     onAccountButtonClick = false
+                }
+            }
+
+            if (!showDialogEvents && !locationShowDialogEvents) {
+                ShowDialogEvents {
+                    viewModel.saveStateSeasonalFlag(true)
+                    locationShowDialogEvents = !locationShowDialogEvents
                 }
             }
 
@@ -393,13 +403,11 @@ fun MainScreen(navController: NavHostController) {
                 }
             }
             else {
-
                 val moviesToDisplay: List<MovieData> = when {
                     searchCompleted -> searchMovies.value?.items ?: emptyList()
                     onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
                     else -> premiereMovies.value?.items ?: emptyList()
                 }
-
                 val countPages: Int = when {
                     searchCompleted -> searchMovies.value?.total ?: 0
                     onFilterButtonClick -> topListMovies.value?.pagesCount ?: 0
@@ -427,7 +435,6 @@ fun MainScreen(navController: NavHostController) {
                                 .fillMaxSize()
                                 .padding(padding)
                         ) {
-
                             AnimatedVisibility( // TODO: Доработать процесс скрытия
                                 visible = !isScrolling.value,
                                 enter = slideInVertically(),
@@ -441,7 +448,7 @@ fun MainScreen(navController: NavHostController) {
                                         horizontalArrangement = Arrangement.Center
                                     ) {
                                         Text(
-                                            text = "Почувствуй новый год!",
+                                            text = stringResource(R.string.title_of_the_list_for_the_new_year),
                                             style = MaterialTheme.typography.displayMedium
                                         )
                                     }

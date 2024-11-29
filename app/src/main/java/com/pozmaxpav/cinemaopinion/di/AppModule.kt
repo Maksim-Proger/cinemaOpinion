@@ -31,6 +31,7 @@ import com.pozmaxpav.cinemaopinion.domain.repository.GetMovieInformationApiRepos
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.SelectedMovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.SeriesControlRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.SystemSharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.UserRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
@@ -46,12 +47,8 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetListMoviesU
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetMovieByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCInsertUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCUpdateMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.theme.GetModeActivationSystemTheme
-import com.pozmaxpav.cinemaopinion.domain.usecase.theme.GetModeApplicationThemeUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.GetUserUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.InsertUserUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.theme.SaveModeActivationSystemThemeUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.theme.SaveModeApplicationThemeUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.UpdateUserUseCase
 import dagger.Module
 import dagger.Provides
@@ -121,32 +118,20 @@ object AppModule {
 
     // endregion
 
-    // region Theme
+    // region Shared Preferences
 
     @Provides
     @Singleton
+    @ThemeRepositoryQualifier
     fun provideThemeRepository(@ApplicationContext context: Context): ThemeRepository {
         return SharedPreferencesRepository(context)
     }
 
     @Provides
-    fun provideSaveModeApplicationThemeUseCase(themeRepository: ThemeRepository): SaveModeApplicationThemeUseCase {
-        return SaveModeApplicationThemeUseCase(themeRepository)
-    }
-
-    @Provides
-    fun provideGetModeApplicationThemeUseCase(themeRepository: ThemeRepository): GetModeApplicationThemeUseCase {
-        return GetModeApplicationThemeUseCase(themeRepository)
-    }
-
-    @Provides
-    fun provideSaveModeActivationSystemThemeUseCase(themeRepository: ThemeRepository): SaveModeActivationSystemThemeUseCase {
-        return SaveModeActivationSystemThemeUseCase(themeRepository)
-    }
-
-    @Provides
-    fun provideGetModeActivationSystemTheme(themeRepository: ThemeRepository): GetModeActivationSystemTheme {
-        return GetModeActivationSystemTheme(themeRepository)
+    @Singleton
+    @SystemSharedPreferencesRepositoryQualifier
+    fun provideSystemSharedPreferencesRepository(@ApplicationContext context: Context): SystemSharedPreferencesRepository {
+        return SharedPreferencesRepository(context)
     }
 
     // endregion

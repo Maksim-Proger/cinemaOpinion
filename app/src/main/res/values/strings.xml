@@ -64,4 +64,8 @@
     <!--  Details Films Card   -->
     <string name="text_buttons_film_card_to_my_list">Для себя</string>
     <string name="text_buttons_film_card_to_general_list">Для всех</string>
+
+    <!--  Seasonal lines  -->
+    <string name="title_of_the_list_for_the_new_year">Почувствуй новый год!</string>
+    
 </resources>
