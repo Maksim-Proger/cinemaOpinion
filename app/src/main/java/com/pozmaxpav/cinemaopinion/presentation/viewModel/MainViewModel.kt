@@ -17,6 +17,8 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetTopMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.information.GetMovieInformationUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.news.GetMediaNewsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetStateSeasonalFlagUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveStateSeasonalFlagUseCase
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -34,8 +36,13 @@ class MainViewModel @Inject constructor(
     private val getSearchFilmsByFiltersUseCase: GetSearchFilmsByFiltersUseCase,
     private val getMovieInformationUseCase: GetMovieInformationUseCase,
     private val getMediaNewsUseCase: GetMediaNewsUseCase,
-    private val getSearchMovieByIdUseCase: GetSearchMovieByIdUseCase
+    private val getSearchMovieByIdUseCase: GetSearchMovieByIdUseCase,
+    private val saveStateSeasonalFlagUseCase: SaveStateSeasonalFlagUseCase,
+    private val getStateSeasonalFlagUseCase: GetStateSeasonalFlagUseCase
 ) : ViewModel() {
+
+    private val _seasonalFlagForAlertDialog = MutableStateFlow(false)
+    val seasonalFlagForAlertDialog: StateFlow<Boolean> = _seasonalFlagForAlertDialog.asStateFlow()
 
     private val _state = MutableStateFlow<State>(State.Success)
     val state: StateFlow<State> = _state.asStateFlow()
@@ -57,6 +64,27 @@ class MainViewModel @Inject constructor(
 
     private val _mediaNews = MutableStateFlow<NewsList?>(null)
     val mediaNews: StateFlow<NewsList?> get() = _mediaNews.asStateFlow()
+
+    fun saveStateSeasonalFlag(isSeasonalFlag: Boolean) {
+        viewModelScope.launch {
+            try {
+                saveStateSeasonalFlagUseCase.invoke(isSeasonalFlag)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun getStateSeasonalFlag() {
+        viewModelScope.launch {
+            try {
+                val state = getStateSeasonalFlagUseCase.invoke()
+                _seasonalFlagForAlertDialog.value = state
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     fun getMediaNews(page:Int) {
         viewModelScope.launch {

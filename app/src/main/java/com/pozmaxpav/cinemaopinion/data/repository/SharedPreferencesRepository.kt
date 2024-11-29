@@ -2,12 +2,14 @@ package com.pozmaxpav.cinemaopinion.data.repository
 
 import android.content.Context
 import com.pozmaxpav.cinemaopinion.data.sharedpreferences.SharedPreferences
+import com.pozmaxpav.cinemaopinion.domain.repository.SystemSharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
 import javax.inject.Inject
 
 class SharedPreferencesRepository @Inject constructor(
     private val context: Context
-) : ThemeRepository {
+) : ThemeRepository, SystemSharedPreferencesRepository {
+
     override fun saveModeApplicationTheme(isModeTheme: Boolean) {
         SharedPreferences.saveModeApplicationTheme(context, isModeTheme)
     }
@@ -22,5 +24,13 @@ class SharedPreferencesRepository @Inject constructor(
 
     override fun getModeActivationSystemTheme(): Boolean {
         return SharedPreferences.getModeActivationSystemTheme(context)
+    }
+
+    override fun saveStateSeasonalFlag(isSeasonalFlag: Boolean) {
+        SharedPreferences.saveStateSeasonalFlag(context, isSeasonalFlag)
+    }
+
+    override fun getStateSeasonalFlag(): Boolean {
+        return SharedPreferences.getStateSeasonalFlag(context)
     }
 }
