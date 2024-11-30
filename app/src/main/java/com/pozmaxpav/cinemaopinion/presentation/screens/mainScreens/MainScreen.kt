@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,13 +45,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
@@ -77,6 +74,7 @@ import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.state.State
+import kotlinx.coroutines.flow.flowOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -151,6 +149,17 @@ fun MainScreen(navController: NavHostController) {
         viewModel.fetchTopListMovies(currentPage)
         userViewModel.fitchUser()
         viewModel.getStateSeasonalFlag()
+    }
+
+    LaunchedEffect(user) {
+        if (user != null) {
+            user.let { userInfo ->
+                username = userInfo?.firstName ?: "Таинственный пользователь"
+                firebaseViewModel.updatingUserData(user!!) // Нужно, чтобы инициализировать первичное обновление
+            }
+        } else {
+            username = "Таинственный пользователь"
+        }
     }
 
     LaunchedEffect(onAccountButtonClick) {
@@ -327,14 +336,6 @@ fun MainScreen(navController: NavHostController) {
                 viewModel.fetchPremiersMovies(it.first, formatMonth(it.second))
                 dateSelectionComplete = false
             }
-        }
-
-        if (user != null) {
-            user.let { userInfo ->
-                username = userInfo?.firstName ?: "Таинственный пользователь"
-            }
-        } else {
-            username = "Таинственный пользователь"
         }
 
         if (sendRequestCompleted) {

@@ -18,7 +18,7 @@ import com.pozmaxpav.cinemaopinion.data.localdb.entities.UserEntity
         SeriesControlEntity::class,
         CommentPersonalListEntity::class
     ],
-    version = 3
+    version = 5
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao

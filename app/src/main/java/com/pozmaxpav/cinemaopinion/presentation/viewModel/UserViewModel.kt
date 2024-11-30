@@ -2,7 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.User
+import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.GetUserUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.InsertUserUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.UpdateUserUseCase
@@ -19,14 +19,13 @@ class UserViewModel @Inject constructor(
     private val updateUserUseCase: UpdateUserUseCase
 ) : ViewModel() {
 
-    private val _users = MutableStateFlow<User?>(null)
-    val users: StateFlow<User?> get() = _users
+    private val _users = MutableStateFlow<DomainUser?>(null)
+    val users: StateFlow<DomainUser?> get() = _users
 
-    fun addUser(firstName: String, lastName: String) {
-        val newUser = User(0, firstName, lastName)
+    fun addUser(user: DomainUser) {
         viewModelScope.launch {
             try {
-                insertUserUseCase(newUser)
+                insertUserUseCase(user)
                 fitchUser()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -34,7 +33,6 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    // TODO: Разобраться что тут у меня!
     fun fitchUser() {
         viewModelScope.launch {
             try {
@@ -47,15 +45,10 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun updateUser(firstName: String, lastName: String) {
+    fun updateUser(user: DomainUser) {
         viewModelScope.launch {
             try {
-                val user = getUserUseCase()
-                val currentUser = user?.id
-                if (currentUser != null) {
-                    val updatedUser = User(currentUser, firstName, lastName)
-                    updateUserUseCase.invoke(updatedUser)
-                }
+                updateUserUseCase(user)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

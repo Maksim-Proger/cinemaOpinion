@@ -11,11 +11,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-// TODO: Разобраться что тут у меня!
 @HiltViewModel
 class ThemeViewModel @Inject constructor(
     private val saveModeApplicationThemeUseCase: SaveModeApplicationThemeUseCase,
-    private val getModeApplicationThemeUseCase: GetModeApplicationThemeUseCase,
+    private val getModeApplicationThemeUseCase: GetModeApplicationThemeUseCase, // TODO: Почему val горит серым
     private val saveModeActivationSystemThemeUseCase: SaveModeActivationSystemThemeUseCase,
     private val getModeActivationSystemTheme: GetModeActivationSystemTheme
 ) : ViewModel() {
@@ -36,7 +35,7 @@ class ThemeViewModel @Inject constructor(
         saveModeActivationSystemThemeUseCase.execute(isSystemThemeMode)
     }
 
-    fun getStatusUsingSystemTheme(): Boolean {
+    fun getStatusUsingSystemTheme(): Boolean { // TODO: Почему мы не используем этот метод
         return getModeActivationSystemTheme.execute()
     }
 }
