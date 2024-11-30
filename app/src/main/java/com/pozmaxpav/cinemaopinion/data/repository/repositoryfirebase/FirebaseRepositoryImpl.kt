@@ -8,6 +8,7 @@ import com.google.firebase.database.ValueEventListener
 import com.pozmaxpav.cinemaopinion.data.firebase.mappers.toData
 import com.pozmaxpav.cinemaopinion.data.firebase.mappers.toDomain
 import com.pozmaxpav.cinemaopinion.data.firebase.models.DataComment
+import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
@@ -15,6 +16,7 @@ import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.Firebase
 import com.pozmaxpav.cinemaopinion.utilits.NODE_COMMENTS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -22,6 +24,18 @@ import javax.inject.Inject
 class FirebaseRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference
 ) : FirebaseRepository {
+
+    override suspend fun updatingUserData(domainUser: DomainUser) {
+        // Используем `id` как ключ
+        val userId = domainUser.id
+
+        if (userId.isNotEmpty()) {
+            // Сохраняем данные по ID
+            databaseReference.child(NODE_LIST_USERS).child(userId).setValue(domainUser).await()
+        } else {
+            throw Exception("User ID is missing")
+        }
+    }
 
     override suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovie) {
         val filmData = SelectedMovie(

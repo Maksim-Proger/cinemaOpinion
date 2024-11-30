@@ -146,7 +146,11 @@ object AppModule {
             AppDatabase::class.java,
             "user_database"
         )
-            .addMigrations(DatabaseMigrations.MIGRATION_1_2)
+            .addMigrations(
+                DatabaseMigrations.MIGRATION_1_2,
+                DatabaseMigrations.MIGRATION_3_4,
+                DatabaseMigrations.MIGRATION_4_5
+            )
             .build()
     }
 

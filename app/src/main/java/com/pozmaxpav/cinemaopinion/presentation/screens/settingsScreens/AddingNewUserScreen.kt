@@ -23,16 +23,20 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.showToast
+import java.util.UUID
 
 @Composable
 fun AddingNewUserScreen(
     nameToast: String,
     onClick: () -> Unit,
-    viewModel: UserViewModel = hiltViewModel()
+    viewModel: UserViewModel = hiltViewModel(),
+    viewModelFirebase: FirebaseViewModel = hiltViewModel()
 ) {
 
     val (firstName, setFirstName) = remember { mutableStateOf("") }
@@ -49,7 +53,8 @@ fun AddingNewUserScreen(
                 textFloatingButton = stringResource(id = R.string.floating_action_button_save),
                 onButtonClick = {
                     // Сохранение пользователя в базе данных
-                    viewModel.addUser(firstName, lastName)
+                    val newUser = DomainUser(UUID.randomUUID().toString(), firstName, lastName)
+                    viewModel.addUser(newUser)
                     onClick()
                     showToast(context, nameToast)
                 },

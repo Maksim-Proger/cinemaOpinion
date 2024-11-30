@@ -2,6 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
@@ -13,12 +14,14 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.ObserveListMoviesUseC
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SendingToTheViewedFolderUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdatingUserDataUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.RemoveRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeRecordUseCase
 import com.pozmaxpav.cinemaopinion.utilits.deletingOldRecords
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,7 +40,8 @@ class FirebaseViewModel @Inject constructor(
     private val savingChangeRecordUseCase: SavingChangeRecordUseCase,
     private val getRecordsOfChangesUseCase: GetRecordsOfChangesUseCase,
     private val removeRecordsOfChangesUseCase: RemoveRecordsOfChangesUseCase,
-    private val sendingToTheViewedFolderUseCase: SendingToTheViewedFolderUseCase
+    private val sendingToTheViewedFolderUseCase: SendingToTheViewedFolderUseCase,
+    private val updatingUserDataUseCase: UpdatingUserDataUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<State>(State.Success)
@@ -54,6 +58,16 @@ class FirebaseViewModel @Inject constructor(
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> get() = _errorMessage
+
+    fun updatingUserData(user: DomainUser) {
+        viewModelScope.launch {
+            try {
+                updatingUserDataUseCase(user)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     fun sendingToTheViewedFolder(movieId: Double) {
         viewModelScope.launch {

@@ -33,9 +33,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -46,7 +48,8 @@ import com.pozmaxpav.cinemaopinion.utilits.showToast
 fun EditPersonalInformationScreen(
     nameToast: String,
     navController: NavHostController,
-    viewModel: UserViewModel = hiltViewModel()
+    viewModel: UserViewModel = hiltViewModel(),
+    firebaseViewModel: FirebaseViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -86,7 +89,13 @@ fun EditPersonalInformationScreen(
                 textFloatingButton = stringResource(id = R.string.floating_action_button_save),
                 onButtonClick = {
                     // Обновление пользователя в базе данных
-                    viewModel.updateUser(firstName, lastName)
+                    val newUser = DomainUser(
+                        user?.id!!,
+                        firstName,
+                        lastName
+                    )
+                    viewModel.updateUser(newUser)
+                    firebaseViewModel.updatingUserData(newUser)
 
                     navigateFunction(navController, Route.MainScreen.route)
                     showToast(context, nameToast)
