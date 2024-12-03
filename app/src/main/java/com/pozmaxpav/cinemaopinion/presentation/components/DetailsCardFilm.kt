@@ -57,7 +57,6 @@ fun DetailsCardFilm(
 ) {
     val statusExist by viewModel.status.collectAsState()
     val context = LocalContext.current
-
     val info by viewModelMain.informationMovie.collectAsState()
 
     // Выполняем запрос к API только при изменении `movie.id`

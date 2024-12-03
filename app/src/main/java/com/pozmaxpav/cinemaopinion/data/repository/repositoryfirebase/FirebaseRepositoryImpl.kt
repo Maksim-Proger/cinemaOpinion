@@ -37,6 +37,18 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateSeasonalEventPoints(userId: String, fieldName: String, newValue: Any) {
+        if (userId.isNotEmpty() && fieldName.isNotEmpty()) {
+            val updates = mapOf(
+                fieldName to newValue
+            )
+
+            databaseReference.child(NODE_LIST_USERS).child(userId).updateChildren(updates).await()
+        } else {
+            throw Exception("User ID is missing")
+        }
+    }
+
     override suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovie) {
         val filmData = SelectedMovie(
             selectedMovie.id,

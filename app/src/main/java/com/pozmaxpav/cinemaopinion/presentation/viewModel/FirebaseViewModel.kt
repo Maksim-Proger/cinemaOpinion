@@ -14,6 +14,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.ObserveListMoviesUseC
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SendingToTheViewedFolderUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdateSeasonalEventPointsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdatingUserDataUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.RemoveRecordsOfChangesUseCase
@@ -41,7 +42,8 @@ class FirebaseViewModel @Inject constructor(
     private val getRecordsOfChangesUseCase: GetRecordsOfChangesUseCase,
     private val removeRecordsOfChangesUseCase: RemoveRecordsOfChangesUseCase,
     private val sendingToTheViewedFolderUseCase: SendingToTheViewedFolderUseCase,
-    private val updatingUserDataUseCase: UpdatingUserDataUseCase
+    private val updatingUserDataUseCase: UpdatingUserDataUseCase,
+    private val updateSeasonalEventPointsUseCase: UpdateSeasonalEventPointsUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<State>(State.Success)
@@ -63,6 +65,16 @@ class FirebaseViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 updatingUserDataUseCase(user)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun updateSeasonalEventPoints(userId: String, fieldName: String, newValue: Any) {
+        viewModelScope.launch {
+            try {
+                updateSeasonalEventPointsUseCase(userId, fieldName, newValue)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

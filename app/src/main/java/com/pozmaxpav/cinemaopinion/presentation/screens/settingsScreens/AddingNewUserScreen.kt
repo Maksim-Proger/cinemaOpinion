@@ -55,6 +55,7 @@ fun AddingNewUserScreen(
                     // Сохранение пользователя в базе данных
                     val newUser = DomainUser(UUID.randomUUID().toString(), firstName, lastName)
                     viewModel.addUser(newUser)
+                    viewModelFirebase.updatingUserData(newUser)
                     onClick()
                     showToast(context, nameToast)
                 },
