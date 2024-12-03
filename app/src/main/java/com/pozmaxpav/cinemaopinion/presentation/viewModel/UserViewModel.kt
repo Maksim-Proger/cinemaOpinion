@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.GetUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.user.IncrementSeasonalEventPointsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.InsertUserUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.UpdateUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,11 +17,26 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val insertUserUseCase: InsertUserUseCase,
     private val getUserUseCase: GetUserUseCase,
-    private val updateUserUseCase: UpdateUserUseCase
+    private val updateUserUseCase: UpdateUserUseCase,
+    private val incrementSeasonalEventPointsUseCase: IncrementSeasonalEventPointsUseCase
 ) : ViewModel() {
 
     private val _users = MutableStateFlow<DomainUser?>(null)
     val users: StateFlow<DomainUser?> get() = _users
+
+    private val _seasonalEventPoints = MutableStateFlow(0L)
+    val seasonalEventPoints: StateFlow<Long> = _seasonalEventPoints
+
+    fun incrementSeasonalEventPoints(userId: String, increment: Long) {
+        viewModelScope.launch {
+            try {
+                incrementSeasonalEventPointsUseCase(userId, increment)
+                fitchUser()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     fun addUser(user: DomainUser) {
         viewModelScope.launch {
@@ -33,11 +49,16 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun fitchUser() {
+    fun fitchUser() { // TODO: Надо доработать чтобы получать пользователя по id
         viewModelScope.launch {
             try {
                 val user = getUserUseCase()
                 _users.value = user // user может быть null
+
+                user?.let {
+                    _seasonalEventPoints.value = it.seasonalEventPoints
+                }
+
             } catch (e: Exception) {
                 _users.value = null
                 e.printStackTrace()

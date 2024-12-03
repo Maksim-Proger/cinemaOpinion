@@ -16,4 +16,7 @@ interface UserDao {
 
     @Update
     suspend fun updateUser(user: UserEntity)
+
+    @Query("UPDATE users SET seasonalEventPoints = seasonalEventPoints + :increment WHERE id = :userId")
+    suspend fun incrementSeasonalEventPoints(userId: String, increment: Long)
 }
