@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ExpandedCard(
     title: String,
-    titleFontSize: TextUnit = MaterialTheme.typography.titleMedium.fontSize,
+    titleFontSize: TextUnit = MaterialTheme.typography.bodyLarge.fontSize,
     titleFontWeight: FontWeight = FontWeight.Normal,
     description: String,
     descriptionFontSize: TextUnit = MaterialTheme.typography.bodyLarge.fontSize,
