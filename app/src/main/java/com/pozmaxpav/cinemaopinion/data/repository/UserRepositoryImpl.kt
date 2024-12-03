@@ -22,4 +22,11 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun updateUser(user: DomainUser) {
         userDao.updateUser(user.toEntity())
     }
+
+    override suspend fun incrementSeasonalEventPoints(
+        userId: String,
+        increment: Long
+    ) {
+        userDao.incrementSeasonalEventPoints(userId, increment)
+    }
 }

@@ -1,5 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarScaffold
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
@@ -52,10 +56,15 @@ fun DetailsCard(
     val user by viewModelUser.users.collectAsState()
     var userId by remember { mutableStateOf("") }
     val info by viewModelMain.informationMovie.collectAsState()
+    var showRatingBar by remember { mutableStateOf(false) }
+
+    val getSeasonalEventPoints by viewModelUser.seasonalEventPoints.collectAsState()
+
     LaunchedEffect(newYearMovie.id) {
         viewModelMain.getInformationMovie(newYearMovie.id)
     }
-    LaunchedEffect(Unit) {
+
+    LaunchedEffect(user) {
         if (user != null) {
             user.let {
                 userId = it!!.id.toString()
@@ -63,11 +72,30 @@ fun DetailsCard(
         }
     }
 
+    LaunchedEffect(getSeasonalEventPoints) {
+        viewModelFirebase.updateSeasonalEventPoints(
+            userId, "seasonalEventPoints", getSeasonalEventPoints // TODO: Доработать запись в базу синхронно с Room
+        )
+    }
+
     Column(
         modifier = Modifier
             .wrapContentSize()
             .padding(padding)
     ) {
+
+        if (showRatingBar) {
+            RatingBarScaffold(
+                score = getSeasonalEventPoints,
+                onCloseButton = {
+                    showRatingBar = !showRatingBar
+                }
+            )
+            BackHandler {
+                showRatingBar = false
+            }
+        }
+
         Card(
             modifier = Modifier
                 .wrapContentHeight()
@@ -128,9 +156,10 @@ fun DetailsCard(
                 ) {
                     Button(
                         onClick = { // TODO: Доработать!
-                            viewModelFirebase.updateSeasonalEventPoints(
-                                userId, "seasonalEventPoints", 10
-                            )
+                            if (getSeasonalEventPoints < 80) {
+                                viewModelUser.incrementSeasonalEventPoints(userId, 10L)
+                            }
+                            showRatingBar = !showRatingBar
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
