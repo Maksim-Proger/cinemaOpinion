@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
 import android.util.Log
+import com.pozmaxpav.cinemaopinion.R
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -74,7 +75,7 @@ fun DetailsCard(
 
     LaunchedEffect(getSeasonalEventPoints) {
         viewModelFirebase.updateSeasonalEventPoints(
-            userId, "seasonalEventPoints", getSeasonalEventPoints // TODO: Доработать запись в базу синхронно с Room
+            userId, "seasonalEventPoints", getSeasonalEventPoints
         )
     }
 
@@ -156,9 +157,32 @@ fun DetailsCard(
                 ) {
                     Button(
                         onClick = { // TODO: Доработать!
-                            if (getSeasonalEventPoints < 80) {
+                            if (getSeasonalEventPoints < 80L) {
                                 viewModelUser.incrementSeasonalEventPoints(userId, 10L)
                             }
+
+                            if (getSeasonalEventPoints == 40L) {
+                                val resourceId = R.drawable.half_done
+                                viewModelFirebase.updateSeasonalEventPoints(
+                                    userId, "awards", resourceId.toString()
+                                )
+
+                                viewModelUser.updateAwardsList(
+                                    userId, resourceId.toString()
+                                )
+                            }
+
+                            if (getSeasonalEventPoints == 80L) {
+                                val resourceId = R.drawable.complete_passage
+                                viewModelFirebase.updateSeasonalEventPoints(
+                                    userId, "awards", resourceId.toString()
+                                )
+
+                                viewModelUser.updateAwardsList(
+                                    userId, resourceId.toString()
+                                )
+                            }
+
                             showRatingBar = !showRatingBar
                         },
                         colors = ButtonDefaults.buttonColors(

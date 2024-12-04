@@ -6,10 +6,12 @@ import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.GetUserUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.IncrementSeasonalEventPointsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.InsertUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.user.UpdateAwardsListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.user.UpdateUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,19 +20,31 @@ class UserViewModel @Inject constructor(
     private val insertUserUseCase: InsertUserUseCase,
     private val getUserUseCase: GetUserUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
-    private val incrementSeasonalEventPointsUseCase: IncrementSeasonalEventPointsUseCase
+    private val incrementSeasonalEventPointsUseCase: IncrementSeasonalEventPointsUseCase,
+    private val updateAwardsListUseCase: UpdateAwardsListUseCase
 ) : ViewModel() {
 
     private val _users = MutableStateFlow<DomainUser?>(null)
-    val users: StateFlow<DomainUser?> get() = _users
+    val users: StateFlow<DomainUser?> get() = _users.asStateFlow()
 
     private val _seasonalEventPoints = MutableStateFlow(0L)
-    val seasonalEventPoints: StateFlow<Long> = _seasonalEventPoints
+    val seasonalEventPoints: StateFlow<Long> = _seasonalEventPoints.asStateFlow() // TODO: Что такое .asStateFlow()
 
     fun incrementSeasonalEventPoints(userId: String, increment: Long) {
         viewModelScope.launch {
             try {
                 incrementSeasonalEventPointsUseCase(userId, increment)
+                fitchUser()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun updateAwardsList(userId: String, newAwards: String) {
+        viewModelScope.launch {
+            try {
+                updateAwardsListUseCase(userId, newAwards)
                 fitchUser()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -60,7 +74,7 @@ class UserViewModel @Inject constructor(
                 }
 
             } catch (e: Exception) {
-                _users.value = null
+                _users.value = null // TODO: Это нам зачем?
                 e.printStackTrace()
             }
         }
