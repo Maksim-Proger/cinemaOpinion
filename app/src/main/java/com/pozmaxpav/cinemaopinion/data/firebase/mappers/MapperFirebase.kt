@@ -43,25 +43,25 @@ fun DomainChangelogModel.toDataChangelog(): DataChangelogModel {
     )
 }
 
-fun DomainUser.toDataUser(): DataUser {
-    return DataUser(
-        id = id,
-        firstName = firstName,
-        lastName = lastName,
-        awards = awards,
-        professionalPoints = professionalPoints,
-        seasonalEventPoints = seasonalEventPoints
-    )
-}
-
-fun DataUser.toDomainUSer(): DomainUser {
-    return DomainUser(
-        id = id,
-        firstName = firstName,
-        lastName = lastName,
-        awards = awards,
-        professionalPoints = professionalPoints,
-        seasonalEventPoints = seasonalEventPoints
-    )
-}
+//fun DomainUser.toDataUser(): DataUser {
+//    return DataUser(
+//        id = id,
+//        firstName = firstName,
+//        lastName = lastName,
+//        awards = awards,
+//        professionalPoints = professionalPoints,
+//        seasonalEventPoints = seasonalEventPoints
+//    )
+//}
+//
+//fun DataUser.toDomainUSer(): DomainUser {
+//    return DomainUser(
+//        id = id,
+//        firstName = firstName,
+//        lastName = lastName,
+//        awards = awards,
+//        professionalPoints = professionalPoints,
+//        seasonalEventPoints = seasonalEventPoints
+//    )
+//}
 

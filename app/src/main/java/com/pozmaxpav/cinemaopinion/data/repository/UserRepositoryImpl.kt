@@ -30,9 +30,13 @@ class UserRepositoryImpl @Inject constructor(
         userDao.incrementSeasonalEventPoints(userId, increment)
     }
 
+    override suspend fun getAwards(userId: String): List<String> {
+        return userDao.getAwards(userId)
+    }
+
     override suspend fun updateAwardsList(
         userId: String,
-        newAwards: String
+        newAwards: List<String>
     ) {
         userDao.updateAwardsList(userId, newAwards)
     }

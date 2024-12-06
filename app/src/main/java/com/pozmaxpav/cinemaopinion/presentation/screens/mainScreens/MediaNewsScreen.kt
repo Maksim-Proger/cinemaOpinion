@@ -45,6 +45,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.theme.UrlLinkColor
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatDate
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -204,9 +205,9 @@ fun NewsItem(
         Text(
             text = item.url ?: "Нет источника",
             style = MaterialTheme.typography.bodySmall.copy(
-                textDecoration = TextDecoration.Underline // Подчеркиваем текст, чтобы он выглядел как ссылка
+                textDecoration = TextDecoration.Underline
             ),
-            color = Color.Blue,
+            color = UrlLinkColor,
             modifier = Modifier
                 .clickable {
                     val encodedUrl = Uri.encode(item.url) // Кодируем URL для передачи через NavController

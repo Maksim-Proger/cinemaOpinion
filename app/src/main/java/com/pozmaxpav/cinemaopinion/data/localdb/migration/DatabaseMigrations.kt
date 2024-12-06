@@ -76,4 +76,21 @@ object DatabaseMigrations {
         }
     }
 
+    val MIGRATION_5_6 = object : Migration(5, 6) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            // Создаем новую таблицу с обновленным полем
+            db.execSQL(
+                "CREATE TABLE users_new (id TEXT PRIMARY KEY NOT NULL, firstName TEXT NOT NULL, lastName TEXT NOT NULL, awards TEXT NOT NULL, professionalPoints INTEGER NOT NULL, seasonalEventPoints INTEGER NOT NULL)"
+            )
+            // Копируем данные из старой таблицы
+            db.execSQL(
+                "INSERT INTO users_new (id, firstName, lastName, awards, professionalPoints, seasonalEventPoints) SELECT id, firstName, lastName, '[]', professionalPoints, seasonalEventPoints FROM users"
+            )
+            // Удаляем старую таблицу
+            db.execSQL("DROP TABLE users")
+            // Переименовываем новую таблицу
+            db.execSQL("ALTER TABLE users_new RENAME TO users")
+        }
+    }
+
 }

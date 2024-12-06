@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -63,11 +61,11 @@ fun AccountScreen(
         viewModel.fitchUser()
     }
 
-    val context = LocalContext.current
     val user by viewModel.users.collectAsState()
     var onAddingNewUserScreenButtonClick by remember { mutableStateOf(false) }
     var showSelectedMovies by remember { mutableStateOf(false) }
     var showSelectedGeneralMovies by remember { mutableStateOf(false) }
+    val listAwards by viewModel.listAwards.collectAsState()
 
     Column(
         modifier = Modifier
@@ -224,22 +222,30 @@ fun AccountScreen(
                         }
 
                         // Выводим награды на экран
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(
+                            modifier = Modifier.padding(10.dp).weight(1f),
+                            verticalArrangement = Arrangement.Bottom
                         ) {
-                            val resourceId = user?.awards?.toIntOrNull()
-
-                            if (resourceId != null) {
-                                Image(
-                                    painter = painterResource(id = resourceId),
-                                    contentDescription = null
-                                )
-                            } else {
-                                Log.e("ResourceError", "Invalid resource ID")
+                            Text(
+                                text = "Зал славы",
+                                style = MaterialTheme.typography.displayMedium,
+                                modifier = Modifier
+                                    .padding(bottom = 16.dp)
+                                    .align(alignment = Alignment.CenterHorizontally)
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                for (i in listAwards) {
+                                    Image(
+                                        painter = painterResource(id = i.toInt()),
+                                        contentDescription = null,
+                                        modifier = Modifier.height(70.dp)
+                                    )
+                                }
                             }
-
                         }
                     }
                 }

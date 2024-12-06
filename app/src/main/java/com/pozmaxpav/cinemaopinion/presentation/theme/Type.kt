@@ -11,8 +11,19 @@ import com.pozmaxpav.cinemaopinion.R
 val mainFontFamily = FontFamily(
     Font(R.font.roboto_serif_medium, FontWeight.Medium)
 )
+val christmasFont = FontFamily(
+    Font(com.example.introductoryscreens.R.font.bad_script)
+)
 
 val Typography = Typography(
+
+    labelMedium = TextStyle(
+        fontFamily = christmasFont,
+        fontWeight = FontWeight.Bold,
+        fontSize = 27.sp,
+        lineHeight = 35.sp,
+        letterSpacing = 0.5.sp
+    ),
 
     bodyLarge = TextStyle(
         fontFamily = mainFontFamily,
