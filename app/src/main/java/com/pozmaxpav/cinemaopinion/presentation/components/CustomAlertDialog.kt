@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -60,8 +59,8 @@ fun ShowDialogEvents(
                    horizontalArrangement = Arrangement.Start
                ) {
                    Text(
-                       text = "✨",
-                       fontSize = 48.sp
+                       text = "\u2744",
+                       fontSize = 65.sp
                    )
                }
                Spacer(modifier = Modifier.padding(16.dp))
@@ -70,12 +69,11 @@ fun ShowDialogEvents(
                ) {
                    Text(
                        text = TEXT_FOR_ALERT_DIALOG,
-                       style = MaterialTheme.typography.titleMedium,
+                       style = MaterialTheme.typography.labelMedium,
                        color = MaterialTheme.colorScheme.secondary
                    )
                }
             }
-
         }
     )
 }

@@ -1,7 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
 import android.util.Log
-import com.pozmaxpav.cinemaopinion.R
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,18 +26,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarScaffold
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
@@ -58,8 +55,8 @@ fun DetailsCard(
     var userId by remember { mutableStateOf("") }
     val info by viewModelMain.informationMovie.collectAsState()
     var showRatingBar by remember { mutableStateOf(false) }
-
     val getSeasonalEventPoints by viewModelUser.seasonalEventPoints.collectAsState()
+    val listAwards by viewModelUser.listAwards.collectAsState()
 
     LaunchedEffect(newYearMovie.id) {
         viewModelMain.getInformationMovie(newYearMovie.id)
@@ -73,11 +70,25 @@ fun DetailsCard(
         }
     }
 
-    LaunchedEffect(getSeasonalEventPoints) {
-        viewModelFirebase.updateSeasonalEventPoints(
-            userId, "seasonalEventPoints", getSeasonalEventPoints
-        )
-    }
+//    LaunchedEffect(listAwards) {
+//        if (getSeasonalEventPoints == 40L) {
+//            viewModelFirebase.updateSeasonalEventPoints(
+//                userId, "awards", listAwards.toString()
+//            )
+//        }
+//
+//        if (getSeasonalEventPoints == 80L) {
+//            viewModelFirebase.updateSeasonalEventPoints(
+//                userId, "awards", listAwards.toString()
+//            )
+//        }
+//    }
+
+//    LaunchedEffect(getSeasonalEventPoints) {
+//        viewModelFirebase.updateSeasonalEventPoints(
+//            userId, "seasonalEventPoints", getSeasonalEventPoints
+//        )
+//    }
 
     Column(
         modifier = Modifier
@@ -157,32 +168,25 @@ fun DetailsCard(
                 ) {
                     Button(
                         onClick = { // TODO: Доработать!
-                            if (getSeasonalEventPoints < 80L) {
-                                viewModelUser.incrementSeasonalEventPoints(userId, 10L)
-                            }
+//                            if (getSeasonalEventPoints < 80L) {
+//                                viewModelUser.incrementSeasonalEventPoints(userId, 40L)
+//                            }
+//
+//                            if (getSeasonalEventPoints == 40L) {
+//                                val resourceId = R.drawable.half_done
+//                                viewModelUser.updateAwardsList(
+//                                    userId, resourceId.toString()
+//                                )
+//                            }
+//
+//                            if (getSeasonalEventPoints == 80L) {
+//                                val resourceId = R.drawable.complete_passage
+//                                viewModelUser.updateAwardsList(
+//                                    userId, resourceId.toString()
+//                                )
+//                            }
 
-                            if (getSeasonalEventPoints == 40L) {
-                                val resourceId = R.drawable.half_done
-                                viewModelFirebase.updateSeasonalEventPoints(
-                                    userId, "awards", resourceId.toString()
-                                )
-
-                                viewModelUser.updateAwardsList(
-                                    userId, resourceId.toString()
-                                )
-                            }
-
-                            if (getSeasonalEventPoints == 80L) {
-                                val resourceId = R.drawable.complete_passage
-                                viewModelFirebase.updateSeasonalEventPoints(
-                                    userId, "awards", resourceId.toString()
-                                )
-
-                                viewModelUser.updateAwardsList(
-                                    userId, resourceId.toString()
-                                )
-                            }
-
+                            viewModelUser.handleEvent(userId)
                             showRatingBar = !showRatingBar
                         },
                         colors = ButtonDefaults.buttonColors(
