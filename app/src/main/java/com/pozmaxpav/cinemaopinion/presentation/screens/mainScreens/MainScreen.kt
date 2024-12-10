@@ -2,9 +2,12 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,6 +66,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.NewYearMovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
 import com.pozmaxpav.cinemaopinion.presentation.components.ProgressBar
 import com.pozmaxpav.cinemaopinion.presentation.components.ShowDialogEvents
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -103,6 +107,7 @@ fun MainScreen(navController: NavHostController) {
     var onAccountButtonClick by remember { mutableStateOf(false) }
     var onAdvancedSearchButtonClick by remember { mutableStateOf(false) }
     var locationShowDialogEvents by remember { mutableStateOf(false) }
+    var locationShowPageAppDescription by remember { mutableStateOf(false) }
 
     // Заголовок для AppBar
     var titleTopBarState by remember { mutableStateOf(false) }
@@ -119,6 +124,7 @@ fun MainScreen(navController: NavHostController) {
     val user by userViewModel.users.collectAsState()
     val state by viewModel.state.collectAsState()
     val showDialogEvents by viewModel.seasonalFlagForAlertDialog.collectAsState()
+    val showPageAppDescription by viewModel.appDescriptionFlag.collectAsState()
 
     // Получаем username
     var username by remember { mutableStateOf("") }
@@ -149,6 +155,7 @@ fun MainScreen(navController: NavHostController) {
         viewModel.fetchTopListMovies(currentPage)
         userViewModel.fitchUser()
         viewModel.getStateSeasonalFlag()
+        viewModel.getStateAppDescriptionFlag()
     }
 
     LaunchedEffect(user) {
@@ -196,25 +203,19 @@ fun MainScreen(navController: NavHostController) {
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            if (!onAccountButtonClick) {
-                AnimatedVisibility(
-                    visible = !searchBarActive,
-                    enter = slideInVertically() + fadeIn(),
-                    exit = slideOutVertically() + fadeOut()
-                ) {
-                    CustomTopAppBar(
-                        title = if (!titleTopBarState) {
-                            stringResource(id = R.string.top_app_bar_header_name_all_movies)
-                        } else {
-                            stringResource(id = R.string.top_app_bar_header_name_top_list_movies)
-                        },
-                        onSearchButtonClick = { searchBarActive = !searchBarActive },
-                        onAdvancedSearchButtonClick = { onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick },
-                        onAccountButtonClick = { onAccountButtonClick = !onAccountButtonClick },
-                        scrollBehavior = scrollBehavior,
-                        onTransitionAction = { navigateFunction(navController, Route.ListOfChangesScreen.route) }
-                    )
-                }
+            if (!onAccountButtonClick && !searchBarActive) {
+                CustomTopAppBar(
+                    title = if (!titleTopBarState) {
+                        stringResource(id = R.string.top_app_bar_header_name_all_movies)
+                    } else {
+                        stringResource(id = R.string.top_app_bar_header_name_top_list_movies)
+                    },
+                    onSearchButtonClick = { searchBarActive = !searchBarActive },
+                    onAdvancedSearchButtonClick = { onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick },
+                    onAccountButtonClick = { onAccountButtonClick = !onAccountButtonClick },
+                    scrollBehavior = scrollBehavior,
+                    onTransitionAction = { navigateFunction(navController, Route.ListOfChangesScreen.route) }
+                )
             }
 
             if (onAccountButtonClick) {
@@ -231,7 +232,17 @@ fun MainScreen(navController: NavHostController) {
                 ShowDialogEvents {
                     viewModel.saveStateSeasonalFlag(true)
                     locationShowDialogEvents = !locationShowDialogEvents
+                    locationShowPageAppDescription = true
                 }
+            }
+
+            if (!showPageAppDescription && locationShowPageAppDescription) {
+                PageDescription(
+                    onDismiss = {
+                        viewModel.saveStateAppDescriptionFlag(true)
+                        locationShowPageAppDescription = false
+                    }
+                )
             }
 
             if (onAdvancedSearchButtonClick) {
@@ -266,7 +277,8 @@ fun MainScreen(navController: NavHostController) {
         floatingActionButton = {
             if (
                 !onAccountButtonClick && !searchBarActive && !onAdvancedSearchButtonClick &&
-                selectedMovie == null && selectedNewYearMovie == null && !showDatePicker
+                selectedMovie == null && selectedNewYearMovie == null && !showDatePicker &&
+                !locationShowPageAppDescription
             ) {
                 FabButtonWithMenu(
                     imageIcon = if (isScrolling.value) Icons.Default.ArrowUpward else Icons.Default.Settings,
@@ -441,8 +453,14 @@ fun MainScreen(navController: NavHostController) {
                         ) {
                             AnimatedVisibility( // TODO: Доработать процесс скрытия
                                 visible = !isScrolling.value,
-                                enter = slideInVertically(),
-                                exit = slideOutVertically()
+                                enter = slideInHorizontally(
+                                    initialOffsetX = { -it },
+                                    animationSpec = tween(durationMillis = 300)
+                                ),
+                                exit = slideOutHorizontally(
+                                    targetOffsetX = { -it },
+                                    animationSpec = tween(durationMillis = 300)
+                                )
                             ) {
                                 Column {
                                     Row(
@@ -484,7 +502,7 @@ fun MainScreen(navController: NavHostController) {
                                     }
                                 }
 
-                                if (showPageSwitchingButtons) {
+                                if (showPageSwitchingButtons && countPages > 1) {
                                     item {
                                         Row(
                                             modifier = Modifier
@@ -500,6 +518,7 @@ fun MainScreen(navController: NavHostController) {
                                                         } else if (searchCompleted) {
                                                             viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
                                                         }
+                                                        scrollToTop = true
                                                     },
                                                     modifier = Modifier.wrapContentWidth()
                                                 ) {
@@ -521,6 +540,7 @@ fun MainScreen(navController: NavHostController) {
                                                         } else if (searchCompleted) {
                                                             viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
                                                         }
+                                                        scrollToTop = true
                                                     },
                                                     modifier = Modifier.wrapContentWidth()
                                                 ) {

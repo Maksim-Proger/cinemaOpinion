@@ -8,6 +8,17 @@ object SharedPreferences {
     private const val MODE_APPLICATION_THEME = "mode_application_theme"
     private const val SYSTEM_THEME_ACTIVATION_MODE = "system_theme_activation_mode"
     private const val STATE_SEASONAL_FLAG = "state_seasonal_flag"
+    private const val STATE_APP_DESCRIPTION_FLAG = "state_app_description_flag"
+
+    fun saveStateAppDescriptionFlag(context: Context, isAppDescriptionFlag: Boolean) {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putBoolean(STATE_APP_DESCRIPTION_FLAG, isAppDescriptionFlag).apply()
+    }
+
+    fun getStateAppDescriptionFlag(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(STATE_APP_DESCRIPTION_FLAG, false)
+    }
 
     fun saveStateSeasonalFlag(context: Context, isSeasonalFlag: Boolean) {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)

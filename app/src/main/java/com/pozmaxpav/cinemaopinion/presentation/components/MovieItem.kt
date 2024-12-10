@@ -45,17 +45,19 @@ fun MovieItem(
         ) {
 
             WorkerWithImage(movie, 150.dp)
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.padding(horizontal = 12.dp))
 
             Column {
                 Text(
                     text = movie.nameRu ?: "Нет названия",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.secondary
                 )
                 Spacer(modifier = Modifier.height(7.dp))
                 Text(
                     text = formatCountries(movie.countries),
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.secondary
                 )
                 Spacer(modifier = Modifier.height(7.dp))
 
@@ -63,41 +65,48 @@ fun MovieItem(
                     is MovieData.Movie -> {
                         Text(
                             text = movie.premiereRu,
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                         Spacer(modifier = Modifier.height(7.dp))
                         Text(
                             text = formatGenres(movie.genres),
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
 
                     is MovieData.MovieTop -> {
                         Text(
                             text = movie.year,
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                         Spacer(modifier = Modifier.height(7.dp))
                         Text(
                             text = movie.rating,
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
 
                     is MovieData.MovieSearch -> {
                         Text(
                             text = movie.year ?: "Нет данных о дате",
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                         Spacer(modifier = Modifier.height(7.dp))
                         Text(
                             text = "Рейтинг Kinopoisk: ${movie.ratingKinopoisk ?: "Нет данных о рейтинге"}",
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                         Spacer(modifier = Modifier.height(7.dp))
                         Text(
                             text = "Рейтинг Imdb: ${movie.ratingImdb ?: "Нет данных о рейтинге"}",
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }

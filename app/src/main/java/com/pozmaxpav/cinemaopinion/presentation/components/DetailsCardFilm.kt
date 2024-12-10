@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,7 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
+import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.formatCountries
 import com.pozmaxpav.cinemaopinion.utilits.formatGenres
 import com.pozmaxpav.cinemaopinion.utilits.showToast
@@ -97,48 +99,53 @@ fun DetailsCardFilm(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
+                    .padding(horizontal = 7.dp)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 10.dp, horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(vertical = 7.dp),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    WorkerWithImage(movie, 200.dp)
-                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Название фильма: ${movie.nameRu ?: stringResource(id = R.string.no_movie_title)}",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Страна: ${formatCountries(movie.countries)}",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
+                    WorkerWithImage(
+                        movie = movie,
+                        height = 200.dp
+                    )
                 }
-
-                Spacer(modifier = Modifier.padding(5.dp))
 
                 Column(
                     modifier = Modifier
-                        .padding(16.dp)
                         .fillMaxWidth()
+                        .padding(vertical = 7.dp)
                 ) {
+                    Text(
+                        text = "Название фильма: ${movie.nameRu ?: stringResource(id = R.string.no_movie_title)}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = "Страна: ${formatCountries(movie.countries)}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
                     when(movie) {
                         is MovieData.Movie -> {
                             Text(
                                 text = "Премьера в России: ${movie.premiereRu}",
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.secondary
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "Жанр: ${formatGenres(movie.genres)}",
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.secondary
                             )
                             Spacer(modifier = Modifier.padding(15.dp))
                             ExpandedCard(
@@ -150,12 +157,14 @@ fun DetailsCardFilm(
                         is MovieData.MovieTop -> {
                             Text(
                                 text = "Год производства: ${movie.year}",
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.secondary
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "Рейтинг: ${movie.rating}",
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.secondary
                             )
                             Spacer(modifier = Modifier.padding(15.dp))
                             ExpandedCard(
@@ -166,17 +175,20 @@ fun DetailsCardFilm(
                         is MovieData.MovieSearch -> {
                             Text(
                                 text = "Год производства: ${movie.year}",
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.secondary
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "Рейтинг Kinopoisk: ${movie.ratingKinopoisk ?: "Нет данных о рейтинге"}",
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.secondary
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "Рейтинг Imdb: ${movie.ratingImdb ?: "Нет данных о рейтинге"}",
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.secondary
                             )
                             Spacer(modifier = Modifier.padding(15.dp))
                             ExpandedCard(
@@ -185,86 +197,82 @@ fun DetailsCardFilm(
                             )
                         }
                     }
-                }
 
-                Spacer(modifier = Modifier.padding(16.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 7.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary
+                            ),
+                            onClick = {
+                                // Преобразуем MovieData в SelectedMovie
+                                val selectedMovie = movie.toSelectedMovie()
+                                viewModel.addSelectedMovie(selectedMovie)
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        ),
-                        onClick = {
+                                if (statusExist == "error") { // TODO: Проверка не работает
+                                    showToast(context, errorToast)
+                                } else showToast(context, addToPersonalList)
+
+                                onClick()
+                            },
+                        ) {
+                            Text(
+                                text = stringResource(R.string.text_buttons_film_card_to_my_list),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary
+                            ),
+                            onClick = {
+                                viewModelFirebase.savingChangeRecord(
+                                    user,
+                                    "добавил(а) фильм: ${movie.nameRu}"
+                                )
+                                viewModelFirebase.saveMovie(NODE_LIST_MOVIES, movie.toSelectedMovie())
+                                showToast(context, addToGeneralList)
+                                onClick()
+                            },
+                        ) {
+                            Text(
+                                text = stringResource(R.string.text_buttons_film_card_to_general_list),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.secondary
+                            ),
+                            onClick = {
 //                            viewModelFirebase.savingChangeRecord(
 //                                user,
 //                                "Пополнил(а) коллекцию новогодней подборки: ${movie.nameRu}"
 //                            )
-                            viewModelFirebase.saveMovie(NODE_NEW_YEAR_LIST, movie.toSelectedMovie())
+                                viewModelFirebase.saveMovie(NODE_NEW_YEAR_LIST, movie.toSelectedMovie())
 //                            showToast(context, addToGeneralList)
-                            onClick()
-                        }
-                    ) {
-                        Text(
-                            text = "В новогоднюю коллекцию",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Button(
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        ),
-                        onClick = {
-                            // Преобразуем MovieData в SelectedMovie
-                            val selectedMovie = movie.toSelectedMovie()
-                            viewModel.addSelectedMovie(selectedMovie)
-
-                            if (statusExist == "error") { // TODO: Проверка не работает
-                                showToast(context, errorToast)
-                            } else showToast(context, addToPersonalList)
-
-                            onClick()
-                        },
-                    ) {
-                        Text(
-                            text = stringResource(R.string.text_buttons_film_card_to_my_list),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-
-                    Button(
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        ),
-                        onClick = {
-                            viewModelFirebase.savingChangeRecord(
-                                user,
-                                "добавил(а) фильм: ${movie.nameRu}"
+                                onClick()
+                            }
+                        ) {
+                            Text(
+                                text = "В новогоднюю коллекцию",
+                                style = MaterialTheme.typography.bodySmall
                             )
-                            viewModelFirebase.saveMovie(NODE_LIST_MOVIES, movie.toSelectedMovie())
-                            showToast(context, addToGeneralList)
-                            onClick()
-                        },
-                    ) {
-                        Text(
-                            text = stringResource(R.string.text_buttons_film_card_to_general_list),
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                        }
                     }
                 }
             }

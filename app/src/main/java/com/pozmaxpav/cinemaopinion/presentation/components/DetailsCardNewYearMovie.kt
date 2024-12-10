@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,12 +34,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarScaffold
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 
 @Composable
 fun DetailsCard(
@@ -135,39 +134,46 @@ fun DetailsCard(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(horizontal = 7.dp)
             ) {
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 10.dp, horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                        .padding(vertical = 7.dp),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    AsyncImage(
-                        model = newYearMovie.posterUrl,
-                        contentDescription = null,
-                        modifier = Modifier.height(200.dp),
-                        contentScale = ContentScale.Fit
-                    )
-                    Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-                    Text(
-                        text = newYearMovie.nameFilm,
-                        style = MaterialTheme.typography.bodyLarge
+                    WorkerWithImageSelectedMovie(
+                        movie = newYearMovie,
+                        height = 200.dp
                     )
                 }
-                Spacer(modifier = Modifier.padding(10.dp))
-                ExpandedCard(
-                    title = "Описание",
-                    description = info?.description ?: "К сожалению, суточный лимит закончился"
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 7.dp),
                 ) {
-                    Button(
-                        onClick = { // TODO: Доработать!
+                    Text(
+                        text = "Название фильма: ${newYearMovie.nameFilm}",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    ExpandedCard(
+                        title = "Описание",
+                        description = info?.description ?: "К сожалению, суточный лимит закончился"
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 7.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Button(
+                            onClick = { // TODO: Доработать!
 //                            if (getSeasonalEventPoints < 80L) {
 //                                viewModelUser.incrementSeasonalEventPoints(userId, 40L)
 //                            }
@@ -186,30 +192,34 @@ fun DetailsCard(
 //                                )
 //                            }
 
-                            viewModelUser.handleEvent(userId)
-                            showRatingBar = !showRatingBar
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        ),
-                    ) {
-                        Text(
-                            text = "Я посмотрел",
-                        )
-                    }
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        ),
-                    ) {
-                        Text(
-                            text = "Добавить к себе"
-                        )
+                                viewModelUser.handleEvent(userId)
+                                showRatingBar = !showRatingBar
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary
+                            ),
+                        ) {
+                            Text(
+                                text = "Я посмотрел",
+                            )
+                        }
+                        Button(
+                            onClick = {},
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary
+                            ),
+                        ) {
+                            Text(
+                                text = "Добавить к себе"
+                            )
+                        }
                     }
                 }
+
+
+
             }
         }
     }

@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -40,11 +39,11 @@ import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.ProgressBar
+import com.pozmaxpav.cinemaopinion.presentation.components.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
-import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import java.text.SimpleDateFormat
@@ -70,7 +69,7 @@ fun ListWatchedMovies(
         firebaseViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
     }
 
-    LaunchedEffect(selectedNote) { // TODO: Надо наж этим еще подумать!
+    LaunchedEffect(selectedNote) { // TODO: Надо над этим еще подумать!
         firebaseViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
     }
 
@@ -110,7 +109,6 @@ fun ListWatchedMovies(
                         showTopBar = !showTopBar
                     }
                 )
-
                 BackHandler {
                     selectedNote = null
                     showTopBar = !showTopBar
@@ -122,7 +120,7 @@ fun ListWatchedMovies(
                     Box(
                         modifier = Modifier
                             .fillMaxSize(),
-                        contentAlignment = Alignment.Center // Центрируем содержимое
+                        contentAlignment = Alignment.Center
                     ) {
                         ProgressBar()
                     }

@@ -62,6 +62,7 @@ fun MediaNewsScreen(
     val mediaNewsList = viewModel.mediaNews.collectAsState()
     val newsToDisplay: List<NewsModel> = mediaNewsList.value?.items ?: emptyList()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var scrollToTop by remember { mutableStateOf(false) }
 
     // TODO: rememberSaveable = позволяет сохранять состояние между пересозданиями. Разобраться!
     var isFirstLoad by rememberSaveable { mutableStateOf(true) } // Флаг для предотвращения повторных запусков
@@ -105,6 +106,13 @@ fun MediaNewsScreen(
             }
     }
 
+    LaunchedEffect(scrollToTop) {
+        if (scrollToTop) {
+            listState.animateScrollToItem(0)
+            scrollToTop = false
+        }
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -144,6 +152,7 @@ fun MediaNewsScreen(
                                 onClick = {
                                     currentPage++
                                     viewModel.getMediaNews(currentPage)
+                                    scrollToTop = true
                                 }
                             ) {
                                 Icon(
@@ -160,6 +169,7 @@ fun MediaNewsScreen(
                                 onClick = {
                                     currentPage--
                                     viewModel.getMediaNews(currentPage)
+                                    scrollToTop = true
                                 }
                             ) {
                                 Icon(
@@ -195,16 +205,19 @@ fun NewsItem(
                 style = MaterialTheme.typography.displayLarge
             )
         }
+
         HorizontalDivider(Modifier.padding(vertical = 7.dp))
 
         Text(
             text = item.description ?: "Нет описания",
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodyLarge
         )
+
         Spacer(Modifier.padding(vertical = 5.dp))
+
         Text(
             text = item.url ?: "Нет источника",
-            style = MaterialTheme.typography.bodySmall.copy(
+            style = MaterialTheme.typography.bodyLarge.copy(
                 textDecoration = TextDecoration.Underline
             ),
             color = UrlLinkColor,
@@ -216,6 +229,7 @@ fun NewsItem(
         )
 
         HorizontalDivider(Modifier.padding(vertical = 7.dp))
+
         Row(
             horizontalArrangement = Arrangement.End
         ) {
@@ -223,12 +237,12 @@ fun NewsItem(
                 val dateTime = formatDate(item.publishedAt.toString())
                 Text(
                     text = dateTime,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyLarge
                 )
             } else {
                 Text(
                     text = "Нет даты публикации",
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }

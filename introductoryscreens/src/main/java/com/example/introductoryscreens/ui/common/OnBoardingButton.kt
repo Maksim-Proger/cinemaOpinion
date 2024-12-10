@@ -10,10 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.introductoryscreens.ui.theme.WhiteGray
 
 @Composable
-fun NewsButton(
+fun OnBoardingScreenButton(
     text: String, // Текст кнопки
     onClick: () -> Unit // Обработчик нажатия на кнопку
 ) {
@@ -24,19 +25,19 @@ fun NewsButton(
             containerColor = Color.Blue, // Цвет фона кнопки
             contentColor = Color.White // Цвет текста на кнопке
         ),
-        shape = RoundedCornerShape(size = 6.dp) // Форма кнопки с закругленными углами
+        shape = RoundedCornerShape(size = 8.dp) // Форма кнопки с закругленными углами
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold
+                fontSize = 22.sp
             )
         )
     }
 }
 
 @Composable
-fun NewsTextButton(
+fun OnBoardingScreenTextButton(
     text: String,
     onClick: () -> Unit
 ) {
@@ -44,7 +45,7 @@ fun NewsTextButton(
         Text(
             text = text,
             style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold
+                fontSize = 22.sp
             ),
             color = WhiteGray
         )

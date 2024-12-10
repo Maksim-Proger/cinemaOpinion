@@ -24,11 +24,17 @@ val Typography = Typography(
         lineHeight = 35.sp,
         letterSpacing = 0.5.sp
     ),
-
+    labelSmall = TextStyle(
+        fontFamily = christmasFont,
+        fontWeight = FontWeight.Bold,
+        fontSize = 19.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
     bodyLarge = TextStyle(
         fontFamily = mainFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
+        fontSize = 17.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
@@ -46,20 +52,19 @@ val Typography = Typography(
         lineHeight = 30.sp,
         letterSpacing = 0.5.sp
     ),
-    titleMedium = TextStyle(
-        fontFamily = mainFontFamily,
-        fontWeight = FontWeight.Normal,
-        fontSize = 19.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    ),
     displayMedium = TextStyle(
         fontFamily = mainFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 22.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
+    ),
+    titleMedium = TextStyle(
+        fontFamily = mainFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 19.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
     )
-
 
 )

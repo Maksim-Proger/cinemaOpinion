@@ -42,22 +42,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
+import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.ProgressBar
+import com.pozmaxpav.cinemaopinion.presentation.components.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
-import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
-import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
+import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.state.State
@@ -74,6 +75,7 @@ fun ListSelectedGeneralMovies(
     navController: NavHostController,
     viewModel: FirebaseViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
+    viewModelMain: MainViewModel = hiltViewModel(),
     onClickCloseButton: () -> Unit
 ) {
     val listMovies by viewModel.movies.collectAsState()
@@ -86,11 +88,18 @@ fun ListSelectedGeneralMovies(
     var username by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
     val state by viewModel.state.collectAsState()
+    val info by viewModelMain.informationMovie.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.getMovies(NODE_LIST_MOVIES)
         viewModel.observeListMovies(NODE_LIST_MOVIES)
         userViewModel.fitchUser()
+    }
+
+    LaunchedEffect(selectedNote) {
+        if (selectedNote != null) { // TODO: Надо проверить на утечку запросов
+            viewModelMain.getInformationMovie(selectedNote!!.id)
+        }
     }
 
     Column(
@@ -164,6 +173,23 @@ fun ListSelectedGeneralMovies(
                         selectedNote!!.id.toDouble()
                     )
                 },
+                openDescription = {
+                    ExpandedCard(
+                        title = "Описание",
+                        description = info?.description ?: "К сожалению, суточный лимит закончился"
+                    )
+                },
+                commentButton = {
+                    Button(
+                        onClick = { openBottomSheetComments = !openBottomSheetComments },
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Text(
+                            text = "Оставить комментарий",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                },
                 movieTransferButton = {
                     Button(
                         onClick = {
@@ -181,8 +207,7 @@ fun ListSelectedGeneralMovies(
                         )
                     }
                 },
-                onClick = { selectedNote = null },
-                openBottomSheet = { openBottomSheetComments = !openBottomSheetComments }
+                onClick = { selectedNote = null }
             )
             BackHandler {
                 selectedNote = null
@@ -358,8 +383,6 @@ fun ShowCommentGeneralList(
     }
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize(),
         contentPadding = PaddingValues(16.dp)
     ) {
         items(listComments) { comment ->
@@ -374,9 +397,18 @@ fun ShowCommentGeneralList(
                     contentColor = MaterialTheme.colorScheme.onSecondary
                 )
             ) {
-                Column(modifier = Modifier.padding(8.dp)) { // TODO: Переделать стили
-                    Text(text = comment.username, fontWeight = FontWeight.Bold)
-                    Text(text = comment.commentText)
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = comment.username,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = comment.commentText,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                     Text(
                         text =
                         SimpleDateFormat(
@@ -384,7 +416,8 @@ fun ShowCommentGeneralList(
                             Locale.getDefault()
                         ).format(
                             Date(comment.timestamp)
-                        )
+                        ),
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }

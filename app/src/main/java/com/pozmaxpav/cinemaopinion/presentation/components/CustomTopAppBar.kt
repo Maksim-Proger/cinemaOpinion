@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ContentPasteSearch
@@ -15,9 +14,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,8 +28,6 @@ fun CustomTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior
 ) {
     TopAppBar(
-        modifier = Modifier
-            .padding(vertical = 15.dp),
         scrollBehavior = scrollBehavior,
         title = {
             Text(
