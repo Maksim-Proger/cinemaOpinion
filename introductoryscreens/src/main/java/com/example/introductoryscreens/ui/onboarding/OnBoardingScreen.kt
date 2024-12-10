@@ -18,8 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.introductoryscreens.ui.common.NewsButton
-import com.example.introductoryscreens.ui.common.NewsTextButton
+import com.example.introductoryscreens.ui.common.OnBoardingScreenButton
+import com.example.introductoryscreens.ui.common.OnBoardingScreenTextButton
 import com.example.introductoryscreens.ui.onboarding.components.OnBoardingPage
 import com.example.introductoryscreens.ui.onboarding.components.PageIndicator
 import com.example.introductoryscreens.util.Dimens.MediumPadding2
@@ -55,7 +55,9 @@ fun OnBoardingScreen(
         HorizontalPager(state = pagerState) { index ->
             OnBoardingPage(page = pages[index])
         }
+
         Spacer(modifier = Modifier.weight(1f))
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -78,7 +80,7 @@ fun OnBoardingScreen(
                 val scope = rememberCoroutineScope()
 
                 if (buttonState.value[0].isNotEmpty()) {
-                    NewsTextButton(
+                    OnBoardingScreenTextButton(
                         text = buttonState.value[0],
                         onClick = {
                             scope.launch {
@@ -88,7 +90,7 @@ fun OnBoardingScreen(
                     )
                 }
 
-                NewsButton(
+                OnBoardingScreenButton(
                     text = buttonState.value[1],
                     onClick = {
                         scope.launch {

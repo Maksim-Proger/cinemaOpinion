@@ -17,7 +17,9 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetTopMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.information.GetMovieInformationUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.news.GetMediaNewsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetStateAppDescriptionFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetStateSeasonalFlagUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveStateAppDescriptionFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveStateSeasonalFlagUseCase
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,8 +40,13 @@ class MainViewModel @Inject constructor(
     private val getMediaNewsUseCase: GetMediaNewsUseCase,
     private val getSearchMovieByIdUseCase: GetSearchMovieByIdUseCase,
     private val saveStateSeasonalFlagUseCase: SaveStateSeasonalFlagUseCase,
-    private val getStateSeasonalFlagUseCase: GetStateSeasonalFlagUseCase
+    private val getStateSeasonalFlagUseCase: GetStateSeasonalFlagUseCase,
+    private val getStateAppDescriptionFlagUseCase: GetStateAppDescriptionFlagUseCase,
+    private val saveStateAppDescriptionFlagUseCase: SaveStateAppDescriptionFlagUseCase
 ) : ViewModel() {
+
+    private val _appDescriptionFlag = MutableStateFlow(false)
+    val appDescriptionFlag = _appDescriptionFlag.asStateFlow()
 
     private val _seasonalFlagForAlertDialog = MutableStateFlow(false)
     val seasonalFlagForAlertDialog: StateFlow<Boolean> = _seasonalFlagForAlertDialog.asStateFlow()
@@ -64,6 +71,27 @@ class MainViewModel @Inject constructor(
 
     private val _mediaNews = MutableStateFlow<NewsList?>(null)
     val mediaNews: StateFlow<NewsList?> get() = _mediaNews.asStateFlow()
+
+    fun saveStateAppDescriptionFlag(isAppDescriptionFlag: Boolean) {
+        viewModelScope.launch {
+            try {
+                saveStateAppDescriptionFlagUseCase(isAppDescriptionFlag)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun getStateAppDescriptionFlag() {
+        viewModelScope.launch {
+            try {
+                val state = getStateAppDescriptionFlagUseCase()
+                _appDescriptionFlag.value = state
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     fun saveStateSeasonalFlag(isSeasonalFlag: Boolean) {
         viewModelScope.launch {

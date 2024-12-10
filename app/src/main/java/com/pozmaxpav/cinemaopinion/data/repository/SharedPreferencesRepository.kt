@@ -33,4 +33,12 @@ class SharedPreferencesRepository @Inject constructor(
     override fun getStateSeasonalFlag(): Boolean {
         return SharedPreferences.getStateSeasonalFlag(context)
     }
+
+    override fun saveStateAppDescriptionFlag(isAppDescriptionFlag: Boolean) {
+        SharedPreferences.saveStateAppDescriptionFlag(context, isAppDescriptionFlag)
+    }
+
+    override fun getStateAppDescriptionFlag(): Boolean {
+        return SharedPreferences.getStateAppDescriptionFlag(context)
+    }
 }

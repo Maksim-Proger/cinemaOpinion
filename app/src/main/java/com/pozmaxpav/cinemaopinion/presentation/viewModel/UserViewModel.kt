@@ -47,20 +47,15 @@ class UserViewModel @Inject constructor(
                 points += 40L
             }
 
-            Log.d("@@@", "Текущее значение очков: $points")
-
             if (points == 40L) {
-                Log.d("@@@", "Список из аккаунта: ${R.drawable.half_done}")
                 updateAwardsList(userId, R.drawable.half_done.toString())
             }
 
             if (points == 80L) {
-                Log.d("@@@", "Список из аккаунта: ${R.drawable.complete_passage}")
                 updateAwardsList(userId, R.drawable.complete_passage.toString())
             }
         }
     }
-
 
     fun incrementSeasonalEventPoints(userId: String, increment: Long) {
         viewModelScope.launch {

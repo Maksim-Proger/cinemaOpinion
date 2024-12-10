@@ -226,13 +226,16 @@ fun AccountScreen(
                             modifier = Modifier.padding(10.dp).weight(1f),
                             verticalArrangement = Arrangement.Bottom
                         ) {
-                            Text(
-                                text = "Зал славы",
-                                style = MaterialTheme.typography.displayMedium,
-                                modifier = Modifier
-                                    .padding(bottom = 16.dp)
-                                    .align(alignment = Alignment.CenterHorizontally)
-                            )
+                            if (listAwards.isNotEmpty()) {
+                                Text(
+                                    text = "Зал славы",
+                                    style = MaterialTheme.typography.displayMedium,
+                                    modifier = Modifier
+                                        .padding(bottom = 16.dp)
+                                        .align(alignment = Alignment.CenterHorizontally)
+                                )
+                            }
+
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center,

@@ -25,6 +25,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -49,11 +50,11 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.CommentPersonalListModel
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
+import com.pozmaxpav.cinemaopinion.presentation.components.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.CommentPersonalListViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
-import com.pozmaxpav.cinemaopinion.utilits.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -132,14 +133,24 @@ fun ListSelectedMovies(
             ShowSelectedMovie(
                 movie = selectedNote!!,
                 buttonVisibility = true,
-                onClick = { selectedNote = null },
-                openBottomSheet = { openBottomSheetComments = !openBottomSheetComments },
                 content = {
                     ShowListComments(
                         listComments,
                         selectedNote!!.id.toDouble()
                     )
-                }
+                },
+                commentButton = {
+                    Button(
+                        onClick = { openBottomSheetComments = !openBottomSheetComments },
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Text(
+                            text = "Оставить комментарий",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                },
+                onClick = { selectedNote = null }
             )
             BackHandler {
                 selectedNote = null

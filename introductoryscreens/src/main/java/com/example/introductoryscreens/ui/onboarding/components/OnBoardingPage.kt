@@ -7,21 +7,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.introductoryscreens.R
 import com.example.introductoryscreens.ui.onboarding.Page
-import com.example.introductoryscreens.ui.onboarding.pages
 import com.example.introductoryscreens.ui.theme.TextColor
 import com.example.introductoryscreens.util.Dimens.MediumPadding2
 
@@ -30,7 +25,6 @@ fun OnBoardingPage(
     modifier: Modifier = Modifier,
     page: Page
 ) {
-    val introductionScreensFontFamily = FontFamily(Font(R.font.bad_script))
 
     Box(
         modifier = modifier
@@ -43,19 +37,18 @@ fun OnBoardingPage(
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
+
         Spacer(Modifier.padding(vertical = 45.dp))
+
         Column(
             modifier = Modifier.padding(vertical = 45.dp)
         ) {
             Text(
                 text = page.title,
                 modifier = Modifier.padding(horizontal = MediumPadding2),
-                style = TextStyle(
-                    fontFamily = introductionScreensFontFamily,
-                    fontWeight = FontWeight.Normal,
+                style = MaterialTheme.typography.labelMedium.copy(
                     fontSize = 55.sp,
-                    lineHeight = 55.sp,
-                    letterSpacing = 0.5.sp
+                    lineHeight = 65.sp,
                 ),
                 color = TextColor
             )
@@ -63,23 +56,11 @@ fun OnBoardingPage(
             Text(
                 text = page.description,
                 modifier = Modifier.padding(horizontal = MediumPadding2),
-                style = TextStyle(
-                    fontFamily = introductionScreensFontFamily,
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Normal,
+                style = MaterialTheme.typography.labelMedium.copy(
                     lineHeight = 34.sp,
-                    letterSpacing = 0.5.sp
                 ),
                 color = TextColor
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewFun() {
-    OnBoardingPage(
-        page = pages[2]
-    )
 }

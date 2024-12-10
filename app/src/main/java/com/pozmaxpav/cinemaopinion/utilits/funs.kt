@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -156,108 +159,6 @@ fun SelectedMovieItem(
             text = movie.nameFilm,
             style = MaterialTheme.typography.bodyLarge
         )
-    }
-}
-
-@Composable
-fun ShowSelectedMovie(
-    movie: SelectedMovie,
-    buttonVisibility: Boolean,
-    content: @Composable () -> Unit,
-    movieTransferButton: @Composable () -> Unit = {},
-    openBottomSheet: () -> Unit = {},
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxSize(),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .clickable { onClick() },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    movieTransferButton()
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp, horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                WorkerWithImageSelectedMovie(
-                    movie = movie,
-                    height = 200.dp
-                )
-                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = movie.nameFilm,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Spacer(modifier = Modifier.padding(vertical = 16.dp))
-                }
-            }
-
-            if (buttonVisibility) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp, horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Button(
-                        onClick = {
-                            openBottomSheet()
-                        }
-                    ) {
-                        Text(
-                            text = "Оставить комментарий",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ){
-                content()
-            }
-        }
     }
 }
 
