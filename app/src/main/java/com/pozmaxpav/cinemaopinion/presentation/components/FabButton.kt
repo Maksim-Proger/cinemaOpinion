@@ -1,11 +1,14 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun FabButton(
@@ -20,13 +23,15 @@ fun FabButton(
         icon = {
             Icon(
                 imageVector = imageIcon,
-                contentDescription = contentDescription
+                contentDescription = contentDescription,
+                modifier = Modifier.size(20.dp)
             )
         },
         text = {
             Text(
                 text = textFloatingButton,
-                style = MaterialTheme.typography.bodyLarge)
+                style = MaterialTheme.typography.bodyMedium
+            )
         },
         expanded = expanded,
         containerColor = MaterialTheme.colorScheme.secondary,

@@ -38,11 +38,9 @@ fun AddingNewUserScreen(
     viewModel: UserViewModel = hiltViewModel(),
     viewModelFirebase: FirebaseViewModel = hiltViewModel()
 ) {
-
     val (firstName, setFirstName) = remember { mutableStateOf("") }
     val (lastName, setLastName) = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
-
     val context = LocalContext.current
 
     Scaffold(
@@ -52,10 +50,13 @@ fun AddingNewUserScreen(
                 contentDescription = stringResource(id = R.string.description_floating_action_button_save),
                 textFloatingButton = stringResource(id = R.string.floating_action_button_save),
                 onButtonClick = {
-                    // Сохранение пользователя в базе данных
-                    val newUser = DomainUser(UUID.randomUUID().toString(), firstName, lastName)
+                    val newUser = DomainUser(
+                        UUID.randomUUID().toString(),
+                        firstName,
+                        lastName
+                    )
                     viewModel.addUser(newUser)
-//                    viewModelFirebase.updatingUserData(newUser)
+                    viewModelFirebase.updatingUserData(newUser)
                     onClick()
                     showToast(context, nameToast)
                 },
@@ -64,7 +65,6 @@ fun AddingNewUserScreen(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { padding ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -72,7 +72,6 @@ fun AddingNewUserScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // TODO: Переделать текстовые надписи
             CustomTextField(
                 value = firstName,
                 onValueChange = setFirstName,

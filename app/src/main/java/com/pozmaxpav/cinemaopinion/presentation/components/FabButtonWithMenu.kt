@@ -32,7 +32,9 @@ fun FabButtonWithMenu(
     onButtonClick: () -> Unit = {},
     expanded: Boolean
 ) {
+
     var menuExpanded by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()

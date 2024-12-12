@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
@@ -22,6 +23,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeR
 import com.pozmaxpav.cinemaopinion.utilits.deletingOldRecords
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,20 +48,23 @@ class FirebaseViewModel @Inject constructor(
     private val updateSeasonalEventPointsUseCase: UpdateSeasonalEventPointsUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<State>(State.Success)
-    val state: StateFlow<State> = _state.asStateFlow()
+    private val _movieDownloadStatus = MutableStateFlow<State>(State.Success)
+    val movieDownloadStatus = _movieDownloadStatus.asStateFlow()
 
-    private val _movies = MutableStateFlow<List<SelectedMovie>>(emptyList())
-    val movies: StateFlow<List<SelectedMovie>> = _movies
-
-    private val _comments = MutableStateFlow<List<DomainComment>>(emptyList())
-    val comments: StateFlow<List<DomainComment>> = _comments
-
-    private val _listOfChanges = MutableStateFlow<List<DomainChangelogModel>>(emptyList())
-    val listOfChanges: StateFlow<List<DomainChangelogModel>> = _listOfChanges
+    private val _commentsDownloadStatus = MutableStateFlow<State>(State.Success)
+    val commentsDownloadStatus = _commentsDownloadStatus.asStateFlow()
 
     private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> get() = _errorMessage
+    val errorMessage = _errorMessage.asStateFlow()
+
+    private val _movies = MutableStateFlow<List<SelectedMovie>>(emptyList())
+    val movies = _movies.asStateFlow()
+
+    private val _comments = MutableStateFlow<List<DomainComment>>(emptyList())
+    val comments = _comments.asStateFlow()
+
+    private val _listOfChanges = MutableStateFlow<List<DomainChangelogModel>>(emptyList())
+    val listOfChanges = _listOfChanges.asStateFlow()
 
     fun updatingUserData(user: DomainUser) {
         viewModelScope.launch {
@@ -101,7 +106,6 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    // Удаление записей из базы данных и списка
     private fun removeOldRecords() {
         viewModelScope.launch {
             val currentList = _listOfChanges.value
@@ -119,7 +123,7 @@ class FirebaseViewModel @Inject constructor(
             // Обновляем список после удаления
             _listOfChanges.value = filteredList
         }
-    }
+    } // Удаление записей из базы данных и списка
 
     fun getRecordsOfChanges() {
         viewModelScope.launch {
@@ -151,11 +155,12 @@ class FirebaseViewModel @Inject constructor(
 
     fun getComments(dataSource: String, movieId: Double) {
         viewModelScope.launch {
-            _state.value = State.Loading
+            _commentsDownloadStatus.value = State.Loading
             try {
                 val commentList = getCommentsForMovieUseCase(dataSource, movieId)
                 _comments.value = commentList
-                _state.value = State.Success
+                delay(500)
+                _commentsDownloadStatus.value = State.Success
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -190,23 +195,24 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun observeListMovies(dataSource: String) {
+    fun getMovies(dataSource: String) {
         viewModelScope.launch {
-            observeListMoviesUseCase(dataSource) { updateListMovies ->
-                _movies.value = updateListMovies
+            _movieDownloadStatus.value = State.Loading
+            try {
+                val moviesList = getMovieUseCase(dataSource)
+                _movies.value = moviesList
+                delay(500)
+                _movieDownloadStatus.value = State.Success
+            } catch (e: Exception) {
+                _errorMessage.value = e.message
             }
         }
     }
 
-    fun getMovies(dataSource: String) {
+    fun observeListMovies(dataSource: String) {
         viewModelScope.launch {
-            _state.value = State.Loading
-            try {
-                val moviesList = getMovieUseCase(dataSource)
-                _movies.value = moviesList
-                _state.value = State.Success
-            } catch (e: Exception) {
-                _errorMessage.value = e.message
+            observeListMoviesUseCase(dataSource) { updateListMovies ->
+                _movies.value = updateListMovies
             }
         }
     }

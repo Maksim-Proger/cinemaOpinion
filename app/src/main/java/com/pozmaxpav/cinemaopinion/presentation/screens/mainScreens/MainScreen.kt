@@ -3,8 +3,6 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -47,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -57,6 +56,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
@@ -67,7 +67,6 @@ import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.NewYearMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
-import com.pozmaxpav.cinemaopinion.presentation.components.ProgressBar
 import com.pozmaxpav.cinemaopinion.presentation.components.ShowDialogEvents
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
@@ -78,7 +77,6 @@ import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.state.State
-import kotlinx.coroutines.flow.flowOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -131,6 +129,7 @@ fun MainScreen(navController: NavHostController) {
 
     // Работаем с Fab
     val listState = rememberLazyListState()
+    val lisStateRow = rememberLazyListState()
     val isExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
     val isScrolling = remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     var scrollToTop by remember { mutableStateOf(false) }
@@ -442,7 +441,10 @@ fun MainScreen(navController: NavHostController) {
                                 .padding(padding),
                             contentAlignment = Alignment.Center // Центрируем содержимое
                         ) {
-                            ProgressBar()
+                            CustomLottieAnimation(
+                                nameFile = "loading_animation.lottie",
+                                modifier = Modifier.scale(0.5f)
+                            )
                         }
                     }
                     is State.Success -> {
@@ -451,7 +453,7 @@ fun MainScreen(navController: NavHostController) {
                                 .fillMaxSize()
                                 .padding(padding)
                         ) {
-                            AnimatedVisibility( // TODO: Доработать процесс скрытия
+                            AnimatedVisibility(
                                 visible = !isScrolling.value,
                                 enter = slideInHorizontally(
                                     initialOffsetX = { -it },
@@ -478,7 +480,9 @@ fun MainScreen(navController: NavHostController) {
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(150.dp)
-                                            .padding(horizontal = 16.dp)
+                                            .padding(horizontal = 16.dp),
+                                        state = lisStateRow,
+                                        contentPadding = PaddingValues(7.dp)
                                     ) {
                                         items(newYearMoviesList, key = { it.id }) { newYearMovie ->
                                             NewYearMovieItem(newYearMovie = newYearMovie) {

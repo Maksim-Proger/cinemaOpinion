@@ -35,8 +35,7 @@ fun PageDescription(
     Scaffold { innerPadding ->
         Spacer(Modifier.padding(innerPadding))
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             Row(
                 modifier = Modifier

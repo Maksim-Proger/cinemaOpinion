@@ -88,7 +88,6 @@ fun EditPersonalInformationScreen(
                 contentDescription = stringResource(id = R.string.description_floating_action_button_save),
                 textFloatingButton = stringResource(id = R.string.floating_action_button_save),
                 onButtonClick = {
-                    // Обновление пользователя в базе данных
                     val newUser = DomainUser(
                         user?.id!!,
                         firstName,
@@ -96,7 +95,6 @@ fun EditPersonalInformationScreen(
                     )
                     viewModel.updateUser(newUser)
                     firebaseViewModel.updatingUserData(newUser)
-
                     navigateFunction(navController, Route.MainScreen.route)
                     showToast(context, nameToast)
                 },
