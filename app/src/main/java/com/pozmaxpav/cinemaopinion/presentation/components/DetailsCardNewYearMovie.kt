@@ -69,25 +69,25 @@ fun DetailsCard(
         }
     }
 
-//    LaunchedEffect(listAwards) {
-//        if (getSeasonalEventPoints == 40L) {
-//            viewModelFirebase.updateSeasonalEventPoints(
-//                userId, "awards", listAwards.toString()
-//            )
-//        }
-//
-//        if (getSeasonalEventPoints == 80L) {
-//            viewModelFirebase.updateSeasonalEventPoints(
-//                userId, "awards", listAwards.toString()
-//            )
-//        }
-//    }
+    LaunchedEffect(listAwards) {
+        if (getSeasonalEventPoints == 40L) {
+            viewModelFirebase.updateSeasonalEventPoints(
+                userId, "awards", listAwards.toString()
+            )
+        }
 
-//    LaunchedEffect(getSeasonalEventPoints) {
-//        viewModelFirebase.updateSeasonalEventPoints(
-//            userId, "seasonalEventPoints", getSeasonalEventPoints
-//        )
-//    }
+        if (getSeasonalEventPoints == 80L) {
+            viewModelFirebase.updateSeasonalEventPoints(
+                userId, "awards", listAwards.toString()
+            )
+        }
+    }
+
+    LaunchedEffect(getSeasonalEventPoints) {
+        viewModelFirebase.updateSeasonalEventPoints(
+            userId, "seasonalEventPoints", getSeasonalEventPoints
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -173,25 +173,7 @@ fun DetailsCard(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Button(
-                            onClick = { // TODO: Доработать!
-//                            if (getSeasonalEventPoints < 80L) {
-//                                viewModelUser.incrementSeasonalEventPoints(userId, 40L)
-//                            }
-//
-//                            if (getSeasonalEventPoints == 40L) {
-//                                val resourceId = R.drawable.half_done
-//                                viewModelUser.updateAwardsList(
-//                                    userId, resourceId.toString()
-//                                )
-//                            }
-//
-//                            if (getSeasonalEventPoints == 80L) {
-//                                val resourceId = R.drawable.complete_passage
-//                                viewModelUser.updateAwardsList(
-//                                    userId, resourceId.toString()
-//                                )
-//                            }
-
+                            onClick = {
                                 viewModelUser.handleEvent(userId)
                                 showRatingBar = !showRatingBar
                             },
@@ -205,7 +187,9 @@ fun DetailsCard(
                             )
                         }
                         Button(
-                            onClick = {},
+                            onClick = {
+                                // TODO: Добавить логику
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondary,
                                 contentColor = MaterialTheme.colorScheme.onSecondary
@@ -217,9 +201,6 @@ fun DetailsCard(
                         }
                     }
                 }
-
-
-
             }
         }
     }

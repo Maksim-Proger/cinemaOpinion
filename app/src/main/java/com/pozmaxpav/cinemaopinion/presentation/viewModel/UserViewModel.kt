@@ -33,7 +33,7 @@ class UserViewModel @Inject constructor(
     val users: StateFlow<DomainUser?> get() = _users.asStateFlow()
 
     private val _seasonalEventPoints = MutableStateFlow(0L)
-    val seasonalEventPoints: StateFlow<Long> = _seasonalEventPoints.asStateFlow() // TODO: Что такое .asStateFlow()
+    val seasonalEventPoints: StateFlow<Long> = _seasonalEventPoints.asStateFlow() // TODO: Отличие .asStateFlow() от StateFlow<>
 
     private val _listAwards = MutableStateFlow<List<String>>(emptyList())
     val listAwards: StateFlow<List<String>> = _listAwards.asStateFlow()
@@ -43,8 +43,8 @@ class UserViewModel @Inject constructor(
             var points = _seasonalEventPoints.value
 
             if (_seasonalEventPoints.value < 80L) {
-                incrementSeasonalEventPoints(userId, 40L)
-                points += 40L
+                incrementSeasonalEventPoints(userId, 2L)
+                points += 2L
             }
 
             if (points == 40L) {

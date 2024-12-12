@@ -40,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -48,6 +49,7 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.ProgressBar
@@ -82,13 +84,13 @@ fun ListSelectedGeneralMovies(
     val listComments by viewModel.comments.collectAsState()
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
-    var (comment, setComment) = remember { mutableStateOf("") }
-    val context = LocalContext.current
     val user by userViewModel.users.collectAsState()
     var username by remember { mutableStateOf("") }
-    val listState = rememberLazyListState()
-    val state by viewModel.state.collectAsState()
+    val stateMovie by viewModel.movieDownloadStatus.collectAsState()
     val info by viewModelMain.informationMovie.collectAsState()
+    var (comment, setComment) = remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
         viewModel.getMovies(NODE_LIST_MOVIES)
@@ -186,7 +188,7 @@ fun ListSelectedGeneralMovies(
                     ) {
                         Text(
                             text = "Оставить комментарий",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 },
@@ -222,14 +224,17 @@ fun ListSelectedGeneralMovies(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 )
             ) {
-                when (state) {
+                when (stateMovie) {
                     is State.Loading -> {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize(),
-                            contentAlignment = Alignment.Center // Центрируем содержимое
+                            contentAlignment = Alignment.Center
                         ) {
-                            ProgressBar()
+                            CustomLottieAnimation(
+                                nameFile = "loading_animation.lottie",
+                                modifier = Modifier.scale(0.5f)
+                            )
                         }
                     }
                     is State.Success -> {
@@ -371,54 +376,62 @@ fun ListSelectedGeneralMovies(
 fun ShowCommentGeneralList(
     listComments: List<DomainComment>,
     id: Double,
-    viewModel: FirebaseViewModel = hiltViewModel(),
+    firebaseViewModel: FirebaseViewModel = hiltViewModel(),
 ) {
-
-    LaunchedEffect(Unit) {
-        viewModel.getComments(NODE_LIST_MOVIES, id)
-    }
+    val stateComments by firebaseViewModel.commentsDownloadStatus.collectAsState()
 
     LaunchedEffect(id) {
-        viewModel.observeComments(NODE_LIST_MOVIES, id)
+        firebaseViewModel.getComments(NODE_LIST_MOVIES, id)
+        firebaseViewModel.observeComments(NODE_LIST_MOVIES, id)
     }
 
-    LazyColumn(
-        contentPadding = PaddingValues(16.dp)
-    ) {
-        items(listComments) { comment ->
-            Card(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .padding(vertical = 7.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
-                )
+    when(stateComments) {
+        is State.Loading -> {
+            CustomLottieAnimation(
+                nameFile = "loading_animation.lottie",
+                modifier = Modifier.scale(0.5f)
+            )
+        }
+        is State.Success -> {
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(8.dp)
-                ) {
-                    Text(
-                        text = comment.username,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Text(
-                        text = comment.commentText,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Text(
-                        text =
-                        SimpleDateFormat(
-                            "dd.MM.yyyy HH:mm",
-                            Locale.getDefault()
-                        ).format(
-                            Date(comment.timestamp)
-                        ),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                items(listComments) { comment ->
+                    Card(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .fillMaxWidth()
+                            .padding(vertical = 7.dp),
+                        elevation = CardDefaults.cardElevation(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = comment.username,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Text(
+                                text = comment.commentText,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Text(
+                                text =
+                                SimpleDateFormat(
+                                    "dd.MM.yyyy HH:mm",
+                                    Locale.getDefault()
+                                ).format(
+                                    Date(comment.timestamp)
+                                ),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
                 }
             }
         }

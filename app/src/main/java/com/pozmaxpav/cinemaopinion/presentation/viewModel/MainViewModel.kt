@@ -152,8 +152,8 @@ class MainViewModel @Inject constructor(
             _state.value = State.Loading
             try {
                 val movies = getPremiereMoviesUseCase(year, month)
-                delay(300) // Искусственная задержка
                 _premiereMovies.value = movies
+                delay(500)
                 _state.value = State.Success
             } catch (e: Exception) {
                 e.printStackTrace()

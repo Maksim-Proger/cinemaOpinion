@@ -55,6 +55,9 @@ android {
 
 dependencies {
 
+    // LottieAnimation
+    implementation("com.airbnb.android:lottie-compose:6.0.1")
+
     // WebView
     implementation("androidx.webkit:webkit:1.12.1")
 
@@ -86,14 +89,14 @@ dependencies {
     //Accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.4-beta")
 
-    // CORE
-    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
-
-    // CALENDAR
-    implementation("com.maxkeppeler.sheets-compose-dialogs:calendar:1.0.2")
-
-    // CLOCK
-    implementation("com.maxkeppeler.sheets-compose-dialogs:clock:1.0.2")
+//    // CORE
+//    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
+//
+//    // CALENDAR
+//    implementation("com.maxkeppeler.sheets-compose-dialogs:calendar:1.0.2")
+//
+//    // CLOCK
+//    implementation("com.maxkeppeler.sheets-compose-dialogs:clock:1.0.2")
 
     // Расширяем библиотеку с иконками
     implementation("androidx.compose.material:material-icons-extended-android:1.7.2")

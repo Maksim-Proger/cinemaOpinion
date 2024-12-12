@@ -202,7 +202,7 @@ fun DetailsCardFilm(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 7.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Button(
                             colors = ButtonDefaults.buttonColors(
@@ -223,7 +223,7 @@ fun DetailsCardFilm(
                         ) {
                             Text(
                                 text = stringResource(R.string.text_buttons_film_card_to_my_list),
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
 
@@ -244,7 +244,7 @@ fun DetailsCardFilm(
                         ) {
                             Text(
                                 text = stringResource(R.string.text_buttons_film_card_to_general_list),
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     }
@@ -256,7 +256,7 @@ fun DetailsCardFilm(
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.secondary
+                                contentColor = MaterialTheme.colorScheme.onSecondary
                             ),
                             onClick = {
 //                            viewModelFirebase.savingChangeRecord(
@@ -270,7 +270,7 @@ fun DetailsCardFilm(
                         ) {
                             Text(
                                 text = "В новогоднюю коллекцию",
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     }
