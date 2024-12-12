@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +22,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pozmaxpav.cinemaopinion.utilits.Constants.NEW_YEAR_TEXT
@@ -29,98 +31,95 @@ import com.pozmaxpav.cinemaopinion.utilits.Constants.NEW_YEAR_TEXT
 fun PageDescription(
     onDismiss: () -> Unit
 ) {
-
     val scrollState = rememberScrollState()
 
     Scaffold { innerPadding ->
-        Spacer(Modifier.padding(innerPadding))
-        Column(
-            modifier = Modifier.fillMaxSize()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .heightIn(75.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "\u2744",
-                    fontSize = 65.sp
-                )
+            // Анимация на заднем фоне
+            CustomLottieAnimation(
+                nameFile = "animation_falling_snow.lottie",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize() // Занимает весь доступный размер
+            )
 
-                Text(
-                    text = "\u2744",
-                    fontSize = 65.sp
-                )
-            }
-
+            // Контент на переднем плане
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 25.dp, vertical = 7.dp)
-                    .weight(1f)
-                    .verticalScroll(scrollState),
-                verticalArrangement = Arrangement.Center
+                    .fillMaxSize()
             ) {
+                // Прокручиваемый текстовый контент
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .verticalScroll(scrollState)
+                        .padding(horizontal = 25.dp, vertical = 7.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = NEW_YEAR_TEXT,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+                }
+
+                // Кнопка
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(10.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = NEW_YEAR_TEXT,
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(10.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextButton(
-                    onClick = onDismiss
-                ) {
-                    Card (
-                        shape = RoundedCornerShape(8.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        )
-                    ) {
-                        Box(
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            Text(
-                                text = "С праздником!",
-                                style = MaterialTheme.typography.labelSmall
+                    TextButton(onClick = onDismiss) {
+                        Card(
+                            shape = RoundedCornerShape(8.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary
                             )
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text(
+                                    text = "С праздником!",
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .heightIn(75.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "\u2744",
-                    fontSize = 65.sp
-                )
-
-                Text(
-                    text = "\u2744",
-                    fontSize = 65.sp
-                )
+                // Украшение
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .heightIn(75.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "\u2744",
+                        fontSize = 65.sp
+                    )
+                    Text(
+                        text = "\u2744",
+                        fontSize = 65.sp
+                    )
+                }
             }
         }
     }
 }
+
