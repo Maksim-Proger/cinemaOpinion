@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.ShowListOverlay
 import com.pozmaxpav.cinemaopinion.utilits.parsYearsToString
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -278,34 +279,6 @@ fun SearchFilterScreen(
         )
     }
 
-}
-
-@Composable
-fun ShowListOverlay(
-    onDismiss: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.6f)
-            .padding(top = 45.dp)
-            .background(Color.Black.copy(alpha = 0.5f))
-            .clickable(
-                onClick = onDismiss,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
-    ) {
-        Box(
-            Modifier
-                .align(Alignment.Center)
-                .padding(16.dp)
-                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
-        ) {
-            content()
-        }
-    }
 }
 
 @Composable
