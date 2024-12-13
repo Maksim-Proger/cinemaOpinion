@@ -4,14 +4,14 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -60,8 +60,8 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
-import com.pozmaxpav.cinemaopinion.presentation.components.DetailsCard
-import com.pozmaxpav.cinemaopinion.presentation.components.DetailsCardFilm
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCard
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
@@ -190,10 +190,9 @@ fun MainScreen(navController: NavHostController) {
                 val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
 
                 // Если достигнут конец списка, показываем кнопку "Следующая страница"
-                // Устанавливаем showNextPageButton в true, если последний видимый элемент - это последний элемент списка и фильтр активен
+                // Устанавливаем showPageSwitchingButtons в true, если последний видимый элемент - это последний элемент списка и фильтр активен
                 showPageSwitchingButtons =
-                    lastVisibleItemIndex >= totalItems - 1 &&
-                            onFilterButtonClick or searchCompleted // TODO: Разобраться с логическими условиями в Kotlin
+                    lastVisibleItemIndex >= totalItems - 1 /* && onFilterButtonClick || searchCompleted */
             }
     }
 
@@ -367,11 +366,7 @@ fun MainScreen(navController: NavHostController) {
             }
         }
 
-        AnimatedVisibility(
-            visible = searchBarActive,
-            enter = slideInVertically(),
-            exit = slideOutVertically()
-        ) {
+        if (searchBarActive) {
             Column(modifier = Modifier.padding(padding)) {
                 CustomSearchBar(
                     query = query,
@@ -424,9 +419,9 @@ fun MainScreen(navController: NavHostController) {
                     else -> premiereMovies.value?.items ?: emptyList()
                 }
                 val countPages: Int = when {
-                    searchCompleted -> searchMovies.value?.total ?: 0
+                    searchCompleted -> searchMovies.value?.totalPages ?: 0
                     onFilterButtonClick -> topListMovies.value?.pagesCount ?: 0
-                    else -> premiereMovies.value?.total ?: 0
+                    else -> 0
                 }
 
                 // Проверяем возможность активации кнопок для навигации
@@ -476,13 +471,16 @@ fun MainScreen(navController: NavHostController) {
                                             style = MaterialTheme.typography.displayMedium
                                         )
                                     }
+                                    Spacer(modifier = Modifier.padding(6.dp))
                                     LazyRow(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(150.dp)
-                                            .padding(horizontal = 16.dp),
-                                        state = lisStateRow,
-                                        contentPadding = PaddingValues(7.dp)
+                                            .padding(horizontal = 16.dp)
+                                            .background(
+                                                color = MaterialTheme.colorScheme.surface
+                                            ),
+                                        state = lisStateRow
                                     ) {
                                         items(newYearMoviesList, key = { it.id }) { newYearMovie ->
                                             NewYearMovieItem(newYearMovie = newYearMovie) {
@@ -498,7 +496,7 @@ fun MainScreen(navController: NavHostController) {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(1f),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(13.dp)
                             ) {
                                 items(moviesToDisplay, key = { it.id }) { movie ->
                                     MovieItem(movie = movie) {
@@ -506,7 +504,7 @@ fun MainScreen(navController: NavHostController) {
                                     }
                                 }
 
-                                if (showPageSwitchingButtons && countPages > 1) {
+                                if (showPageSwitchingButtons) {
                                     item {
                                         Row(
                                             modifier = Modifier
@@ -527,9 +525,8 @@ fun MainScreen(navController: NavHostController) {
                                                     modifier = Modifier.wrapContentWidth()
                                                 ) {
                                                     Icon(
-                                                        // TODO: Поправить содержание
                                                         painter = painterResource(R.drawable.ic_previous_page),
-                                                        contentDescription = stringResource(id = R.string.description_icon_home_button),
+                                                        contentDescription = stringResource(id = R.string.description_icon_previous_page_button),
                                                         tint = MaterialTheme.colorScheme.onPrimary
                                                     )
                                                 }
@@ -549,9 +546,8 @@ fun MainScreen(navController: NavHostController) {
                                                     modifier = Modifier.wrapContentWidth()
                                                 ) {
                                                     Icon(
-                                                        // TODO: Поправить содержание
                                                         painter = painterResource(R.drawable.ic_next_page),
-                                                        contentDescription = stringResource(id = R.string.description_icon_home_button),
+                                                        contentDescription = stringResource(id = R.string.description_icon_next_page_button),
                                                         tint = MaterialTheme.colorScheme.onPrimary
                                                     )
                                                 }

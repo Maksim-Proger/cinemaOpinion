@@ -79,7 +79,7 @@ fun ApiMovieSearch.toDomain(): MovieData.MovieSearch {
 
 fun ApiMovieSearchList.toDomain(): MovieSearchList {
     return MovieSearchList(
-        total = total,
+        totalPages = totalPages,
         items = items.map { it.toDomain() }
     )
 }
