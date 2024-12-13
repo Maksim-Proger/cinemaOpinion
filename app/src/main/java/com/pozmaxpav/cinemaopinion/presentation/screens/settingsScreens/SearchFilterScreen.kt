@@ -1,12 +1,15 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
 
-import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -100,27 +103,8 @@ fun SearchFilterScreen(
         }
     ) { innerPadding ->
 
-        if (showGenresList) {
-            ShowListGenres { genre ->
-                selectedGenre = genre
-                showGenresList = false
-            }
-            BackHandler {
-                showGenresList = !showGenresList
-            }
-        }
-        if (showCountriesList) {
-            ShowListCountries { country ->
-                selectedCountry = country
-                showCountriesList = false
-            }
-            BackHandler{
-                showCountriesList = !showCountriesList
-            }
-        }
-
         Column(
-            Modifier.padding(innerPadding)
+            Modifier.padding(innerPadding).fillMaxSize()
         ) {
 
             SelectType(
@@ -267,6 +251,59 @@ fun SearchFilterScreen(
                     )
                 }
             }
+        }
+    }
+
+    if (showGenresList) {
+        ShowListOverlay(
+            onDismiss = { showGenresList = false },
+            content = {
+                ShowListGenres { genre ->
+                    selectedGenre = genre
+                    showGenresList = false
+                }
+            }
+        )
+    }
+
+    if (showCountriesList) {
+        ShowListOverlay(
+            onDismiss = { showCountriesList = false },
+            content = {
+                ShowListCountries { country ->
+                    selectedCountry = country
+                    showCountriesList = false
+                }
+            }
+        )
+    }
+
+}
+
+@Composable
+fun ShowListOverlay(
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.6f)
+            .padding(top = 45.dp)
+            .background(Color.Black.copy(alpha = 0.5f))
+            .clickable(
+                onClick = onDismiss,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            )
+    ) {
+        Box(
+            Modifier
+                .align(Alignment.Center)
+                .padding(16.dp)
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
+        ) {
+            content()
         }
     }
 }

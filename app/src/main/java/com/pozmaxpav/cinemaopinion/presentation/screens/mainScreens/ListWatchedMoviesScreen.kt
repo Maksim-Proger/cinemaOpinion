@@ -39,7 +39,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
-import com.pozmaxpav.cinemaopinion.presentation.components.ShowSelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
