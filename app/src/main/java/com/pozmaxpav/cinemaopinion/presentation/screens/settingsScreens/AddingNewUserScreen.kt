@@ -8,22 +8,26 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
+import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
@@ -31,19 +35,29 @@ import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import java.util.UUID
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddingNewUserScreen(
     nameToast: String,
-    onClick: () -> Unit,
+    onClickClose: () -> Unit,
     viewModel: UserViewModel = hiltViewModel(),
     viewModelFirebase: FirebaseViewModel = hiltViewModel()
 ) {
     val (firstName, setFirstName) = remember { mutableStateOf("") }
     val (lastName, setLastName) = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            ClassicTopAppBar(
+                title = stringResource(R.string.title_for_adding_new_user_screen),
+                scrollBehavior = scrollBehavior,
+                onTransitionAction = onClickClose
+            )
+        },
         floatingActionButton = {
             FabButton(
                 imageIcon = Icons.Default.Add,
@@ -57,18 +71,18 @@ fun AddingNewUserScreen(
                     )
                     viewModel.addUser(newUser)
                     viewModelFirebase.updatingUserData(newUser)
-                    onClick()
+                    onClickClose()
                     showToast(context, nameToast)
                 },
                 expanded = true
             )
         },
         floatingActionButtonPosition = FabPosition.End
-    ) { padding ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

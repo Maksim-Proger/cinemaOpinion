@@ -76,8 +76,7 @@ fun ListSelectedGeneralMovies(
     navController: NavHostController,
     viewModel: FirebaseViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
-    viewModelMain: MainViewModel = hiltViewModel(),
-    onClickCloseButton: () -> Unit
+    viewModelMain: MainViewModel = hiltViewModel()
 ) {
     val listMovies by viewModel.movies.collectAsState()
     val listComments by viewModel.comments.collectAsState()
@@ -186,7 +185,7 @@ fun ListSelectedGeneralMovies(
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text(
-                            text = "Оставить комментарий",
+                            text = "Оставить\nкомментарий",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -204,7 +203,7 @@ fun ListSelectedGeneralMovies(
                     ) {
                         Text(
                             text = "Просмотрен",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 },
@@ -327,7 +326,11 @@ fun ListSelectedGeneralMovies(
         ) {
             Card(
                 modifier = Modifier
-                    .clickable(onClick = onClickCloseButton),
+                    .clickable(
+                        onClick = {
+                            navigateFunction(navController, Route.MainScreen.route)
+                        }
+                    ),
                 shape = RoundedCornerShape(8.dp),
                 elevation = CardDefaults.cardElevation(8.dp),
                 colors = CardDefaults.cardColors(

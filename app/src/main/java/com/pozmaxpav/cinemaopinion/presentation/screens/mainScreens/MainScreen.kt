@@ -68,6 +68,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuI
 import com.pozmaxpav.cinemaopinion.presentation.components.NewYearMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
 import com.pozmaxpav.cinemaopinion.presentation.components.ShowDialogEvents
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
@@ -161,7 +162,7 @@ fun MainScreen(navController: NavHostController) {
         if (user != null) {
             user.let { userInfo ->
                 username = userInfo?.firstName ?: "Таинственный пользователь"
-//                firebaseViewModel.updatingUserData(user!!) // Нужно, чтобы инициализировать первичное обновление
+                firebaseViewModel.updatingUserData(user!!) // Нужно, чтобы инициализировать первичное обновление
             }
         } else {
             username = "Таинственный пользователь"
@@ -201,7 +202,7 @@ fun MainScreen(navController: NavHostController) {
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            if (!onAccountButtonClick && !searchBarActive) {
+            if (!searchBarActive) {
                 CustomTopAppBar(
                     title = if (!titleTopBarState) {
                         stringResource(id = R.string.top_app_bar_header_name_all_movies)
@@ -215,68 +216,11 @@ fun MainScreen(navController: NavHostController) {
                     onTransitionAction = { navigateFunction(navController, Route.ListOfChangesScreen.route) }
                 )
             }
-
-            if (onAccountButtonClick) {
-                AccountScreen(
-                    navController,
-                    onClick = { onAccountButtonClick = false }
-                )
-                BackHandler {
-                    onAccountButtonClick = false
-                }
-            }
-
-            if (!showDialogEvents && !locationShowDialogEvents) {
-                ShowDialogEvents {
-                    viewModel.saveStateSeasonalFlag(true)
-                    locationShowDialogEvents = !locationShowDialogEvents
-                    locationShowPageAppDescription = true
-                }
-            }
-
-            if (!showPageAppDescription && locationShowPageAppDescription) {
-                PageDescription(
-                    onDismiss = {
-                        viewModel.saveStateAppDescriptionFlag(true)
-                        locationShowPageAppDescription = false
-                    }
-                )
-            }
-
-            if (onAdvancedSearchButtonClick) {
-                SearchFilterScreen(
-                    onClickClose = { onAdvancedSearchButtonClick = false },
-                    onSendRequest = { sendRequestCompleted = true },
-                    onSearch = { it ->
-                        requestBody = it
-                        searchCompleted = true
-                    }
-                )
-                BackHandler {
-                    onAdvancedSearchButtonClick = false
-                }
-            }
-
-            if (showDatePicker) {
-                DatePickerFunction(
-                    onCloseDatePicker = {
-                        showDatePicker = !showDatePicker
-                        dateSelectionComplete = true
-                    },
-                    onDateSelected = { date ->
-                        selectedDate = date
-                    },
-                )
-                BackHandler {
-                    showDatePicker = !showDatePicker
-                }
-            }
         },
         floatingActionButton = {
             if (
-                !onAccountButtonClick && !searchBarActive && !onAdvancedSearchButtonClick &&
-                selectedMovie == null && selectedNewYearMovie == null && !showDatePicker &&
-                !locationShowPageAppDescription
+                !searchBarActive && !onAdvancedSearchButtonClick && selectedMovie == null &&
+                selectedNewYearMovie == null && !showDatePicker && !locationShowPageAppDescription
             ) {
                 FabButtonWithMenu(
                     imageIcon = if (isScrolling.value) Icons.Default.ArrowUpward else Icons.Default.Settings,
@@ -344,30 +288,240 @@ fun MainScreen(navController: NavHostController) {
         }
     ) { padding ->
 
-        if (dateSelectionComplete) {
-            selectedDate?.let {
-                viewModel.fetchPremiersMovies(it.first, formatMonth(it.second))
-                dateSelectionComplete = false
-            }
-        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
 
-        if (sendRequestCompleted) {
-            requestBody.let { compositeRequest  ->
-                viewModel.searchFilmsByFilters(
-                    compositeRequest.type,
-                    compositeRequest.keyword,
-                    compositeRequest.countries,
-                    compositeRequest.genres,
-                    compositeRequest.ratingFrom,
-                    compositeRequest.yearFrom,
-                    compositeRequest.yearTo,
-                    currentPage)
-                sendRequestCompleted = false
+            if (dateSelectionComplete) {
+                selectedDate?.let {
+                    viewModel.fetchPremiersMovies(it.first, formatMonth(it.second))
+                    dateSelectionComplete = false
+                }
             }
-        }
 
-        if (searchBarActive) {
-            Column(modifier = Modifier.padding(padding)) {
+            if (sendRequestCompleted) {
+                requestBody.let { compositeRequest  ->
+                    viewModel.searchFilmsByFilters(
+                        compositeRequest.type,
+                        compositeRequest.keyword,
+                        compositeRequest.countries,
+                        compositeRequest.genres,
+                        compositeRequest.ratingFrom,
+                        compositeRequest.yearFrom,
+                        compositeRequest.yearTo,
+                        currentPage)
+                    sendRequestCompleted = false
+                }
+            }
+
+            if (!searchBarActive) {
+                if (selectedMovie != null) {
+                    DetailsCardFilm(
+                        stringResource(R.string.movie_has_been_added),
+                        stringResource(R.string.movie_has_already_been_added),
+                        stringResource(R.string.movie_has_been_added_to_general_list),
+                        selectedMovie!!,
+                        onClick = { selectedMovie = null },
+                        padding,
+                        user = username
+                    )
+                    BackHandler {
+                        selectedMovie = null
+                    }
+
+                }
+                else if (selectedNewYearMovie != null) {
+                    DetailsCard(
+                        selectedNewYearMovie!!,
+                        onCloseButton = { selectedNewYearMovie = null },
+                        padding
+                    )
+                    BackHandler {
+                        selectedNewYearMovie = null
+                    }
+                }
+                else {
+                    val moviesToDisplay: List<MovieData> = when {
+                        searchCompleted -> searchMovies.value?.items ?: emptyList()
+                        onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
+                        else -> premiereMovies.value?.items ?: emptyList()
+                    }
+                    val countPages: Int = when {
+                        searchCompleted -> searchMovies.value?.totalPages ?: 0
+                        onFilterButtonClick -> topListMovies.value?.pagesCount ?: 0
+                        else -> 0
+                    }
+
+                    // Проверяем возможность активации кнопок для навигации
+                    val canGoBack = currentPage > 1
+                    val canGoForward = currentPage < countPages
+
+                    when (state) {
+                        is State.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(padding),
+                                contentAlignment = Alignment.Center // Центрируем содержимое
+                            ) {
+                                CustomLottieAnimation(
+                                    nameFile = "loading_animation.lottie",
+                                    modifier = Modifier.scale(0.5f)
+                                )
+                            }
+                        }
+                        is State.Success -> {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(padding)
+                            ) {
+                                AnimatedVisibility(
+                                    visible = !isScrolling.value,
+                                    enter = slideInHorizontally(
+                                        initialOffsetX = { -it },
+                                        animationSpec = tween(durationMillis = 300)
+                                    ),
+                                    exit = slideOutHorizontally(
+                                        targetOffsetX = { -it },
+                                        animationSpec = tween(durationMillis = 300)
+                                    )
+                                ) {
+                                    Column {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 16.dp),
+                                            horizontalArrangement = Arrangement.Center
+                                        ) {
+                                            Text(
+                                                text = stringResource(R.string.title_of_the_list_for_the_new_year),
+                                                style = MaterialTheme.typography.displayMedium
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.padding(6.dp))
+                                        LazyRow(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(150.dp)
+                                                .padding(horizontal = 16.dp)
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.surface
+                                                ),
+                                            state = lisStateRow
+                                        ) {
+                                            items(newYearMoviesList, key = { it.id }) { newYearMovie ->
+                                                NewYearMovieItem(newYearMovie = newYearMovie) {
+                                                    selectedNewYearMovie = newYearMovie
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                LazyColumn(
+                                    state = listState,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f),
+                                    contentPadding = PaddingValues(13.dp)
+                                ) {
+                                    items(moviesToDisplay, key = { it.id }) { movie ->
+                                        MovieItem(movie = movie) {
+                                            selectedMovie = movie
+                                        }
+                                    }
+
+                                    if (showPageSwitchingButtons) {
+                                        item {
+                                            Row(
+                                                modifier = Modifier
+                                                    .wrapContentWidth()
+                                                    .padding(vertical = 16.dp)
+                                            ) {
+                                                if (canGoBack) {
+                                                    IconButton (
+                                                        onClick = {
+                                                            currentPage--
+                                                            if (onFilterButtonClick) {
+                                                                viewModel.fetchTopListMovies(currentPage)
+                                                            } else if (searchCompleted) {
+                                                                viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                                            }
+                                                            scrollToTop = true
+                                                        },
+                                                        modifier = Modifier.wrapContentWidth()
+                                                    ) {
+                                                        Icon(
+                                                            painter = painterResource(R.drawable.ic_previous_page),
+                                                            contentDescription = stringResource(id = R.string.description_icon_previous_page_button),
+                                                            tint = MaterialTheme.colorScheme.onPrimary
+                                                        )
+                                                    }
+                                                }
+
+                                                if (canGoForward) {
+                                                    IconButton(
+                                                        onClick = {
+                                                            currentPage++
+                                                            if (onFilterButtonClick) {
+                                                                viewModel.fetchTopListMovies(currentPage)
+                                                            } else if (searchCompleted) {
+                                                                viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                                            }
+                                                            scrollToTop = true
+                                                        },
+                                                        modifier = Modifier.wrapContentWidth()
+                                                    ) {
+                                                        Icon(
+                                                            painter = painterResource(R.drawable.ic_next_page),
+                                                            contentDescription = stringResource(id = R.string.description_icon_next_page_button),
+                                                            tint = MaterialTheme.colorScheme.onPrimary
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!showDialogEvents && !locationShowDialogEvents) {
+                ShowDialogEvents {
+                    viewModel.saveStateSeasonalFlag(true)
+                    locationShowDialogEvents = !locationShowDialogEvents
+                    locationShowPageAppDescription = true
+                }
+            }
+
+            if (showDatePicker) {
+                DatePickerFunction(
+                    onCloseDatePicker = {
+                        showDatePicker = !showDatePicker
+                        dateSelectionComplete = true
+                    },
+                    onDateSelected = { date ->
+                        selectedDate = date
+                    },
+                )
+                BackHandler {
+                    showDatePicker = !showDatePicker
+                }
+            }
+
+        }
+    }
+
+    if (searchBarActive) {
+        CustomBoxShowOverlay(
+            paddingVerticalSecondBox = 50.dp,
+            paddingSecondBox = 16.dp,
+            content = {
                 CustomSearchBar(
                     query = query,
                     onQueryChange = { newQuery -> query = newQuery },
@@ -384,184 +538,59 @@ fun MainScreen(navController: NavHostController) {
                     searchHistory = searchHistory
                 )
             }
-        }
-
-        if (!searchBarActive) {
-            if (selectedMovie != null) {
-                DetailsCardFilm(
-                    stringResource(R.string.movie_has_been_added),
-                    stringResource(R.string.movie_has_already_been_added),
-                    stringResource(R.string.movie_has_been_added_to_general_list),
-                    selectedMovie!!,
-                    onClick = { selectedMovie = null },
-                    padding,
-                    user = username
-                )
-                BackHandler {
-                    selectedMovie = null
-                }
-
-            }
-            else if (selectedNewYearMovie != null) {
-                DetailsCard(
-                    selectedNewYearMovie!!,
-                    onCloseButton = { selectedNewYearMovie = null },
-                    padding
-                )
-                BackHandler {
-                    selectedNewYearMovie = null
-                }
-            }
-            else {
-                val moviesToDisplay: List<MovieData> = when {
-                    searchCompleted -> searchMovies.value?.items ?: emptyList()
-                    onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
-                    else -> premiereMovies.value?.items ?: emptyList()
-                }
-                val countPages: Int = when {
-                    searchCompleted -> searchMovies.value?.totalPages ?: 0
-                    onFilterButtonClick -> topListMovies.value?.pagesCount ?: 0
-                    else -> 0
-                }
-
-                // Проверяем возможность активации кнопок для навигации
-                val canGoBack = currentPage > 1
-                val canGoForward = currentPage < countPages
-
-                when (state) {
-                    is State.Loading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(padding),
-                            contentAlignment = Alignment.Center // Центрируем содержимое
-                        ) {
-                            CustomLottieAnimation(
-                                nameFile = "loading_animation.lottie",
-                                modifier = Modifier.scale(0.5f)
-                            )
-                        }
-                    }
-                    is State.Success -> {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(padding)
-                        ) {
-                            AnimatedVisibility(
-                                visible = !isScrolling.value,
-                                enter = slideInHorizontally(
-                                    initialOffsetX = { -it },
-                                    animationSpec = tween(durationMillis = 300)
-                                ),
-                                exit = slideOutHorizontally(
-                                    targetOffsetX = { -it },
-                                    animationSpec = tween(durationMillis = 300)
-                                )
-                            ) {
-                                Column {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp),
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.title_of_the_list_for_the_new_year),
-                                            style = MaterialTheme.typography.displayMedium
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.padding(6.dp))
-                                    LazyRow(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(150.dp)
-                                            .padding(horizontal = 16.dp)
-                                            .background(
-                                                color = MaterialTheme.colorScheme.surface
-                                            ),
-                                        state = lisStateRow
-                                    ) {
-                                        items(newYearMoviesList, key = { it.id }) { newYearMovie ->
-                                            NewYearMovieItem(newYearMovie = newYearMovie) {
-                                                selectedNewYearMovie = newYearMovie
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            LazyColumn(
-                                state = listState,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f),
-                                contentPadding = PaddingValues(13.dp)
-                            ) {
-                                items(moviesToDisplay, key = { it.id }) { movie ->
-                                    MovieItem(movie = movie) {
-                                        selectedMovie = movie
-                                    }
-                                }
-
-                                if (showPageSwitchingButtons) {
-                                    item {
-                                        Row(
-                                            modifier = Modifier
-                                                .wrapContentWidth()
-                                                .padding(vertical = 16.dp)
-                                        ) {
-                                            if (canGoBack) {
-                                                IconButton (
-                                                    onClick = {
-                                                        currentPage--
-                                                        if (onFilterButtonClick) {
-                                                            viewModel.fetchTopListMovies(currentPage)
-                                                        } else if (searchCompleted) {
-                                                            viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
-                                                        }
-                                                        scrollToTop = true
-                                                    },
-                                                    modifier = Modifier.wrapContentWidth()
-                                                ) {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.ic_previous_page),
-                                                        contentDescription = stringResource(id = R.string.description_icon_previous_page_button),
-                                                        tint = MaterialTheme.colorScheme.onPrimary
-                                                    )
-                                                }
-                                            }
-
-                                            if (canGoForward) {
-                                                IconButton(
-                                                    onClick = {
-                                                        currentPage++
-                                                        if (onFilterButtonClick) {
-                                                            viewModel.fetchTopListMovies(currentPage)
-                                                        } else if (searchCompleted) {
-                                                            viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
-                                                        }
-                                                        scrollToTop = true
-                                                    },
-                                                    modifier = Modifier.wrapContentWidth()
-                                                ) {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.ic_next_page),
-                                                        contentDescription = stringResource(id = R.string.description_icon_next_page_button),
-                                                        tint = MaterialTheme.colorScheme.onPrimary
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        )
     }
+
+    if (!showPageAppDescription && locationShowPageAppDescription) {
+        CustomBoxShowOverlay(
+            content = {
+                PageDescription(
+                    onDismiss = {
+                        viewModel.saveStateAppDescriptionFlag(true)
+                        locationShowPageAppDescription = false
+                    }
+                )
+            }
+        )
+    }
+
+    if (onAdvancedSearchButtonClick) {
+        CustomBoxShowOverlay(
+            content = {
+                SearchFilterScreen(
+                    onClickClose = { onAdvancedSearchButtonClick = false },
+                    onSendRequest = { sendRequestCompleted = true },
+                    onSearch = { it ->
+                        requestBody = it
+                        searchCompleted = true
+                    }
+                )
+                BackHandler {
+                    onAdvancedSearchButtonClick = false
+                }
+            }
+        )
+    }
+
+    if (onAccountButtonClick) {
+        CustomBoxShowOverlay(
+            onDismiss = {
+                onAccountButtonClick = false
+            },
+            paddingVerticalSecondBox = 50.dp,
+            paddingSecondBox = 16.dp,
+            content = {
+                AccountScreen(
+                    navController,
+                    onClick = { onAccountButtonClick = false }
+                )
+                BackHandler {
+                    onAccountButtonClick = false
+                }
+            }
+        )
+    }
+
 }
 
 

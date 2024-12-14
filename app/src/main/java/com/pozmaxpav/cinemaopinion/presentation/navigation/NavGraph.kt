@@ -12,6 +12,8 @@ import androidx.navigation.navArgument
 import com.example.introductoryscreens.ui.onboarding.OnBoardingScreen
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListOfChangesScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListSelectedGeneralMovies
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListSelectedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListWatchedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MediaNewsScreen
@@ -76,9 +78,7 @@ fun NavGraph(
             SeriesControlScreen(navController)
         }
 
-        composable(
-            Route.SettingsScreen.route
-        ) {
+        composable(Route.SettingsScreen.route) {
             SettingsScreen(themeViewModel, navController)
         }
 
@@ -89,12 +89,16 @@ fun NavGraph(
             WebViewScreen()
         }
 
-        composable(
-            Route.ListWatchedMovies.route
-        ) {
-            ListWatchedMovies(
-                navController
-            )
+        composable(Route.ListWatchedMovies.route) {
+            ListWatchedMovies(navController)
+        }
+
+        composable(Route.ListSelectedGeneralMovies.route) {
+            ListSelectedGeneralMovies(navController)
+        }
+
+        composable(Route.ListSelectedMovies.route) {
+            ListSelectedMovies(navController)
         }
 
     }

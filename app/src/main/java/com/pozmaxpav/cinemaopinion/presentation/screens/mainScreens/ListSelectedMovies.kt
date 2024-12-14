@@ -46,15 +46,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.CommentPersonalListModel
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.CommentPersonalListViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,12 +70,14 @@ import java.util.Locale
 
 @Composable
 fun ListSelectedMovies(
+    navController: NavHostController,
     viewModel: SelectedMovieViewModel = hiltViewModel(),
     viewModelComments: CommentPersonalListViewModel = hiltViewModel(),
-    onClickCloseButton: () -> Unit
+    viewModelMain: MainViewModel = hiltViewModel()
 ) {
     val listSelectedMovies by viewModel.selectedMovies.collectAsState()
     val listComments by viewModelComments.comments.collectAsState()
+    val info by viewModelMain.informationMovie.collectAsState()
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var (comment, setComment) = remember { mutableStateOf("") }
@@ -79,6 +86,12 @@ fun ListSelectedMovies(
 
     LaunchedEffect(Unit) {
         viewModel.fitchListSelectedMovies()
+    }
+
+    LaunchedEffect(selectedNote) {
+        if (selectedNote != null) { // TODO: Надо проверить на утечку запросов
+            viewModelMain.getInformationMovie(selectedNote!!.id)
+        }
     }
 
     Column(
@@ -139,14 +152,20 @@ fun ListSelectedMovies(
                         selectedNote!!.id.toDouble()
                     )
                 },
+                openDescription = {
+                    ExpandedCard(
+                        title = "Описание",
+                        description = info?.description ?: "К сожалению, суточный лимит закончился"
+                    )
+                },
                 commentButton = {
                     Button(
                         onClick = { openBottomSheetComments = !openBottomSheetComments },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text(
-                            text = "Оставить комментарий",
-                            style = MaterialTheme.typography.bodySmall
+                            text = "Оставить\nкомментарий",
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 },
@@ -242,7 +261,7 @@ fun ListSelectedMovies(
             modifier = Modifier
                 .clickable(
                     onClick = {
-                        onClickCloseButton()
+                        navigateFunction(navController, Route.MainScreen.route)
                     }
                 ),
             shape = RoundedCornerShape(8.dp),
@@ -314,12 +333,5 @@ private fun ShowListComments(
                 }
             }
         }
-
-//        else {
-//            Text(
-//                text = "Комментариев нет",
-//                fontWeight = FontWeight.Bold
-//            )
-//        }
     }
 }
