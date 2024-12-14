@@ -29,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
@@ -36,17 +37,23 @@ import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarScaffold
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
+import com.pozmaxpav.cinemaopinion.utilits.showToast
+import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 
 @Composable
 fun DetailsCard(
     newYearMovie: SelectedMovie,
     onCloseButton: () -> Unit,
     padding: PaddingValues,
+    addToPersonalList: String,
+    errorToast: String,
     viewModelFirebase: FirebaseViewModel = hiltViewModel(),
     viewModelMain: MainViewModel = hiltViewModel(),
-    viewModelUser: UserViewModel = hiltViewModel()
+    viewModelUser: UserViewModel = hiltViewModel(),
+    viewModel: SelectedMovieViewModel = hiltViewModel(),
 ) {
     val user by viewModelUser.users.collectAsState()
     var userId by remember { mutableStateOf("") }
@@ -54,6 +61,8 @@ fun DetailsCard(
     var showRatingBar by remember { mutableStateOf(false) }
     val getSeasonalEventPoints by viewModelUser.seasonalEventPoints.collectAsState()
     val listAwards by viewModelUser.listAwards.collectAsState()
+    val statusExist by viewModel.status.collectAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(newYearMovie.id) {
         viewModelMain.getInformationMovie(newYearMovie.id)
@@ -154,10 +163,11 @@ fun DetailsCard(
                 ) {
                     Text(
                         text = "Название фильма: ${newYearMovie.nameFilm}",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.secondary
                     )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.padding(15.dp))
 
                     ExpandedCard(
                         title = "Описание",
@@ -180,13 +190,14 @@ fun DetailsCard(
                                 contentColor = MaterialTheme.colorScheme.onSecondary
                             ),
                         ) {
-                            Text(
-                                text = "Я посмотрел",
-                            )
+                            Text(text = "Я посмотрел",)
                         }
                         Button(
                             onClick = {
-                                // TODO: Добавить логику
+                                viewModel.addSelectedMovie(newYearMovie)
+                                if (statusExist == "error") {
+                                    showToast(context, errorToast)
+                                } else showToast(context, addToPersonalList)
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondary,

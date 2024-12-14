@@ -216,7 +216,7 @@ fun DetailsCardFilm(
                                 val selectedMovie = movie.toSelectedMovie()
                                 viewModel.addSelectedMovie(selectedMovie)
 
-                                if (statusExist == "error") { // TODO: Проверка не работает
+                                if (statusExist == "error") {
                                     showToast(context, errorToast)
                                 } else showToast(context, addToPersonalList)
 
@@ -234,7 +234,7 @@ fun DetailsCardFilm(
                                 containerColor = MaterialTheme.colorScheme.secondary,
                                 contentColor = MaterialTheme.colorScheme.onSecondary
                             ),
-                            onClick = {
+                            onClick = { // TODO: Добавить проверку
                                 viewModelFirebase.savingChangeRecord(
                                     user,
                                     "добавил(а) фильм: ${movie.nameRu}"
