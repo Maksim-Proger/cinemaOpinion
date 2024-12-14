@@ -35,13 +35,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -62,199 +62,171 @@ fun AccountScreen(
     }
 
     val user by viewModel.users.collectAsState()
-    var onAddingNewUserScreenButtonClick by remember { mutableStateOf(false) }
-    var showSelectedMovies by remember { mutableStateOf(false) }
-    var showSelectedGeneralMovies by remember { mutableStateOf(false) }
     val listAwards by viewModel.listAwards.collectAsState()
+    var onAddingNewUserScreenButtonClick by remember { mutableStateOf(false) }
 
-    Column(
+    Card(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxHeight(0.7f),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiary,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     ) {
-
-        if (onAddingNewUserScreenButtonClick) {
-            AddingNewUserScreen(
-                nameToast = stringResource(R.string.add_new_account),
-                onClick = { onAddingNewUserScreenButtonClick = false }
-            )
-            BackHandler {
-                onAddingNewUserScreenButtonClick = false
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            IconButton(onClick = onClick) {
+                Icon(
+                    modifier = Modifier.size(30.dp),
+                    imageVector = Icons.Default.Close,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
-        }
-
-        if (showSelectedMovies) {
-            ListSelectedMovies(
-                onClickCloseButton = { showSelectedMovies = false }
+            Text(
+                text = stringResource(id = R.string.title_account_screen),
+                style = MaterialTheme.typography.displayLarge
             )
-            BackHandler {
-                showSelectedMovies = false
-            }
-        }
 
-        if (showSelectedGeneralMovies) {
-            ListSelectedGeneralMovies(
-                navController,
-                onClickCloseButton = { showSelectedGeneralMovies = false }
-            )
-            BackHandler {
-                showSelectedGeneralMovies = false
-            }
+            AccountSettingMenu(navController)
+
         }
 
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 50.dp, horizontal = 16.dp)
-                .fillMaxHeight(0.7f)
-                .graphicsLayer(alpha = 0.95f),
+                .fillMaxSize()
+                .padding(horizontal = 25.dp, vertical = 10.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        horizontal = 25.dp,
-                        vertical = 15.dp
-                    )
+                    .padding(15.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = onClick) {
-                        Icon(
-                            modifier = Modifier.size(30.dp),
-                            imageVector = Icons.Default.Close,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Text(
-                        text = stringResource(id = R.string.title_account_screen),
-                        style = MaterialTheme.typography.displayLarge
+                    Image(
+                        modifier = Modifier.size(80.dp),
+                        imageVector = Icons.Outlined.AccountCircle,
+                        contentDescription = null,
+                        colorFilter = ColorFilter
+                            .tint(MaterialTheme.colorScheme.onSurfaceVariant)
                     )
 
-                    AccountSettingMenu(navController)
+                    Spacer(modifier = Modifier.padding(8.dp))
 
-                }
-
-                Spacer(modifier = Modifier.padding(8.dp))
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer(alpha = 0.95f),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(15.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                modifier = Modifier.size(80.dp),
-                                imageVector = Icons.Outlined.AccountCircle,
-                                contentDescription = null,
-                                colorFilter = ColorFilter
-                                    .tint(MaterialTheme.colorScheme.onSurfaceVariant)
-                            )
-                            Spacer(modifier = Modifier.padding(8.dp))
-
-                            if (user != null) {
-                                Column {
-                                    user?.let { user ->
-                                        Text(
-                                            text = user.firstName,
-                                            style = MaterialTheme.typography.displayMedium
-                                        )
-                                        Text(
-                                            text = user.lastName,
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    }
-                                }
-                            } else {
-                                Button(
-                                    onClick = {
-                                        onAddingNewUserScreenButtonClick =
-                                            !onAddingNewUserScreenButtonClick
-                                    }
-                                ) {
-                                    Text(text = "Войти")
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(20.dp))
-                        HorizontalDivider()
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        AccountListItem(
-                            icon = painterResource(id = R.drawable.ic_movie_list),
-                            contentDescription = stringResource(id = R.string.description_icon_movie_list),
-                            title = stringResource(id = R.string.my_list_movies)
-                        ) {
-                            showSelectedMovies = true
-                        }
-                        Spacer(modifier = Modifier.height(20.dp))
-                        AccountListItem(
-                            icon = painterResource(id = R.drawable.ic_movie_list),
-                            contentDescription = stringResource(id = R.string.description_icon_movie_list),
-                            title = stringResource(id = R.string.joint_list_films)
-                        ) {
-                            showSelectedGeneralMovies = true
-                        }
-                        Spacer(modifier = Modifier.height(20.dp))
-                        AccountListItem(
-                            icon = painterResource(id = R.drawable.ic_movie_list),
-                            contentDescription = "null",
-                            title = "Контроль серий"
-                        ) {
-                            navigateFunction(navController, Route.SeriesControlScreen.route)
-                        }
-
-                        // Выводим награды на экран
-                        Column(
-                            modifier = Modifier.padding(10.dp).weight(1f),
-                            verticalArrangement = Arrangement.Bottom
-                        ) {
-                            if (listAwards.isNotEmpty()) {
+                    if (user != null) {
+                        Column {
+                            user?.let { user ->
                                 Text(
-                                    text = "Зал славы",
-                                    style = MaterialTheme.typography.displayMedium,
-                                    modifier = Modifier
-                                        .padding(bottom = 16.dp)
-                                        .align(alignment = Alignment.CenterHorizontally)
+                                    text = user.firstName,
+                                    style = MaterialTheme.typography.displayMedium
+                                )
+                                Text(
+                                    text = user.lastName,
+                                    style = MaterialTheme.typography.bodyLarge
                                 )
                             }
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                for (i in listAwards) {
-                                    Image(
-                                        painter = painterResource(id = i.toInt()),
-                                        contentDescription = null,
-                                        modifier = Modifier.height(70.dp)
-                                    )
-                                }
+                        }
+                    } else {
+                        Button(
+                            onClick = {
+                                onAddingNewUserScreenButtonClick =
+                                    !onAddingNewUserScreenButtonClick
                             }
+                        ) {
+                            Text(text = "Войти")
+                        }
+                    }
+                }
+
+                HorizontalDivider(
+                    modifier = Modifier
+                        .padding(vertical = 20.dp)
+                )
+
+                AccountListItem(
+                    icon = painterResource(id = R.drawable.ic_movie_list),
+                    contentDescription = stringResource(id = R.string.description_icon_movie_list),
+                    title = stringResource(id = R.string.my_list_movies)
+                ) {
+                    navigateFunction(navController, Route.ListSelectedMovies.route)
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                AccountListItem(
+                    icon = painterResource(id = R.drawable.ic_movie_list),
+                    contentDescription = stringResource(id = R.string.description_icon_movie_list),
+                    title = stringResource(id = R.string.joint_list_films)
+                ) {
+                    navigateFunction(navController, Route.ListSelectedGeneralMovies.route)
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                AccountListItem(
+                    icon = painterResource(id = R.drawable.ic_movie_list),
+                    contentDescription = "null",
+                    title = "Контроль серий"
+                ) {
+                    navigateFunction(navController, Route.SeriesControlScreen.route)
+                }
+
+                // Выводим награды на экран
+                Column(
+                    modifier = Modifier.padding(10.dp).weight(1f),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    if (listAwards.isNotEmpty()) {
+                        Text(
+                            text = "Зал славы",
+                            style = MaterialTheme.typography.displayMedium,
+                            modifier = Modifier
+                                .padding(bottom = 16.dp)
+                                .align(alignment = Alignment.CenterHorizontally)
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        for (i in listAwards) {
+                            Image(
+                                painter = painterResource(id = i.toInt()),
+                                contentDescription = null,
+                                modifier = Modifier.height(70.dp)
+                            )
                         }
                     }
                 }
             }
         }
     }
+
+    if (onAddingNewUserScreenButtonClick) {
+        CustomBoxShowOverlay(
+            content = {
+                AddingNewUserScreen(
+                    nameToast = stringResource(R.string.add_new_account),
+                    onClickClose = { onAddingNewUserScreenButtonClick = false }
+                )
+                BackHandler {
+                    onAddingNewUserScreenButtonClick = false
+                }
+            }
+        )
+    }
+
 }
 
 

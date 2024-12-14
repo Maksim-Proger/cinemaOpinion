@@ -8,6 +8,7 @@
     <string name="no_movie_title">Нет названия фильма</string>
     <string name="no_year_of_release_of_the_film">Нет года выпуска фильма</string>
     <string name="title_for_advanced_search_screen">Расширенный поиск</string>
+    <string name="title_for_adding_new_user_screen">Добавление нового пользователя</string>
 
     <!--   Text for Drop-Down Menu   -->
     <string name="drop_down_menu_item_edit">Изменить данные пользователя</string>

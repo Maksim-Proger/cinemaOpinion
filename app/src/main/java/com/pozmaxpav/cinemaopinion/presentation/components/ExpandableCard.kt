@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -76,6 +77,7 @@ fun ExpandedCard(
                 .padding(padding)
         ) {
             Row(
+                modifier = Modifier.padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -109,6 +111,11 @@ fun ExpandedCard(
                         .padding(padding)
                         .verticalScroll(scrollState)
                 ) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(bottom = 5.dp),
+                        color = MaterialTheme.colorScheme.onSecondary
+                    )
+
                     Text(
                         text = description,
                         fontSize = descriptionFontSize,

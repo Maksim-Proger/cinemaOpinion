@@ -32,8 +32,7 @@ fun CustomSearchBar(
 ) {
     DockedSearchBar(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 30.dp),
+            .fillMaxWidth(),
         query = query,
         onQueryChange = onQueryChange,
         onSearch = onSearch,

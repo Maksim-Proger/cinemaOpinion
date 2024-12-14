@@ -108,6 +108,7 @@ fun CustomTextField(
             unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
             focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
             unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
+            // TODO: Разобраться с цветами!
         ),
         label = label,
         placeholder = placeholder,

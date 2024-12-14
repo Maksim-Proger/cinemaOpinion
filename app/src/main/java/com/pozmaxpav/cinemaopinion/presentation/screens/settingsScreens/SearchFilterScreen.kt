@@ -2,19 +2,17 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -62,7 +60,7 @@ import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
-import com.pozmaxpav.cinemaopinion.presentation.components.ShowListOverlay
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.utilits.parsYearsToString
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -256,8 +254,9 @@ fun SearchFilterScreen(
     }
 
     if (showGenresList) {
-        ShowListOverlay(
+        CustomBoxShowOverlay(
             onDismiss = { showGenresList = false },
+            paddingSecondBox = 16.dp,
             content = {
                 ShowListGenres { genre ->
                     selectedGenre = genre
@@ -268,8 +267,9 @@ fun SearchFilterScreen(
     }
 
     if (showCountriesList) {
-        ShowListOverlay(
+        CustomBoxShowOverlay(
             onDismiss = { showCountriesList = false },
+            paddingSecondBox = 16.dp,
             content = {
                 ShowListCountries { country ->
                     selectedCountry = country
@@ -523,13 +523,16 @@ fun ShowListCountries(onCountrySelected: (Pair<Int, String>) -> Unit) {
         Pair(33, "СССР"),
         Pair(34, "Россия")
     )
+
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 70.dp)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                RoundedCornerShape(16.dp)
+            )
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.wrapContentSize(),
             contentPadding = PaddingValues(16.dp)
         ) {
             items(listCountries) { country ->
@@ -561,11 +564,13 @@ fun ShowListGenres(onGenreSelected: (Pair<Int, String>) -> Unit) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 70.dp)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                RoundedCornerShape(16.dp)
+            )
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.wrapContentSize(),
             contentPadding = PaddingValues(16.dp)
         ) {
             items(listGenres) { genre ->

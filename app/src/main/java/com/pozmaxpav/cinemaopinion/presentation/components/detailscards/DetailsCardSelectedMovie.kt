@@ -86,7 +86,8 @@ fun ShowSelectedMovie(
                 ) {
                     Text(
                         text = movie.nameFilm,
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
 
