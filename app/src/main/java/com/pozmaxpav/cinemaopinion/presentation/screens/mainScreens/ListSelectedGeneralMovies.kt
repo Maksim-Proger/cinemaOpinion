@@ -184,10 +184,7 @@ fun ListSelectedGeneralMovies(
                         onClick = { openBottomSheetComments = !openBottomSheetComments },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        Text(
-                            text = "Оставить\nкомментарий",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        Text(text = "Оставить комментарий")
                     }
                 },
                 movieTransferButton = {
@@ -201,10 +198,7 @@ fun ListSelectedGeneralMovies(
                             )
                         }
                     ) {
-                        Text(
-                            text = "Просмотрен",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        Text(text = "Просмотрен")
                     }
                 },
                 onClick = { selectedNote = null }

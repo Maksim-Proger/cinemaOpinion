@@ -163,10 +163,7 @@ fun ListSelectedMovies(
                         onClick = { openBottomSheetComments = !openBottomSheetComments },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        Text(
-                            text = "Оставить\nкомментарий",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        Text(text = "Оставить комментарий")
                     }
                 },
                 onClick = { selectedNote = null }

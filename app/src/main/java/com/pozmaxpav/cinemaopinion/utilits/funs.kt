@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -100,15 +101,15 @@ fun CustomTextField(
         value = value,
         shape = RoundedCornerShape(16.dp),
         onValueChange = onValueChange,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
+        colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
             focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
             unfocusedLabelColor = MaterialTheme.colorScheme.outline,
             focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
             unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
             focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
-            // TODO: Разобраться с цветами!
+            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+            cursorColor = MaterialTheme.colorScheme.onPrimary
         ),
         label = label,
         placeholder = placeholder,

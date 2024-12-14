@@ -335,7 +335,9 @@ fun MainScreen(navController: NavHostController) {
                     DetailsCard(
                         selectedNewYearMovie!!,
                         onCloseButton = { selectedNewYearMovie = null },
-                        padding
+                        padding,
+                        stringResource(R.string.movie_has_been_added),
+                        stringResource(R.string.movie_has_already_been_added)
                     )
                     BackHandler {
                         selectedNewYearMovie = null
