@@ -62,6 +62,8 @@ import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.utilits.parsYearsToString
+import java.util.Locale
+import kotlin.math.ceil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -594,7 +596,8 @@ fun RangeSliderToSelectDate(
         modifier = Modifier.padding(16.dp)
     ) {
         Text(
-            text = "Выберите диапазон: ${range.start.toInt()} - ${range.endInclusive.toInt()}",
+//            text = "Выберите диапазон: ${range.start.toInt()} - ${range.endInclusive.toInt()}",
+            text = "Выберите диапазон: ${ceil(range.start).toInt()} - ${ceil(range.endInclusive).toInt()}",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )

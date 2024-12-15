@@ -4,10 +4,11 @@ import com.pozmaxpav.cinemaopinion.di.SystemSharedPreferencesRepositoryQualifier
 import com.pozmaxpav.cinemaopinion.domain.repository.SystemSharedPreferencesRepository
 import javax.inject.Inject
 
-class GetStateAppDescriptionFlagUseCase @Inject constructor(
+class GetAppVersionUseCase @Inject constructor(
     @SystemSharedPreferencesRepositoryQualifier private val repository: SystemSharedPreferencesRepository
 ) {
-    operator fun invoke(): Boolean {
-        return repository.getStateAppDescriptionFlag()
+    operator fun invoke() : String? {
+        return repository.getAppVersion()
     }
 }
+

@@ -121,8 +121,7 @@ fun MainScreen(navController: NavHostController) {
     val newYearMoviesList by firebaseViewModel.movies.collectAsState()
     val user by userViewModel.users.collectAsState()
     val state by viewModel.state.collectAsState()
-    val showDialogEvents by viewModel.seasonalFlagForAlertDialog.collectAsState()
-    val showPageAppDescription by viewModel.appDescriptionFlag.collectAsState()
+    val showDialogEvents by viewModel.resultChecking.collectAsState()
 
     // Получаем username
     var username by remember { mutableStateOf("") }
@@ -151,8 +150,7 @@ fun MainScreen(navController: NavHostController) {
         viewModel.fetchPremiersMovies(2024, "November")
         viewModel.fetchTopListMovies(currentPage)
         userViewModel.fitchUser()
-        viewModel.getStateSeasonalFlag()
-        viewModel.getStateAppDescriptionFlag()
+//        viewModel.getResultChecking()
     }
 
     LaunchedEffect(user) {
@@ -536,7 +534,6 @@ fun MainScreen(navController: NavHostController) {
         CustomBoxShowOverlay(
             content = {
                 ShowDialogEvents {
-                    viewModel.saveStateSeasonalFlag(true)
                     locationShowDialogEvents = !locationShowDialogEvents
                     locationShowPageAppDescription = true
                 }
@@ -544,12 +541,11 @@ fun MainScreen(navController: NavHostController) {
         )
     }
 
-    if (!showPageAppDescription && locationShowPageAppDescription) {
+    if (!showDialogEvents && locationShowPageAppDescription) {
         CustomBoxShowOverlay(
             content = {
                 PageDescription(
                     onDismiss = {
-                        viewModel.saveStateAppDescriptionFlag(true)
                         locationShowPageAppDescription = false
                     }
                 )

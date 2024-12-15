@@ -15,10 +15,10 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetTopMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.information.GetMovieInformationUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.news.GetMediaNewsUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetStateAppDescriptionFlagUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetStateSeasonalFlagUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveStateAppDescriptionFlagUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveStateSeasonalFlagUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetAppVersionUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetResultCheckingUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveAppVersionUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveResultCheckingUseCase
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -37,17 +37,17 @@ class MainViewModel @Inject constructor(
     private val getMovieInformationUseCase: GetMovieInformationUseCase,
     private val getMediaNewsUseCase: GetMediaNewsUseCase,
     private val getSearchMovieByIdUseCase: GetSearchMovieByIdUseCase,
-    private val saveStateSeasonalFlagUseCase: SaveStateSeasonalFlagUseCase,
-    private val getStateSeasonalFlagUseCase: GetStateSeasonalFlagUseCase,
-    private val getStateAppDescriptionFlagUseCase: GetStateAppDescriptionFlagUseCase,
-    private val saveStateAppDescriptionFlagUseCase: SaveStateAppDescriptionFlagUseCase
+    private val getAppVersionUseCase: GetAppVersionUseCase,
+    private val saveAppVersionUseCase: SaveAppVersionUseCase,
+    private val getResultCheckingUseCase: GetResultCheckingUseCase,
+    private val saveResultCheckingUseCase: SaveResultCheckingUseCase
 ) : ViewModel() {
 
-    private val _appDescriptionFlag = MutableStateFlow(false)
-    val appDescriptionFlag = _appDescriptionFlag.asStateFlow()
+    private val _versionApp = MutableStateFlow("Unknown")
+    val versionApp = _versionApp.asStateFlow()
 
-    private val _seasonalFlagForAlertDialog = MutableStateFlow(false)
-    val seasonalFlagForAlertDialog: StateFlow<Boolean> = _seasonalFlagForAlertDialog.asStateFlow()
+    private val _resultChecking = MutableStateFlow(false)
+    val resultChecking = _resultChecking.asStateFlow()
 
     private val _state = MutableStateFlow<State>(State.Success)
     val state: StateFlow<State> = _state.asStateFlow()
@@ -70,42 +70,45 @@ class MainViewModel @Inject constructor(
     private val _mediaNews = MutableStateFlow<NewsList?>(null)
     val mediaNews: StateFlow<NewsList?> get() = _mediaNews.asStateFlow()
 
-    fun saveStateAppDescriptionFlag(isAppDescriptionFlag: Boolean) {
+
+    init {
+        getAppVersion()
+        getResultChecking()
+    }
+
+
+    fun saveAppVersion(version: String) {
         viewModelScope.launch {
             try {
-                saveStateAppDescriptionFlagUseCase(isAppDescriptionFlag)
+                saveAppVersionUseCase(version)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    fun getStateAppDescriptionFlag() {
+    fun getAppVersion() {
         viewModelScope.launch {
             try {
-                val state = getStateAppDescriptionFlagUseCase()
-                _appDescriptionFlag.value = state
+                val version = getAppVersionUseCase() ?: "Unknown"
+                _versionApp.value = version
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    fun saveStateSeasonalFlag(isSeasonalFlag: Boolean) {
+    fun saveResultChecking(resultChecking: Boolean) {
         viewModelScope.launch {
-            try {
-                saveStateSeasonalFlagUseCase.invoke(isSeasonalFlag)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            saveResultCheckingUseCase(resultChecking)
         }
     }
 
-    fun getStateSeasonalFlag() {
+    fun getResultChecking() {
         viewModelScope.launch {
             try {
-                val state = getStateSeasonalFlagUseCase.invoke()
-                _seasonalFlagForAlertDialog.value = state
+                val result = getResultCheckingUseCase()
+                _resultChecking.value = result
             } catch (e: Exception) {
                 e.printStackTrace()
             }

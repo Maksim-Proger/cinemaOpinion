@@ -2,8 +2,8 @@ package com.pozmaxpav.cinemaopinion.domain.repository
 
 
 interface SystemSharedPreferencesRepository {
-    fun saveStateSeasonalFlag(isSeasonalFlag: Boolean)
-    fun getStateSeasonalFlag(): Boolean
-    fun saveStateAppDescriptionFlag(isAppDescriptionFlag: Boolean)
-    fun getStateAppDescriptionFlag(): Boolean
+    fun saveAppVersion(version: String)
+    fun getAppVersion(): String?
+    fun saveResultChecking(resultChecking: Boolean)
+    fun getResultChecking(): Boolean
 }
