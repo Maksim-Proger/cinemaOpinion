@@ -115,7 +115,6 @@ fun MainScreen(navController: NavHostController) {
     val viewModel: MainViewModel = hiltViewModel()
     val userViewModel:UserViewModel = hiltViewModel()
     val firebaseViewModel: FirebaseViewModel = hiltViewModel()
-    // Настраиваем слушателей переменных из ViewModels
     val premiereMovies = viewModel.premiersMovies.collectAsState()
     val topListMovies = viewModel.topListMovies.collectAsState()
     val searchMovies = viewModel.searchMovies.collectAsState()
@@ -140,9 +139,7 @@ fun MainScreen(navController: NavHostController) {
     var showPageSwitchingButtons by remember { mutableStateOf(false) }
     var saveSearchQuery by remember { mutableStateOf("") } // Сохраняем содержание поиска
 
-    // Сохраняем выбранный фильм для отправки информации о нем в DetailsCardFilm()
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
-    // Сохраняем выбранный новогодний фильм для отправки информации о нем в DetailsCard()
     var selectedNewYearMovie by remember { mutableStateOf<SelectedMovie?>(null) }
 
     // endregion
@@ -493,14 +490,6 @@ fun MainScreen(navController: NavHostController) {
                 }
             }
 
-            if (!showDialogEvents && !locationShowDialogEvents) {
-                ShowDialogEvents {
-                    viewModel.saveStateSeasonalFlag(true)
-                    locationShowDialogEvents = !locationShowDialogEvents
-                    locationShowPageAppDescription = true
-                }
-            }
-
             if (showDatePicker) {
                 DatePickerFunction(
                     onCloseDatePicker = {
@@ -539,6 +528,18 @@ fun MainScreen(navController: NavHostController) {
                     onActiveChange = { isActive -> searchBarActive = isActive },
                     searchHistory = searchHistory
                 )
+            }
+        )
+    }
+
+    if (!showDialogEvents && !locationShowDialogEvents) {
+        CustomBoxShowOverlay(
+            content = {
+                ShowDialogEvents {
+                    viewModel.saveStateSeasonalFlag(true)
+                    locationShowDialogEvents = !locationShowDialogEvents
+                    locationShowPageAppDescription = true
+                }
             }
         )
     }

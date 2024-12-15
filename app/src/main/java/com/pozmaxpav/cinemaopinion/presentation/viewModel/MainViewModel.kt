@@ -1,7 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
-
-// TODO: Почему тут нам надо вызывать execute?
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData.MovieSearch
