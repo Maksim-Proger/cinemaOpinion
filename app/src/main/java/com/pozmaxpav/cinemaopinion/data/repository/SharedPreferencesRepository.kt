@@ -13,32 +13,27 @@ class SharedPreferencesRepository @Inject constructor(
     override fun saveModeApplicationTheme(isModeTheme: Boolean) {
         SharedPreferences.saveModeApplicationTheme(context, isModeTheme)
     }
-
     override fun getModeApplicationTheme(): Boolean {
         return SharedPreferences.getModeApplicationTheme(context)
     }
-
     override fun saveModeActivationSystemTheme(isSystemModeTheme: Boolean) {
         SharedPreferences.saveModeActivationSystemTheme(context, isSystemModeTheme)
     }
-
     override fun getModeActivationSystemTheme(): Boolean {
         return SharedPreferences.getModeActivationSystemTheme(context)
     }
 
-    override fun saveStateSeasonalFlag(isSeasonalFlag: Boolean) {
-        SharedPreferences.saveStateSeasonalFlag(context, isSeasonalFlag)
+    override fun saveAppVersion(version: String) {
+        SharedPreferences.saveAppVersion(context, version)
+    }
+    override fun getAppVersion(): String? {
+        return SharedPreferences.getAppVersion(context)
+    }
+    override fun saveResultChecking(resultChecking: Boolean) {
+        SharedPreferences.saveResultChecking(context, resultChecking)
+    }
+    override fun getResultChecking(): Boolean {
+        return SharedPreferences.getResultChecking(context)
     }
 
-    override fun getStateSeasonalFlag(): Boolean {
-        return SharedPreferences.getStateSeasonalFlag(context)
-    }
-
-    override fun saveStateAppDescriptionFlag(isAppDescriptionFlag: Boolean) {
-        SharedPreferences.saveStateAppDescriptionFlag(context, isAppDescriptionFlag)
-    }
-
-    override fun getStateAppDescriptionFlag(): Boolean {
-        return SharedPreferences.getStateAppDescriptionFlag(context)
-    }
 }

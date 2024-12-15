@@ -7,27 +7,24 @@ object SharedPreferences {
     private const val SYSTEM_PREFERENCES = "system_preferences"
     private const val MODE_APPLICATION_THEME = "mode_application_theme"
     private const val SYSTEM_THEME_ACTIVATION_MODE = "system_theme_activation_mode"
-    private const val STATE_SEASONAL_FLAG = "state_seasonal_flag"
-    private const val STATE_APP_DESCRIPTION_FLAG = "state_app_description_flag"
+    private const val APP_VERSION_KEY = "app_version_key"
+    private const val RESULT_CHECKING_APP_VERSION = "result_checking"
 
-    fun saveStateAppDescriptionFlag(context: Context, isAppDescriptionFlag: Boolean) {
+    fun saveAppVersion(context: Context, version: String) {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
-        sharedPreferences.edit().putBoolean(STATE_APP_DESCRIPTION_FLAG, isAppDescriptionFlag).apply()
+        sharedPreferences.edit().putString(APP_VERSION_KEY, version).apply()
     }
-
-    fun getStateAppDescriptionFlag(context: Context): Boolean {
+    fun getAppVersion(context: Context): String? {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
-        return sharedPreferences.getBoolean(STATE_APP_DESCRIPTION_FLAG, false)
+        return sharedPreferences.getString(APP_VERSION_KEY, null)
     }
-
-    fun saveStateSeasonalFlag(context: Context, isSeasonalFlag: Boolean) {
+    fun saveResultChecking(context: Context, resultChecking: Boolean) {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
-        sharedPreferences.edit().putBoolean(STATE_SEASONAL_FLAG, isSeasonalFlag).apply()
+        sharedPreferences.edit().putBoolean(RESULT_CHECKING_APP_VERSION, resultChecking).apply()
     }
-
-    fun getStateSeasonalFlag(context: Context): Boolean {
+    fun getResultChecking(context: Context): Boolean {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
-        return sharedPreferences.getBoolean(STATE_SEASONAL_FLAG, false)
+        return sharedPreferences.getBoolean(RESULT_CHECKING_APP_VERSION, false)
     }
 
     fun saveModeApplicationTheme(context: Context, isModeTheme: Boolean) {
