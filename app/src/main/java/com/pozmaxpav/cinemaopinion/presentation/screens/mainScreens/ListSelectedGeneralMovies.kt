@@ -166,7 +166,8 @@ fun ListSelectedGeneralMovies(
         if (selectedNote != null) {
             ShowSelectedMovie(
                 movie = selectedNote!!,
-                buttonVisibility = true,
+                isGeneralList = true,
+                isShowCommentButton = true,
                 content = {
                     ShowCommentGeneralList(
                         listComments,

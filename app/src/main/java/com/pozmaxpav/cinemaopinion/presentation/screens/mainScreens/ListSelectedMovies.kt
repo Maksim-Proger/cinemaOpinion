@@ -145,7 +145,8 @@ fun ListSelectedMovies(
         if (selectedNote != null) {
             ShowSelectedMovie(
                 movie = selectedNote!!,
-                buttonVisibility = true,
+                isGeneralList = false,
+                isShowCommentButton = true,
                 content = {
                     ShowListComments(
                         listComments,
