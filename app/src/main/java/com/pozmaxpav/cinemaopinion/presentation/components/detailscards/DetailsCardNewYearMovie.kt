@@ -178,7 +178,7 @@ fun DetailsCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 7.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Button(
                             onClick = {

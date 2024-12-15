@@ -26,7 +26,8 @@ import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 @Composable
 fun ShowSelectedMovie(
     movie: SelectedMovie,
-    buttonVisibility: Boolean,
+    isGeneralList: Boolean,
+    isShowCommentButton: Boolean,
     content: @Composable () -> Unit = {},
     openDescription: @Composable () -> Unit = {},
     commentButton: @Composable () -> Unit = {},
@@ -96,17 +97,30 @@ fun ShowSelectedMovie(
                         .fillMaxWidth()
                         .padding(vertical = 7.dp),
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        movieTransferButton()
-                        Spacer(Modifier.padding(horizontal = 4.dp))
-                        if (buttonVisibility) {
-                            commentButton()
+                    if (isGeneralList) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            movieTransferButton()
+                            Spacer(Modifier.padding(horizontal = 4.dp))
+                            if (isShowCommentButton) {
+                                commentButton()
+                            }
+                        }
+                    } else {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (isShowCommentButton) {
+                                commentButton()
+                            }
                         }
                     }
+
                     Spacer(Modifier.padding(vertical = 7.dp))
                     openDescription()
                 }
