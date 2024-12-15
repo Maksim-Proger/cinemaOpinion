@@ -45,8 +45,6 @@ class MainActivity : ComponentActivity() {
                             themeViewModel = themeViewModel,
                             startDestination = startDestination
                         )
-                    } else {
-                        // TODO: Можно добавить экран загрузки или просто оставить пустое пространство
                     }
                 }
             }
