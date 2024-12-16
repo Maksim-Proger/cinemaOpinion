@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 fun CustomBoxShowOverlay(
     onDismiss: () -> Unit = {},
     paddingVerticalSecondBox: Dp = 0.dp,
-    paddingSecondBox: Dp = 0.dp,
+    paddingHorizontalSecondBox: Dp = 0.dp,
     content: @Composable () -> Unit
 ) {
     Box(
@@ -33,8 +33,8 @@ fun CustomBoxShowOverlay(
         Box(
             Modifier.padding(
                 vertical = paddingVerticalSecondBox,
-                horizontal = paddingSecondBox
-            ),
+                horizontal = paddingHorizontalSecondBox
+            )
         ) {
             content()
         }

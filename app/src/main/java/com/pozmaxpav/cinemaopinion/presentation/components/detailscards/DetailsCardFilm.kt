@@ -251,31 +251,31 @@ fun DetailsCardFilm(
                         }
                     }
 
-//                    Row(
-//                        modifier = Modifier.fillMaxWidth()
-//                    ) {
-//                        Button(
-//                            modifier = Modifier.fillMaxWidth(),
-//                            colors = ButtonDefaults.buttonColors(
-//                                containerColor = MaterialTheme.colorScheme.secondary,
-//                                contentColor = MaterialTheme.colorScheme.onSecondary
-//                            ),
-//                            onClick = {
-////                            viewModelFirebase.savingChangeRecord(
-////                                user,
-////                                "Пополнил(а) коллекцию новогодней подборки: ${movie.nameRu}"
-////                            )
-//                                viewModelFirebase.saveMovie(NODE_NEW_YEAR_LIST, movie.toSelectedMovie())
-////                            showToast(context, addToGeneralList)
-//                                onClick()
-//                            }
-//                        ) {
-//                            Text(
-//                                text = "В новогоднюю коллекцию",
-//                                style = MaterialTheme.typography.bodyMedium
-//                            )
-//                        }
-//                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary
+                            ),
+                            onClick = {
+                            viewModelFirebase.savingChangeRecord(
+                                user,
+                                "Пополнил(а) коллекцию новогодней подборки: ${movie.nameRu}"
+                            )
+                                viewModelFirebase.saveMovie(NODE_NEW_YEAR_LIST, movie.toSelectedMovie())
+                            showToast(context, addToGeneralList)
+                                onClick()
+                            }
+                        ) {
+                            Text(
+                                text = "В новогоднюю коллекцию",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
                 }
             }
         }

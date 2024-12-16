@@ -142,11 +142,6 @@ fun MainScreen(navController: NavHostController) {
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
     var selectedNewYearMovie by remember { mutableStateOf<SelectedMovie?>(null) }
 
-    // Тестовый блок
-    LaunchedEffect(Unit) {
-        Log.d("@@@", "$showDialogEvents и $locationShowDialogEvents")
-    }
-
     // endregion
 
     // region Launchers
@@ -514,7 +509,7 @@ fun MainScreen(navController: NavHostController) {
     if (searchBarActive) {
         CustomBoxShowOverlay(
             paddingVerticalSecondBox = 50.dp,
-            paddingSecondBox = 16.dp,
+            paddingHorizontalSecondBox = 16.dp,
             content = {
                 CustomSearchBar(
                     query = query,
@@ -587,7 +582,7 @@ fun MainScreen(navController: NavHostController) {
                 onAccountButtonClick = false
             },
             paddingVerticalSecondBox = 50.dp,
-            paddingSecondBox = 16.dp,
+            paddingHorizontalSecondBox = 16.dp,
             content = {
                 AccountScreen(
                     navController,
