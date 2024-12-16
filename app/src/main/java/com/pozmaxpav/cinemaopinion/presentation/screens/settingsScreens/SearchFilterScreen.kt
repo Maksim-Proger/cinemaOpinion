@@ -257,7 +257,8 @@ fun SearchFilterScreen(
     if (showGenresList) {
         CustomBoxShowOverlay(
             onDismiss = { showGenresList = false },
-            paddingSecondBox = 16.dp,
+            paddingVerticalSecondBox = 100.dp,
+            paddingHorizontalSecondBox = 16.dp,
             content = {
                 ShowListGenres { genre ->
                     selectedGenre = genre
@@ -270,7 +271,8 @@ fun SearchFilterScreen(
     if (showCountriesList) {
         CustomBoxShowOverlay(
             onDismiss = { showCountriesList = false },
-            paddingSecondBox = 16.dp,
+            paddingVerticalSecondBox = 100.dp,
+            paddingHorizontalSecondBox = 16.dp,
             content = {
                 ShowListCountries { country ->
                     selectedCountry = country
