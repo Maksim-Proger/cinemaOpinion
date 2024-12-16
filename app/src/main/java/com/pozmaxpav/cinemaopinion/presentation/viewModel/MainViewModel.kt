@@ -70,12 +70,14 @@ class MainViewModel @Inject constructor(
     private val _mediaNews = MutableStateFlow<NewsList?>(null)
     val mediaNews: StateFlow<NewsList?> get() = _mediaNews.asStateFlow()
 
-
     init {
         getAppVersion()
         getResultChecking()
     }
 
+    fun resetResultChecking() {
+        _resultChecking.value = true
+    }
 
     fun saveAppVersion(version: String) {
         viewModelScope.launch {
