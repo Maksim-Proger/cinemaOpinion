@@ -62,7 +62,6 @@ import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.utilits.parsYearsToString
-import java.util.Locale
 import kotlin.math.ceil
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -596,17 +595,24 @@ fun RangeSliderToSelectDate(
         modifier = Modifier.padding(16.dp)
     ) {
         Text(
-//            text = "Выберите диапазон: ${range.start.toInt()} - ${range.endInclusive.toInt()}",
-            text = "Выберите диапазон: ${ceil(range.start).toInt()} - ${ceil(range.endInclusive).toInt()}",
+            text = if (range.start <= range.endInclusive) {
+                "Выберите диапазон: ${range.start.toInt()} - ${range.endInclusive.toInt()}"
+            } else {
+                "Некорректный диапазон"
+            },
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         RangeSlider(
             modifier = Modifier.padding(horizontal = 10.dp),
             value = range,
-            onValueChange = onRangeChange,
+            onValueChange = { newRange ->
+                if (newRange.start <= newRange.endInclusive) {
+                    onRangeChange(newRange)
+                }
+            },
             valueRange = 1900f..2024f,
-            steps = 124,
+            steps = 0,
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.secondary,
                 activeTickColor = MaterialTheme.colorScheme.tertiaryContainer
@@ -624,13 +630,11 @@ fun SliderRatingFrom(
         modifier = Modifier
             .padding(16.dp)
     ) {
-
         Text(
-            text = "Укажите минимальный рейтинг: $sliderPosition",
+            text = "Укажите минимальный рейтинг: ${ceil(sliderPosition)}", // TODO: Прочитать про метод ceil
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-
         Slider(
             modifier = Modifier.padding(horizontal = 10.dp),
             valueRange = 0f .. 10f,

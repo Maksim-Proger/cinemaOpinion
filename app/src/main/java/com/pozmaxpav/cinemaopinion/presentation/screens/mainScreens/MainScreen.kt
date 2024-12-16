@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -141,6 +142,11 @@ fun MainScreen(navController: NavHostController) {
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
     var selectedNewYearMovie by remember { mutableStateOf<SelectedMovie?>(null) }
 
+    // Тестовый блок
+    LaunchedEffect(Unit) {
+        Log.d("@@@", "$showDialogEvents и $locationShowDialogEvents")
+    }
+
     // endregion
 
     // region Launchers
@@ -150,7 +156,6 @@ fun MainScreen(navController: NavHostController) {
         viewModel.fetchPremiersMovies(2024, "November")
         viewModel.fetchTopListMovies(currentPage)
         userViewModel.fitchUser()
-//        viewModel.getResultChecking()
     }
 
     LaunchedEffect(user) {
@@ -534,23 +539,28 @@ fun MainScreen(navController: NavHostController) {
         CustomBoxShowOverlay(
             content = {
                 ShowDialogEvents {
-                    locationShowDialogEvents = !locationShowDialogEvents
+                    locationShowDialogEvents = true
                     locationShowPageAppDescription = true
                 }
             }
         )
     }
 
-    if (!showDialogEvents && locationShowPageAppDescription) {
+    if (locationShowPageAppDescription) {
+        var flag by remember { mutableStateOf(false) }
         CustomBoxShowOverlay(
             content = {
                 PageDescription(
                     onDismiss = {
                         locationShowPageAppDescription = false
+                        flag = true
                     }
                 )
             }
         )
+        LaunchedEffect(flag) {
+            viewModel.resetResultChecking()
+        }
     }
 
     if (onAdvancedSearchButtonClick) {
