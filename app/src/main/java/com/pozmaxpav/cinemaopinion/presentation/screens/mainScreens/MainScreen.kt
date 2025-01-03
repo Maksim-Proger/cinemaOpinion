@@ -119,6 +119,7 @@ fun MainScreen(navController: NavHostController) {
     val premiereMovies = viewModel.premiersMovies.collectAsState()
     val topListMovies = viewModel.topListMovies.collectAsState()
     val searchMovies = viewModel.searchMovies.collectAsState()
+    val searchMovies2 = viewModel.searchMovies2.collectAsState()
     val newYearMoviesList by firebaseViewModel.movies.collectAsState()
     val user by userViewModel.users.collectAsState()
     val state by viewModel.state.collectAsState()
@@ -340,12 +341,28 @@ fun MainScreen(navController: NavHostController) {
                 }
                 else {
                     val moviesToDisplay: List<MovieData> = when {
-                        searchCompleted -> searchMovies.value?.items ?: emptyList()
+                        searchCompleted -> {
+                            val mainMovies = searchMovies.value
+                            val fallbackMovies = searchMovies2.value
+                            if (mainMovies != null && mainMovies.items.isNotEmpty()) {
+                                mainMovies.items
+                            } else {
+                                fallbackMovies?.films ?: emptyList()
+                            }
+                        }
                         onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
                         else -> premiereMovies.value?.items ?: emptyList()
                     }
                     val countPages: Int = when {
-                        searchCompleted -> searchMovies.value?.totalPages ?: 0
+                        searchCompleted -> {
+                            val mainMovies = searchMovies.value
+                            val fallbackMovies = searchMovies2.value
+                            if (mainMovies != null && mainMovies.totalPages != 0) {
+                                mainMovies.totalPages
+                            } else {
+                                fallbackMovies?.pagesCount ?: 0
+                            }
+                        }
                         onFilterButtonClick -> topListMovies.value?.pagesCount ?: 0
                         else -> 0
                     }

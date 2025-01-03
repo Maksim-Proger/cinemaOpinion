@@ -32,6 +32,7 @@ fun ShowSelectedMovie(
     openDescription: @Composable () -> Unit = {},
     commentButton: @Composable () -> Unit = {},
     movieTransferButton: @Composable () -> Unit = {},
+    movieTransferButtonToSerialsList: @Composable () -> Unit = {},
     onClick: () -> Unit
 ) {
     Column(
@@ -98,15 +99,26 @@ fun ShowSelectedMovie(
                         .padding(vertical = 7.dp),
                 ) {
                     if (isGeneralList) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
                         ) {
-                            movieTransferButton()
-                            Spacer(Modifier.padding(horizontal = 4.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                movieTransferButton()
+                                movieTransferButtonToSerialsList()
+                            }
                             if (isShowCommentButton) {
-                                commentButton()
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    commentButton()
+                                }
                             }
                         }
                     } else {

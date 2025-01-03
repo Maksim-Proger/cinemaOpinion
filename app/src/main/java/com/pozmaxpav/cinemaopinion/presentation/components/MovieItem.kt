@@ -76,7 +76,6 @@ fun MovieItem(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
-
                     is MovieData.MovieTop -> {
                         Text(
                             text = movie.year,
@@ -90,7 +89,6 @@ fun MovieItem(
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
-
                     is MovieData.MovieSearch -> {
                         Text(
                             text = movie.year ?: "Нет данных о дате",
@@ -106,6 +104,19 @@ fun MovieItem(
                         Spacer(modifier = Modifier.height(7.dp))
                         Text(
                             text = "Рейтинг Imdb: ${movie.ratingImdb ?: "Нет данных о рейтинге"}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                    is MovieData.MovieSearch2 -> {
+                        Text(
+                            text = "Название на английском: ${movie.nameEn}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                        Spacer(modifier = Modifier.height(7.dp))
+                        Text(
+                            text = movie.year ?: "Нет данных о дате",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.secondary
                         )

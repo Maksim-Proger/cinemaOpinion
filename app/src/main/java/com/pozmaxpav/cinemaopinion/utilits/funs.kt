@@ -296,6 +296,11 @@ fun MovieData.toSelectedMovie(): SelectedMovie {
             nameFilm = this.nameRu?: "Нет названия",
             posterUrl = this.posterUrl
         )
+        is MovieData.MovieSearch2 -> SelectedMovie(
+            id = this.filmId,
+            nameFilm = this.nameRu?: "Нет названия",
+            posterUrl = this.posterUrl
+        )
     }
 }
 

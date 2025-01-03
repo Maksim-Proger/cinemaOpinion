@@ -16,6 +16,7 @@ import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.Firebase
 import com.pozmaxpav.cinemaopinion.utilits.NODE_COMMENTS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import kotlinx.coroutines.tasks.await
@@ -269,6 +270,43 @@ class FirebaseRepositoryImpl @Inject constructor(
                     // Копируем запись в новую папку
                     databaseReference
                         .child(NODE_LIST_WATCHED_MOVIES)
+                        .child(movieKey)
+                        .setValue(movieData)
+                        .await()
+
+                    // Удаляем запись после переноса
+                    databaseReference
+                        .child(NODE_LIST_MOVIES)
+                        .child(movieKey)
+                        .removeValue()
+                        .await()
+                }
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override suspend fun sendingToTheSerialsList(movieId: Double) {
+        try {
+            val snapshot = databaseReference
+                .child(NODE_LIST_MOVIES)
+                .orderByChild("id")
+                .equalTo(movieId)
+                .get()
+                .await()
+
+            if (snapshot.exists()) {
+                val movieSnapshot = snapshot.children.firstOrNull() // Берём первую подходящую запись
+                val movieKey = movieSnapshot?.key // Получаем ключ записи
+
+                if (movieSnapshot != null && movieKey != null) {
+                    val movieData = movieSnapshot.value // Получаем данные записи
+
+                    // Копируем запись в новую папку
+                    databaseReference
+                        .child(NODE_LIST_SERIALS)
                         .child(movieKey)
                         .setValue(movieData)
                         .await()

@@ -3,6 +3,7 @@ package com.pozmaxpav.cinemaopinion.data.api
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieList
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearch
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearchList
+import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearchList2
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieTopList
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.news.ApiNewsList
 import com.pozmaxpav.cinemaopinion.utilits.API_KEY
@@ -32,6 +33,13 @@ interface MovieListApi {
         @Query("keyword") keyword: String,
         @Query("page") page: Int
     ): ApiMovieSearchList
+
+    @Headers("X-API-KEY: $API_KEY")
+    @GET("/api/v2.1/films/search-by-keyword")
+    suspend fun searchFilms2(
+        @Query("keyword") keyword: String,
+        @Query("page") page: Int
+    ): ApiMovieSearchList2
 
     @Headers("X-API-KEY: $API_KEY")
     @GET("/api/v2.2/films")

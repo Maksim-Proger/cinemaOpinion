@@ -20,9 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -51,14 +49,12 @@ import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
-import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
-import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
@@ -72,33 +68,32 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun ListSelectedGeneralMovies(
+fun ListSelectedGeneralSerials(
     navController: NavHostController,
     viewModel: FirebaseViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
     viewModelMain: MainViewModel = hiltViewModel()
 ) {
-    val listMovies by viewModel.movies.collectAsState()
+
+    val listSerials by viewModel.movies.collectAsState()
     val listComments by viewModel.comments.collectAsState()
-    var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
-    var openBottomSheetComments by remember { mutableStateOf(false) }
+    var selectedSerial by remember { mutableStateOf<SelectedMovie?>(null) }
     val user by userViewModel.users.collectAsState()
     var username by remember { mutableStateOf("") }
-    val stateMovie by viewModel.movieDownloadStatus.collectAsState()
     val info by viewModelMain.informationMovie.collectAsState()
     var (comment, setComment) = remember { mutableStateOf("") }
     val context = LocalContext.current
     val listState = rememberLazyListState()
+    var openBottomSheetComments by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewModel.getMovies(NODE_LIST_MOVIES)
-        viewModel.observeListMovies(NODE_LIST_MOVIES)
+        viewModel.getMovies(NODE_LIST_SERIALS)
+        viewModel.observeListMovies(NODE_LIST_SERIALS)
         userViewModel.fitchUser()
     }
-
-    LaunchedEffect(selectedNote) {
-        if (selectedNote != null) { // TODO: Надо проверить на утечку запросов
-            viewModelMain.getInformationMovie(selectedNote!!.id)
+    LaunchedEffect(selectedSerial) {
+        if (selectedSerial != null) { // TODO: Надо проверить на утечку запросов
+            viewModelMain.getInformationMovie(selectedSerial!!.id)
         }
     }
 
@@ -108,7 +103,6 @@ fun ListSelectedGeneralMovies(
             .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 45.dp, horizontal = 16.dp)
     ) {
-
         if (user != null) {
             user.let { userInfo ->
                 username = userInfo?.firstName ?: "Таинственный пользователь"
@@ -117,61 +111,15 @@ fun ListSelectedGeneralMovies(
             username = "Таинственный пользователь"
         }
 
-        if (openBottomSheetComments) {
-            MyBottomSheet(
-                onClose = {
-                    openBottomSheetComments = !openBottomSheetComments
-                },
-                content = {
-                    CustomTextFieldForComments(
-                        value = comment,
-                        onValueChange = setComment,
-                        placeholder = {
-                            Text(
-                                text = "Оставьте свой комментарий"
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.outline
-                            )
-                        },
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                viewModel.addComment(
-                                    selectedNote!!.id.toDouble(),
-                                    username,
-                                    comment
-                                )
-                                viewModel.savingChangeRecord(
-                                    username,
-                                    "добавил(а) комментарий к фильму: ${selectedNote!!.nameFilm}"
-                                )
-                                showToast(context, "Комментарий добавлен")
-                                setComment("")
-                                openBottomSheetComments = !openBottomSheetComments
-                            }
-                        )
-                    )
-                },
-                fraction = 0.7f
-            )
-            BackHandler {
-                openBottomSheetComments = !openBottomSheetComments
-            }
-        }
-
-        if (selectedNote != null) {
+        if (selectedSerial != null) {
             ShowSelectedMovie(
-                movie = selectedNote!!,
+                movie = selectedSerial!!,
                 isGeneralList = true,
                 isShowCommentButton = true,
                 content = {
-                    ShowCommentGeneralList(
+                    ShowCommentGeneralListSerials(
                         listComments,
-                        selectedNote!!.id.toDouble()
+                        selectedSerial!!.id.toDouble()
                     )
                 },
                 openDescription = {
@@ -182,57 +130,30 @@ fun ListSelectedGeneralMovies(
                 },
                 commentButton = {
                     Button(
-                        onClick = { openBottomSheetComments = !openBottomSheetComments }
+                        onClick = { openBottomSheetComments = !openBottomSheetComments },
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Оставить комментарий",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
+                        Text(text = "Оставить комментарий")
                     }
                 },
                 movieTransferButton = {
                     Button(
                         onClick = {
-                            viewModel.sendingToTheViewedFolder(selectedNote!!.id.toDouble())
-                            showToast(context, "Фильм успешно перенесен")
-                            viewModel.savingChangeRecord(
-                                username,
-                                "переместил(а) фильм: ${selectedNote!!.nameFilm}"
-                            )
-                        }
-                    ) {
-                        Text(
-                            text = "Просмотрен",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                },
-                movieTransferButtonToSerialsList = {
-                    Button(
-                        onClick = {
-                            viewModel.sendingToTheSerialsList(selectedNote!!.id.toDouble())
+                            viewModel.sendingToTheViewedFolder(selectedSerial!!.id.toDouble())
                             showToast(context, "Сериал успешно перенесен")
                             viewModel.savingChangeRecord(
                                 username,
-                                "переместил(а) сериал: ${selectedNote!!.nameFilm}"
+                                "переместил(а) фильм: ${selectedSerial!!.nameFilm}"
                             )
                         }
                     ) {
-                        Text(
-                            text = "Переместить в сериалы",
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                        Text(text = "Просмотрен")
                     }
                 },
-                onClick = { selectedNote = null }
+                onClick = { selectedSerial = null }
             )
             BackHandler {
-                selectedNote = null
+                selectedSerial = null
             }
 
         } else {
@@ -244,95 +165,79 @@ fun ListSelectedGeneralMovies(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 )
             ) {
-                when (stateMovie) {
-                    is State.Loading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CustomLottieAnimation(
-                                nameFile = "loading_animation.lottie",
-                                modifier = Modifier.scale(0.5f)
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(10.dp)
+                ) {
+                    items(listSerials) { movie ->
+
+                        var isVisible by remember { mutableStateOf(true) } // Состояние видимости
+
+                        AnimatedVisibility(
+                            visible = isVisible,
+                            exit = slideOutHorizontally(
+                                targetOffsetX = { -it }, // Уходит влево
+                                animationSpec = tween(durationMillis = 300) // Длительность анимации
                             )
-                        }
-                    }
-                    is State.Success -> {
-                        LazyColumn(
-                            state = listState,
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentPadding = PaddingValues(10.dp)
                         ) {
-                            items(listMovies) { movie ->
-
-                                var isVisible by remember { mutableStateOf(true) } // Состояние видимости
-
-                                AnimatedVisibility(
-                                    visible = isVisible,
-                                    exit = slideOutHorizontally(
-                                        targetOffsetX = { -it }, // Уходит влево
-                                        animationSpec = tween(durationMillis = 300) // Длительность анимации
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Card(
+                                    modifier = Modifier
+                                        .wrapContentHeight(),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.secondary,
+                                        contentColor = MaterialTheme.colorScheme.onSecondary
                                     )
                                 ) {
                                     Row(
                                         modifier = Modifier
-                                            .fillMaxWidth(),
+                                            .fillMaxWidth()
+                                            .wrapContentHeight(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Card(
+                                        Row(
                                             modifier = Modifier
-                                                .wrapContentHeight(),
-                                            colors = CardDefaults.cardColors(
-                                                containerColor = MaterialTheme.colorScheme.secondary,
-                                                contentColor = MaterialTheme.colorScheme.onSecondary
-                                            )
+                                                .fillMaxWidth()
+                                                .weight(0.9f)
                                         ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .wrapContentHeight(),
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .weight(0.9f)
-                                                ) {
-                                                    SelectedMovieItem(
-                                                        movie = movie,
-                                                        onClick = { selectedNote = movie }
-                                                    )
-                                                }
+                                            SelectedMovieItem(
+                                                movie = movie,
+                                                onClick = { selectedSerial = movie }
+                                            )
+                                        }
 
-                                                IconButton(
-                                                    onClick = {
-                                                        isVisible =
-                                                            false // Скрываем элемент перед удалением
-                                                        CoroutineScope(Dispatchers.Main).launch {
-                                                            delay(300)
-                                                            viewModel.removeMovie(movie.id.toDouble())
-                                                        }
-                                                        viewModel.savingChangeRecord(
-                                                            username,
-                                                            "удалил(а) фильм: ${movie.nameFilm}"
-                                                        )
-                                                    }
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Close,
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.onSecondary
-                                                    )
+                                        IconButton(
+                                            onClick = {
+                                                isVisible =
+                                                    false // Скрываем элемент перед удалением
+                                                CoroutineScope(Dispatchers.Main).launch {
+                                                    delay(300)
+                                                    viewModel.removeMovie(movie.id.toDouble())
                                                 }
+                                                viewModel.savingChangeRecord(
+                                                    username,
+                                                    "удалил(а) фильм: ${movie.nameFilm}"
+                                                )
                                             }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Close,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
                                         }
                                     }
                                 }
-                                Spacer(Modifier.padding(5.dp))
                             }
                         }
+                        Spacer(Modifier.padding(5.dp))
                     }
                 }
             }
@@ -397,7 +302,7 @@ fun ListSelectedGeneralMovies(
 }
 
 @Composable
-fun ShowCommentGeneralList(
+fun ShowCommentGeneralListSerials(
     listComments: List<DomainComment>,
     id: Double,
     firebaseViewModel: FirebaseViewModel = hiltViewModel(),
@@ -405,8 +310,8 @@ fun ShowCommentGeneralList(
     val stateComments by firebaseViewModel.commentsDownloadStatus.collectAsState()
 
     LaunchedEffect(id) {
-        firebaseViewModel.getComments(NODE_LIST_MOVIES, id)
-        firebaseViewModel.observeComments(NODE_LIST_MOVIES, id)
+        firebaseViewModel.getComments(NODE_LIST_SERIALS, id)
+        firebaseViewModel.observeComments(NODE_LIST_SERIALS, id)
     }
 
     when(stateComments) {
@@ -461,4 +366,3 @@ fun ShowCommentGeneralList(
         }
     }
 }
-

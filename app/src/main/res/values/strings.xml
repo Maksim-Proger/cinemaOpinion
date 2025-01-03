@@ -38,8 +38,9 @@
     <string name="edit_personal_information">Данные пользователя обновлены</string>
 
     <!--  Title Icons  -->
-    <string name="my_list_movies">Мой список</string>
-    <string name="joint_list_films">Общий список</string>
+    <string name="my_list_movies">Личный список</string>
+    <string name="joint_list_films">Общий список с фильмами</string>
+    <string name="joint_list_serials">Общий список с сериалами</string>
     <string name="floating_action_button_save">Сохранить</string>
     <string name="floating_action_button_settings">Фильтр</string>
     <string name="list_selected_movies_button_close">Закрыть</string>
@@ -56,6 +57,7 @@
     <string name="description_icon_settings">Icon Strings</string>
     <string name="description_icon_exit">Icon Exit</string>
     <string name="description_icon_movie_list">Icon Movie List</string>
+    <string name="description_icon_serials_list">Icon Serials List</string>
     <string name="description_icon_edit_change_name">Icon Edit Change Name</string>
     <string name="description_icon_add_lastName_name">Icon Add Lastname</string>
     <string name="description_icon_add_name">Icon Add Name</string>
@@ -65,8 +67,9 @@
     <string name="description_icon_next_page_button">Icon Next Page Button</string>
 
     <!--  Details Films Card   -->
-    <string name="text_buttons_film_card_to_my_list">Для себя</string>
-    <string name="text_buttons_film_card_to_general_list">Для всех</string>
+    <string name="text_buttons_film_card_to_my_list">В свой список</string>
+    <string name="text_buttons_film_card_to_general_list_movies">В общий список с фильмами</string>
+    <string name="text_buttons_film_card_to_general_list_serials">В общий список с сериалами</string>
 
     <!--  Seasonal lines  -->
     <string name="title_of_the_list_for_the_new_year">Почувствуй новый год!</string>

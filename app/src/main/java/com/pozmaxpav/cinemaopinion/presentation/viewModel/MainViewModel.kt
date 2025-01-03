@@ -1,16 +1,21 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
+import android.util.Log
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData.MovieSearch
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
+import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList2
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.information.Information
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsList
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetPremiereMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchFilmsByFiltersUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMovieByIdUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMovies2UseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetTopMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.information.GetMovieInformationUseCase
@@ -32,6 +37,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getPremiereMoviesUseCase: GetPremiereMoviesUseCase,
     private val getSearchMoviesUseCase: GetSearchMoviesUseCase,
+    private val getSearchMovies2UseCase: GetSearchMovies2UseCase,
     private val getTopMoviesUseCase: GetTopMoviesUseCase,
     private val getSearchFilmsByFiltersUseCase: GetSearchFilmsByFiltersUseCase,
     private val getMovieInformationUseCase: GetMovieInformationUseCase,
@@ -58,8 +64,14 @@ class MainViewModel @Inject constructor(
     private val _topListMovies = MutableStateFlow<MovieTopList?>(null)
     val topListMovies: StateFlow<MovieTopList?> get() = _topListMovies.asStateFlow()
 
+
+
     private val _searchMovies = MutableStateFlow<MovieSearchList?>(null)
-    val searchMovies: StateFlow<MovieSearchList?> get() = _searchMovies.asStateFlow()
+    val searchMovies = _searchMovies.asStateFlow()
+    private val _searchMovies2 = MutableStateFlow<MovieSearchList2?>(null)
+    val searchMovies2 = _searchMovies2.asStateFlow()
+
+
 
     private val _searchMovieById = MutableStateFlow<MovieSearch?>(null)
     val searchMovieById: StateFlow<MovieSearch?> get() = _searchMovieById.asStateFlow()
@@ -180,6 +192,12 @@ class MainViewModel @Inject constructor(
             try {
                 val movies = getSearchMoviesUseCase(keyword, page)
                 _searchMovies.value = movies
+
+                if (movies.items.isEmpty()) {
+                    val fallbackMovies  = getSearchMovies2UseCase(keyword, page)
+                    _searchMovies2.value = fallbackMovies
+                }
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -201,7 +219,7 @@ class MainViewModel @Inject constructor(
                 val movies = getSearchFilmsByFiltersUseCase(
                     type, keyword, countries, genres, ratingFrom, yearFrom, yearTo, page
                 )
-                _searchMovies.value = movies
+//                _searchMovies.value = movies
             } catch (e: Exception) {
                 e.printStackTrace()
             }

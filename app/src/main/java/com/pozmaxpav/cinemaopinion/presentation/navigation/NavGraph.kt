@@ -13,6 +13,7 @@ import com.example.introductoryscreens.ui.onboarding.OnBoardingScreen
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListOfChangesScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListSelectedGeneralMovies
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListSelectedGeneralSerials
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListSelectedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListWatchedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MainScreen
@@ -95,6 +96,10 @@ fun NavGraph(
 
         composable(Route.ListSelectedGeneralMovies.route) {
             ListSelectedGeneralMovies(navController)
+        }
+
+        composable(Route.ListSelectedGeneralSerials.route) {
+            ListSelectedGeneralSerials(navController)
         }
 
         composable(Route.ListSelectedMovies.route) {
