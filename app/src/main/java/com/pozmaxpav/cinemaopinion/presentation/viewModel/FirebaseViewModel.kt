@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
@@ -14,6 +13,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.ObserveCommentsForMov
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.ObserveListMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SendingToTheSerialsListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SendingToTheViewedFolderUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdateSeasonalEventPointsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdatingUserDataUseCase
@@ -24,9 +24,7 @@ import com.pozmaxpav.cinemaopinion.utilits.deletingOldRecords
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -44,6 +42,7 @@ class FirebaseViewModel @Inject constructor(
     private val getRecordsOfChangesUseCase: GetRecordsOfChangesUseCase,
     private val removeRecordsOfChangesUseCase: RemoveRecordsOfChangesUseCase,
     private val sendingToTheViewedFolderUseCase: SendingToTheViewedFolderUseCase,
+    private val sendingToTheSerialsListUseCase: SendingToTheSerialsListUseCase,
     private val updatingUserDataUseCase: UpdatingUserDataUseCase,
     private val updateSeasonalEventPointsUseCase: UpdateSeasonalEventPointsUseCase
 ) : ViewModel() {
@@ -90,6 +89,16 @@ class FirebaseViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 sendingToTheViewedFolderUseCase(movieId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun sendingToTheSerialsList(movieId: Double) {
+        viewModelScope.launch {
+            try {
+                sendingToTheSerialsListUseCase(movieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

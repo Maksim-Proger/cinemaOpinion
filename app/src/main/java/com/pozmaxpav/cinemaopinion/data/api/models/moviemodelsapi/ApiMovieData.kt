@@ -30,3 +30,13 @@ data class ApiMovieSearch(
     val countries: List<ApiCountry>
 )
 
+data class ApiMovieSearch2(
+    val filmId: Int,
+//    val rating: Double?,
+    val nameRu: String?,
+    val nameEn: String?,
+    val year: String?,
+    val countries: List<ApiCountry>,
+    val posterUrl: String
+)
+

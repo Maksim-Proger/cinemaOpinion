@@ -174,6 +174,16 @@ fun AccountScreen(
 
                 AccountListItem(
                     icon = painterResource(id = R.drawable.ic_movie_list),
+                    contentDescription = stringResource(id = R.string.description_icon_serials_list),
+                    title = stringResource(id = R.string.joint_list_serials)
+                ) {
+                    navigateFunction(navController, Route.ListSelectedGeneralSerials.route)
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                AccountListItem(
+                    icon = painterResource(id = R.drawable.ic_movie_list),
                     contentDescription = "null",
                     title = "Контроль серий"
                 ) {
