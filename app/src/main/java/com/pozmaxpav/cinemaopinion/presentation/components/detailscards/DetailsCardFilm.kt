@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -59,6 +61,7 @@ fun DetailsCardFilm(
 ) {
     val statusExist by viewModel.status.collectAsState()
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
     val info by viewModelMain.informationMovie.collectAsState()
 
     // Выполняем запрос к API только при изменении `movie.id`
@@ -100,6 +103,7 @@ fun DetailsCardFilm(
                     .wrapContentHeight()
                     .fillMaxWidth()
                     .padding(horizontal = 7.dp)
+                    .verticalScroll(scrollState)
             ) {
                 Row(
                     modifier = Modifier
@@ -229,6 +233,7 @@ fun DetailsCardFilm(
                             .padding(vertical = 7.dp)
                     ) {
                         Column(
+//                            modifier = Modifier.verticalScroll(scrollState),
                             verticalArrangement = Arrangement.Center
                         ) {
                             Button(
