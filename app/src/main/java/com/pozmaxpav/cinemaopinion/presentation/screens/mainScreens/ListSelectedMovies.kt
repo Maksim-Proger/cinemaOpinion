@@ -111,9 +111,7 @@ fun ListSelectedMovies(
                         value = comment,
                         onValueChange = setComment,
                         placeholder = {
-                            Text(
-                                text = "Оставьте свой комментарий"
-                            )
+                            Text(text = "Оставьте свой комментарий")
                         },
                         leadingIcon = {
                             Icon(
@@ -164,7 +162,10 @@ fun ListSelectedMovies(
                         onClick = { openBottomSheetComments = !openBottomSheetComments },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        Text(text = "Оставить комментарий")
+                        Text(
+                            text = "Оставить комментарий",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 },
                 onClick = { selectedNote = null }
