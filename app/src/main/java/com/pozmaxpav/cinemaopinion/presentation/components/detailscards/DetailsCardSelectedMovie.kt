@@ -103,18 +103,18 @@ fun ShowSelectedMovie(
                             modifier = Modifier
                                 .fillMaxWidth()
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
                             ) {
                                 movieTransferButton()
                                 movieTransferButtonToSerialsList()
                             }
+
                             if (isShowCommentButton) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center,
+                                    horizontalArrangement = Arrangement.Start,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     commentButton()
@@ -124,7 +124,7 @@ fun ShowSelectedMovie(
                     } else {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End,
+                            horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             if (isShowCommentButton) {

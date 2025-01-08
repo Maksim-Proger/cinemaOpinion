@@ -133,7 +133,10 @@ fun ListSelectedGeneralSerials(
                         onClick = { openBottomSheetComments = !openBottomSheetComments },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        Text(text = "Оставить комментарий")
+                        Text(
+                            text = "Оставить комментарий",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 },
                 movieTransferButton = {
@@ -147,7 +150,10 @@ fun ListSelectedGeneralSerials(
                             )
                         }
                     ) {
-                        Text(text = "Просмотрен")
+                        Text(
+                            text = "Просмотрен",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 },
                 onClick = { selectedSerial = null }

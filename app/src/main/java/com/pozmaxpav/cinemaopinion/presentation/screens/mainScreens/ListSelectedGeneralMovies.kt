@@ -184,15 +184,10 @@ fun ListSelectedGeneralMovies(
                     Button(
                         onClick = { openBottomSheetComments = !openBottomSheetComments }
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Оставить комментарий",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
+                        Text(
+                            text = "Оставить комментарий",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 },
                 movieTransferButton = {
@@ -208,7 +203,7 @@ fun ListSelectedGeneralMovies(
                     ) {
                         Text(
                             text = "Просмотрен",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 },
@@ -225,7 +220,7 @@ fun ListSelectedGeneralMovies(
                     ) {
                         Text(
                             text = "Переместить в сериалы",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 },
