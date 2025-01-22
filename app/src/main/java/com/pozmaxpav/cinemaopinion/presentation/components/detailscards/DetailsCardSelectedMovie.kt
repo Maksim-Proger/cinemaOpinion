@@ -7,8 +7,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
@@ -35,13 +39,17 @@ fun ShowSelectedMovie(
     movieTransferButtonToSerialsList: @Composable () -> Unit = {},
     onClick: () -> Unit
 ) {
+
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .wrapContentSize()
     ) {
         Card(
             modifier = Modifier
-                .fillMaxSize(),
+                .wrapContentHeight()
+                .fillMaxWidth(),
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -65,8 +73,9 @@ fun ShowSelectedMovie(
             Column(
                 modifier = Modifier
                     .wrapContentHeight()
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(horizontal = 7.dp)
+                    .verticalScroll(scrollState)
             ) {
                 Row(
                     modifier = Modifier
@@ -139,7 +148,7 @@ fun ShowSelectedMovie(
 
                 Column(
                     modifier = Modifier
-                        .wrapContentHeight()
+                        .height(500.dp) // TODO: Подумать на параметром высоты.
                         .fillMaxWidth()
                 ) {
                     content()

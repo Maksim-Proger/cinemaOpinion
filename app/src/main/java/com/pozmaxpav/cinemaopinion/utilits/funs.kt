@@ -164,6 +164,7 @@ fun SelectedMovieItem(
     }
 }
 
+// TODO: Переписать цвета
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextFieldForComments(

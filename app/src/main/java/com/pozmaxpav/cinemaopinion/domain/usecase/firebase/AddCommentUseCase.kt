@@ -7,7 +7,7 @@ import javax.inject.Inject
 class AddCommentUseCase @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) {
-    suspend operator fun invoke(movieId: Double, comment: DomainComment) {
-        firebaseRepository.addCommentToMovie(movieId, comment)
+    suspend operator fun invoke(dataSource: String, movieId: Double, comment: DomainComment) {
+        firebaseRepository.addCommentToMovie(dataSource, movieId, comment)
     }
 }

@@ -185,6 +185,7 @@ class FirebaseViewModel @Inject constructor(
     }
 
     fun addComment(
+        dataSource: String,
         movieId: Double,
         username: String,
         commentUser: String
@@ -197,7 +198,7 @@ class FirebaseViewModel @Inject constructor(
         )
         viewModelScope.launch {
             try {
-                addCommentUseCase(movieId, comment)
+                addCommentUseCase(dataSource, movieId, comment)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
