@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -61,6 +63,7 @@ fun DetailsCard(
     val listAwards by viewModelUser.listAwards.collectAsState()
     val statusExist by viewModel.status.collectAsState()
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(newYearMovie.id) {
         viewModelMain.getInformationMovie(newYearMovie.id)
@@ -140,6 +143,7 @@ fun DetailsCard(
                     .wrapContentHeight()
                     .fillMaxWidth()
                     .padding(horizontal = 7.dp)
+                    .verticalScroll(scrollState)
             ) {
 
                 Row(

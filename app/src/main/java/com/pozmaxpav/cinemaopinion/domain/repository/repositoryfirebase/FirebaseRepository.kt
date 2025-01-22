@@ -10,7 +10,7 @@ interface FirebaseRepository {
     suspend fun removeMovie(id: Double)
     suspend fun getMovie(dataSource: String): List<SelectedMovie>
     suspend fun observeListMovies(dataSource: String, onMoviesUpdated: (List<SelectedMovie>) -> Unit)
-    suspend fun addCommentToMovie(movieId: Double, comment: DomainComment)
+    suspend fun addCommentToMovie(dataSource: String, movieId: Double, comment: DomainComment)
     suspend fun getCommentsForMovie(dataSource: String, movieId: Double): List<DomainComment>
     suspend fun observeCommentsForMovie(dataSource:String, movieId: Double, onCommentsUpdated: (List<DomainComment>) -> Unit)
     suspend fun savingChangeRecord(domainChangelogModel: DomainChangelogModel)

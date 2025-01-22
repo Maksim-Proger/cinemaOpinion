@@ -141,6 +141,7 @@ fun ListSelectedGeneralMovies(
                         keyboardActions = KeyboardActions(
                             onDone = {
                                 viewModel.addComment(
+                                    NODE_LIST_MOVIES,
                                     selectedNote!!.id.toDouble(),
                                     username,
                                     comment
@@ -413,7 +414,7 @@ fun ShowCommentGeneralList(
         }
         is State.Success -> {
             LazyColumn(
-                contentPadding = PaddingValues(16.dp)
+                contentPadding = PaddingValues(5.dp)
             ) {
                 items(listComments) { comment ->
                     Card(
@@ -431,24 +432,42 @@ fun ShowCommentGeneralList(
                             modifier = Modifier
                                 .padding(8.dp)
                         ) {
-                            Text(
-                                text = comment.username,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = comment.username,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+
                             Text(
                                 text = comment.commentText,
                                 style = MaterialTheme.typography.bodyLarge
                             )
-                            Text(
-                                text =
-                                SimpleDateFormat(
-                                    "dd.MM.yyyy HH:mm",
-                                    Locale.getDefault()
-                                ).format(
-                                    Date(comment.timestamp)
-                                ),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text =
+                                    SimpleDateFormat(
+                                        "dd.MM.yyyy HH:mm",
+                                        Locale.getDefault()
+                                    ).format(
+                                        Date(comment.timestamp)
+                                    ),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
                         }
                     }
                 }

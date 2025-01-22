@@ -44,7 +44,7 @@ class SelectedMovieViewModel @Inject constructor(
         }
     }
 
-    fun addSelectedMovie(selectedMovie: SelectedMovie) {
+    fun addSelectedMovie(selectedMovie: SelectedMovie) { // TODO: Проверить содержание сохраняемых данных
         viewModelScope.launch {
             try {
                 val existMovie = getFilmById(selectedMovie.id)

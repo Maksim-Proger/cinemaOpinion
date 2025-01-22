@@ -51,7 +51,7 @@ class FirebaseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovie) {
-        val filmData = SelectedMovie(
+        val filmData = SelectedMovie( // TODO: Надо разобрать зачем мне тут снова создавать модель?
             selectedMovie.id,
             selectedMovie.nameFilm,
             selectedMovie.posterUrl,
@@ -114,10 +114,10 @@ class FirebaseRepositoryImpl @Inject constructor(
             })
     }
 
-    override suspend fun addCommentToMovie(movieId: Double, comment: DomainComment) {
+    override suspend fun addCommentToMovie(dataSource: String, movieId: Double, comment: DomainComment) {
         // Поиск фильма по его ID
         val snapshot = databaseReference
-            .child(NODE_LIST_MOVIES)
+            .child(dataSource)
             .orderByChild("id")
             .equalTo(movieId)
             .get()
@@ -130,7 +130,7 @@ class FirebaseRepositoryImpl @Inject constructor(
 
             // Получаем уникальный ключ для комментария
             val commentId = databaseReference
-                .child(NODE_LIST_MOVIES)
+                .child(dataSource)
                 .child(movieKey!!)
                 .child(NODE_COMMENTS)
                 .push().key!!
@@ -140,7 +140,7 @@ class FirebaseRepositoryImpl @Inject constructor(
 
             // Добавляем комментарий под конкретным фильмом
             databaseReference
-                .child(NODE_LIST_MOVIES)
+                .child(dataSource)
                 .child(movieKey)
                 .child(NODE_COMMENTS)
                 .child(commentId)

@@ -233,7 +233,6 @@ fun DetailsCardFilm(
                             .padding(vertical = 7.dp)
                     ) {
                         Column(
-//                            modifier = Modifier.verticalScroll(scrollState),
                             verticalArrangement = Arrangement.Center
                         ) {
                             Button(

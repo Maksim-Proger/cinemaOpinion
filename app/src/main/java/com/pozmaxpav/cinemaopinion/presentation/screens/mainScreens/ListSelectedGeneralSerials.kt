@@ -20,7 +20,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -49,11 +51,13 @@ import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
+import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -111,6 +115,53 @@ fun ListSelectedGeneralSerials(
             username = "Таинственный пользователь"
         }
 
+        if (openBottomSheetComments) {
+            MyBottomSheet(
+                onClose = {
+                    openBottomSheetComments = !openBottomSheetComments
+                },
+                content = {
+                    CustomTextFieldForComments(
+                        value = comment,
+                        onValueChange = setComment,
+                        placeholder = {
+                            Text(
+                                text = "Оставьте свой комментарий"
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.outline
+                            )
+                        },
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                viewModel.addComment(
+                                    NODE_LIST_SERIALS,
+                                    selectedSerial!!.id.toDouble(),
+                                    username,
+                                    comment
+                                )
+                                viewModel.savingChangeRecord(
+                                    username,
+                                    "добавил(а) комментарий к фильму: ${selectedSerial!!.nameFilm}"
+                                )
+                                showToast(context, "Комментарий добавлен")
+                                setComment("")
+                                openBottomSheetComments = !openBottomSheetComments
+                            }
+                        )
+                    )
+                },
+                fraction = 0.7f
+            )
+            BackHandler {
+                openBottomSheetComments = !openBottomSheetComments
+            }
+        }
+
         if (selectedSerial != null) {
             ShowSelectedMovie(
                 movie = selectedSerial!!,
@@ -131,7 +182,7 @@ fun ListSelectedGeneralSerials(
                 commentButton = {
                     Button(
                         onClick = { openBottomSheetComments = !openBottomSheetComments },
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+//                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text(
                             text = "Оставить комментарий",
@@ -347,24 +398,42 @@ fun ShowCommentGeneralListSerials(
                             modifier = Modifier
                                 .padding(8.dp)
                         ) {
-                            Text(
-                                text = comment.username,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = comment.username,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+
                             Text(
                                 text = comment.commentText,
                                 style = MaterialTheme.typography.bodyLarge
                             )
-                            Text(
-                                text =
-                                SimpleDateFormat(
-                                    "dd.MM.yyyy HH:mm",
-                                    Locale.getDefault()
-                                ).format(
-                                    Date(comment.timestamp)
-                                ),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text =
+                                    SimpleDateFormat(
+                                        "dd.MM.yyyy HH:mm",
+                                        Locale.getDefault()
+                                    ).format(
+                                        Date(comment.timestamp)
+                                    ),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
                         }
                     }
                 }
