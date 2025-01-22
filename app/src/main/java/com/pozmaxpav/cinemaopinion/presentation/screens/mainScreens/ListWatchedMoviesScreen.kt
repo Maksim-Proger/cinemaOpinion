@@ -2,6 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -205,24 +206,42 @@ fun ShowCommentWatchedMoviesList(
                             modifier = Modifier
                                 .padding(8.dp)
                         ) {
-                            Text(
-                                text = comment.username,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = comment.username,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+
                             Text(
                                 text = comment.commentText,
                                 style = MaterialTheme.typography.bodyLarge
                             )
-                            Text(
-                                text =
-                                SimpleDateFormat(
-                                    "dd.MM.yyyy HH:mm",
-                                    Locale.getDefault()
-                                ).format(
-                                    Date(comment.timestamp)
-                                ),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text =
+                                    SimpleDateFormat(
+                                        "dd.MM.yyyy HH:mm",
+                                        Locale.getDefault()
+                                    ).format(
+                                        Date(comment.timestamp)
+                                    ),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
                         }
                     }
                 }
