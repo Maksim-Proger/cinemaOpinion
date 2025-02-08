@@ -1,10 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
-import android.util.Log
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData.MovieSearch
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
@@ -64,14 +61,10 @@ class MainViewModel @Inject constructor(
     private val _topListMovies = MutableStateFlow<MovieTopList?>(null)
     val topListMovies: StateFlow<MovieTopList?> get() = _topListMovies.asStateFlow()
 
-
-
     private val _searchMovies = MutableStateFlow<MovieSearchList?>(null)
     val searchMovies = _searchMovies.asStateFlow()
     private val _searchMovies2 = MutableStateFlow<MovieSearchList2?>(null)
     val searchMovies2 = _searchMovies2.asStateFlow()
-
-
 
     private val _searchMovieById = MutableStateFlow<MovieSearch?>(null)
     val searchMovieById: StateFlow<MovieSearch?> get() = _searchMovieById.asStateFlow()
@@ -204,7 +197,7 @@ class MainViewModel @Inject constructor(
         }
     }
     
-    fun searchFilmsByFilters( // TODO: Дописать!
+    fun searchFilmsByFilters( // TODO: Дописать возможность поиска из второй базы!
         type: String?,
         keyword: String?,
         countries: Int?,
@@ -219,7 +212,7 @@ class MainViewModel @Inject constructor(
                 val movies = getSearchFilmsByFiltersUseCase(
                     type, keyword, countries, genres, ratingFrom, yearFrom, yearTo, page
                 )
-//                _searchMovies.value = movies
+                _searchMovies.value = movies
             } catch (e: Exception) {
                 e.printStackTrace()
             }

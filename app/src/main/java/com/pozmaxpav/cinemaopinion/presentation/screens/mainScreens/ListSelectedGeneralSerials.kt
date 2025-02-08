@@ -146,7 +146,7 @@ fun ListSelectedGeneralSerials(
                                 )
                                 viewModel.savingChangeRecord(
                                     username,
-                                    "добавил(а) комментарий к фильму: ${selectedSerial!!.nameFilm}"
+                                    "добавил(а) комментарий к сериалу: ${selectedSerial!!.nameFilm}"
                                 )
                                 showToast(context, "Комментарий добавлен")
                                 setComment("")
@@ -196,7 +196,7 @@ fun ListSelectedGeneralSerials(
                             showToast(context, "Сериал успешно перенесен")
                             viewModel.savingChangeRecord(
                                 username,
-                                "переместил(а) фильм: ${selectedSerial!!.nameFilm}"
+                                "переместил(а) сериал: ${selectedSerial!!.nameFilm}"
                             )
                         }
                     ) {
