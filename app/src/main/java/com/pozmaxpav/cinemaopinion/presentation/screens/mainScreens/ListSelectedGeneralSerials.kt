@@ -181,8 +181,7 @@ fun ListSelectedGeneralSerials(
                 },
                 commentButton = {
                     Button(
-                        onClick = { openBottomSheetComments = !openBottomSheetComments },
-//                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        onClick = { openBottomSheetComments = !openBottomSheetComments }
                     ) {
                         Text(
                             text = "Оставить комментарий",
@@ -380,7 +379,7 @@ fun ShowCommentGeneralListSerials(
         }
         is State.Success -> {
             LazyColumn(
-                contentPadding = PaddingValues(16.dp)
+                contentPadding = PaddingValues(5.dp)
             ) {
                 items(listComments) { comment ->
                     Card(
