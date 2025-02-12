@@ -88,7 +88,7 @@ fun SearchFilterScreen(
     var searchWordResult by remember { mutableStateOf("") }
 
     // Переменные для хранения выбранного диапазона возможных годов
-    var selectedRange by remember { mutableStateOf(1900f..2024f) } // Диапазон значений
+    var selectedRange by remember { mutableStateOf(1900f..2025f) } // Диапазон значений
     var sliderPosition by remember { mutableFloatStateOf(0f) }
     // endregion
 
@@ -613,7 +613,7 @@ fun RangeSliderToSelectDate(
                     onRangeChange(newRange)
                 }
             },
-            valueRange = 1900f..2024f,
+            valueRange = 1900f..2025f,
             steps = 0,
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.secondary,

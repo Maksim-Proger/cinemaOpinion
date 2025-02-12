@@ -40,7 +40,7 @@ fun DatePickerFunction(
     onDateSelected: (Pair<Int, String>) -> Unit
 ) {
     var selectedMonth by remember { mutableIntStateOf(1) }
-    var selectedYear by remember { mutableIntStateOf(2024) }
+    var selectedYear by remember { mutableIntStateOf(2025) }
 
     Column(
         modifier = Modifier
@@ -115,7 +115,7 @@ fun DatePickerFunction(
                         contentPadding = PaddingValues(10.dp),
                         verticalArrangement = Arrangement.Center
                     ) {
-                        items((0..124).toList().reversed()) { index ->
+                        items((0..125).toList().reversed()) { index -> // TODO: Забыл почему тут указано 125, а не 2025
                             val year = 1900 + index
                             Text(
                                 text = year.toString(),
