@@ -149,7 +149,7 @@ fun MainScreen(navController: NavHostController) {
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
-        viewModel.fetchPremiersMovies(2024, "November")
+        viewModel.fetchPremiersMovies(2025, "January")
         viewModel.fetchTopListMovies(currentPage)
         userViewModel.fitchUser()
     }
