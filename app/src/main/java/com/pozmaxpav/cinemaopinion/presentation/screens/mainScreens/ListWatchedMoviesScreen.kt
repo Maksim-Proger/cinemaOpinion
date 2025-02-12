@@ -188,7 +188,7 @@ fun ShowCommentWatchedMoviesList(
         is State.Success -> {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(10.dp)
+                contentPadding = PaddingValues(5.dp)
             ) {
                 items(listComments) { comment ->
                     Card(
