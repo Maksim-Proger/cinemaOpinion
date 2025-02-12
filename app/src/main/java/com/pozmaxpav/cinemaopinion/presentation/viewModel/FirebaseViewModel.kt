@@ -85,10 +85,10 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun sendingToTheViewedFolder(movieId: Double) {
+    fun sendingToTheViewedFolder(dataSource: String, movieId: Double) {
         viewModelScope.launch {
             try {
-                sendingToTheViewedFolderUseCase(movieId)
+                sendingToTheViewedFolderUseCase(dataSource, movieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

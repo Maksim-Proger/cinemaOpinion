@@ -192,11 +192,14 @@ fun ListSelectedGeneralSerials(
                 movieTransferButton = {
                     Button(
                         onClick = {
-                            viewModel.sendingToTheViewedFolder(selectedSerial!!.id.toDouble())
+                            viewModel.sendingToTheViewedFolder(
+                                NODE_LIST_SERIALS,
+                                selectedSerial!!.id.toDouble()
+                            )
                             showToast(context, "Сериал успешно перенесен")
                             viewModel.savingChangeRecord(
                                 username,
-                                "переместил(а) сериал: ${selectedSerial!!.nameFilm}"
+                                "переместил(а) сериал в просмотренные: ${selectedSerial!!.nameFilm}"
                             )
                         }
                     ) {
