@@ -194,11 +194,14 @@ fun ListSelectedGeneralMovies(
                 movieTransferButton = {
                     Button(
                         onClick = {
-                            viewModel.sendingToTheViewedFolder(selectedNote!!.id.toDouble())
+                            viewModel.sendingToTheViewedFolder(
+                                NODE_LIST_MOVIES,
+                                selectedNote!!.id.toDouble()
+                            )
                             showToast(context, "Фильм успешно перенесен")
                             viewModel.savingChangeRecord(
                                 username,
-                                "переместил(а) фильм: ${selectedNote!!.nameFilm}"
+                                "переместил(а) фильм в просмотренные: ${selectedNote!!.nameFilm}"
                             )
                         }
                     ) {
@@ -215,7 +218,7 @@ fun ListSelectedGeneralMovies(
                             showToast(context, "Сериал успешно перенесен")
                             viewModel.savingChangeRecord(
                                 username,
-                                "переместил(а) сериал: ${selectedNote!!.nameFilm}"
+                                "переместил(а) сериал в список с сериалами: ${selectedNote!!.nameFilm}"
                             )
                         }
                     ) {
