@@ -251,7 +251,11 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun sendingToTheViewedFolder(dataSource: String, movieId: Double) {
+    override suspend fun sendingToTheViewedFolder(
+        dataSource: String,
+        directionDataSource: String,
+        movieId: Double
+    ) {
         try {
             val snapshot = databaseReference
                 .child(dataSource)
@@ -269,7 +273,7 @@ class FirebaseRepositoryImpl @Inject constructor(
 
                     // Копируем запись в новую папку
                     databaseReference
-                        .child(NODE_LIST_WATCHED_MOVIES)
+                        .child(directionDataSource)
                         .child(movieKey)
                         .setValue(movieData)
                         .await()

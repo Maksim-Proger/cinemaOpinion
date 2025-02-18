@@ -37,6 +37,7 @@ fun ShowSelectedMovie(
     commentButton: @Composable () -> Unit = {},
     movieTransferButton: @Composable () -> Unit = {},
     movieTransferButtonToSerialsList: @Composable () -> Unit = {},
+    movieTransferButtonToWaitingList: @Composable () -> Unit = {},
     onClick: () -> Unit
 ) {
 
@@ -117,6 +118,7 @@ fun ShowSelectedMovie(
                                     .fillMaxWidth()
                             ) {
                                 movieTransferButton()
+                                movieTransferButtonToWaitingList()
                                 movieTransferButtonToSerialsList()
                             }
 

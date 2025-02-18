@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -59,6 +60,7 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
@@ -164,6 +166,18 @@ fun ListSelectedGeneralMovies(
             }
         }
 
+        if (selectedNote == null) {
+            Row(modifier = Modifier.fillMaxWidth().padding(vertical = 7.dp)) {
+                IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
+                    Icon(
+                        Icons.Default.ArrowBackIosNew,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
         if (selectedNote != null) {
             ShowSelectedMovie(
                 movie = selectedNote!!,
@@ -196,6 +210,7 @@ fun ListSelectedGeneralMovies(
                         onClick = {
                             viewModel.sendingToTheViewedFolder(
                                 NODE_LIST_MOVIES,
+                                NODE_LIST_WATCHED_MOVIES,
                                 selectedNote!!.id.toDouble()
                             )
                             showToast(context, "Фильм успешно перенесен")
@@ -347,30 +362,6 @@ fun ListSelectedGeneralMovies(
         ) {
             Card(
                 modifier = Modifier
-                    .clickable(
-                        onClick = {
-                            navigateFunction(navController, Route.MainScreen.route)
-                        }
-                    ),
-                shape = RoundedCornerShape(8.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            ) {
-                Box(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.list_selected_movies_button_close),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-
-            Card(
-                modifier = Modifier
                     .clickable {
                         navigateFunction(navController, Route.ListWatchedMovies.route)
                     },
@@ -382,11 +373,11 @@ fun ListSelectedGeneralMovies(
                 )
             ) {
                 Box(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(10.dp)
                 ) {
                     Text(
                         text = "Просмотренные",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
