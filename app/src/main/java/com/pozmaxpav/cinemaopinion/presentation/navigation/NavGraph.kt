@@ -15,6 +15,7 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListOfChange
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListSelectedGeneralMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListSelectedGeneralSerials
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListSelectedMovies
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListWaitingContinuationSeries
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListWatchedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MediaNewsScreen
@@ -106,5 +107,8 @@ fun NavGraph(
             ListSelectedMovies(navController)
         }
 
+        composable(Route.ListWaitingContinuationSeries.route) {
+            ListWaitingContinuationSeries(navController)
+        }
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -59,6 +60,8 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WAITING_CONTINUATION_SERIES
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
@@ -162,6 +165,18 @@ fun ListSelectedGeneralSerials(
             }
         }
 
+        if (selectedSerial == null) {
+            Row(modifier = Modifier.fillMaxWidth().padding(vertical = 7.dp)) {
+                IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
+                    Icon(
+                        Icons.Default.ArrowBackIosNew,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
         if (selectedSerial != null) {
             ShowSelectedMovie(
                 movie = selectedSerial!!,
@@ -189,11 +204,33 @@ fun ListSelectedGeneralSerials(
                         )
                     }
                 },
+                movieTransferButtonToWaitingList = {
+                    Button(
+                        onClick = {
+                            viewModel.sendingToTheViewedFolder(
+                                NODE_LIST_SERIALS,
+                                NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                selectedSerial!!.id.toDouble()
+                            )
+                            showToast(context, "Сериал успешно перенесен в лист ожидания")
+                            viewModel.savingChangeRecord(
+                                username,
+                                "переместил(а) сериал в лист ожидания: ${selectedSerial!!.nameFilm}"
+                            )
+                        }
+                    ) {
+                        Text(
+                            text = "Перенести в лист ожидания",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                },
                 movieTransferButton = {
                     Button(
                         onClick = {
                             viewModel.sendingToTheViewedFolder(
                                 NODE_LIST_SERIALS,
+                                NODE_LIST_WATCHED_MOVIES,
                                 selectedSerial!!.id.toDouble()
                             )
                             showToast(context, "Сериал успешно перенесен")
@@ -312,30 +349,6 @@ fun ListSelectedGeneralSerials(
         ) {
             Card(
                 modifier = Modifier
-                    .clickable(
-                        onClick = {
-                            navigateFunction(navController, Route.MainScreen.route)
-                        }
-                    ),
-                shape = RoundedCornerShape(8.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            ) {
-                Box(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.list_selected_movies_button_close),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-
-            Card(
-                modifier = Modifier
                     .clickable {
                         navigateFunction(navController, Route.ListWatchedMovies.route)
                     },
@@ -347,11 +360,33 @@ fun ListSelectedGeneralSerials(
                 )
             ) {
                 Box(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(10.dp)
                 ) {
                     Text(
                         text = "Просмотренные",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+
+            Card(
+                modifier = Modifier
+                    .clickable {
+                        navigateFunction(navController, Route.ListWaitingContinuationSeries.route)
+                    },
+                shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            ) {
+                Box(
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    Text(
+                        text = "Лист ожидания",
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }

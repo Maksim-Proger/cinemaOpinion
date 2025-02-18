@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
@@ -85,10 +86,14 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun sendingToTheViewedFolder(dataSource: String, movieId: Double) {
+    fun sendingToTheViewedFolder(
+        dataSource: String,
+        directionDataSource: String,
+        movieId: Double
+    ) {
         viewModelScope.launch {
             try {
-                sendingToTheViewedFolderUseCase(dataSource, movieId)
+                sendingToTheViewedFolderUseCase(dataSource, directionDataSource, movieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -115,7 +120,7 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    private fun removeOldRecords() {
+    private fun removeOldRecords() { // Удаление записей из базы данных и списка
         viewModelScope.launch {
             val currentList = _listOfChanges.value
             val filteredList = mutableListOf<DomainChangelogModel>()
@@ -129,10 +134,9 @@ class FirebaseViewModel @Inject constructor(
                 }
             }
 
-            // Обновляем список после удаления
-            _listOfChanges.value = filteredList
+            _listOfChanges.value = filteredList // Обновляем список после удаления
         }
-    } // Удаление записей из базы данных и списка
+    }
 
     fun getRecordsOfChanges() {
         viewModelScope.launch {

@@ -16,7 +16,7 @@ interface FirebaseRepository {
     suspend fun savingChangeRecord(domainChangelogModel: DomainChangelogModel)
     suspend fun getRecordsOfChanges(): List<DomainChangelogModel>
     suspend fun removeRecordsOfChanges(id: String)
-    suspend fun sendingToTheViewedFolder(dataSource: String, movieId: Double)
+    suspend fun sendingToTheViewedFolder(dataSource: String, directionDataSource: String, movieId: Double)
     suspend fun sendingToTheSerialsList(movieId: Double)
     suspend fun updatingUserData(domainUser: DomainUser)
     suspend fun updateSeasonalEventPoints(userId: String, fieldName: String, newValue: Any)

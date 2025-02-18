@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SendingToTheViewedFolderUseCase @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) {
-    suspend operator fun invoke(dataSource: String, movieId: Double) {
-        firebaseRepository.sendingToTheViewedFolder(dataSource, movieId)
+    suspend operator fun invoke(dataSource: String, directionDataSource: String, movieId: Double) {
+        firebaseRepository.sendingToTheViewedFolder(dataSource, directionDataSource, movieId)
     }
 }
