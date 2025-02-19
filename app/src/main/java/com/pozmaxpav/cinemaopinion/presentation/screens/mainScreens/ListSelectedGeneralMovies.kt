@@ -43,11 +43,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
@@ -213,7 +211,7 @@ fun ListSelectedGeneralMovies(
                                 NODE_LIST_WATCHED_MOVIES,
                                 selectedNote!!.id.toDouble()
                             )
-                            showToast(context, "Фильм успешно перенесен")
+                            showToast(context, "Фильм успешно перенесен в просмотренные")
                             viewModel.savingChangeRecord(
                                 username,
                                 "переместил(а) фильм в просмотренные: ${selectedNote!!.nameFilm}"
