@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.CommentBank
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PriorityHigh
+import androidx.compose.material.icons.filled.Start
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,6 +48,7 @@ import com.pozmaxpav.cinemaopinion.presentation.theme.CommentAddedColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.DeveloperCommentColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.FilmAddedColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.FilmDeleteColor
+import com.pozmaxpav.cinemaopinion.presentation.theme.MovingElement
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import java.text.SimpleDateFormat
@@ -187,8 +189,14 @@ fun colorMethod(text: String): Color {
     return when {
         text.contains("добавил важный комментарий") -> DeveloperCommentColor
         text.contains("добавил(а) комментарий к фильму") -> CommentAddedColor
+        text.contains("добавил(а) комментарий к сериалу") -> CommentAddedColor
         text.contains("удалил(а) фильм") -> FilmDeleteColor
+        text.contains("удалил(а) сериал") -> FilmDeleteColor
         text.contains("добавил(а) фильм") -> FilmAddedColor
+        text.contains("добавил(а) сериал") -> FilmAddedColor
+        text.contains("переместил(а) сериал в лист ожидания") -> MovingElement
+        text.contains("переместил(а) сериал в просмотренные") -> MovingElement
+        text.contains("переместил(а) фильм в просмотренные") -> MovingElement
         else -> Color.Transparent
     }
 }
@@ -197,8 +205,14 @@ fun iconMethod(text: String): ImageVector {
     return when {
         text.contains("добавил важный комментарий") -> Icons.Default.PriorityHigh
         text.contains("добавил(а) комментарий к фильму") -> Icons.Default.CommentBank
+        text.contains("добавил(а) комментарий к сериалу") -> Icons.Default.CommentBank
         text.contains("удалил(а) фильм") -> Icons.Default.Delete
+        text.contains("удалил(а) сериал") -> Icons.Default.Delete
         text.contains("добавил(а) фильм") -> Icons.Default.Add
+        text.contains("добавил(а) сериал") -> Icons.Default.Add
+        text.contains("переместил(а) сериал в лист ожидания") -> Icons.Default.Start
+        text.contains("переместил(а) сериал в просмотренные") -> Icons.Default.Start
+        text.contains("переместил(а) фильм в просмотренные") -> Icons.Default.Start
         else -> Icons.Default.Comment
     }
 }

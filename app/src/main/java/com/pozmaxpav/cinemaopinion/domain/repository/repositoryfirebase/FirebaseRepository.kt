@@ -7,7 +7,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 
 interface FirebaseRepository {
     suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovie)
-    suspend fun removeMovie(id: Double)
+    suspend fun removeMovie(dataSource: String, id: Double)
     suspend fun getMovie(dataSource: String): List<SelectedMovie>
     suspend fun observeListMovies(dataSource: String, onMoviesUpdated: (List<SelectedMovie>) -> Unit)
     suspend fun addCommentToMovie(dataSource: String, movieId: Double, comment: DomainComment)

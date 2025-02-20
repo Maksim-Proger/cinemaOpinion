@@ -324,7 +324,10 @@ fun ListSelectedGeneralMovies(
                                                             false // Скрываем элемент перед удалением
                                                         CoroutineScope(Dispatchers.Main).launch {
                                                             delay(300)
-                                                            viewModel.removeMovie(movie.id.toDouble())
+                                                            viewModel.removeMovie(
+                                                                NODE_LIST_MOVIES,
+                                                                movie.id.toDouble()
+                                                            )
                                                         }
                                                         viewModel.savingChangeRecord(
                                                             username,

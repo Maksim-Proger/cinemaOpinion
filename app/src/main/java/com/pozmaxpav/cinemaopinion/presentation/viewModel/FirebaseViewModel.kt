@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
@@ -242,10 +241,10 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun removeMovie(id: Double) {
+    fun removeMovie(dataSource: String, id: Double) {
         viewModelScope.launch {
             try {
-                removeMovieUseCase(id)
+                removeMovieUseCase(dataSource, id)
             } catch (e: Exception) {
                 _errorMessage.value = e.message
             }
