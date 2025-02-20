@@ -62,11 +62,11 @@ class FirebaseRepositoryImpl @Inject constructor(
         } ?: throw Exception("Failed to generate key")
     }
 
-    override suspend fun removeMovie(id: Double) {
+    override suspend fun removeMovie(dataSource: String, id: Double) {
         try {
             val snapshot =
                 databaseReference
-                    .child("list_movies")
+                    .child(dataSource)
                     .orderByChild("id")
                     .equalTo(id)
                     .get()

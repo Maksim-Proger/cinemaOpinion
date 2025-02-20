@@ -311,15 +311,17 @@ fun ListSelectedGeneralSerials(
 
                                         IconButton(
                                             onClick = {
-                                                isVisible =
-                                                    false // Скрываем элемент перед удалением
+                                                isVisible = false // Скрываем элемент перед удалением
                                                 CoroutineScope(Dispatchers.Main).launch {
                                                     delay(300)
-                                                    viewModel.removeMovie(movie.id.toDouble())
+                                                    viewModel.removeMovie(
+                                                        NODE_LIST_SERIALS,
+                                                        movie.id.toDouble()
+                                                    )
                                                 }
                                                 viewModel.savingChangeRecord(
                                                     username,
-                                                    "удалил(а) фильм: ${movie.nameFilm}"
+                                                    "удалил(а) сериал: ${movie.nameFilm}"
                                                 )
                                             }
                                         ) {
