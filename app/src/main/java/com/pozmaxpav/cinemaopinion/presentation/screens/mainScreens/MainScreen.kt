@@ -158,7 +158,7 @@ fun MainScreen(navController: NavHostController) {
         if (user != null) {
             user.let { userInfo ->
                 username = userInfo?.firstName ?: "Таинственный пользователь"
-                firebaseViewModel.updatingUserData(user!!) // Нужно, чтобы инициализировать первичное обновление
+//                firebaseViewModel.updatingUserData(user!!) // Нужно, чтобы инициализировать первичное обновление
             }
         } else {
             username = "Таинственный пользователь"

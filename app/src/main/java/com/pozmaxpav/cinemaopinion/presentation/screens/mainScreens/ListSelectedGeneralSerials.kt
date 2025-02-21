@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -108,7 +109,7 @@ fun ListSelectedGeneralSerials(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(vertical = 45.dp, horizontal = 16.dp)
+            .padding(vertical = 45.dp)
     ) {
         if (user != null) {
             user.let { userInfo ->
@@ -170,8 +171,8 @@ fun ListSelectedGeneralSerials(
                 IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
                     Icon(
                         Icons.Default.ArrowBackIosNew,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        contentDescription = stringResource(R.string.description_icon_back_button),
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
@@ -253,13 +254,10 @@ fun ListSelectedGeneralSerials(
             }
 
         } else {
-            Card(
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(8.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 LazyColumn(
                     state = listState,
