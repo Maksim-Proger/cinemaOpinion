@@ -43,9 +43,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
@@ -106,7 +108,7 @@ fun ListSelectedGeneralMovies(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(vertical = 45.dp, horizontal = 16.dp)
+            .padding(vertical = 45.dp)
     ) {
 
         if (user != null) {
@@ -169,8 +171,8 @@ fun ListSelectedGeneralMovies(
                 IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
                     Icon(
                         Icons.Default.ArrowBackIosNew,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        contentDescription = stringResource(R.string.description_icon_back_button),
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
@@ -248,13 +250,10 @@ fun ListSelectedGeneralMovies(
             }
 
         } else {
-            Card(
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(8.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                )
+            Column (
+                modifier = Modifier
+                    .weight(1f)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 when (stateMovie) {
                     is State.Loading -> {

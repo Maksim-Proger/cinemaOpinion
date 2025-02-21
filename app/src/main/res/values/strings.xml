@@ -65,6 +65,7 @@
     <string name="description_icon_home_button">Icon Home Button</string>
     <string name="description_icon_previous_page_button">Icon Previous Page Button</string>
     <string name="description_icon_next_page_button">Icon Next Page Button</string>
+    <string name="description_icon_back_button">Icon Back Button</string>
 
     <!--  Details Films Card   -->
     <string name="text_buttons_film_card_to_my_list">В свой список</string>
