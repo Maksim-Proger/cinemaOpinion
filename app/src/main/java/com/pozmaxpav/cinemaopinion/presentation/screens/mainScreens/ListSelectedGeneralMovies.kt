@@ -88,7 +88,7 @@ fun ListSelectedGeneralMovies(
     var username by remember { mutableStateOf("") }
     val stateMovie by viewModel.movieDownloadStatus.collectAsState()
     val info by viewModelMain.informationMovie.collectAsState()
-    var (comment, setComment) = remember { mutableStateOf("") }
+    val (comment, setComment) = remember { mutableStateOf("") }
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
