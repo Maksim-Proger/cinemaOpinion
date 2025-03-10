@@ -98,7 +98,7 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun fitchUser() { // TODO: Надо доработать чтобы получать пользователя по id
+    fun fitchUser() {
         viewModelScope.launch {
             try {
                 val user = getUserUseCase()
@@ -114,7 +114,7 @@ class UserViewModel @Inject constructor(
                 e.printStackTrace()
             }
         }
-    }
+    } // TODO: Надо доработать чтобы получать пользователя по id
 
     fun addUser(user: DomainUser) {
         viewModelScope.launch {

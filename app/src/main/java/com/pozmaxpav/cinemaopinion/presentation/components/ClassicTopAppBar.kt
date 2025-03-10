@@ -19,7 +19,8 @@ import com.pozmaxpav.cinemaopinion.R
 fun ClassicTopAppBar(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
-    onTransitionAction: () -> Unit
+    onShowTransitionAction: Boolean = true,
+    onTransitionAction: () -> Unit = {}
 ) {
     TopAppBar(
         scrollBehavior = scrollBehavior,
@@ -31,12 +32,14 @@ fun ClassicTopAppBar(
             )
         },
         actions = {
-            IconButton(onClick = onTransitionAction) {
-                Icon(
-                    imageVector = Icons.Default.Home,
-                    contentDescription = stringResource(id = R.string.description_icon_home_button),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
+            if (onShowTransitionAction) {
+                IconButton(onClick = onTransitionAction) {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = stringResource(id = R.string.description_icon_home_button),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(

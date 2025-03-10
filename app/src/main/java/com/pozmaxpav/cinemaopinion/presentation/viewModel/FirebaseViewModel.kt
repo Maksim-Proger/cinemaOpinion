@@ -27,6 +27,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -65,10 +66,16 @@ class FirebaseViewModel @Inject constructor(
     private val _listOfChanges = MutableStateFlow<List<DomainChangelogModel>>(emptyList())
     val listOfChanges = _listOfChanges.asStateFlow()
 
-    fun updatingUserData(user: DomainUser) {
+    fun updatingUserData(nikName: String, email: String, password: String) {
         viewModelScope.launch {
             try {
-                updatingUserDataUseCase(user)
+                val newUser = DomainUser(
+                    UUID.randomUUID().toString(),
+                    nikName,
+                    email,
+                    password
+                )
+                updatingUserDataUseCase(newUser)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

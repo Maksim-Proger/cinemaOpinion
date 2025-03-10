@@ -9,6 +9,16 @@ object SharedPreferences {
     private const val SYSTEM_THEME_ACTIVATION_MODE = "system_theme_activation_mode"
     private const val APP_VERSION_KEY = "app_version_key"
     private const val RESULT_CHECKING_APP_VERSION = "result_checking"
+    private const val REGISTRATION_FLAG = "registration_flag"
+
+    fun saveRegistrationFlag(context: Context, registrationFlag: Boolean) {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putBoolean(REGISTRATION_FLAG, registrationFlag).apply()
+    }
+    fun getRegistrationFlag(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(REGISTRATION_FLAG, false)
+    }
 
     fun saveAppVersion(context: Context, version: String) {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
@@ -31,17 +41,14 @@ object SharedPreferences {
         val sharedPreferences = context.getSharedPreferences(THEME_PREFERENCES, Context.MODE_PRIVATE)
         sharedPreferences.edit().putBoolean(MODE_APPLICATION_THEME, isModeTheme).apply()
     }
-
     fun getModeApplicationTheme(context: Context): Boolean {
         val sharedPreferences = context.getSharedPreferences(THEME_PREFERENCES, Context.MODE_PRIVATE)
         return sharedPreferences.getBoolean(MODE_APPLICATION_THEME, false)
     }
-
     fun saveModeActivationSystemTheme(context: Context, isSystemModeTheme: Boolean) {
         val sharedPreferences = context.getSharedPreferences(THEME_PREFERENCES, Context.MODE_PRIVATE)
         sharedPreferences.edit().putBoolean(SYSTEM_THEME_ACTIVATION_MODE, isSystemModeTheme).apply()
     }
-
     fun getModeActivationSystemTheme(context: Context) : Boolean {
         val sharedPreferences = context.getSharedPreferences(THEME_PREFERENCES, Context.MODE_PRIVATE)
         return sharedPreferences.getBoolean(SYSTEM_THEME_ACTIVATION_MODE, false)

@@ -18,8 +18,10 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetTopMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.information.GetMovieInformationUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.news.GetMediaNewsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetAppVersionUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetRegistrationFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetResultCheckingUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveAppVersionUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveRegistrationFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveResultCheckingUseCase
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,7 +45,9 @@ class MainViewModel @Inject constructor(
     private val getAppVersionUseCase: GetAppVersionUseCase,
     private val saveAppVersionUseCase: SaveAppVersionUseCase,
     private val getResultCheckingUseCase: GetResultCheckingUseCase,
-    private val saveResultCheckingUseCase: SaveResultCheckingUseCase
+    private val saveResultCheckingUseCase: SaveResultCheckingUseCase,
+    private val saveRegistrationFlagUseCase: SaveRegistrationFlagUseCase,
+    private val getRegistrationFlagUseCase: GetRegistrationFlagUseCase
 ) : ViewModel() {
 
     private val _versionApp = MutableStateFlow("Unknown")
@@ -51,6 +55,9 @@ class MainViewModel @Inject constructor(
 
     private val _resultChecking = MutableStateFlow(false)
     val resultChecking = _resultChecking.asStateFlow()
+
+    private val _registrationFlag = MutableStateFlow(false)
+    val registrationFlag = _registrationFlag.asStateFlow()
 
     private val _state = MutableStateFlow<State>(State.Success)
     val state: StateFlow<State> = _state.asStateFlow()
@@ -80,6 +87,27 @@ class MainViewModel @Inject constructor(
         getResultChecking()
     }
 
+    fun saveRegistrationFlag(registrationFlag: Boolean) {
+        viewModelScope.launch {
+            try {
+                saveRegistrationFlagUseCase(registrationFlag)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun getRegistrationFlag() {
+        viewModelScope.launch {
+            try {
+                val flag = getRegistrationFlagUseCase()
+                _registrationFlag.value = flag
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun resetResultChecking() {
         _resultChecking.value = true
     }
@@ -94,7 +122,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getAppVersion() {
+    private fun getAppVersion() {
         viewModelScope.launch {
             try {
                 val version = getAppVersionUseCase() ?: "Unknown"
@@ -111,7 +139,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getResultChecking() {
+    private fun getResultChecking() {
         viewModelScope.launch {
             try {
                 val result = getResultCheckingUseCase()

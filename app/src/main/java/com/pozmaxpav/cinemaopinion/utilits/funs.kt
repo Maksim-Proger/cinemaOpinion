@@ -82,7 +82,7 @@ fun AccountListItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun CustomTextField(
     value: String,
@@ -92,6 +92,8 @@ fun CustomTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     supportingText: @Composable (() -> Unit)? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    imeAction: ImeAction = ImeAction.Default,
     singleLine: Boolean = true
 ) {
     OutlinedTextField(
@@ -127,10 +129,8 @@ fun CustomTextField(
         } else null,
         supportingText = supportingText,
         keyboardOptions = KeyboardOptions(
-            // Указываем какой тип клавиатуры будет использоваться.
-            keyboardType = KeyboardType.Text,
-            // Указываем, каким образом будет обрабатываться нажатие клавиши Enter.
-            imeAction = ImeAction.Done
+            keyboardType = keyboardType,
+            imeAction = imeAction
         ),
         keyboardActions = keyboardActions,
         singleLine = singleLine,

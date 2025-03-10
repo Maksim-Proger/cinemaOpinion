@@ -75,13 +75,13 @@ fun AddingNewUserScreen(
                     contentDescription = stringResource(id = R.string.description_floating_action_button_save),
                     textFloatingButton = stringResource(id = R.string.floating_action_button_save),
                     onButtonClick = {
-                        val newUser = DomainUser(
-                            UUID.randomUUID().toString(),
-                            firstName,
-                            lastName
-                        )
-                        viewModel.addUser(newUser)
-                        viewModelFirebase.updatingUserData(newUser)
+//                        val newUser = DomainUser(
+//                            UUID.randomUUID().toString(),
+//                            firstName,
+//                            lastName
+//                        )
+//                        viewModel.addUser(newUser)
+//                        viewModelFirebase.updatingUserData(firstName, lastName)
                         onClickClose()
                         showToast(context, nameToast)
                     },
@@ -120,7 +120,7 @@ fun AddingNewUserScreen(
                 CustomTextField(
                     value = lastName,
                     onValueChange = setLastName,
-                    label = { Text(stringResource(id = R.string.text_for_add_lastName_field)) },
+//                    label = { Text(stringResource(id = R.string.text_for_add_lastName_field)) },
                     placeholder = { Text(stringResource(id = R.string.placeholder_for_add_lastName_field)) },
                     leadingIcon = {
                         Icon(
