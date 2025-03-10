@@ -126,16 +126,17 @@ fun AccountScreen(
                         Column {
                             user?.let { user ->
                                 Text(
-                                    text = user.firstName,
+                                    text = user.nikName,
                                     style = MaterialTheme.typography.displayMedium
                                 )
                                 Text(
-                                    text = user.lastName,
+                                    text = user.email,
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                             }
                         }
                     } else {
+                        // TODO: Удалить!
                         Button(
                             onClick = {
                                 onAddingNewUserScreenButtonClick =
@@ -223,6 +224,7 @@ fun AccountScreen(
         }
     }
 
+    // TODO: Удалить!
     if (onAddingNewUserScreenButtonClick) {
         CustomBoxShowOverlay(
             content = {

@@ -13,7 +13,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.presentation.navigation.NavGraph
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.LoginScreen
 import com.pozmaxpav.cinemaopinion.presentation.theme.CinemaOpinionTheme
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.introduction.IntroductionScreensViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CheckAndUpdateAppVersion
@@ -33,9 +35,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val themeViewModel: ThemeViewModel = hiltViewModel()
+            val mainViewModel: MainViewModel = hiltViewModel()
             val introductionScreensViewModel: IntroductionScreensViewModel = hiltViewModel()
             val startDestination by introductionScreensViewModel.startDestination.collectAsState()
             val isLoading by introductionScreensViewModel.isLoading.collectAsState()
+            val registrationFlag by mainViewModel.registrationFlag.collectAsState()
             val context = LocalContext.current
 
             CinemaOpinionTheme(themeViewModel = themeViewModel) {
@@ -45,10 +49,14 @@ class MainActivity : ComponentActivity() {
                 ) {
                     if (!isLoading) {
                         CheckAndUpdateAppVersion(context)
-                        NavGraph(
-                            themeViewModel = themeViewModel,
-                            startDestination = startDestination
-                        )
+                        if (registrationFlag) {
+                            NavGraph(
+                                themeViewModel = themeViewModel,
+                                startDestination = startDestination
+                            )
+                        } else {
+                            LoginScreen()
+                        }
                     }
                 }
             }

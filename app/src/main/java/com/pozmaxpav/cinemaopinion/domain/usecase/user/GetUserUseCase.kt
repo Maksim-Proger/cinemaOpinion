@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetUserUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(): DomainUser? { // метод getUserUseCase возвращает User? (nullable). TODO: почему suspend operator fun???
+    suspend operator fun invoke(): DomainUser? { // метод getUserUseCase возвращает User? (nullable)
         return userRepository.getUser()
     }
 }
