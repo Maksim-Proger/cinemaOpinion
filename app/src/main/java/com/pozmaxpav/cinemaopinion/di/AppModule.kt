@@ -1,5 +1,5 @@
 package com.pozmaxpav.cinemaopinion.di
-// TODO: Почистить модуль
+
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
@@ -16,15 +16,12 @@ import com.pozmaxpav.cinemaopinion.data.localdb.appdb.AppDatabase
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.CommentPersonalListDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.SelectedMovieDao
 import com.pozmaxpav.cinemaopinion.data.localdb.dao.SeriesControlDao
-import com.pozmaxpav.cinemaopinion.data.localdb.dao.UserDao
-import com.pozmaxpav.cinemaopinion.data.localdb.migration.DatabaseMigrations
 import com.pozmaxpav.cinemaopinion.data.repository.CommentPersonalListRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.GetMovieInformationApiRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SelectedMovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SharedPreferencesRepository
-import com.pozmaxpav.cinemaopinion.data.repository.UserRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.FirebaseRepositoryImpl
 import com.pozmaxpav.cinemaopinion.domain.repository.CommentPersonalListRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.GetMovieInformationApiRepository
@@ -33,7 +30,6 @@ import com.pozmaxpav.cinemaopinion.domain.repository.SelectedMovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.SeriesControlRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.SystemSharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.UserRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
@@ -47,9 +43,6 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetListMoviesU
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetMovieByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCInsertUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCUpdateMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.user.GetUserUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.user.InsertUserUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.user.UpdateUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -145,48 +138,7 @@ object AppModule {
             context,
             AppDatabase::class.java,
             "user_database"
-        )
-            .addMigrations(
-                DatabaseMigrations.MIGRATION_1_2,
-                DatabaseMigrations.MIGRATION_3_4,
-                DatabaseMigrations.MIGRATION_4_5,
-                DatabaseMigrations.MIGRATION_5_6
-            )
-            .build()
-    }
-
-    // endregion
-
-    // region User
-
-    @Provides
-    @Singleton
-    fun provideUserDao(appDatabase: AppDatabase): UserDao {
-        return appDatabase.userDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserRepository(userDao: UserDao): UserRepository {
-        return UserRepositoryImpl(userDao)
-    }
-
-    @Provides
-    @Singleton
-    fun provideInsertUserUseCase(userRepository: UserRepository): InsertUserUseCase {
-        return InsertUserUseCase(userRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGetUserUseCase(userRepository: UserRepository): GetUserUseCase {
-        return GetUserUseCase(userRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideUpdateUserUseCase(userRepository: UserRepository): UpdateUserUseCase {
-        return UpdateUserUseCase(userRepository)
+        ).build()
     }
 
     // endregion

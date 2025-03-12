@@ -1,0 +1,164 @@
+package com.pozmaxpav.cinemaopinion.presentation.viewModel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.pozmaxpav.cinemaopinion.domain.models.User
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.AddUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetUsersUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdateSeasonalEventPointsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdatingUserDataUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UsersScreenUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import java.util.UUID
+import javax.inject.Inject
+
+@HiltViewModel
+class AuxiliaryUserViewModel @Inject constructor(
+    private val updatingUserDataUseCase: UpdatingUserDataUseCase,
+    private val updateSeasonalEventPointsUseCase: UpdateSeasonalEventPointsUseCase,
+    private val addUserUseCase: AddUserUseCase,
+    private val getUsersUseCase: GetUsersUseCase,
+    private val usersScreenUseCase: UsersScreenUseCase
+) : ViewModel() {
+
+    private val _users = MutableStateFlow<List<User>>(emptyList())
+    val users = _users.asStateFlow()
+
+    private val _seasonalEventPoints = MutableStateFlow(0L)
+    val seasonalEventPoints = _seasonalEventPoints.asStateFlow()
+
+    private val _listAwards = MutableStateFlow<List<String>>(emptyList())
+    val listAwards = _listAwards.asStateFlow()
+
+    fun getUsers() {
+        viewModelScope.launch {
+            try {
+                val user = getUsersUseCase()
+                _users.value = user
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun usersScreen(userId: String) {
+        viewModelScope.launch {
+            try {
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+//        user?.let {
+//            _seasonalEventPoints.value = it.seasonalEventPoints
+//            _listAwards.value = it.awards
+//        }
+    }
+
+    fun addUser(nikName: String, email: String, password: String) {
+        viewModelScope.launch {
+            try {
+                val newUser = User(
+                    UUID.randomUUID().toString(),
+                    nikName,
+                    email,
+                    password
+                )
+                addUserUseCase(newUser)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun updatingUserData(userId: String, nikName: String, email: String, password: String) {
+        viewModelScope.launch {
+            try {
+                val newUser = User(
+                    userId,
+                    nikName,
+                    email,
+                    password
+                )
+                updatingUserDataUseCase(newUser)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun updateSeasonalEventPoints(userId: String, fieldName: String, newValue: Any) {
+        viewModelScope.launch {
+            try {
+                updateSeasonalEventPointsUseCase(userId, fieldName, newValue)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+//    fun updateAwardsList(userId: String, newAward: String) {
+//        viewModelScope.launch {
+//            try {
+//                // Получаем текущий список наград напрямую из базы через UseCase
+//                val currentAwards = getAwardsUseCase(userId)
+//
+//                // Убираем некорректные вложенные списки или пустые значения
+//                val safeAwards = currentAwards.flatMap { award ->
+//                    if (award.startsWith("[") && award.endsWith("]")) {
+//                        // Если элемент является JSON-строкой списка, распаковываем его
+//                        Converters().toList(award)
+//                    } else {
+//                        listOf(award) // Оставляем элемент как есть
+//                    }
+//                }
+//
+//                // Добавляем новую награду к списку
+//                val updatedAwards = safeAwards + newAward
+//
+//                // Обновляем список в базе данных
+//                updateAwardsListUseCase(userId, updatedAwards)
+//
+//                // Обновляем StateFlow
+//                _listAwards.value = updatedAwards
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
+
+//    fun handleEvent(userId: String) {
+//        viewModelScope.launch {
+//            var points = _seasonalEventPoints.value
+//
+//            if (_seasonalEventPoints.value < 80L) {
+//                incrementSeasonalEventPoints(userId, 2L)
+//                points += 2L
+//            }
+//
+//            if (points == 40L) {
+//                updateAwardsList(userId, R.drawable.half_done.toString())
+//            }
+//
+//            if (points == 80L) {
+//                updateAwardsList(userId, R.drawable.complete_passage.toString())
+//            }
+//        }
+//    }
+//
+//    fun incrementSeasonalEventPoints(userId: String, increment: Long) {
+//        viewModelScope.launch {
+//            try {
+//                incrementSeasonalEventPointsUseCase(userId, increment)
+//                fitchUser()
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
+
+}
