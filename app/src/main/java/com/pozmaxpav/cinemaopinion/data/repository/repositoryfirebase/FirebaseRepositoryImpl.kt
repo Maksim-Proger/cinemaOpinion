@@ -8,8 +8,8 @@ import com.google.firebase.database.ValueEventListener
 import com.pozmaxpav.cinemaopinion.data.firebase.mappers.toData
 import com.pozmaxpav.cinemaopinion.data.firebase.mappers.toDomain
 import com.pozmaxpav.cinemaopinion.data.firebase.models.DataComment
-import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.User
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
@@ -18,7 +18,6 @@ import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -26,13 +25,57 @@ class FirebaseRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference
 ) : FirebaseRepository {
 
-    override suspend fun updatingUserData(domainUser: DomainUser) {
+    override suspend fun getUsers(): List<User> {
+        val snapshot = databaseReference.child(NODE_LIST_USERS).get().await()
+        return snapshot.children.mapNotNull { childrenSnapshot ->
+            childrenSnapshot.getValue(User::class.java)
+        }
+            .map {
+                User(
+                    id = it.id,
+                    nikName = it.nikName,
+                    email = it.email,
+                    password = it.password,
+                    awards = it.awards,
+                    professionalPoints = it.professionalPoints,
+                    seasonalEventPoints = it.seasonalEventPoints
+                )
+            }
+    }
+
+    override suspend fun usersScreen(userId: String): User? {
+        if (userId.isEmpty()) {
+            return null
+        }
+
+        val snapshot = databaseReference.child(NODE_LIST_USERS).child(userId).get().await()
+        return snapshot.getValue(User::class.java)?.let { userSnapshot ->
+            User(
+                id = userSnapshot.id,
+                nikName = userSnapshot.nikName,
+                email = userSnapshot.email,
+                password = userSnapshot.password,
+                awards = userSnapshot.awards,
+                professionalPoints = userSnapshot.professionalPoints,
+                seasonalEventPoints = userSnapshot.seasonalEventPoints
+            )
+        }
+    }
+
+    override suspend fun addUser(user: User) {
+        val key = databaseReference.child(NODE_LIST_USERS).push().key
+        key?.let {
+            databaseReference.child(NODE_LIST_USERS).child(it).setValue(user).await()
+        } ?: throw Exception("Failed to generate key")
+    }
+
+    override suspend fun updatingUserData(user: User) {
         // Используем `id` как ключ
-        val userId = domainUser.id
+        val userId = user.id
 
         if (userId.isNotEmpty()) {
             // Сохраняем данные по ID
-            databaseReference.child(NODE_LIST_USERS).child(userId).setValue(domainUser).await()
+            databaseReference.child(NODE_LIST_USERS).child(userId).setValue(user).await()
         } else {
             throw Exception("User ID is missing")
         }

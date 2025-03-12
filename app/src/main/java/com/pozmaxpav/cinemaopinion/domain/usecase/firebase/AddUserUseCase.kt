@@ -4,10 +4,10 @@ import com.pozmaxpav.cinemaopinion.domain.models.User
 import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
 import javax.inject.Inject
 
-class UpdatingUserDataUseCase @Inject constructor(
+class AddUserUseCase @Inject constructor(
     private val repository: FirebaseRepository
 ) {
     suspend operator fun invoke(user: User) {
-        repository.updatingUserData(user)
+        repository.addUser(user)
     }
 }

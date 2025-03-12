@@ -2,8 +2,8 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.DomainUser
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.User
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.AddCommentUseCase
@@ -43,9 +43,7 @@ class FirebaseViewModel @Inject constructor(
     private val getRecordsOfChangesUseCase: GetRecordsOfChangesUseCase,
     private val removeRecordsOfChangesUseCase: RemoveRecordsOfChangesUseCase,
     private val sendingToTheViewedFolderUseCase: SendingToTheViewedFolderUseCase,
-    private val sendingToTheSerialsListUseCase: SendingToTheSerialsListUseCase,
-    private val updatingUserDataUseCase: UpdatingUserDataUseCase,
-    private val updateSeasonalEventPointsUseCase: UpdateSeasonalEventPointsUseCase
+    private val sendingToTheSerialsListUseCase: SendingToTheSerialsListUseCase
 ) : ViewModel() {
 
     private val _movieDownloadStatus = MutableStateFlow<State>(State.Success)
@@ -65,32 +63,6 @@ class FirebaseViewModel @Inject constructor(
 
     private val _listOfChanges = MutableStateFlow<List<DomainChangelogModel>>(emptyList())
     val listOfChanges = _listOfChanges.asStateFlow()
-
-    fun updatingUserData(nikName: String, email: String, password: String) {
-        viewModelScope.launch {
-            try {
-                val newUser = DomainUser(
-                    UUID.randomUUID().toString(),
-                    nikName,
-                    email,
-                    password
-                )
-                updatingUserDataUseCase(newUser)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    fun updateSeasonalEventPoints(userId: String, fieldName: String, newValue: Any) {
-        viewModelScope.launch {
-            try {
-                updateSeasonalEventPointsUseCase(userId, fieldName, newValue)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 
     fun sendingToTheViewedFolder(
         dataSource: String,
