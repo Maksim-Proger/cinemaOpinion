@@ -2,7 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.User
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.AddUserUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetUsersUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdateSeasonalEventPointsUseCase

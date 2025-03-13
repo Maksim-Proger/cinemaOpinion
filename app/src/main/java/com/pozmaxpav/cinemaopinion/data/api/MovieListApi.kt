@@ -6,7 +6,7 @@ import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearch
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearchList2
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieTopList
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.news.ApiNewsList
-import com.pozmaxpav.cinemaopinion.utilits.API_KEY
+import com.pozmaxpav.cinemaopinion.utilits.Constants.API_KEY
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path

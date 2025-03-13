@@ -1,7 +1,7 @@
 package com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase
 
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
-import com.pozmaxpav.cinemaopinion.domain.models.User
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 
@@ -18,7 +18,6 @@ interface FirebaseRepository {
     suspend fun removeRecordsOfChanges(id: String)
     suspend fun sendingToTheViewedFolder(dataSource: String, directionDataSource: String, movieId: Double)
     suspend fun sendingToTheSerialsList(movieId: Double)
-
     suspend fun getUsers(): List<User>
     suspend fun usersScreen(userId: String): User?
     suspend fun addUser(user: User)

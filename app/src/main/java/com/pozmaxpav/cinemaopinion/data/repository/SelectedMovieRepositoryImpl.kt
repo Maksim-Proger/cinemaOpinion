@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.data.repository
 
-import com.pozmaxpav.cinemaopinion.data.localdb.dao.SelectedMovieDao
+import com.pozmaxpav.cinemaopinion.data.local.room.dao.SelectedMovieDao
 import com.pozmaxpav.cinemaopinion.data.mappers.toDomain
 import com.pozmaxpav.cinemaopinion.data.mappers.toEntity
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie

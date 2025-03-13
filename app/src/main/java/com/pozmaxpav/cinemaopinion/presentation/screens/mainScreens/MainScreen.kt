@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -56,7 +55,7 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
@@ -74,7 +73,7 @@ import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -97,8 +96,16 @@ fun MainScreen(navController: NavHostController) {
     var searchBarActive by remember { mutableStateOf(false) }
     var searchCompleted by remember { mutableStateOf(false) } // Флаг для отображения списка фильмов после поиска
     val searchHistory = mutableListOf<String>()
+
     // Расширенный поиск
-    var requestBody by remember { mutableStateOf(CompositeRequest(null, null, null, null, null, null, null)) }
+    var requestBody by remember {
+        mutableStateOf(
+            CompositeRequest(
+                null, null, null, null, null,
+                null, null
+            )
+        )
+    }
     var sendRequestCompleted by remember { mutableStateOf(false) } // Флаг для предотвращения повторной отправки запроса
 
     // Состояния для открытия страниц
@@ -114,14 +121,14 @@ fun MainScreen(navController: NavHostController) {
 
     // Работаем с ViewModel
     val viewModel: MainViewModel = hiltViewModel()
-    val userViewModel:UserViewModel = hiltViewModel()
+//    val userViewModel:UserViewModel = hiltViewModel()
     val firebaseViewModel: FirebaseViewModel = hiltViewModel()
     val premiereMovies = viewModel.premiersMovies.collectAsState()
     val topListMovies = viewModel.topListMovies.collectAsState()
     val searchMovies = viewModel.searchMovies.collectAsState()
     val searchMovies2 = viewModel.searchMovies2.collectAsState()
     val newYearMoviesList by firebaseViewModel.movies.collectAsState()
-    val user by userViewModel.users.collectAsState()
+//    val user by userViewModel.users.collectAsState()
     val state by viewModel.state.collectAsState()
     val showDialogEvents by viewModel.resultChecking.collectAsState()
 
@@ -151,19 +158,19 @@ fun MainScreen(navController: NavHostController) {
     LaunchedEffect(Unit) {
         viewModel.fetchPremiersMovies(2025, "January")
         viewModel.fetchTopListMovies(currentPage)
-        userViewModel.fitchUser()
+//        userViewModel.fitchUser()
     }
 
-    LaunchedEffect(user) {
-        if (user != null) {
-            user.let { userInfo ->
-                username = userInfo?.firstName ?: "Таинственный пользователь"
-//                firebaseViewModel.updatingUserData(user!!) // Нужно, чтобы инициализировать первичное обновление
-            }
-        } else {
-            username = "Таинственный пользователь"
-        }
-    }
+//    LaunchedEffect(user) {
+//        if (user != null) {
+//            user.let { userInfo ->
+//                username = userInfo?.firstName ?: "Таинственный пользователь"
+////                firebaseViewModel.updatingUserData(user!!) // Нужно, чтобы инициализировать первичное обновление
+//            }
+//        } else {
+//            username = "Таинственный пользователь"
+//        }
+//    }
 
     LaunchedEffect(onAccountButtonClick) {
         firebaseViewModel.getMovies(NODE_NEW_YEAR_LIST)

@@ -1,9 +1,9 @@
 package com.pozmaxpav.cinemaopinion.data.repository
 
-import com.pozmaxpav.cinemaopinion.data.localdb.dao.SeriesControlDao
+import com.pozmaxpav.cinemaopinion.data.local.room.dao.SeriesControlDao
 import com.pozmaxpav.cinemaopinion.data.mappers.toDomain
 import com.pozmaxpav.cinemaopinion.data.mappers.toEntity
-import com.pozmaxpav.cinemaopinion.domain.models.SeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.models.room.models.SeriesControlModel
 import com.pozmaxpav.cinemaopinion.domain.repository.SeriesControlRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

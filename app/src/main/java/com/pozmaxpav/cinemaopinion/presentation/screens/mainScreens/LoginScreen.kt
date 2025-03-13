@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,6 +42,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.showToast
@@ -46,7 +50,8 @@ import com.pozmaxpav.cinemaopinion.utilits.showToast
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    viewModelFirebase: FirebaseViewModel = hiltViewModel()
+    viewModelFirebase: FirebaseViewModel = hiltViewModel(),
+    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
 ) {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -58,6 +63,15 @@ fun LoginScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+
+
+
+    LaunchedEffect(Unit) {
+        auxiliaryUserViewModel.getUsers()
+    }
+    val users by auxiliaryUserViewModel.users.collectAsState()
+
+
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -76,6 +90,7 @@ fun LoginScreen(
                 content = {
                     RegistrationWindow(
                         viewModelFirebase,
+                        auxiliaryUserViewModel,
                         keyboardController,
                         focusManager,
                         onClose = {
@@ -152,6 +167,7 @@ fun LoginScreen(
                 CustomTextButton(
                     textButton = "Вход",
                     onClickButton = {
+                        Log.d("@@@", users.toString())
                         /*TODO: Добавить проверку данных перед входом*/
                         /*TODO: Добавить действие входа*/
                     }
@@ -164,6 +180,7 @@ fun LoginScreen(
 @Composable
 fun RegistrationWindow(
     viewModelFirebase: FirebaseViewModel,
+    auxiliaryUserViewModel: AuxiliaryUserViewModel,
     keyboardController: SoftwareKeyboardController?,
     focusManager: FocusManager,
     onClose: () -> Unit
@@ -249,7 +266,7 @@ fun RegistrationWindow(
                 textButton = "Сохранить",
                 paddingEnd = 15.dp,
                 onClickButton = {
-                    viewModelFirebase.updatingUserData(nikName, email, password)
+                    auxiliaryUserViewModel.addUser(nikName, email, password)
                     onClose()
                 }
             )

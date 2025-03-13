@@ -57,7 +57,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSele
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
@@ -77,14 +77,14 @@ import java.util.Locale
 fun ListSelectedGeneralMovies(
     navController: NavHostController,
     viewModel: FirebaseViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel(),
+//    userViewModel: UserViewModel = hiltViewModel(),
     viewModelMain: MainViewModel = hiltViewModel()
 ) {
     val listMovies by viewModel.movies.collectAsState()
     val listComments by viewModel.comments.collectAsState()
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
-    val user by userViewModel.users.collectAsState()
+//    val user by userViewModel.users.collectAsState()
     var username by remember { mutableStateOf("") }
     val stateMovie by viewModel.movieDownloadStatus.collectAsState()
     val info by viewModelMain.informationMovie.collectAsState()
@@ -95,7 +95,7 @@ fun ListSelectedGeneralMovies(
     LaunchedEffect(Unit) {
         viewModel.getMovies(NODE_LIST_MOVIES)
         viewModel.observeListMovies(NODE_LIST_MOVIES)
-        userViewModel.fitchUser()
+//        userViewModel.fitchUser()
     }
 
     LaunchedEffect(selectedNote) {
@@ -111,13 +111,13 @@ fun ListSelectedGeneralMovies(
             .padding(vertical = 45.dp)
     ) {
 
-        if (user != null) {
-            user.let { userInfo ->
-                username = userInfo?.firstName ?: "Таинственный пользователь"
-            }
-        } else {
-            username = "Таинственный пользователь"
-        }
+//        if (user != null) {
+//            user.let { userInfo ->
+//                username = userInfo?.firstName ?: "Таинственный пользователь"
+//            }
+//        } else {
+//            username = "Таинственный пользователь"
+//        }
 
         if (openBottomSheetComments) {
             MyBottomSheet(

@@ -11,11 +11,11 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.pozmaxpav.cinemaopinion.data.api.GetMovieInformationApi
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
-import com.pozmaxpav.cinemaopinion.data.localdatastore.LocalUserManagerImpl
-import com.pozmaxpav.cinemaopinion.data.localdb.appdb.AppDatabase
-import com.pozmaxpav.cinemaopinion.data.localdb.dao.CommentPersonalListDao
-import com.pozmaxpav.cinemaopinion.data.localdb.dao.SelectedMovieDao
-import com.pozmaxpav.cinemaopinion.data.localdb.dao.SeriesControlDao
+import com.pozmaxpav.cinemaopinion.data.local.datastore.LocalUserManagerImpl
+import com.pozmaxpav.cinemaopinion.data.local.room.appdb.AppDatabase
+import com.pozmaxpav.cinemaopinion.data.local.room.dao.CommentPersonalListDao
+import com.pozmaxpav.cinemaopinion.data.local.room.dao.SelectedMovieDao
+import com.pozmaxpav.cinemaopinion.data.local.room.dao.SeriesControlDao
 import com.pozmaxpav.cinemaopinion.data.repository.CommentPersonalListRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.GetMovieInformationApiRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl

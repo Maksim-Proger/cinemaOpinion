@@ -52,7 +52,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSele
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WAITING_CONTINUATION_SERIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
@@ -69,7 +69,7 @@ import java.util.Locale
 fun ListWaitingContinuationSeries(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel(),
+//    userViewModel: UserViewModel = hiltViewModel(),
     viewModelMain: MainViewModel = hiltViewModel()
 ) {
 
@@ -78,7 +78,7 @@ fun ListWaitingContinuationSeries(
     val listComments by firebaseViewModel.comments.collectAsState()
     val info by viewModelMain.informationMovie.collectAsState()
     val stateMovies by firebaseViewModel.movieDownloadStatus.collectAsState()
-    val user by userViewModel.users.collectAsState()
+//    val user by userViewModel.users.collectAsState()
     var username by remember { mutableStateOf("") }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
@@ -90,7 +90,7 @@ fun ListWaitingContinuationSeries(
     LaunchedEffect(Unit) {
         firebaseViewModel.getMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
         firebaseViewModel.observeListMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
-        userViewModel.fitchUser()
+//        userViewModel.fitchUser()
     }
 
     LaunchedEffect(selectedNote) {
@@ -121,13 +121,13 @@ fun ListWaitingContinuationSeries(
                     .padding(vertical = 45.dp, horizontal = 16.dp)
             ) {
 
-                if (user != null) {
-                    user.let { userInfo ->
-                        username = userInfo?.firstName ?: "Таинственный пользователь"
-                    }
-                } else {
-                    username = "Таинственный пользователь"
-                }
+//                if (user != null) {
+//                    user.let { userInfo ->
+//                        username = userInfo?.firstName ?: "Таинственный пользователь"
+//                    }
+//                } else {
+//                    username = "Таинственный пользователь"
+//                }
 
                 if (openBottomSheetComments) {
                     MyBottomSheet(

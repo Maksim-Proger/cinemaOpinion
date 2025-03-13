@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.repository
 
-import com.pozmaxpav.cinemaopinion.domain.models.CommentPersonalListModel
+import com.pozmaxpav.cinemaopinion.domain.models.room.models.CommentPersonalListModel
 import kotlinx.coroutines.flow.Flow
 
 interface CommentPersonalListRepository {
