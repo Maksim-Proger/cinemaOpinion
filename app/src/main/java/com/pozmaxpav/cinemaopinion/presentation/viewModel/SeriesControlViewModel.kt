@@ -2,7 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.SeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.models.room.models.SeriesControlModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCDeleteMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetListMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetMovieByIdUseCase

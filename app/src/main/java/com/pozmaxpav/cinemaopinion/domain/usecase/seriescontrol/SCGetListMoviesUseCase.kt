@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol
 
-import com.pozmaxpav.cinemaopinion.domain.models.SeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.models.room.models.SeriesControlModel
 import com.pozmaxpav.cinemaopinion.domain.repository.SeriesControlRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

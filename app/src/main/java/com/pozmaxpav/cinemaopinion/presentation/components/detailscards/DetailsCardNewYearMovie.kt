@@ -39,7 +39,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarSc
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
@@ -52,15 +52,15 @@ fun DetailsCard(
     errorToast: String,
     viewModelFirebase: FirebaseViewModel = hiltViewModel(),
     viewModelMain: MainViewModel = hiltViewModel(),
-    viewModelUser: UserViewModel = hiltViewModel(),
+//    viewModelUser: UserViewModel = hiltViewModel(),
     viewModel: SelectedMovieViewModel = hiltViewModel(),
 ) {
-    val user by viewModelUser.users.collectAsState()
+//    val user by viewModelUser.users.collectAsState()
     var userId by remember { mutableStateOf("") }
     val info by viewModelMain.informationMovie.collectAsState()
     var showRatingBar by remember { mutableStateOf(false) }
-    val getSeasonalEventPoints by viewModelUser.seasonalEventPoints.collectAsState()
-    val listAwards by viewModelUser.listAwards.collectAsState()
+//    val getSeasonalEventPoints by viewModelUser.seasonalEventPoints.collectAsState()
+//    val listAwards by viewModelUser.listAwards.collectAsState()
     val statusExist by viewModel.status.collectAsState()
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -69,33 +69,33 @@ fun DetailsCard(
         viewModelMain.getInformationMovie(newYearMovie.id)
     }
 
-    LaunchedEffect(user) {
-        if (user != null) {
-            user.let {
-                userId = it!!.id.toString()
-            }
-        }
-    }
+//    LaunchedEffect(user) {
+//        if (user != null) {
+//            user.let {
+//                userId = it!!.id.toString()
+//            }
+//        }
+//    }
 
-    LaunchedEffect(listAwards) {
-        if (getSeasonalEventPoints == 40L) {
-            viewModelFirebase.updateSeasonalEventPoints(
-                userId, "awards", listAwards.toString()
-            )
-        }
+//    LaunchedEffect(listAwards) {
+//        if (getSeasonalEventPoints == 40L) {
+//            viewModelFirebase.updateSeasonalEventPoints(
+//                userId, "awards", listAwards.toString()
+//            )
+//        }
+//
+//        if (getSeasonalEventPoints == 80L) {
+//            viewModelFirebase.updateSeasonalEventPoints(
+//                userId, "awards", listAwards.toString()
+//            )
+//        }
+//    }
 
-        if (getSeasonalEventPoints == 80L) {
-            viewModelFirebase.updateSeasonalEventPoints(
-                userId, "awards", listAwards.toString()
-            )
-        }
-    }
-
-    LaunchedEffect(getSeasonalEventPoints) {
-        viewModelFirebase.updateSeasonalEventPoints(
-            userId, "seasonalEventPoints", getSeasonalEventPoints
-        )
-    }
+//    LaunchedEffect(getSeasonalEventPoints) {
+//        viewModelFirebase.updateSeasonalEventPoints(
+//            userId, "seasonalEventPoints", getSeasonalEventPoints
+//        )
+//    }
 
     Column(
         modifier = Modifier
@@ -103,17 +103,17 @@ fun DetailsCard(
             .padding(padding)
     ) {
 
-        if (showRatingBar) {
-            RatingBarScaffold(
-                score = getSeasonalEventPoints,
-                onCloseButton = {
-                    showRatingBar = !showRatingBar
-                }
-            )
-            BackHandler {
-                showRatingBar = false
-            }
-        }
+//        if (showRatingBar) {
+//            RatingBarScaffold(
+//                score = getSeasonalEventPoints,
+//                onCloseButton = {
+//                    showRatingBar = !showRatingBar
+//                }
+//            )
+//            BackHandler {
+//                showRatingBar = false
+//            }
+//        }
 
         Card(
             modifier = Modifier
@@ -184,7 +184,7 @@ fun DetailsCard(
                     ) {
                         Button(
                             onClick = {
-                                viewModelUser.handleEvent(userId)
+//                                viewModelUser.handleEvent(userId)
                                 showRatingBar = !showRatingBar
                             },
                             colors = ButtonDefaults.buttonColors(

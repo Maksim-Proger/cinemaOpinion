@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.commentPersonalList
 
-import com.pozmaxpav.cinemaopinion.domain.models.CommentPersonalListModel
+import com.pozmaxpav.cinemaopinion.domain.models.room.models.CommentPersonalListModel
 import com.pozmaxpav.cinemaopinion.domain.repository.CommentPersonalListRepository
 import javax.inject.Inject
 

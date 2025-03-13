@@ -46,7 +46,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.AddingNewUserScreen
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
@@ -54,16 +54,16 @@ import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 fun AccountScreen(
     navController: NavHostController,
     onClick: () -> Unit,
-    viewModel: UserViewModel = hiltViewModel()
+//    viewModel: UserViewModel = hiltViewModel()
 ) {
 
-    LaunchedEffect(Unit) {
-        viewModel.fitchUser()
-    }
-
-    val user by viewModel.users.collectAsState()
-    val listAwards by viewModel.listAwards.collectAsState()
-    var onAddingNewUserScreenButtonClick by remember { mutableStateOf(false) }
+//    LaunchedEffect(Unit) {
+//        viewModel.fitchUser()
+//    }
+//
+//    val user by viewModel.users.collectAsState()
+//    val listAwards by viewModel.listAwards.collectAsState()
+//    var onAddingNewUserScreenButtonClick by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -120,32 +120,32 @@ fun AccountScreen(
                             .tint(MaterialTheme.colorScheme.onSurfaceVariant)
                     )
 
-                    Spacer(modifier = Modifier.padding(8.dp))
-
-                    if (user != null) {
-                        Column {
-                            user?.let { user ->
-                                Text(
-                                    text = user.nikName,
-                                    style = MaterialTheme.typography.displayMedium
-                                )
-                                Text(
-                                    text = user.email,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-                        }
-                    } else {
-                        // TODO: Удалить!
-                        Button(
-                            onClick = {
-                                onAddingNewUserScreenButtonClick =
-                                    !onAddingNewUserScreenButtonClick
-                            }
-                        ) {
-                            Text(text = "Войти")
-                        }
-                    }
+//                    Spacer(modifier = Modifier.padding(8.dp))
+//
+//                    if (user != null) {
+//                        Column {
+//                            user?.let { user ->
+//                                Text(
+//                                    text = user.nikName,
+//                                    style = MaterialTheme.typography.displayMedium
+//                                )
+//                                Text(
+//                                    text = user.email,
+//                                    style = MaterialTheme.typography.bodyLarge
+//                                )
+//                            }
+//                        }
+//                    } else {
+//                        // TODO: Удалить!
+//                        Button(
+//                            onClick = {
+//                                onAddingNewUserScreenButtonClick =
+//                                    !onAddingNewUserScreenButtonClick
+//                            }
+//                        ) {
+//                            Text(text = "Войти")
+//                        }
+//                    }
                 }
 
                 HorizontalDivider(
@@ -192,52 +192,52 @@ fun AccountScreen(
                 }
 
                 // Выводим награды на экран
-                Column(
-                    modifier = Modifier.padding(10.dp).weight(1f),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    if (listAwards.isNotEmpty()) {
-                        Text(
-                            text = "Зал славы",
-                            style = MaterialTheme.typography.displayMedium,
-                            modifier = Modifier
-                                .padding(bottom = 16.dp)
-                                .align(alignment = Alignment.CenterHorizontally)
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        for (i in listAwards) {
-                            Image(
-                                painter = painterResource(id = i.toInt()),
-                                contentDescription = null,
-                                modifier = Modifier.height(70.dp)
-                            )
-                        }
-                    }
-                }
+//                Column(
+//                    modifier = Modifier.padding(10.dp).weight(1f),
+//                    verticalArrangement = Arrangement.Bottom
+//                ) {
+//                    if (listAwards.isNotEmpty()) {
+//                        Text(
+//                            text = "Зал славы",
+//                            style = MaterialTheme.typography.displayMedium,
+//                            modifier = Modifier
+//                                .padding(bottom = 16.dp)
+//                                .align(alignment = Alignment.CenterHorizontally)
+//                        )
+//                    }
+//
+//                    Row(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        horizontalArrangement = Arrangement.Center,
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        for (i in listAwards) {
+//                            Image(
+//                                painter = painterResource(id = i.toInt()),
+//                                contentDescription = null,
+//                                modifier = Modifier.height(70.dp)
+//                            )
+//                        }
+//                    }
+//                }
             }
         }
     }
 
     // TODO: Удалить!
-    if (onAddingNewUserScreenButtonClick) {
-        CustomBoxShowOverlay(
-            content = {
-                AddingNewUserScreen(
-                    nameToast = stringResource(R.string.add_new_account),
-                    onClickClose = { onAddingNewUserScreenButtonClick = false }
-                )
-                BackHandler {
-                    onAddingNewUserScreenButtonClick = false
-                }
-            }
-        )
-    }
+//    if (onAddingNewUserScreenButtonClick) {
+//        CustomBoxShowOverlay(
+//            content = {
+//                AddingNewUserScreen(
+//                    nameToast = stringResource(R.string.add_new_account),
+//                    onClickClose = { onAddingNewUserScreenButtonClick = false }
+//                )
+//                BackHandler {
+//                    onAddingNewUserScreenButtonClick = false
+//                }
+//            }
+//        )
+//    }
 
 }
 

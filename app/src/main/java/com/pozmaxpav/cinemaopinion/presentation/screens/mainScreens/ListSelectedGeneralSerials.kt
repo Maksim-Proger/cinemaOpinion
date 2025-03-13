@@ -58,7 +58,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSele
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WAITING_CONTINUATION_SERIES
@@ -79,14 +79,14 @@ import java.util.Locale
 fun ListSelectedGeneralSerials(
     navController: NavHostController,
     viewModel: FirebaseViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel(),
+//    userViewModel: UserViewModel = hiltViewModel(),
     viewModelMain: MainViewModel = hiltViewModel()
 ) {
 
     val listSerials by viewModel.movies.collectAsState()
     val listComments by viewModel.comments.collectAsState()
     var selectedSerial by remember { mutableStateOf<SelectedMovie?>(null) }
-    val user by userViewModel.users.collectAsState()
+//    val user by userViewModel.users.collectAsState()
     var username by remember { mutableStateOf("") }
     val info by viewModelMain.informationMovie.collectAsState()
     val (comment, setComment) = remember { mutableStateOf("") }
@@ -97,7 +97,7 @@ fun ListSelectedGeneralSerials(
     LaunchedEffect(Unit) {
         viewModel.getMovies(NODE_LIST_SERIALS)
         viewModel.observeListMovies(NODE_LIST_SERIALS)
-        userViewModel.fitchUser()
+//        userViewModel.fitchUser()
     }
     LaunchedEffect(selectedSerial) {
         if (selectedSerial != null) { // TODO: Надо проверить на утечку запросов
@@ -111,13 +111,13 @@ fun ListSelectedGeneralSerials(
             .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 45.dp)
     ) {
-        if (user != null) {
-            user.let { userInfo ->
-                username = userInfo?.firstName ?: "Таинственный пользователь"
-            }
-        } else {
-            username = "Таинственный пользователь"
-        }
+//        if (user != null) {
+//            user.let { userInfo ->
+//                username = userInfo?.firstName ?: "Таинственный пользователь"
+//            }
+//        } else {
+//            username = "Таинственный пользователь"
+//        }
 
         if (openBottomSheetComments) {
             MyBottomSheet(

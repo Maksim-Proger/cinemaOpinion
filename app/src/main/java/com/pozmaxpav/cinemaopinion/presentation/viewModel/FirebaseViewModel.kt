@@ -3,7 +3,6 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
-import com.pozmaxpav.cinemaopinion.domain.models.User
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.AddCommentUseCase
@@ -15,8 +14,6 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SendingToTheSerialsListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SendingToTheViewedFolderUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdateSeasonalEventPointsUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdatingUserDataUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.RemoveRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeRecordUseCase
@@ -27,7 +24,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel

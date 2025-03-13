@@ -2,13 +2,13 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData.MovieSearch
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList2
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.information.Information
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsList
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData.MovieSearch
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieList
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList2
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieTopList
+import com.pozmaxpav.cinemaopinion.domain.models.api.information.Information
+import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsList
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetPremiereMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchFilmsByFiltersUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.movies.GetSearchMovieByIdUseCase

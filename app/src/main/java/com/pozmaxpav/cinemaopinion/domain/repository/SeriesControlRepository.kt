@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.repository
 
-import com.pozmaxpav.cinemaopinion.domain.models.SeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.models.room.models.SeriesControlModel
 import kotlinx.coroutines.flow.Flow
 
 interface SeriesControlRepository {

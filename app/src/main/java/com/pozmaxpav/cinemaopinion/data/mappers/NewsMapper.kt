@@ -2,8 +2,8 @@ package com.pozmaxpav.cinemaopinion.data.mappers
 
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.news.ApiNewsList
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.news.ApiNewsModel
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsList
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsModel
+import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsList
+import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsModel
 
 fun ApiNewsModel.toDomain(): NewsModel {
     return NewsModel(

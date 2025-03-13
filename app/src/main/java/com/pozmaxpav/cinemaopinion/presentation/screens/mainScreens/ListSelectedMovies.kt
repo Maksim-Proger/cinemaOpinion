@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.CommentPersonalListModel
+import com.pozmaxpav.cinemaopinion.domain.models.room.models.CommentPersonalListModel
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet

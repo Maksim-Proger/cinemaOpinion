@@ -32,7 +32,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
@@ -41,7 +41,7 @@ import com.pozmaxpav.cinemaopinion.utilits.showToast
 fun AddingNewUserScreen(
     nameToast: String,
     onClickClose: () -> Unit,
-    viewModel: UserViewModel = hiltViewModel(),
+//    viewModel: UserViewModel = hiltViewModel(),
     viewModelFirebase: FirebaseViewModel = hiltViewModel()
 ) {
     val (firstName, setFirstName) = remember { mutableStateOf("") }

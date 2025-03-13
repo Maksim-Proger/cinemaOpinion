@@ -10,13 +10,13 @@ import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieTop
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieTopList
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearchList
 import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearchList2
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.Country
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.Genre
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList2
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.Country
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.Genre
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieList
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieTopList
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList2
 
 fun ApiGenre.toDomain(): Genre {
     return Genre(

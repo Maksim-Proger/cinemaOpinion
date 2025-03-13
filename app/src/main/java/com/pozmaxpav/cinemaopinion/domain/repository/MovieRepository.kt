@@ -1,11 +1,11 @@
 package com.pozmaxpav.cinemaopinion.domain.repository
 
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData.MovieSearch
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieList
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieTopList
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieSearchList2
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.news.NewsList
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData.MovieSearch
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieList
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieTopList
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList2
+import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsList
 
 interface MovieRepository {
     suspend fun getPremiereMovies(year: Int, month: String): MovieList

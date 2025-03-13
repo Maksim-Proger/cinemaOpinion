@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.movies
 
-import com.pozmaxpav.cinemaopinion.domain.models.moviemodels.MovieData.MovieSearch
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData.MovieSearch
 import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
 import javax.inject.Inject
 
