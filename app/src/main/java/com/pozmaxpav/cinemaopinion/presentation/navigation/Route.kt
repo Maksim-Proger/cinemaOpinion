@@ -16,4 +16,5 @@ sealed class Route(
     data object ListSelectedGeneralSerials : Route(route = "list_selected_general_serials")
     data object ListSelectedMovies : Route(route = "list_selected_movies")
     data object ListWaitingContinuationSeries : Route(route = "list_waiting_continuation_series")
+    data object LoginScreen : Route(route = "login_screen")
 }

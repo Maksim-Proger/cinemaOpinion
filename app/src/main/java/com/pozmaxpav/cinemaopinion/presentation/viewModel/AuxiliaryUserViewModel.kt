@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.AddUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.CheckLoginAndPasswordUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetUsersUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdateSeasonalEventPointsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdatingUserDataUseCase
@@ -21,11 +22,15 @@ class AuxiliaryUserViewModel @Inject constructor(
     private val updateSeasonalEventPointsUseCase: UpdateSeasonalEventPointsUseCase,
     private val addUserUseCase: AddUserUseCase,
     private val getUsersUseCase: GetUsersUseCase,
-    private val usersScreenUseCase: UsersScreenUseCase
+    private val usersScreenUseCase: UsersScreenUseCase,
+    private val checkLoginAndPasswordUseCase: CheckLoginAndPasswordUseCase
 ) : ViewModel() {
 
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users = _users.asStateFlow()
+
+    private val _user = MutableStateFlow<User?>(null)
+    val user = _user.asStateFlow()
 
     private val _seasonalEventPoints = MutableStateFlow(0L)
     val seasonalEventPoints = _seasonalEventPoints.asStateFlow()
@@ -45,20 +50,6 @@ class AuxiliaryUserViewModel @Inject constructor(
         }
     }
 
-    fun usersScreen(userId: String) {
-        viewModelScope.launch {
-            try {
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-//        user?.let {
-//            _seasonalEventPoints.value = it.seasonalEventPoints
-//            _listAwards.value = it.awards
-//        }
-    }
-
     fun addUser(nikName: String, email: String, password: String) {
         viewModelScope.launch {
             try {
@@ -73,6 +64,35 @@ class AuxiliaryUserViewModel @Inject constructor(
                 e.printStackTrace()
             }
         }
+    }
+
+    fun checkLoginAndPassword(email: String, password: String) {
+        viewModelScope.launch {
+            try {
+                val dataUser = checkLoginAndPasswordUseCase(email, password)
+                _user.value = dataUser
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+
+
+
+
+    fun usersScreen(userId: String) {
+        viewModelScope.launch {
+            try {
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+//        user?.let {
+//            _seasonalEventPoints.value = it.seasonalEventPoints
+//            _listAwards.value = it.awards
+//        }
     }
 
     fun updatingUserData(userId: String, nikName: String, email: String, password: String) {

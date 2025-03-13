@@ -17,6 +17,7 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListSelected
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListSelectedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListWaitingContinuationSeries
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.ListWatchedMovies
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.LoginScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MediaNewsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.SeriesControlScreen
@@ -31,7 +32,9 @@ fun NavGraph(
     themeViewModel: ThemeViewModel,
     startDestination: String
 ) {
+
     val navController = rememberNavController()
+
     NavHost(
         navController = navController,
         startDestination = startDestination
@@ -109,6 +112,10 @@ fun NavGraph(
 
         composable(Route.ListWaitingContinuationSeries.route) {
             ListWaitingContinuationSeries(navController)
+        }
+
+        composable(Route.LoginScreen.route) {
+            LoginScreen(navController)
         }
     }
 }

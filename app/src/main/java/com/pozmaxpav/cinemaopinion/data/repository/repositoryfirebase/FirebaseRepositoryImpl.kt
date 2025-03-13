@@ -28,7 +28,6 @@ class FirebaseRepositoryImpl @Inject constructor(
     override suspend fun getUsers(): List<User> {
         val snapshot = databaseReference.child(NODE_LIST_USERS).get().await()
         return snapshot.children.mapNotNull { childrenSnapshot ->
-            Log.d("@@@", childrenSnapshot.toString())
             childrenSnapshot.getValue(User::class.java)
         }
             .map {
@@ -42,25 +41,6 @@ class FirebaseRepositoryImpl @Inject constructor(
                     seasonalEventPoints = it.seasonalEventPoints
                 )
             }
-    }
-
-    override suspend fun usersScreen(userId: String): User? {
-        if (userId.isEmpty()) {
-            return null
-        }
-
-        val snapshot = databaseReference.child(NODE_LIST_USERS).child(userId).get().await()
-        return snapshot.getValue(User::class.java)?.let { userSnapshot ->
-            User(
-                id = userSnapshot.id,
-                nikName = userSnapshot.nikName,
-                email = userSnapshot.email,
-                password = userSnapshot.password,
-                awards = userSnapshot.awards,
-                professionalPoints = userSnapshot.professionalPoints,
-                seasonalEventPoints = userSnapshot.seasonalEventPoints
-            )
-        }
     }
 
     override suspend fun addUser(user: User) {
@@ -82,10 +62,51 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun checkLoginAndPassword(email: String, password: String): User? {
+        val query = databaseReference.child(NODE_LIST_USERS).orderByChild("email").equalTo(email)
+        val userSnapshot = query.get().await()
+
+        if (!userSnapshot.exists()) {
+            return null
+        }
+
+        for (snapshot in userSnapshot.children) {
+            val user = snapshot.getValue(User::class.java)
+            if (user != null) {
+                // Проверяем совпадение пароля
+                if (user.password == password) {
+                    return user // Возвращаем пользователя, если пароль совпал
+                } else {
+                    return null // Пароль не совпал
+                }
+            }
+        }
+
+        return null
+    }
 
 
 
 
+
+    override suspend fun usersScreen(userId: String): User? {
+        if (userId.isEmpty()) {
+            return null
+        }
+
+        val snapshot = databaseReference.child(NODE_LIST_USERS).child(userId).get().await()
+        return snapshot.getValue(User::class.java)?.let { userSnapshot ->
+            User(
+                id = userSnapshot.id,
+                nikName = userSnapshot.nikName,
+                email = userSnapshot.email,
+                password = userSnapshot.password,
+                awards = userSnapshot.awards,
+                professionalPoints = userSnapshot.professionalPoints,
+                seasonalEventPoints = userSnapshot.seasonalEventPoints
+            )
+        }
+    }
 
     override suspend fun updateSeasonalEventPoints(
         userId: String,
@@ -102,6 +123,10 @@ class FirebaseRepositoryImpl @Inject constructor(
             throw Exception("User ID is missing")
         }
     }
+
+
+
+
 
     override suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovie) {
 //        val filmData = SelectedMovie( // TODO: Надо разобрать зачем мне тут снова создавать модель?
