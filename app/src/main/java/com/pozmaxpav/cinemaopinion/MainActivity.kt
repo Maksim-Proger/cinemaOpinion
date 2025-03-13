@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
 import com.pozmaxpav.cinemaopinion.presentation.navigation.NavGraph
+import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.LoginScreen
 import com.pozmaxpav.cinemaopinion.presentation.theme.CinemaOpinionTheme
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
@@ -55,7 +57,10 @@ class MainActivity : ComponentActivity() {
                                 startDestination = startDestination
                             )
                         } else {
-                            LoginScreen()
+                            NavGraph(
+                                themeViewModel = themeViewModel,
+                                startDestination = Route.LoginScreen.route
+                            )
                         }
                     }
                 }

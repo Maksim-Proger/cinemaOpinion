@@ -38,19 +38,22 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
+import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    viewModelFirebase: FirebaseViewModel = hiltViewModel(),
+    navController: NavHostController,
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
 ) {
 
@@ -59,19 +62,22 @@ fun LoginScreen(
     val (password, setPassword) = remember { mutableStateOf("") }
     var openBottomSheet by remember { mutableStateOf(false) }
     val nameToast = stringResource(R.string.add_new_account)
+    val loginErrorToast = stringResource(R.string.login_error)
+    val user by auxiliaryUserViewModel.user.collectAsState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
-
-
-    LaunchedEffect(Unit) {
-        auxiliaryUserViewModel.getUsers()
+    LaunchedEffect(user) {
+        if (user != null) {
+            navigateFunction(navController, Route.MainScreen.route)
+        }
+//        else if (showError) {
+//            showToast(context, loginErrorToast)
+//            showError = false // Сбрасываем флаг ошибки
+//        }
     }
-    val users by auxiliaryUserViewModel.users.collectAsState()
-
-
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -89,7 +95,6 @@ fun LoginScreen(
                 onClose = { openBottomSheet = false },
                 content = {
                     RegistrationWindow(
-                        viewModelFirebase,
                         auxiliaryUserViewModel,
                         keyboardController,
                         focusManager,
@@ -167,9 +172,7 @@ fun LoginScreen(
                 CustomTextButton(
                     textButton = "Вход",
                     onClickButton = {
-                        Log.d("@@@", users.toString())
-                        /*TODO: Добавить проверку данных перед входом*/
-                        /*TODO: Добавить действие входа*/
+                        auxiliaryUserViewModel.checkLoginAndPassword(login, password)
                     }
                 )
             }
@@ -179,7 +182,6 @@ fun LoginScreen(
 
 @Composable
 fun RegistrationWindow(
-    viewModelFirebase: FirebaseViewModel,
     auxiliaryUserViewModel: AuxiliaryUserViewModel,
     keyboardController: SoftwareKeyboardController?,
     focusManager: FocusManager,
