@@ -1,8 +1,8 @@
 package com.pozmaxpav.cinemaopinion.utilits.state
 
 sealed class State {
-    object Loading : State()
-    object Success : State()
-//    data class Error(val message: String) : State()
+    data object Loading : State()
+    data object Success : State()
+    data object Error : State()
 }
 

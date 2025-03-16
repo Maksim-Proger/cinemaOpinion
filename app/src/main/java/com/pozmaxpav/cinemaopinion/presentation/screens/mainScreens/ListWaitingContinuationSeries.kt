@@ -285,6 +285,7 @@ fun ListWaitingContinuationSeries(
                         }
                     }
                 }
+                is State.Error -> {}
             }
         }
     }
@@ -371,5 +372,6 @@ fun ShowCommentWaitingContinuationSeriesList(
                 }
             }
         }
+        is State.Error -> {}
     }
 }

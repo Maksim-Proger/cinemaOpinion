@@ -1,7 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,10 +18,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -45,16 +44,18 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
+    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -63,20 +64,21 @@ fun LoginScreen(
     var openBottomSheet by remember { mutableStateOf(false) }
     val nameToast = stringResource(R.string.add_new_account)
     val loginErrorToast = stringResource(R.string.login_error)
-    val user by auxiliaryUserViewModel.user.collectAsState()
+    val loginCompleted = stringResource(R.string.login_completed)
+    val loginVerificationResult by auxiliaryUserViewModel.loginVerificationResult.collectAsState()
+    val showToast by auxiliaryUserViewModel.showToast.collectAsState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
-    LaunchedEffect(user) {
-        if (user != null) {
+    LaunchedEffect(loginVerificationResult) {
+        if (loginVerificationResult != null) {
+            mainViewModel.saveRegistrationFlag(true)
+            mainViewModel.saveUserId(loginVerificationResult!!.id)
+            showToast(context, loginCompleted)
             navigateFunction(navController, Route.MainScreen.route)
         }
-//        else if (showError) {
-//            showToast(context, loginErrorToast)
-//            showError = false // Сбрасываем флаг ошибки
-//        }
     }
 
     Scaffold(
@@ -108,6 +110,11 @@ fun LoginScreen(
             )
         }
 
+        if (showToast) {
+            showToast(context, loginErrorToast)
+            auxiliaryUserViewModel.resetToastState()
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -115,6 +122,7 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // region Email
             CustomTextField(
                 value = login,
                 onValueChange = setLogin,
@@ -134,7 +142,9 @@ fun LoginScreen(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             )
+            // endregion
             Spacer(Modifier.padding(10.dp))
+            // region Password
             CustomTextField(
                 value = password,
                 onValueChange = setPassword,
@@ -155,9 +165,9 @@ fun LoginScreen(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             )
-
-
+            // endregion
             Spacer(Modifier.padding(26.dp))
+            // region Buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -176,6 +186,7 @@ fun LoginScreen(
                     }
                 )
             }
+            // endregion
         }
     }
 }

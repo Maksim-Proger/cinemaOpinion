@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -29,9 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -41,12 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.AddingNewUserScreen
-//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
@@ -54,16 +48,18 @@ import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 fun AccountScreen(
     navController: NavHostController,
     onClick: () -> Unit,
-//    viewModel: UserViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel(),
+    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
 ) {
 
-//    LaunchedEffect(Unit) {
-//        viewModel.fitchUser()
-//    }
-//
-//    val user by viewModel.users.collectAsState()
+    val userId by mainViewModel.userId.collectAsState()
+    val userData by auxiliaryUserViewModel.userData.collectAsState()
 //    val listAwards by viewModel.listAwards.collectAsState()
 //    var onAddingNewUserScreenButtonClick by remember { mutableStateOf(false) }
+
+    LaunchedEffect(userId) {
+        auxiliaryUserViewModel.getUserData(userId)
+    }
 
     Card(
         modifier = Modifier
@@ -120,32 +116,22 @@ fun AccountScreen(
                             .tint(MaterialTheme.colorScheme.onSurfaceVariant)
                     )
 
-//                    Spacer(modifier = Modifier.padding(8.dp))
-//
-//                    if (user != null) {
-//                        Column {
-//                            user?.let { user ->
-//                                Text(
-//                                    text = user.nikName,
-//                                    style = MaterialTheme.typography.displayMedium
-//                                )
-//                                Text(
-//                                    text = user.email,
-//                                    style = MaterialTheme.typography.bodyLarge
-//                                )
-//                            }
-//                        }
-//                    } else {
-//                        // TODO: Удалить!
-//                        Button(
-//                            onClick = {
-//                                onAddingNewUserScreenButtonClick =
-//                                    !onAddingNewUserScreenButtonClick
-//                            }
-//                        ) {
-//                            Text(text = "Войти")
-//                        }
-//                    }
+                    Spacer(modifier = Modifier.padding(8.dp))
+
+                    if (userData != null) {
+                        Column {
+                            userData?.let { user ->
+                                Text(
+                                    text = user.nikName,
+                                    style = MaterialTheme.typography.displayMedium
+                                )
+                                Text(
+                                    text = user.email,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                        }
+                    }
                 }
 
                 HorizontalDivider(
@@ -191,6 +177,7 @@ fun AccountScreen(
                     navigateFunction(navController, Route.SeriesControlScreen.route)
                 }
 
+                // region Awards
                 // Выводим награды на экран
 //                Column(
 //                    modifier = Modifier.padding(10.dp).weight(1f),
@@ -220,24 +207,10 @@ fun AccountScreen(
 //                        }
 //                    }
 //                }
+                // endregion
             }
         }
     }
-
-    // TODO: Удалить!
-//    if (onAddingNewUserScreenButtonClick) {
-//        CustomBoxShowOverlay(
-//            content = {
-//                AddingNewUserScreen(
-//                    nameToast = stringResource(R.string.add_new_account),
-//                    onClickClose = { onAddingNewUserScreenButtonClick = false }
-//                )
-//                BackHandler {
-//                    onAddingNewUserScreenButtonClick = false
-//                }
-//            }
-//        )
-//    }
 
 }
 
@@ -247,7 +220,7 @@ private fun AccountSettingMenu(navController: NavHostController) {
     SettingsMenu { closeMenu ->
 
         MyDropdownMenuItem(
-            onAction = { // TODO: Надо детальнее разобраться в этой навигации
+            onAction = {
                 navigateFunction(navController, Route.EditPersonalInformationScreen.route)
                 closeMenu() // Закрываем меню после навигации
             },

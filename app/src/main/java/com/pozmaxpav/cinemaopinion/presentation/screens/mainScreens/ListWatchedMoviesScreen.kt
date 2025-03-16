@@ -240,6 +240,7 @@ fun ListWatchedMovies(
                         }
                     }
                 }
+                is State.Error -> {}
             }
         }
     }
@@ -327,5 +328,6 @@ fun ShowCommentWatchedMoviesList(
                 }
             }
         }
+        is State.Error -> {}
     }
 }

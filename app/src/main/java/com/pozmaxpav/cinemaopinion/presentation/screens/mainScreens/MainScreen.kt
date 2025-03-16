@@ -508,6 +508,7 @@ fun MainScreen(navController: NavHostController) {
                                 }
                             }
                         }
+                        is State.Error -> {}
                     }
                 }
             }

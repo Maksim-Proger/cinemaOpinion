@@ -85,11 +85,7 @@ class FirebaseRepositoryImpl @Inject constructor(
         return null
     }
 
-
-
-
-
-    override suspend fun usersScreen(userId: String): User? {
+    override suspend fun getUserData(userId: String): User? {
         if (userId.isEmpty()) {
             return null
         }
@@ -107,6 +103,11 @@ class FirebaseRepositoryImpl @Inject constructor(
             )
         }
     }
+
+
+
+
+
 
     override suspend fun updateSeasonalEventPoints(
         userId: String,

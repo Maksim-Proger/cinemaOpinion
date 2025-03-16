@@ -8,7 +8,8 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.CheckLoginAndPassword
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetUsersUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdateSeasonalEventPointsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdatingUserDataUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UsersScreenUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetUserDataUseCase
+import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,15 +23,21 @@ class AuxiliaryUserViewModel @Inject constructor(
     private val updateSeasonalEventPointsUseCase: UpdateSeasonalEventPointsUseCase,
     private val addUserUseCase: AddUserUseCase,
     private val getUsersUseCase: GetUsersUseCase,
-    private val usersScreenUseCase: UsersScreenUseCase,
+    private val getUserDataUseCase: GetUserDataUseCase,
     private val checkLoginAndPasswordUseCase: CheckLoginAndPasswordUseCase
 ) : ViewModel() {
 
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users = _users.asStateFlow()
 
-    private val _user = MutableStateFlow<User?>(null)
-    val user = _user.asStateFlow()
+    private val _loginVerificationResult = MutableStateFlow<User?>(null)
+    val loginVerificationResult = _loginVerificationResult.asStateFlow()
+
+    private val _showToast = MutableStateFlow(false)
+    val showToast = _showToast.asStateFlow()
+
+    private val _userData = MutableStateFlow<User?>(null)
+    val userData = _userData.asStateFlow()
 
     private val _seasonalEventPoints = MutableStateFlow(0L)
     val seasonalEventPoints = _seasonalEventPoints.asStateFlow()
@@ -49,7 +56,6 @@ class AuxiliaryUserViewModel @Inject constructor(
             }
         }
     }
-
     fun addUser(nikName: String, email: String, password: String) {
         viewModelScope.launch {
             try {
@@ -65,26 +71,26 @@ class AuxiliaryUserViewModel @Inject constructor(
             }
         }
     }
-
     fun checkLoginAndPassword(email: String, password: String) {
         viewModelScope.launch {
             try {
-                val dataUser = checkLoginAndPasswordUseCase(email, password)
-                _user.value = dataUser
+                val loginVerification = checkLoginAndPasswordUseCase(email, password)
+                _loginVerificationResult.value = loginVerification
+                _showToast.value = loginVerification == null
             } catch (e: Exception) {
                 e.printStackTrace()
+                _showToast.value = true
             }
         }
     }
-
-
-
-
-
-    fun usersScreen(userId: String) {
+    fun resetToastState() {
+        _showToast.value = false
+    }
+    fun getUserData(userId: String) {
         viewModelScope.launch {
             try {
-
+                val userData = getUserDataUseCase(userId)
+                _userData.value = userData
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -94,6 +100,10 @@ class AuxiliaryUserViewModel @Inject constructor(
 //            _listAwards.value = it.awards
 //        }
     }
+
+
+
+
 
     fun updatingUserData(userId: String, nikName: String, email: String, password: String) {
         viewModelScope.launch {

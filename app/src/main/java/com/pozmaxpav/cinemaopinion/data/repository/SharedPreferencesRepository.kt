@@ -42,5 +42,11 @@ class SharedPreferencesRepository @Inject constructor(
     override fun getRegistrationFlag(): Boolean {
         return SharedPreferences.getRegistrationFlag(context)
     }
+    override fun saveUserId(userId: String) {
+        SharedPreferences.saveUserId(context, userId)
+    }
+    override fun getUserId(): String? {
+        return SharedPreferences.getUserId(context)
+    }
 
 }
