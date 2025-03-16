@@ -36,7 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarScaffold
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
 //import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
@@ -50,52 +50,27 @@ fun DetailsCard(
     padding: PaddingValues,
     addToPersonalList: String,
     errorToast: String,
-    viewModelFirebase: FirebaseViewModel = hiltViewModel(),
-    viewModelMain: MainViewModel = hiltViewModel(),
-//    viewModelUser: UserViewModel = hiltViewModel(),
-    viewModel: SelectedMovieViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
+    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    selectedMovieViewModel: SelectedMovieViewModel = hiltViewModel(),
 ) {
-//    val user by viewModelUser.users.collectAsState()
-    var userId by remember { mutableStateOf("") }
-    val info by viewModelMain.informationMovie.collectAsState()
+
+    val userId by mainViewModel.userId.collectAsState()
+    val info by mainViewModel.informationMovie.collectAsState()
     var showRatingBar by remember { mutableStateOf(false) }
-//    val getSeasonalEventPoints by viewModelUser.seasonalEventPoints.collectAsState()
-//    val listAwards by viewModelUser.listAwards.collectAsState()
-    val statusExist by viewModel.status.collectAsState()
+    val quantitySeasonalEventPoints by auxiliaryUserViewModel.seasonalEventPoints.collectAsState()
+    val statusExist by selectedMovieViewModel.status.collectAsState()
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(newYearMovie.id) {
-        viewModelMain.getInformationMovie(newYearMovie.id)
+    LaunchedEffect(userId) {
+        auxiliaryUserViewModel.getUserData(userId)
+        auxiliaryUserViewModel.getSeasonalEventPoints(userId)
     }
 
-//    LaunchedEffect(user) {
-//        if (user != null) {
-//            user.let {
-//                userId = it!!.id.toString()
-//            }
-//        }
-//    }
-
-//    LaunchedEffect(listAwards) {
-//        if (getSeasonalEventPoints == 40L) {
-//            viewModelFirebase.updateSeasonalEventPoints(
-//                userId, "awards", listAwards.toString()
-//            )
-//        }
-//
-//        if (getSeasonalEventPoints == 80L) {
-//            viewModelFirebase.updateSeasonalEventPoints(
-//                userId, "awards", listAwards.toString()
-//            )
-//        }
-//    }
-
-//    LaunchedEffect(getSeasonalEventPoints) {
-//        viewModelFirebase.updateSeasonalEventPoints(
-//            userId, "seasonalEventPoints", getSeasonalEventPoints
-//        )
-//    }
+    LaunchedEffect(newYearMovie.id) {
+        mainViewModel.getInformationMovie(newYearMovie.id)
+    }
 
     Column(
         modifier = Modifier
@@ -103,17 +78,17 @@ fun DetailsCard(
             .padding(padding)
     ) {
 
-//        if (showRatingBar) {
-//            RatingBarScaffold(
-//                score = getSeasonalEventPoints,
-//                onCloseButton = {
-//                    showRatingBar = !showRatingBar
-//                }
-//            )
-//            BackHandler {
-//                showRatingBar = false
-//            }
-//        }
+        if (showRatingBar) {
+            RatingBarScaffold(
+                score = quantitySeasonalEventPoints,
+                onCloseButton = {
+                    showRatingBar = !showRatingBar
+                }
+            )
+            BackHandler {
+                showRatingBar = false
+            }
+        }
 
         Card(
             modifier = Modifier
@@ -182,9 +157,11 @@ fun DetailsCard(
                             .padding(vertical = 7.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
+
+                        // region watched
                         Button(
                             onClick = {
-//                                viewModelUser.handleEvent(userId)
+                                auxiliaryUserViewModel.updatingEventData(userId)
                                 showRatingBar = !showRatingBar
                             },
                             colors = ButtonDefaults.buttonColors(
@@ -194,9 +171,12 @@ fun DetailsCard(
                         ) {
                             Text(text = "Я посмотрел",)
                         }
+                        // endregion
+
+                        // region ButtonAddToYourList
                         Button(
                             onClick = {
-                                viewModel.addSelectedMovie(newYearMovie)
+                                selectedMovieViewModel.addSelectedMovie(newYearMovie)
                                 if (statusExist == "error") {
                                     showToast(context, errorToast)
                                 } else showToast(context, addToPersonalList)
@@ -210,6 +190,8 @@ fun DetailsCard(
                                 text = "Добавить к себе"
                             )
                         }
+                        // endregion
+
                     }
                 }
             }

@@ -24,5 +24,5 @@ interface FirebaseRepository {
     suspend fun addUser(user: User)
     suspend fun checkLoginAndPassword(email: String, password: String): User?
     suspend fun updatingUserData(user: User)
-    suspend fun updateSeasonalEventPoints(userId: String, fieldName: String, newValue: Any)
+    suspend fun updateSpecificField(userId: String, fieldName: String, newValue: Any)
 }

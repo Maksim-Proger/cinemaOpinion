@@ -21,6 +21,7 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.LoginScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MediaNewsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.SeriesControlScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.EditPersonalInformationScreen
 //import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.EditPersonalInformationScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SettingsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.WebViewScreen
@@ -61,23 +62,16 @@ fun NavGraph(
         }
 
         composable(Route.MediaNewsScreen.route) {
-            MediaNewsScreen(
-                navController
-            )
+            MediaNewsScreen(navController)
         }
 
         composable(Route.ListOfChangesScreen.route) {
-            ListOfChangesScreen(
-                navController
-            )
+            ListOfChangesScreen(navController)
         }
 
-//        composable(Route.EditPersonalInformationScreen.route) {
-//            EditPersonalInformationScreen(
-//                stringResource(R.string.edit_personal_information), // TODO: подумать как иначе передать стрингу
-//                navController
-//            )
-//        }
+        composable(Route.EditPersonalInformationScreen.route) {
+            EditPersonalInformationScreen(navController)
+        }
 
         composable(Route.SeriesControlScreen.route) {
             SeriesControlScreen(navController)

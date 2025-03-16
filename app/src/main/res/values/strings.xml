@@ -21,14 +21,16 @@
     <string name="drop_down_menu_item_select_date">Выбрать дату</string>
 
     <!--   Text of the fields   -->
-    <string name="text_for_edit_name_field">Имя пользователя</string>
-    <string name="placeholder_for_edit_name_field">Введите новое имя пользователя</string>
+    <string name="text_for_edit_nik_name_field">Имя пользователя</string>
+    <string name="placeholder_for_edit_nik_name_field">Введите новое имя пользователя</string>
 <!--    <string name="text_for_add_lastName_field">Фамилия пользователя</string>-->
     <string name="placeholder_for_add_lastName_field">Введите фамилию пользователя</string>
     <string name="text_for_add_name_field">Имя пользователя</string>
     <string name="placeholder_for_add_name_field">Введите имя пользователя</string>
-    <string name="text_for_edit_lastName_field">Фамилия пользователя</string>
-    <string name="placeholder_for_edit_lastName_field">Введите новую фамилию пользователя</string>
+    <string name="text_for_edit_email_field">Email</string>
+    <string name="placeholder_for_edit_email_field">Введите новый Email</string>
+    <string name="text_for_edit_password_field">пароль</string>
+    <string name="placeholder_for_edit_password_field">Введите новый пароль</string>
 
     <!--  ShowToast String  -->
     <string name="movie_has_been_added">Фильм добавлен в личный список</string>
