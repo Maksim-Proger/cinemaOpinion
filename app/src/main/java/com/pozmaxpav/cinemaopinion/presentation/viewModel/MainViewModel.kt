@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData.MovieSearch
@@ -20,9 +21,11 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.movies.news.GetMediaNewsUseCas
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetAppVersionUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetRegistrationFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetResultCheckingUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetUserIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveAppVersionUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveRegistrationFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveResultCheckingUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveUserIdUseCase
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -47,7 +50,9 @@ class MainViewModel @Inject constructor(
     private val getResultCheckingUseCase: GetResultCheckingUseCase,
     private val saveResultCheckingUseCase: SaveResultCheckingUseCase,
     private val saveRegistrationFlagUseCase: SaveRegistrationFlagUseCase,
-    private val getRegistrationFlagUseCase: GetRegistrationFlagUseCase
+    private val getRegistrationFlagUseCase: GetRegistrationFlagUseCase,
+    private val saveUserIdUseCase: SaveUserIdUseCase,
+    private val getUserIdUseCase: GetUserIdUseCase
 ) : ViewModel() {
 
     private val _versionApp = MutableStateFlow("Unknown")
@@ -58,6 +63,9 @@ class MainViewModel @Inject constructor(
 
     private val _registrationFlag = MutableStateFlow(false)
     val registrationFlag = _registrationFlag.asStateFlow()
+
+    private val _userId = MutableStateFlow("Unknown")
+    val userId = _userId.asStateFlow()
 
     private val _state = MutableStateFlow<State>(State.Success)
     val state: StateFlow<State> = _state.asStateFlow()
@@ -85,6 +93,8 @@ class MainViewModel @Inject constructor(
     init {
         getAppVersion()
         getResultChecking()
+        getRegistrationFlag()
+        getUserId()
     }
 
     fun saveRegistrationFlag(registrationFlag: Boolean) {
@@ -96,8 +106,7 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
-    fun getRegistrationFlag() {
+    private fun getRegistrationFlag() {
         viewModelScope.launch {
             try {
                 val flag = getRegistrationFlagUseCase()
@@ -107,11 +116,29 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+    fun saveUserId(userId: String) {
+        viewModelScope.launch {
+            try {
+                saveUserIdUseCase(userId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    private fun getUserId() {
+        viewModelScope.launch {
+            try {
+                val id = getUserIdUseCase() ?: "Unknown"
+                _userId.value = id
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     fun resetResultChecking() {
         _resultChecking.value = true
     }
-
     fun saveAppVersion(version: String) {
         viewModelScope.launch {
             try {
@@ -121,7 +148,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
     private fun getAppVersion() {
         viewModelScope.launch {
             try {
@@ -132,13 +158,11 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
     fun saveResultChecking(resultChecking: Boolean) {
         viewModelScope.launch {
             saveResultCheckingUseCase(resultChecking)
         }
     }
-
     private fun getResultChecking() {
         viewModelScope.launch {
             try {
@@ -160,7 +184,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
     fun getInformationMovie(movieId: Int) {
         viewModelScope.launch {
             try {
@@ -171,7 +194,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
     fun getSearchMovieById(id: Int) {
         viewModelScope.launch {
             try {
@@ -182,7 +204,6 @@ class MainViewModel @Inject constructor(
             }
         }
     } // TODO: Работает, но пока не задействован в приложении
-
     fun fetchPremiersMovies(year: Int, month: String) {
         viewModelScope.launch {
             _state.value = State.Loading
@@ -196,7 +217,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
     fun fetchTopListMovies(page: Int) {
         viewModelScope.launch {
             try {
@@ -207,7 +227,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
     fun fetchSearchMovies(keyword: String, page: Int) {
         viewModelScope.launch {
             try {
@@ -224,7 +243,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-    
     fun searchFilmsByFilters( // TODO: Дописать возможность поиска из второй базы!
         type: String?,
         keyword: String?,

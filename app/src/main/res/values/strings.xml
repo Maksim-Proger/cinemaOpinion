@@ -36,6 +36,7 @@
     <string name="movie_has_already_been_added">Данный фильм уже добавлен</string>
     <string name="add_new_account">Пользователь добавлен</string>
     <string name="login_error">Неверно введен логин или пароль</string>
+    <string name="login_completed">Вход выполнен</string>
     <string name="edit_personal_information">Данные пользователя обновлены</string>
 
     <!--  Title Icons  -->

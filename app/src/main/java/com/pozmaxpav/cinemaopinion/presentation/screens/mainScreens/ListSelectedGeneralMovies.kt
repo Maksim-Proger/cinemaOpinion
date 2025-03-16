@@ -348,6 +348,7 @@ fun ListSelectedGeneralMovies(
                             }
                         }
                     }
+                    is State.Error -> {}
                 }
             }
         }
@@ -467,6 +468,7 @@ fun ShowCommentGeneralList(
                 }
             }
         }
+        is State.Error -> {}
     }
 }
 

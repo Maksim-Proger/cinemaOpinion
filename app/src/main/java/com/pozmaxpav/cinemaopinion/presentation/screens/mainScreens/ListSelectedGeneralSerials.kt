@@ -476,5 +476,6 @@ fun ShowCommentGeneralListSerials(
                 }
             }
         }
+        is State.Error -> {}
     }
 }
