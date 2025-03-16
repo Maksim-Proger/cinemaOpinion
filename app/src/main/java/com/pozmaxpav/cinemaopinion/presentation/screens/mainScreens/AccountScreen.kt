@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -54,11 +55,12 @@ fun AccountScreen(
 
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
-//    val listAwards by viewModel.listAwards.collectAsState()
-//    var onAddingNewUserScreenButtonClick by remember { mutableStateOf(false) }
+    val listAwards by auxiliaryUserViewModel.listAwards.collectAsState()
 
     LaunchedEffect(userId) {
         auxiliaryUserViewModel.getUserData(userId)
+        auxiliaryUserViewModel.getAwardsList(userId)
+        Log.d("@@@", listAwards)
     }
 
     Card(
@@ -109,7 +111,7 @@ fun AccountScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        modifier = Modifier.size(80.dp),
+                        modifier = Modifier.size(60.dp),
                         imageVector = Icons.Outlined.AccountCircle,
                         contentDescription = null,
                         colorFilter = ColorFilter
@@ -127,7 +129,7 @@ fun AccountScreen(
                                 )
                                 Text(
                                     text = user.email,
-                                    style = MaterialTheme.typography.bodyLarge
+                                    style = MaterialTheme.typography.bodySmall
                                 )
                             }
                         }
@@ -178,7 +180,6 @@ fun AccountScreen(
                 }
 
                 // region Awards
-                // Выводим награды на экран
 //                Column(
 //                    modifier = Modifier.padding(10.dp).weight(1f),
 //                    verticalArrangement = Arrangement.Bottom
@@ -191,19 +192,20 @@ fun AccountScreen(
 //                                .padding(bottom = 16.dp)
 //                                .align(alignment = Alignment.CenterHorizontally)
 //                        )
-//                    }
 //
-//                    Row(
-//                        modifier = Modifier.fillMaxWidth(),
-//                        horizontalArrangement = Arrangement.Center,
-//                        verticalAlignment = Alignment.CenterVertically
-//                    ) {
-//                        for (i in listAwards) {
-//                            Image(
-//                                painter = painterResource(id = i.toInt()),
-//                                contentDescription = null,
-//                                modifier = Modifier.height(70.dp)
-//                            )
+//                        Row(
+//                            modifier = Modifier.fillMaxWidth(),
+//                            horizontalArrangement = Arrangement.Center,
+//                            verticalAlignment = Alignment.CenterVertically
+//                        ) {
+//                            val newListAwards = listAwards.split(",")
+//                            for (i in newListAwards) {
+//                                Image(
+//                                    painter = painterResource(id = i.toInt()),
+//                                    contentDescription = null,
+//                                    modifier = Modifier.height(70.dp)
+//                                )
+//                            }
 //                        }
 //                    }
 //                }

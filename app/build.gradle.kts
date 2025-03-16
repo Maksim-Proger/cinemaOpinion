@@ -24,13 +24,23 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("C:/Users/PMPav/keystore/mykeystore.jks")
+            storePassword = "mysecretpassword"
+            keyAlias = "mykeyalias"
+            keyPassword = "mysecretpassword"
+        }
+    }
+
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -89,24 +99,15 @@ dependencies {
     //Accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.4-beta")
 
-//    // CORE
-//    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
-//
-//    // CALENDAR
-//    implementation("com.maxkeppeler.sheets-compose-dialogs:calendar:1.0.2")
-//
-//    // CLOCK
-//    implementation("com.maxkeppeler.sheets-compose-dialogs:clock:1.0.2")
-
     // Расширяем библиотеку с иконками
-    implementation("androidx.compose.material:material-icons-extended-android:1.7.2")
+    implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
 
     // Room
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.datastore:datastore-preferences:1.1.3")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

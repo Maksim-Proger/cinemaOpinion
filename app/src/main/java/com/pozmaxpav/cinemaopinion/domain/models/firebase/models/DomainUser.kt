@@ -7,5 +7,5 @@ data class User(
     val password: String = "",
     val awards: String = "",
     val professionalPoints: String = "",
-    val seasonalEventPoints: String = ""
+    val seasonalEventPoints: Long = 0L
 )

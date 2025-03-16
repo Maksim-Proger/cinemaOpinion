@@ -163,7 +163,7 @@ fun LoginScreen(
                     }
                 ),
                 keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
             )
             // endregion
             Spacer(Modifier.padding(26.dp))

@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase
 
-import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -51,9 +50,7 @@ class FirebaseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updatingUserData(user: User) {
-        // Используем `id` как ключ
         val userId = user.id
-
         if (userId.isNotEmpty()) {
             // Сохраняем данные по ID
             databaseReference.child(NODE_LIST_USERS).child(userId).setValue(user).await()
@@ -104,12 +101,7 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
     }
 
-
-
-
-
-
-    override suspend fun updateSeasonalEventPoints(
+    override suspend fun updateSpecificField(
         userId: String,
         fieldName: String,
         newValue: Any
@@ -124,10 +116,6 @@ class FirebaseRepositoryImpl @Inject constructor(
             throw Exception("User ID is missing")
         }
     }
-
-
-
-
 
     override suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovie) {
 //        val filmData = SelectedMovie( // TODO: Надо разобрать зачем мне тут снова создавать модель?
@@ -158,7 +146,7 @@ class FirebaseRepositoryImpl @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            Log.e("RemoveMovie", "Error: ${e.message}")
+            // TODO: Добавить отлов ошибки
         }
     }
 
@@ -191,7 +179,7 @@ class FirebaseRepositoryImpl @Inject constructor(
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e("FirebaseRepositoryImpl", "Error fetching movies: ${error.message}")
+                    // TODO: Добавить отлов ошибки
                 }
             })
     }
@@ -286,16 +274,13 @@ class FirebaseRepositoryImpl @Inject constructor(
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            Log.e(
-                                "FirebaseRepositoryImpl",
-                                "Error fetching comments: ${error.message}"
-                            )
+                            // TODO: Добавить отлов ошибки
                         }
                     })
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e("FirebaseRepositoryImpl", "Error fetching movie: ${error.message}")
+                    // TODO: Добавить отлов ошибки
                 }
             })
     }
@@ -344,11 +329,11 @@ class FirebaseRepositoryImpl @Inject constructor(
                     filmSnapshot.ref.removeValue().await() // Удаляем запись
                 }
             } else {
-                Log.e("RemoveMovie", "No matching record found with id: $id")
+                // TODO: Добавить отлов ошибки
             }
 
         } catch (e: Exception) {
-            Log.e("RemoveMovie", "Error: ${e.message}")
+            // TODO: Добавить отлов ошибки
         }
     }
 
