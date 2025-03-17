@@ -7,10 +7,10 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.AddUserUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.CheckLoginAndPasswordUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetUserDataUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetUsersUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdateSpecificFieldUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdatingUserDataUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetUserDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -136,9 +136,8 @@ class AuxiliaryUserViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val userData = getUserDataUseCase(userId)
-//                Log.d("@@@", "Из getAwardsList = $userData")
                 userData?.let {
-                    _listAwards.value = it.awards.replace(",", " ")
+                    _listAwards.value = it.awards
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -149,9 +148,21 @@ class AuxiliaryUserViewModel @Inject constructor(
     private fun updateAwardsList(userId: String, newAward: String) {
         viewModelScope.launch {
             try {
-                val currentAwards = _listAwards.value
-                val updatedAwards = "$currentAwards,$newAward"
-                updateSpecificField(userId, "awards", updatedAwards)
+                val userData = getUserDataUseCase(userId)
+                userData?.let {
+                    val currentAwards = it.awards
+
+                    // Проверяем, есть ли уже такая награда в списке
+                    if (currentAwards.contains(newAward)) {
+                        Log.w("updateAwardsList", "Award already exists: $newAward")
+                        return@launch
+                    }
+
+                    val updatedAwards = if (currentAwards.isEmpty()) newAward
+                    else "$currentAwards,$newAward"
+
+                    updateSpecificField(userId, "awards", updatedAwards)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -169,12 +180,10 @@ class AuxiliaryUserViewModel @Inject constructor(
             }
 
             if (points == 40L) {
-                getAwardsList(userId)
                 updateAwardsList(userId, R.drawable.half_done.toString())
             }
 
             if (points == 80L) {
-                getAwardsList(userId)
                 updateAwardsList(userId, R.drawable.complete_passage.toString())
             }
         }
