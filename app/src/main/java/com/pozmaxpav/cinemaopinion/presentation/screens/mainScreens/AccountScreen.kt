@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -60,7 +59,6 @@ fun AccountScreen(
     LaunchedEffect(userId) {
         auxiliaryUserViewModel.getUserData(userId)
         auxiliaryUserViewModel.getAwardsList(userId)
-        Log.d("@@@", listAwards)
     }
 
     Card(
@@ -180,35 +178,63 @@ fun AccountScreen(
                 }
 
                 // region Awards
-//                Column(
-//                    modifier = Modifier.padding(10.dp).weight(1f),
-//                    verticalArrangement = Arrangement.Bottom
-//                ) {
-//                    if (listAwards.isNotEmpty()) {
-//                        Text(
-//                            text = "Зал славы",
-//                            style = MaterialTheme.typography.displayMedium,
-//                            modifier = Modifier
-//                                .padding(bottom = 16.dp)
-//                                .align(alignment = Alignment.CenterHorizontally)
-//                        )
-//
-//                        Row(
-//                            modifier = Modifier.fillMaxWidth(),
-//                            horizontalArrangement = Arrangement.Center,
-//                            verticalAlignment = Alignment.CenterVertically
-//                        ) {
-//                            val newListAwards = listAwards.split(",")
-//                            for (i in newListAwards) {
-//                                Image(
-//                                    painter = painterResource(id = i.toInt()),
-//                                    contentDescription = null,
-//                                    modifier = Modifier.height(70.dp)
-//                                )
-//                            }
-//                        }
-//                    }
-//                }
+                Column(
+                    modifier = Modifier.padding(10.dp).weight(1f),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    if (listAwards.isNotEmpty()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Зал славы",
+                                style = MaterialTheme.typography.displayMedium,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            val newListAwards = listAwards.split(",")
+                            for (i in newListAwards) {
+                                Image(
+                                    painter = painterResource(id = i.toInt()),
+                                    contentDescription = null,
+                                    modifier = Modifier.height(70.dp)
+                                )
+                            }
+                        }
+                    } else {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Column {
+                                Text(
+                                    text = "Зал славы",
+                                    style = MaterialTheme.typography.displayMedium,
+                                    modifier = Modifier
+                                        .padding(bottom = 16.dp)
+                                        .align(alignment = Alignment.CenterHorizontally)
+                                )
+                                Text(
+                                    text = "Наград пока нет",
+                                    style = MaterialTheme.typography.displayMedium,
+                                    modifier = Modifier
+                                        .padding(bottom = 16.dp)
+                                        .align(alignment = Alignment.CenterHorizontally)
+                                )
+                            }
+                        }
+
+                    }
+                }
                 // endregion
             }
         }
