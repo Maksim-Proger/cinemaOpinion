@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,11 +53,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.room.models.SeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainSeriesControlModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.SeriesControlViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -70,13 +72,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun SeriesControlScreen(
     navController: NavHostController,
-    viewModel: SeriesControlViewModel = hiltViewModel()
+    seriesControlViewModel: SeriesControlViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var selectedNote by remember { mutableStateOf<SeriesControlModel?>(null) }
-    val listMovies by viewModel.listMovies.collectAsState()
+    val listMovies by seriesControlViewModel.listMovies.collectAsState()
+    val userId by mainViewModel.userId.collectAsState()
+    var selectedNote by remember { mutableStateOf<DomainSeriesControlModel?>(null) }
     var openBottomSheetAdd by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
+
+    LaunchedEffect(userId) {
+        seriesControlViewModel.getListEntries(userId)
+        seriesControlViewModel.observeListEntries(userId)
+    }
 
     if (openBottomSheetAdd) {
         MyBottomSheet(
@@ -84,9 +93,10 @@ fun SeriesControlScreen(
                 openBottomSheetAdd = false
             },
             content = {
-                AddItem {
-                    openBottomSheetAdd = false
-                }
+                AddItem(
+                    seriesControlViewModel,
+                    userId
+                ) { openBottomSheetAdd = false }
             },
             fraction = 0.3f
         )
@@ -95,20 +105,20 @@ fun SeriesControlScreen(
         }
     }
 
-    if (openBottomSheetChange) {
-        MyBottomSheet(
-            onClose = { openBottomSheetChange = false },
-            content = {
-                ChangeItem(movie = selectedNote!!) {
-                    openBottomSheetChange = false
-                }
-            },
-            fraction = 0.5f
-        )
-        BackHandler {
-            openBottomSheetChange = false
-        }
-    }
+//    if (openBottomSheetChange) {
+//        MyBottomSheet(
+//            onClose = { openBottomSheetChange = false },
+//            content = {
+//                ChangeItem(movie = selectedNote!!) {
+//                    openBottomSheetChange = false
+//                }
+//            },
+//            fraction = 0.5f
+//        )
+//        BackHandler {
+//            openBottomSheetChange = false
+//        }
+//    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -132,6 +142,7 @@ fun SeriesControlScreen(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
+        Spacer(Modifier.padding(innerPadding))
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -182,7 +193,7 @@ fun SeriesControlScreen(
                                         isVisible = false // Скрываем элемент перед удалением
                                         CoroutineScope(Dispatchers.Main).launch {
                                             delay(300)
-                                            viewModel.deleteMovie(movie.id)
+                                            seriesControlViewModel.deleteMovie(userId, movie.id)
                                         }
                                     }
                                 ) {
@@ -201,11 +212,18 @@ fun SeriesControlScreen(
             item { Spacer(Modifier.padding(45.dp)) }
         }
     }
+
+    // Останавливаем наблюдение при выходе из экрана
+    DisposableEffect(Unit) {
+        onDispose {
+            seriesControlViewModel.onCleared() // Останавливаем слушатель
+        }
+    }
 }
 
 @Composable
 private fun Item(
-    movie: SeriesControlModel,
+    movie: DomainSeriesControlModel,
     onClick: () -> Unit
 ) {
     Row(
@@ -222,11 +240,14 @@ private fun Item(
 
 @Composable
 private fun AddItem(
-    viewModel: SeriesControlViewModel = hiltViewModel(),
+    seriesControlViewModel: SeriesControlViewModel,
+    userId: String,
     onClickCloseButton: () -> Unit
 ) {
+
     val (titleMovie, setTitleMovie) = remember { mutableStateOf("") }
     val context = LocalContext.current
+
     CustomTextField(
         value = titleMovie,
         onValueChange = setTitleMovie,
@@ -240,7 +261,7 @@ private fun AddItem(
         },
         keyboardActions = KeyboardActions(
             onDone = {
-                viewModel.insertMovie(titleMovie)
+                seriesControlViewModel.addNewEntry(userId, titleMovie)
                 showToast(context, "Элемент добавлен")
                 setTitleMovie("")
                 onClickCloseButton()
@@ -249,107 +270,107 @@ private fun AddItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ChangeItem(
-    movie: SeriesControlModel,
-    viewModel: SeriesControlViewModel = hiltViewModel(),
-    onClick: () -> Unit
-) {
-    val (season, setSeason) = remember { mutableStateOf("") }
-    val (series, setSeries) = remember { mutableStateOf("") }
-
-    LaunchedEffect(Unit) {
-        setSeason(movie.season.toString())
-        setSeries(movie.series.toString())
-    }
-
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 15.dp),
-        value = season,
-        onValueChange = setSeason,
-        shape = RoundedCornerShape(16.dp),
-        placeholder = { Text("Укажите сезон") },
-        trailingIcon =  if (season.isNotEmpty()) {
-            {
-                IconButton(onClick = { setSeason("") }) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(id = R.string.description_clear_text),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
-        } else null,
-        keyboardOptions = KeyboardOptions(
-            // Указываем какой тип клавиатуры будет использоваться.
-            keyboardType = KeyboardType.Number,
-            // Указываем, каким образом будет обрабатываться нажатие клавиши Enter.
-            imeAction = ImeAction.Done
-        ),
-        singleLine = true,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-            focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
-        )
-    )
-
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 15.dp),
-        value = series,
-        onValueChange = setSeries,
-        shape = RoundedCornerShape(16.dp),
-        placeholder = { Text("Укажите серию") },
-        trailingIcon =  if (series.isNotEmpty()) {
-            {
-                IconButton(onClick = { setSeries("") }) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(id = R.string.description_clear_text),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
-        } else null,
-        keyboardOptions = KeyboardOptions(
-            // Указываем какой тип клавиатуры будет использоваться.
-            keyboardType = KeyboardType.Number,
-            // Указываем, каким образом будет обрабатываться нажатие клавиши Enter.
-            imeAction = ImeAction.Done
-        ),
-        singleLine = true,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-            focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
-        )
-    )
-
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(end = 15.dp),
-        horizontalArrangement = Arrangement.End
-    ) {
-        Button(
-            onClick = {
-                viewModel.updateMovie(movie.id, season.toInt(), series.toInt())
-                onClick()
-            }
-        ) {
-            Text(text = "Сохранить")
-        }
-    }
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//private fun ChangeItem(
+//    movie: DomainSeriesControlModel,
+//    viewModel: SeriesControlViewModel = hiltViewModel(),
+//    onClick: () -> Unit
+//) {
+//    val (season, setSeason) = remember { mutableStateOf("") }
+//    val (series, setSeries) = remember { mutableStateOf("") }
+//
+//    LaunchedEffect(Unit) {
+//        setSeason(movie.season.toString())
+//        setSeries(movie.series.toString())
+//    }
+//
+//    OutlinedTextField(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(horizontal = 15.dp, vertical = 15.dp),
+//        value = season,
+//        onValueChange = setSeason,
+//        shape = RoundedCornerShape(16.dp),
+//        placeholder = { Text("Укажите сезон") },
+//        trailingIcon =  if (season.isNotEmpty()) {
+//            {
+//                IconButton(onClick = { setSeason("") }) {
+//                    Icon(
+//                        imageVector = Icons.Default.Close,
+//                        contentDescription = stringResource(id = R.string.description_clear_text),
+//                        tint = MaterialTheme.colorScheme.onPrimary
+//                    )
+//                }
+//            }
+//        } else null,
+//        keyboardOptions = KeyboardOptions(
+//            // Указываем какой тип клавиатуры будет использоваться.
+//            keyboardType = KeyboardType.Number,
+//            // Указываем, каким образом будет обрабатываться нажатие клавиши Enter.
+//            imeAction = ImeAction.Done
+//        ),
+//        singleLine = true,
+//        colors = TextFieldDefaults.outlinedTextFieldColors(
+//            focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+//            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+//            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+//            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+//            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+//            focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+//            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
+//        )
+//    )
+//
+//    OutlinedTextField(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(horizontal = 15.dp, vertical = 15.dp),
+//        value = series,
+//        onValueChange = setSeries,
+//        shape = RoundedCornerShape(16.dp),
+//        placeholder = { Text("Укажите серию") },
+//        trailingIcon =  if (series.isNotEmpty()) {
+//            {
+//                IconButton(onClick = { setSeries("") }) {
+//                    Icon(
+//                        imageVector = Icons.Default.Close,
+//                        contentDescription = stringResource(id = R.string.description_clear_text),
+//                        tint = MaterialTheme.colorScheme.onPrimary
+//                    )
+//                }
+//            }
+//        } else null,
+//        keyboardOptions = KeyboardOptions(
+//            // Указываем какой тип клавиатуры будет использоваться.
+//            keyboardType = KeyboardType.Number,
+//            // Указываем, каким образом будет обрабатываться нажатие клавиши Enter.
+//            imeAction = ImeAction.Done
+//        ),
+//        singleLine = true,
+//        colors = TextFieldDefaults.outlinedTextFieldColors(
+//            focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+//            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+//            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+//            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+//            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+//            focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+//            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
+//        )
+//    )
+//
+//    Row(
+//        modifier = Modifier.fillMaxWidth().padding(end = 15.dp),
+//        horizontalArrangement = Arrangement.End
+//    ) {
+//        Button(
+//            onClick = {
+//                viewModel.updateMovie(movie.id, season.toInt(), series.toInt())
+//                onClick()
+//            }
+//        ) {
+//            Text(text = "Сохранить")
+//        }
+//    }
+//}
 

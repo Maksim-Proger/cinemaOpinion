@@ -4,7 +4,7 @@ import com.pozmaxpav.cinemaopinion.data.local.room.dao.SelectedMovieDao
 import com.pozmaxpav.cinemaopinion.data.mappers.toDomain
 import com.pozmaxpav.cinemaopinion.data.mappers.toEntity
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
-import com.pozmaxpav.cinemaopinion.domain.repository.SelectedMovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.remote.SelectedMovieRepository
 import javax.inject.Inject
 
 class SelectedMovieRepositoryImpl @Inject constructor(

@@ -133,7 +133,7 @@ fun MainScreen(navController: NavHostController) {
     val showDialogEvents by viewModel.resultChecking.collectAsState()
 
     // Получаем username
-    var username by remember { mutableStateOf("") }
+    val username by remember { mutableStateOf("") }
 
     // Работаем с Fab
     val listState = rememberLazyListState()
@@ -156,9 +156,8 @@ fun MainScreen(navController: NavHostController) {
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
-        viewModel.fetchPremiersMovies(2025, "January")
+        viewModel.fetchPremiersMovies(2025, "March")
         viewModel.fetchTopListMovies(currentPage)
-//        userViewModel.fitchUser()
     }
 
 //    LaunchedEffect(user) {
@@ -398,48 +397,48 @@ fun MainScreen(navController: NavHostController) {
                                     .fillMaxSize()
                                     .padding(padding)
                             ) {
-                                AnimatedVisibility(
-                                    visible = !isScrolling.value,
-                                    enter = slideInHorizontally(
-                                        initialOffsetX = { -it },
-                                        animationSpec = tween(durationMillis = 300)
-                                    ),
-                                    exit = slideOutHorizontally(
-                                        targetOffsetX = { -it },
-                                        animationSpec = tween(durationMillis = 300)
-                                    )
-                                ) {
-                                    Column {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 16.dp),
-                                            horizontalArrangement = Arrangement.Center
-                                        ) {
-                                            Text(
-                                                text = stringResource(R.string.title_of_the_list_for_the_new_year),
-                                                style = MaterialTheme.typography.displayMedium
-                                            )
-                                        }
-                                        Spacer(modifier = Modifier.padding(6.dp))
-                                        LazyRow(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(150.dp)
-                                                .padding(horizontal = 16.dp)
-                                                .background(
-                                                    color = MaterialTheme.colorScheme.surface
-                                                ),
-                                            state = lisStateRow
-                                        ) {
-                                            items(newYearMoviesList, key = { it.id }) { newYearMovie ->
-                                                NewYearMovieItem(newYearMovie = newYearMovie) {
-                                                    selectedNewYearMovie = newYearMovie
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+//                                AnimatedVisibility(
+//                                    visible = !isScrolling.value,
+//                                    enter = slideInHorizontally(
+//                                        initialOffsetX = { -it },
+//                                        animationSpec = tween(durationMillis = 300)
+//                                    ),
+//                                    exit = slideOutHorizontally(
+//                                        targetOffsetX = { -it },
+//                                        animationSpec = tween(durationMillis = 300)
+//                                    )
+//                                ) {
+//                                    Column {
+//                                        Row(
+//                                            modifier = Modifier
+//                                                .fillMaxWidth()
+//                                                .padding(horizontal = 16.dp),
+//                                            horizontalArrangement = Arrangement.Center
+//                                        ) {
+//                                            Text(
+//                                                text = stringResource(R.string.title_of_the_list_for_the_new_year),
+//                                                style = MaterialTheme.typography.displayMedium
+//                                            )
+//                                        }
+//                                        Spacer(modifier = Modifier.padding(6.dp))
+//                                        LazyRow(
+//                                            modifier = Modifier
+//                                                .fillMaxWidth()
+//                                                .height(150.dp)
+//                                                .padding(horizontal = 16.dp)
+//                                                .background(
+//                                                    color = MaterialTheme.colorScheme.surface
+//                                                ),
+//                                            state = lisStateRow
+//                                        ) {
+//                                            items(newYearMoviesList, key = { it.id }) { newYearMovie ->
+//                                                NewYearMovieItem(newYearMovie = newYearMovie) {
+//                                                    selectedNewYearMovie = newYearMovie
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
 
                                 LazyColumn(
                                     state = listState,

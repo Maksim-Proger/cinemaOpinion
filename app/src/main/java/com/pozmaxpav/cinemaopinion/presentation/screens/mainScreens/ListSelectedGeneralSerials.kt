@@ -25,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -50,7 +49,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
@@ -397,7 +396,7 @@ fun ListSelectedGeneralSerials(
 
 @Composable
 fun ShowCommentGeneralListSerials(
-    listComments: List<DomainComment>,
+    listComments: List<DomainCommentModel>,
     id: Double,
     firebaseViewModel: FirebaseViewModel = hiltViewModel(),
 ) {

@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
@@ -248,7 +248,7 @@ fun ListWatchedMovies(
 
 @Composable
 fun ShowCommentWatchedMoviesList(
-    listComments: List<DomainComment>,
+    listComments: List<DomainCommentModel>,
     id: Double,
     firebaseViewModel: FirebaseViewModel = hiltViewModel(),
 ) {

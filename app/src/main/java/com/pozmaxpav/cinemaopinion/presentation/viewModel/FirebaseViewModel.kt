@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.AddCommentUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetCommentsForMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetMovieUseCase
@@ -54,7 +54,7 @@ class FirebaseViewModel @Inject constructor(
     private val _movies = MutableStateFlow<List<SelectedMovie>>(emptyList())
     val movies = _movies.asStateFlow()
 
-    private val _comments = MutableStateFlow<List<DomainComment>>(emptyList())
+    private val _comments = MutableStateFlow<List<DomainCommentModel>>(emptyList())
     val comments = _comments.asStateFlow()
 
     private val _listOfChanges = MutableStateFlow<List<DomainChangelogModel>>(emptyList())
@@ -168,7 +168,7 @@ class FirebaseViewModel @Inject constructor(
         username: String,
         commentUser: String
     ) {
-        val comment = DomainComment(
+        val comment = DomainCommentModel(
             commentId = "", // Оставляем пустым, так как key будет сгенерирован позже
             username = username,
             commentText = commentUser,

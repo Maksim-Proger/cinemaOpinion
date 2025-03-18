@@ -2,8 +2,8 @@ package com.pozmaxpav.cinemaopinion.data.repository
 
 import android.content.Context
 import com.pozmaxpav.cinemaopinion.data.sharedpreferences.SharedPreferences
-import com.pozmaxpav.cinemaopinion.domain.repository.SystemSharedPreferencesRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemSharedPreferencesRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.system.ThemeRepository
 import javax.inject.Inject
 
 class SharedPreferencesRepository @Inject constructor(

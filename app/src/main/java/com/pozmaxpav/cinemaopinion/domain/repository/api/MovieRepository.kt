@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.domain.repository
+package com.pozmaxpav.cinemaopinion.domain.repository.api
 
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData.MovieSearch
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieList
