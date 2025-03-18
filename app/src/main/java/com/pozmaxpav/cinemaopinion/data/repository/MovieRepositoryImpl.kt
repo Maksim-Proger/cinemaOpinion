@@ -8,7 +8,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList2
 import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsList
-import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepository
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(private val api: MovieListApi) : MovieRepository {

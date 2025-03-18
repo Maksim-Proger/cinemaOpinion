@@ -1,7 +1,7 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.movies
 
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList2
-import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepository
 import javax.inject.Inject
 
 class GetSearchMovies2UseCase @Inject constructor(

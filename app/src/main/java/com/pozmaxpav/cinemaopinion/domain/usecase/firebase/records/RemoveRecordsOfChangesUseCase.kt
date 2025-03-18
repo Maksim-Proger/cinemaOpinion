@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records
 
-import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.remote.FirebaseRepository
 import javax.inject.Inject
 
 class RemoveRecordsOfChangesUseCase @Inject constructor(

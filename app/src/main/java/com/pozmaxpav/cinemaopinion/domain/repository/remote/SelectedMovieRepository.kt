@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.domain.repository
+package com.pozmaxpav.cinemaopinion.domain.repository.remote
 
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 

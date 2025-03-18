@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.domain.repository
+package com.pozmaxpav.cinemaopinion.domain.repository.system
 
 interface ThemeRepository {
     fun saveModeApplicationTheme(isModeTheme: Boolean)

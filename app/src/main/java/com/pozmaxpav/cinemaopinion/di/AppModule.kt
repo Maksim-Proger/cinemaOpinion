@@ -15,34 +15,21 @@ import com.pozmaxpav.cinemaopinion.data.local.datastore.LocalUserManagerImpl
 import com.pozmaxpav.cinemaopinion.data.local.room.appdb.AppDatabase
 import com.pozmaxpav.cinemaopinion.data.local.room.dao.CommentPersonalListDao
 import com.pozmaxpav.cinemaopinion.data.local.room.dao.SelectedMovieDao
-import com.pozmaxpav.cinemaopinion.data.local.room.dao.SeriesControlDao
 import com.pozmaxpav.cinemaopinion.data.repository.CommentPersonalListRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.GetMovieInformationApiRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SelectedMovieRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.SharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.FirebaseRepositoryImpl
-import com.pozmaxpav.cinemaopinion.domain.repository.CommentPersonalListRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.GetMovieInformationApiRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.MovieRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.SelectedMovieRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.SeriesControlRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.SystemSharedPreferencesRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.ThemeRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.DeleteSelectedFilmUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetFilmByIdUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetListSelectedFilmsUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.InsertFilmUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCDeleteMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetListMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetMovieByIdUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCInsertUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCUpdateMovieUseCase
+import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.SeriesControlRepositoryImpl
+import com.pozmaxpav.cinemaopinion.domain.repository.remote.CommentPersonalListRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.remote.SelectedMovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemSharedPreferencesRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.system.ThemeRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.remote.FirebaseRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.remote.SeriesControlRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -105,7 +92,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGetMovieInformationApiRepository(api: GetMovieInformationApi): GetMovieInformationApiRepository {
+    fun provideGetMovieInformationApiRepository(api: GetMovieInformationApi):
+            GetMovieInformationApiRepository {
         return GetMovieInformationApiRepositoryImpl(api)
     }
 
@@ -157,30 +145,6 @@ object AppModule {
         return SelectedMovieRepositoryImpl(selectedMovieDao)
     }
 
-    @Provides
-    @Singleton
-    fun provideGetListSelectedFilmsUseCase(selectedMovieRepository: SelectedMovieRepository): GetListSelectedFilmsUseCase {
-        return GetListSelectedFilmsUseCase(selectedMovieRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideInsertFilmUseCase(selectedMovieRepository: SelectedMovieRepository): InsertFilmUseCase {
-        return InsertFilmUseCase(selectedMovieRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGetFilmById(selectedMovieRepository: SelectedMovieRepository): GetFilmByIdUseCase {
-        return GetFilmByIdUseCase(selectedMovieRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideDeleteSelectedFilmUseCase(selectedMovieRepository: SelectedMovieRepository): DeleteSelectedFilmUseCase {
-        return DeleteSelectedFilmUseCase(selectedMovieRepository)
-    }
-
     // endregion
 
     // region Firebase
@@ -199,26 +163,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFilmRepository(databaseReference: DatabaseReference): FirebaseRepository {
+    fun provideFirebaseRepository(databaseReference: DatabaseReference): FirebaseRepository {
         return FirebaseRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
     }
 
     @Provides
     @Singleton
-    fun provideSaveMovieUseCase(firebaseRepository: FirebaseRepository): SaveMovieUseCase {
-        return SaveMovieUseCase(firebaseRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideRemoveMovieUseCase(firebaseRepository: FirebaseRepository): RemoveMovieUseCase {
-        return RemoveMovieUseCase(firebaseRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGetMovieUseCase(firebaseRepository: FirebaseRepository): GetMovieUseCase {
-        return GetMovieUseCase(firebaseRepository)
+    fun provideSeriesControlRepository(databaseReference: DatabaseReference): SeriesControlRepository {
+        return SeriesControlRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
     }
 
     // endregion
@@ -227,22 +179,21 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLocalUserManager(
-        application: Application
-    ) : LocalUserManager = LocalUserManagerImpl(application)
+    fun provideLocalUserManager(application: Application): LocalUserManager =
+        LocalUserManagerImpl(application)
 
     @Provides
     @Singleton
-    fun provideAppEntryUseCases(
-        localUserManager: LocalUserManager
-    ) = AppEntryUseCases(
-        readAppEntry = ReadAppEntry(localUserManager),
-        saveAppEntry = SaveAppEntry(localUserManager)
-    )
+    fun provideAppEntryUseCases(localUserManager: LocalUserManager) =
+        AppEntryUseCases(
+            readAppEntry = ReadAppEntry(localUserManager),
+            saveAppEntry = SaveAppEntry(localUserManager)
+        )
 
     // endregion
 
     // region CommentPersonalList
+
     @Provides
     fun provideCommentPersonalListDao(appDatabase: AppDatabase): CommentPersonalListDao {
         return appDatabase.commentPersonalListDao()
@@ -252,51 +203,8 @@ object AppModule {
     fun provideCommentPersonalListRepository(commentPersonalListDao: CommentPersonalListDao): CommentPersonalListRepository {
         return CommentPersonalListRepositoryImpl(commentPersonalListDao)
     }
-    // endregion
-
-    // region SeriesControl
-
-    @Provides
-    @Singleton
-    fun providesSeriesControlDao(appDatabase: AppDatabase): SeriesControlDao {
-        return appDatabase.seriesControlDao()
-    }
-
-    @Provides
-    @Singleton
-    fun providesSeriesControlRepository(seriesControlDao: SeriesControlDao): SeriesControlRepository {
-        return SeriesControlRepositoryImpl(seriesControlDao)
-    }
-
-    @Provides
-    @Singleton
-    fun providesSCDeleteMovieUseCase(seriesControlRepository: SeriesControlRepository): SCDeleteMovieUseCase {
-        return SCDeleteMovieUseCase(seriesControlRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun providesSCGetListMoviesUseCase(seriesControlRepository: SeriesControlRepository): SCGetListMoviesUseCase {
-        return SCGetListMoviesUseCase(seriesControlRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun providesSCGetMovieByIdUseCase(seriesControlRepository: SeriesControlRepository): SCGetMovieByIdUseCase {
-        return SCGetMovieByIdUseCase(seriesControlRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun providesSCInsertUseCase(seriesControlRepository: SeriesControlRepository): SCInsertUseCase {
-        return SCInsertUseCase(seriesControlRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun providesSCUpdateMovieUseCase(seriesControlRepository: SeriesControlRepository): SCUpdateMovieUseCase {
-        return SCUpdateMovieUseCase(seriesControlRepository)
-    }
 
     // endregion
+
+
 }

@@ -1,7 +1,7 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.firebase
 
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
-import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.remote.FirebaseRepository
 import javax.inject.Inject
 
 class GetMovieUseCase @Inject constructor(

@@ -1,13 +1,13 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol
 
-import com.pozmaxpav.cinemaopinion.domain.models.room.models.SeriesControlModel
-import com.pozmaxpav.cinemaopinion.domain.repository.SeriesControlRepository
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainSeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.repository.remote.SeriesControlRepository
 import javax.inject.Inject
 
 class SCUpdateMovieUseCase @Inject constructor(
     private val seriesControlRepository: SeriesControlRepository
 ) {
-    suspend operator fun invoke(movie: SeriesControlModel) {
-        seriesControlRepository.updateMovie(movie)
+    suspend operator fun invoke(movie: DomainSeriesControlModel) {
+        seriesControlRepository.updateEntry(movie)
     }
 }

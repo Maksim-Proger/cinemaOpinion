@@ -4,10 +4,10 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainSeriesCon
 import com.pozmaxpav.cinemaopinion.domain.repository.remote.SeriesControlRepository
 import javax.inject.Inject
 
-class SCGetMovieByIdUseCase @Inject constructor(
+class GetListEntriesUseCase @Inject constructor(
     private val seriesControlRepository: SeriesControlRepository
 ) {
-    suspend operator fun invoke(id: Int): DomainSeriesControlModel? {
-        return seriesControlRepository.getEntryById(id)
+    suspend operator fun invoke(userId: String): List<DomainSeriesControlModel> {
+        return seriesControlRepository.getListEntries(userId)
     }
 }

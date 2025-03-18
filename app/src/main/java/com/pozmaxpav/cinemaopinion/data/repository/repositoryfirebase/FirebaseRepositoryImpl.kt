@@ -9,9 +9,9 @@ import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
 import com.pozmaxpav.cinemaopinion.data.remote.firebase.models.DataComment
 import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainComment
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
-import com.pozmaxpav.cinemaopinion.domain.repository.repositoryfirebase.FirebaseRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.remote.FirebaseRepository
 import com.pozmaxpav.cinemaopinion.utilits.NODE_COMMENTS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
@@ -187,7 +187,7 @@ class FirebaseRepositoryImpl @Inject constructor(
     override suspend fun addCommentToMovie(
         dataSource: String,
         movieId: Double,
-        comment: DomainComment
+        comment: DomainCommentModel
     ) {
         // Поиск фильма по его ID
         val snapshot = databaseReference
@@ -228,7 +228,7 @@ class FirebaseRepositoryImpl @Inject constructor(
     override suspend fun getCommentsForMovie(
         dataSource: String,
         movieId: Double
-    ): List<DomainComment> {
+    ): List<DomainCommentModel> {
         // Ищем узел с нужным фильмом
         val movieSnapshot = databaseReference
             .child(dataSource)
@@ -253,7 +253,7 @@ class FirebaseRepositoryImpl @Inject constructor(
     override suspend fun observeCommentsForMovie(
         dataSource: String,
         movieId: Double,
-        onCommentsUpdated: (List<DomainComment>) -> Unit
+        onCommentsUpdated: (List<DomainCommentModel>) -> Unit
     ) {
         databaseReference
             .child(dataSource)
