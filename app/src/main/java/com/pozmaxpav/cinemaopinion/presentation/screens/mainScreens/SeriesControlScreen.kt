@@ -78,7 +78,7 @@ fun SeriesControlScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listMovies by seriesControlViewModel.listMovies.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
-    var selectedNote by remember { mutableStateOf<DomainSeriesControlModel?>(null) }
+    var selectedEntry by remember { mutableStateOf<DomainSeriesControlModel?>(null) }
     var openBottomSheetAdd by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
 
@@ -105,20 +105,24 @@ fun SeriesControlScreen(
         }
     }
 
-//    if (openBottomSheetChange) {
-//        MyBottomSheet(
-//            onClose = { openBottomSheetChange = false },
-//            content = {
-//                ChangeItem(movie = selectedNote!!) {
-//                    openBottomSheetChange = false
-//                }
-//            },
-//            fraction = 0.5f
-//        )
-//        BackHandler {
-//            openBottomSheetChange = false
-//        }
-//    }
+    if (openBottomSheetChange) {
+        MyBottomSheet(
+            onClose = { openBottomSheetChange = false },
+            content = {
+                ChangeItem(
+                    userId,
+                    selectedEntry!!,
+                    seriesControlViewModel
+                ) {
+                    openBottomSheetChange = false
+                }
+            },
+            fraction = 0.5f
+        )
+        BackHandler {
+            openBottomSheetChange = false
+        }
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -149,7 +153,7 @@ fun SeriesControlScreen(
                 .padding(innerPadding),
             contentPadding = PaddingValues(10.dp)
         ) {
-            items(listMovies, key = { it.id }) { movie ->
+            items(listMovies, key = { it.id }) { entry ->
                 var isVisible by remember { mutableStateOf(true) }
                 AnimatedVisibility(
                     visible = isVisible,
@@ -182,18 +186,17 @@ fun SeriesControlScreen(
                                 Row(
                                     modifier = Modifier.weight(0.9f)
                                 ) {
-                                    Item(movie) {
-                                        selectedNote = movie
+                                    Item(entry) {
+                                        selectedEntry = entry
                                         openBottomSheetChange = true
                                     }
                                 }
-
                                 IconButton(
                                     onClick = {
                                         isVisible = false // Скрываем элемент перед удалением
                                         CoroutineScope(Dispatchers.Main).launch {
                                             delay(300)
-                                            seriesControlViewModel.deleteMovie(userId, movie.id)
+                                            seriesControlViewModel.deleteMovie(userId, entry.id)
                                         }
                                     }
                                 ) {
@@ -270,107 +273,109 @@ private fun AddItem(
     )
 }
 
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//private fun ChangeItem(
-//    movie: DomainSeriesControlModel,
-//    viewModel: SeriesControlViewModel = hiltViewModel(),
-//    onClick: () -> Unit
-//) {
-//    val (season, setSeason) = remember { mutableStateOf("") }
-//    val (series, setSeries) = remember { mutableStateOf("") }
-//
-//    LaunchedEffect(Unit) {
-//        setSeason(movie.season.toString())
-//        setSeries(movie.series.toString())
-//    }
-//
-//    OutlinedTextField(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(horizontal = 15.dp, vertical = 15.dp),
-//        value = season,
-//        onValueChange = setSeason,
-//        shape = RoundedCornerShape(16.dp),
-//        placeholder = { Text("Укажите сезон") },
-//        trailingIcon =  if (season.isNotEmpty()) {
-//            {
-//                IconButton(onClick = { setSeason("") }) {
-//                    Icon(
-//                        imageVector = Icons.Default.Close,
-//                        contentDescription = stringResource(id = R.string.description_clear_text),
-//                        tint = MaterialTheme.colorScheme.onPrimary
-//                    )
-//                }
-//            }
-//        } else null,
-//        keyboardOptions = KeyboardOptions(
-//            // Указываем какой тип клавиатуры будет использоваться.
-//            keyboardType = KeyboardType.Number,
-//            // Указываем, каким образом будет обрабатываться нажатие клавиши Enter.
-//            imeAction = ImeAction.Done
-//        ),
-//        singleLine = true,
-//        colors = TextFieldDefaults.outlinedTextFieldColors(
-//            focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-//            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-//            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-//            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-//            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-//            focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-//            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
-//        )
-//    )
-//
-//    OutlinedTextField(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(horizontal = 15.dp, vertical = 15.dp),
-//        value = series,
-//        onValueChange = setSeries,
-//        shape = RoundedCornerShape(16.dp),
-//        placeholder = { Text("Укажите серию") },
-//        trailingIcon =  if (series.isNotEmpty()) {
-//            {
-//                IconButton(onClick = { setSeries("") }) {
-//                    Icon(
-//                        imageVector = Icons.Default.Close,
-//                        contentDescription = stringResource(id = R.string.description_clear_text),
-//                        tint = MaterialTheme.colorScheme.onPrimary
-//                    )
-//                }
-//            }
-//        } else null,
-//        keyboardOptions = KeyboardOptions(
-//            // Указываем какой тип клавиатуры будет использоваться.
-//            keyboardType = KeyboardType.Number,
-//            // Указываем, каким образом будет обрабатываться нажатие клавиши Enter.
-//            imeAction = ImeAction.Done
-//        ),
-//        singleLine = true,
-//        colors = TextFieldDefaults.outlinedTextFieldColors(
-//            focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-//            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-//            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-//            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-//            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-//            focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-//            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
-//        )
-//    )
-//
-//    Row(
-//        modifier = Modifier.fillMaxWidth().padding(end = 15.dp),
-//        horizontalArrangement = Arrangement.End
-//    ) {
-//        Button(
-//            onClick = {
-//                viewModel.updateMovie(movie.id, season.toInt(), series.toInt())
-//                onClick()
-//            }
-//        ) {
-//            Text(text = "Сохранить")
-//        }
-//    }
-//}
+@Composable
+private fun ChangeItem(
+    userId: String,
+    selectedEntry: DomainSeriesControlModel,
+    seriesControlViewModel: SeriesControlViewModel,
+    onClick: () -> Unit
+) {
+    val (season, setSeason) = remember { mutableStateOf("") }
+    val (series, setSeries) = remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        setSeason(selectedEntry.season.toString())
+        setSeries(selectedEntry.series.toString())
+    }
+
+    // region Season
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 15.dp),
+        value = season,
+        onValueChange = setSeason,
+        shape = RoundedCornerShape(16.dp),
+        placeholder = { Text("Укажите сезон") },
+        trailingIcon = if (season.isNotEmpty()) {
+            {
+                IconButton(onClick = { setSeason("") }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.description_clear_text),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        } else null,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+        singleLine = true,
+        colors = textFieldColors()
+    )
+    // endregion
+
+    // region series
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 15.dp),
+        value = series,
+        onValueChange = setSeries,
+        shape = RoundedCornerShape(16.dp),
+        placeholder = { Text("Укажите серию") },
+        trailingIcon = if (series.isNotEmpty()) {
+            {
+                IconButton(onClick = { setSeries("") }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.description_clear_text),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        } else null,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+        singleLine = true,
+        colors = textFieldColors()
+    )
+    // endregion
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 15.dp),
+        horizontalArrangement = Arrangement.End
+    ) {
+        Button(
+            onClick = {
+                seriesControlViewModel.updateMovie(
+                    userId,
+                    selectedEntry.id,
+                    selectedEntry.title,
+                    season.toInt(),
+                    series.toInt()
+                )
+                onClick()
+            }
+        ) { Text(text = "Сохранить") }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun textFieldColors() = TextFieldDefaults.outlinedTextFieldColors(
+    focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+    focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+    unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+    focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+    unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+    focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+    unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
+)
 

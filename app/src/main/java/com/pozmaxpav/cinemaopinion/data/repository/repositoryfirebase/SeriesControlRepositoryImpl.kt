@@ -135,28 +135,59 @@ class SeriesControlRepositoryImpl @Inject constructor(
 
             if (userSnapshot.exists()) {
                 val userKey = userSnapshot.children.firstOrNull()?.key
-                val entriesSnapshot = databaseReference
-                    .child(NODE_LIST_USERS)
-                    .child(userKey!!)
-                    .child(NODE_SERIES_CONTROL)
-                    .get()
-                    .await()
 
-                if(entriesSnapshot.exists() && entriesSnapshot.hasChildren()) {
-                    for (it in entriesSnapshot.children) {
-                        it.ref.removeValue().await()
+                if (userKey != null) {
+                    val entriesSnapshot = databaseReference
+                        .child(NODE_LIST_USERS)
+                        .child(userKey)
+                        .child(NODE_SERIES_CONTROL)
+                        .get()
+                        .await()
+
+                    if(entriesSnapshot.exists() && entriesSnapshot.hasChildren()) {
+                        for (entry in entriesSnapshot.children) {
+                            if (entry.child("id").getValue(String::class.java) == entryId) {
+                                entry.ref.removeValue().await()
+                                break
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    override suspend fun getEntryById(id: Int): DomainSeriesControlModel? {
-        TODO("Not yet implemented")
-    }
+    override suspend fun updateEntry(userId: String, entryId: String, selectedEntry: DomainSeriesControlModel) {
+        if (userId.isNotEmpty()) {
+            val userSnapshot = databaseReference
+                .child(NODE_LIST_USERS)
+                .orderByChild("id")
+                .equalTo(userId)
+                .get()
+                .await()
 
-    override suspend fun updateEntry(entry: DomainSeriesControlModel) {
-        TODO("Not yet implemented")
+            if (userSnapshot.exists()) {
+                val userKey = userSnapshot.children.firstOrNull()?.key
+
+                if (userKey != null) {
+                    val entriesSnapshot = databaseReference
+                        .child(NODE_LIST_USERS)
+                        .child(userKey)
+                        .child(NODE_SERIES_CONTROL)
+                        .get()
+                        .await()
+
+                    if(entriesSnapshot.exists() && entriesSnapshot.hasChildren()) {
+                        for (entry in entriesSnapshot.children) {
+                            if (entry.child("id").getValue(String::class.java) == entryId) {
+                                entry.ref.setValue(selectedEntry).await()
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

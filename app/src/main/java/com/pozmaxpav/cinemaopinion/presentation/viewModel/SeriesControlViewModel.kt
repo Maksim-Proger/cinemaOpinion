@@ -5,13 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainSeriesControlModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.DeleteEntryUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.GetListEntriesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCGetMovieByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.AddNewEntryUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.ObserveListEntriesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.SCUpdateMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.UpdateEntryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -23,8 +21,7 @@ class SeriesControlViewModel @Inject constructor(
     private val getListEntriesUseCase: GetListEntriesUseCase,
     private val observeListEntriesUseCase: ObserveListEntriesUseCase,
     private val deleteEntryUseCase: DeleteEntryUseCase,
-    private val getMovieByIdUseCase: SCGetMovieByIdUseCase,
-    private val updateMovieUseCase: SCUpdateMovieUseCase
+    private val updateMovieUseCase: UpdateEntryUseCase
 ) : ViewModel() {
 
     private val _listMovies = MutableStateFlow<List<DomainSeriesControlModel>>(emptyList())
@@ -47,11 +44,6 @@ class SeriesControlViewModel @Inject constructor(
                 _listMovies.value = onEntriesUpdated
             }
         }
-    }
-
-    public override fun onCleared() {
-        super.onCleared()
-        observeListEntriesUseCase.removeListener() // Удаляем слушатель при уничтожении ViewModel
     }
 
     fun addNewEntry(userId: String, title: String, season: Int = 0, series: Int = 0) {
@@ -80,15 +72,25 @@ class SeriesControlViewModel @Inject constructor(
         }
     }
 
-    //    fun updateMovie(id: Int, season: Int, series: Int) {
-//        viewModelScope.launch {
-//            try {
-//                val movie = getMovieByIdUseCase(id)
-//                val updatedMovie = movie!!.copy(season = season, series = series)
-//                updateMovieUseCase(updatedMovie)
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
-//        }
-//    }
+    fun updateMovie(userId: String, entryId: String, title: String, season: Int, series: Int) {
+        viewModelScope.launch {
+            try {
+                val selectedEntry = DomainSeriesControlModel(
+                    entryId,
+                    title,
+                    season,
+                    series
+                )
+                updateMovieUseCase(userId, entryId, selectedEntry)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    public override fun onCleared() {
+        super.onCleared()
+        observeListEntriesUseCase.removeListener() // Удаляем слушатель при уничтожении ViewModel
+    }
+
 }
