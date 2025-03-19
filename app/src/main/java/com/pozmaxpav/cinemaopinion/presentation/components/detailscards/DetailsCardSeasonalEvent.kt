@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarScaffold
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel

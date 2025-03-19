@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard

@@ -14,12 +14,11 @@ import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
 import com.pozmaxpav.cinemaopinion.data.local.datastore.LocalUserManagerImpl
 import com.pozmaxpav.cinemaopinion.data.local.room.appdb.AppDatabase
 import com.pozmaxpav.cinemaopinion.data.local.room.dao.CommentPersonalListDao
-import com.pozmaxpav.cinemaopinion.data.local.room.dao.SelectedMovieDao
-import com.pozmaxpav.cinemaopinion.data.repository.CommentPersonalListRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.GetMovieInformationApiRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.MovieRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.SelectedMovieRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.SharedPreferencesRepository
+import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.CommentPersonalListRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.repositoryapi.GetMovieInformationApiRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.repositoryapi.MovieRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.SelectedMovieRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.system.SharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.FirebaseRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.domain.repository.remote.CommentPersonalListRepository
@@ -131,22 +130,6 @@ object AppModule {
 
     // endregion
 
-    // region SelectedFilm
-
-    @Provides
-    @Singleton
-    fun provideSelectedMovieDao(appDatabase: AppDatabase): SelectedMovieDao {
-        return appDatabase.selectedMovieDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideSelectedMovieRepository(selectedMovieDao: SelectedMovieDao): SelectedMovieRepository {
-        return SelectedMovieRepositoryImpl(selectedMovieDao)
-    }
-
-    // endregion
-
     // region Firebase
 
     @Provides
@@ -171,6 +154,12 @@ object AppModule {
     @Singleton
     fun provideSeriesControlRepository(databaseReference: DatabaseReference): SeriesControlRepository {
         return SeriesControlRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
+    }
+
+    @Provides
+    @Singleton
+    fun provideSelectedMovieRepository(databaseReference: DatabaseReference): SelectedMovieRepository {
+        return SelectedMovieRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
     }
 
     // endregion
@@ -205,6 +194,5 @@ object AppModule {
     }
 
     // endregion
-
 
 }

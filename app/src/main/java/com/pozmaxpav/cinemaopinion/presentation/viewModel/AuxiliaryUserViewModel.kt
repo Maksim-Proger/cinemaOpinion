@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.AddUserUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.AddUserUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.CheckLoginAndPasswordUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetUserDataUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetUsersUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdateSpecificFieldUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.UpdatingUserDataUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.GetUserDataUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.GetUsersUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.UpdateSpecificFieldUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.UpdatingUserDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.repository.remote
 
-import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel

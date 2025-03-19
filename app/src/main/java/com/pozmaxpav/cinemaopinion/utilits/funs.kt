@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.Country
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData
