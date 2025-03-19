@@ -1,0 +1,13 @@
+package com.pozmaxpav.cinemaopinion.domain.usecase.api.movies
+
+import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieTopList
+import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepository
+import javax.inject.Inject
+
+class GetTopMoviesUseCase @Inject constructor(
+    private val repository: MovieRepository
+) {
+    suspend operator fun invoke(page: Int) : MovieTopList {
+        return repository.getTopMovies(page)
+    }
+}

@@ -49,7 +49,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.room.models.CommentPersonalListModel
-import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSelectedMovie
@@ -80,7 +80,7 @@ fun ListSelectedMovies(
     val info by viewModelMain.informationMovie.collectAsState()
     var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
-    var (comment, setComment) = remember { mutableStateOf("") }
+    val (comment, setComment) = remember { mutableStateOf("") }
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
@@ -313,7 +313,7 @@ private fun ShowListComments(
                     )
                 ) {
                     if (id == comment.movieId) {
-                        Column(modifier = Modifier.padding(8.dp)) { // TODO: Переделать стили
+                        Column(modifier = Modifier.padding(8.dp)) {
                             Text(
                                 text = comment.commentText,
                                 fontWeight = FontWeight.Bold

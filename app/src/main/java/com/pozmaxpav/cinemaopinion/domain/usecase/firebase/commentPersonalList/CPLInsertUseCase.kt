@@ -1,0 +1,13 @@
+package com.pozmaxpav.cinemaopinion.domain.usecase.firebase.commentPersonalList
+
+import com.pozmaxpav.cinemaopinion.domain.models.room.models.CommentPersonalListModel
+import com.pozmaxpav.cinemaopinion.domain.repository.remote.CommentPersonalListRepository
+import javax.inject.Inject
+
+class CPLInsertUseCase @Inject constructor(
+    private val repository: CommentPersonalListRepository
+) {
+    suspend operator fun invoke(comment: CommentPersonalListModel) {
+        repository.insert(comment)
+    }
+}

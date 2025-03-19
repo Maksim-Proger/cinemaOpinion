@@ -3,11 +3,11 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainSeriesControlModel
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.DeleteEntryUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.GetListEntriesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.AddNewEntryUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.ObserveListEntriesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.seriescontrol.UpdateEntryUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.seriescontrol.DeleteEntryUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.seriescontrol.GetListEntriesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.seriescontrol.AddNewEntryUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.seriescontrol.ObserveListEntriesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.seriescontrol.UpdateEntryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

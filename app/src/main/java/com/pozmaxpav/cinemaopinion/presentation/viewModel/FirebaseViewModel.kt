@@ -2,16 +2,16 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.AddCommentUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetCommentsForMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.GetMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.ObserveCommentsForMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.ObserveListMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.RemoveMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SaveMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments.AddCommentUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments.GetCommentsForMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.GetMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments.ObserveCommentsForMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.ObserveListMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.RemoveMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SaveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SendingToTheSerialsListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SendingToTheViewedFolderUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfChangesUseCase

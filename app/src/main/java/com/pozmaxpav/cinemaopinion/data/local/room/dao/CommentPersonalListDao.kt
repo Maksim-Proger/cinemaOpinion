@@ -8,11 +8,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CommentPersonalListDao {
-
     @Insert
     suspend fun insert(comment: CommentPersonalListEntity)
-
     @Query("SELECT * FROM comments")
     fun getComments(): Flow<List<CommentPersonalListEntity>>
-
 }

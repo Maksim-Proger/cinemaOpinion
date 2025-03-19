@@ -2,11 +2,10 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.SelectedMovie
-import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.DeleteSelectedFilmUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetFilmByIdUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.GetListSelectedFilmsUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.selectedFilm.InsertFilmUseCase
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedFilm.DeleteMovieFromPersonalListUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedFilm.GetListPersonalMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedFilm.AddMovieToPersonalListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,10 +15,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SelectedMovieViewModel @Inject constructor(
-    private val getListSelectedFilmsUseCase: GetListSelectedFilmsUseCase,
-    private val insertFilmUseCase: InsertFilmUseCase,
+    private val getListSelectedFilmsUseCase: GetListPersonalMoviesUseCase,
+    private val insertFilmUseCase: AddMovieToPersonalListUseCase,
     private val getFilmById: GetFilmByIdUseCase,
-    private val deleteSelectedFilmUseCase: DeleteSelectedFilmUseCase
+    private val deleteSelectedFilmUseCase: DeleteMovieFromPersonalListUseCase
 ) : ViewModel() {
 
     private val _selectedMovies = MutableStateFlow<List<SelectedMovie>>(emptyList())
@@ -44,7 +43,7 @@ class SelectedMovieViewModel @Inject constructor(
         }
     }
 
-    fun addSelectedMovie(selectedMovie: SelectedMovie) { // TODO: Проверить содержание сохраняемых данных
+    fun addSelectedMovie(selectedMovie: SelectedMovie) {
         viewModelScope.launch {
             try {
                 val existMovie = getFilmById(selectedMovie.id)
