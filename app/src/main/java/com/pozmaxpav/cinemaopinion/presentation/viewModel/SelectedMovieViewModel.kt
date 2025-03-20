@@ -2,10 +2,11 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedFilm.DeleteMovieFromPersonalListUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedFilm.GetListPersonalMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedFilm.AddMovieToPersonalListUseCase
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedmovie.DeleteMovieFromPersonalListUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedmovie.GetListPersonalMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedmovie.AddMovieToPersonalListUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedmovie.ObserveListSelectedMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,26 +16,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SelectedMovieViewModel @Inject constructor(
-    private val getListSelectedFilmsUseCase: GetListPersonalMoviesUseCase,
-    private val insertFilmUseCase: AddMovieToPersonalListUseCase,
-    private val getFilmById: GetFilmByIdUseCase,
-    private val deleteSelectedFilmUseCase: DeleteMovieFromPersonalListUseCase
+    private val addMovieToPersonalListUseCase: AddMovieToPersonalListUseCase,
+    private val getListPersonalMoviesUseCase: GetListPersonalMoviesUseCase,
+    private val observeListSelectedMoviesUseCase: ObserveListSelectedMoviesUseCase,
+    private val deleteMovieFromPersonalListUseCase: DeleteMovieFromPersonalListUseCase
 ) : ViewModel() {
 
-    private val _selectedMovies = MutableStateFlow<List<SelectedMovie>>(emptyList())
-    val selectedMovies: StateFlow<List<SelectedMovie>> = _selectedMovies
+    private val _selectedMovies = MutableStateFlow<List<SelectedMovieModel>>(emptyList())
+    val selectedMovies: StateFlow<List<SelectedMovieModel>> = _selectedMovies
 
     private val _status = MutableStateFlow("")
     val status: StateFlow<String> = _status.asStateFlow()
 
-    init {
-        fitchListSelectedMovies()
-    }
-
-    fun fitchListSelectedMovies() {
+    fun getListPersonalMovies(userId: String) {
         viewModelScope.launch {
             try {
-                val movies = getListSelectedFilmsUseCase()
+                val movies = getListPersonalMoviesUseCase(userId)
                 _selectedMovies.value = movies
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -43,14 +40,21 @@ class SelectedMovieViewModel @Inject constructor(
         }
     }
 
-    fun addSelectedMovie(selectedMovie: SelectedMovie) {
+    fun addMovieToPersonalList(userId: String, selectedMovie: SelectedMovieModel) {
         viewModelScope.launch {
             try {
-                val existMovie = getFilmById(selectedMovie.id)
-                if (existMovie == null) {
-                    insertFilmUseCase.invoke(selectedMovie)
-                } else {
-                    _status.value = "error"
+                addMovieToPersonalListUseCase(userId, selectedMovie)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun observeListSelectedMovies(userId: String) {
+        viewModelScope.launch {
+            try {
+                observeListSelectedMoviesUseCase(userId) { onSelectedMoviesUpdated ->
+                    _selectedMovies.value = onSelectedMoviesUpdated
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -58,16 +62,19 @@ class SelectedMovieViewModel @Inject constructor(
         }
     }
 
-    fun deleteSelectedMovie(selectedMovie: SelectedMovie) {
+    fun deleteSelectedMovie(userId: String, selectedMovieId: String) {
         viewModelScope.launch {
             try {
-                deleteSelectedFilmUseCase(selectedMovie)
-                fitchListSelectedMovies()
+                deleteMovieFromPersonalListUseCase(userId, selectedMovieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
+    public override fun onCleared() {
+        super.onCleared()
+        observeListSelectedMoviesUseCase.removeListener()
+    }
 
 }

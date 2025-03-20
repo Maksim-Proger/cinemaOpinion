@@ -7,7 +7,7 @@ import com.google.firebase.database.ValueEventListener
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
 import com.pozmaxpav.cinemaopinion.data.remote.firebase.models.DataComment
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
@@ -117,7 +117,7 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovie) {
+    override suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovieModel) {
 //        val filmData = SelectedMovie( // TODO: Надо разобрать зачем мне тут снова создавать модель?
 //            selectedMovie.id,
 //            selectedMovie.nameFilm,
@@ -150,13 +150,13 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMovie(dataSource: String): List<SelectedMovie> {
+    override suspend fun getMovie(dataSource: String): List<SelectedMovieModel> {
         val snapshot = databaseReference.child(dataSource).get().await()
         return snapshot.children.mapNotNull { childSnapshot ->
-            childSnapshot.getValue(SelectedMovie::class.java)
+            childSnapshot.getValue(SelectedMovieModel::class.java)
         }
             .map {
-                SelectedMovie(
+                SelectedMovieModel(
                     id = it.id,
                     nameFilm = it.nameFilm,
                     posterUrl = it.posterUrl
@@ -166,14 +166,14 @@ class FirebaseRepositoryImpl @Inject constructor(
 
     override suspend fun observeListMovies(
         dataSource: String,
-        onMoviesUpdated: (List<SelectedMovie>) -> Unit
+        onMoviesUpdated: (List<SelectedMovieModel>) -> Unit
     ) {
         databaseReference
             .child(dataSource)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val movies = snapshot.children.mapNotNull { movieSnapshot ->
-                        movieSnapshot.getValue(SelectedMovie::class.java)
+                        movieSnapshot.getValue(SelectedMovieModel::class.java)
                     }
                     onMoviesUpdated(movies)
                 }

@@ -1,9 +1,13 @@
 package com.pozmaxpav.cinemaopinion.domain.repository.remote
 
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 
 interface SelectedMovieRepository {
-    suspend fun addMovieToPersonalList(selectedMovie: SelectedMovie)
-    suspend fun getListPersonalMovies(): List<SelectedMovie>
-    suspend fun deleteMovieFromPersonalList(selectedMovie: SelectedMovie)
+    fun removeListener()
+    suspend fun addMovieToPersonalList(userId: String, selectedMovie: SelectedMovieModel)
+    suspend fun getListPersonalMovies(userId: String, ): List<SelectedMovieModel>
+    suspend fun observeListSelectedMovies(
+        userId: String, onSelectedMoviesUpdated: (List<SelectedMovieModel>) -> Unit
+    )
+    suspend fun deleteMovieFromPersonalList(userId: String, selectedMovieId: String)
 }

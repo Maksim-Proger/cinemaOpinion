@@ -44,7 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
@@ -137,7 +137,7 @@ fun MainScreen(navController: NavHostController) {
     var saveSearchQuery by remember { mutableStateOf("") } // Сохраняем содержание поиска
 
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
-    var selectedNewYearMovie by remember { mutableStateOf<SelectedMovie?>(null) }
+    var selectedNewYearMovie by remember { mutableStateOf<SelectedMovieModel?>(null) }
 
     // endregion
 

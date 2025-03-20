@@ -23,12 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 
 @Composable
 fun ShowSelectedMovie(
-    movie: SelectedMovie,
+    movie: SelectedMovieModel,
     isGeneralList: Boolean,
     isShowCommentButton: Boolean,
     content: @Composable () -> Unit = {},

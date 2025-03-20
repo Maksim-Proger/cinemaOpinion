@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarScaffold
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
@@ -45,7 +45,7 @@ import com.pozmaxpav.cinemaopinion.utilits.showToast
 
 @Composable
 fun DetailsCard(
-    newYearMovie: SelectedMovie,
+    newYearMovie: SelectedMovieModel,
     onCloseButton: () -> Unit,
     padding: PaddingValues,
     addToPersonalList: String,
@@ -173,10 +173,10 @@ fun DetailsCard(
                         }
                         // endregion
 
-                        // region ButtonAddToYourList
+                        // region ButtonAddToPersonalList
                         Button(
                             onClick = {
-                                selectedMovieViewModel.addSelectedMovie(newYearMovie)
+                                selectedMovieViewModel.addMovieToPersonalList(userId, newYearMovie)
                                 if (statusExist == "error") {
                                     showToast(context, errorToast)
                                 } else showToast(context, addToPersonalList)

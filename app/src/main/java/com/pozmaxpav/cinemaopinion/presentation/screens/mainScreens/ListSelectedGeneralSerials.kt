@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
@@ -84,7 +84,7 @@ fun ListSelectedGeneralSerials(
 
     val listSerials by viewModel.movies.collectAsState()
     val listComments by viewModel.comments.collectAsState()
-    var selectedSerial by remember { mutableStateOf<SelectedMovie?>(null) }
+    var selectedSerial by remember { mutableStateOf<SelectedMovieModel?>(null) }
 //    val user by userViewModel.users.collectAsState()
     var username by remember { mutableStateOf("") }
     val info by viewModelMain.informationMovie.collectAsState()

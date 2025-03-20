@@ -55,19 +55,19 @@ fun DetailsCardFilm(
     onClick: () -> Unit,
     padding: PaddingValues,
     user: String,
-    viewModel: SelectedMovieViewModel = hiltViewModel(),
-    viewModelFirebase: FirebaseViewModel = hiltViewModel(),
-    viewModelMain: MainViewModel = hiltViewModel()
+    selectedMovieViewModel: SelectedMovieViewModel = hiltViewModel(),
+    firebaseViewModel: FirebaseViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
-    val statusExist by viewModel.status.collectAsState()
+    val statusExist by selectedMovieViewModel.status.collectAsState()
+    val userId by mainViewModel.userId.collectAsState()
+    val info by mainViewModel.informationMovie.collectAsState()
+
     val context = LocalContext.current
     val scrollState = rememberScrollState()
-    val info by viewModelMain.informationMovie.collectAsState()
 
-    // Выполняем запрос к API только при изменении `movie.id`
-    // Это нужно, чтобы не было многократного запроса к Api
     LaunchedEffect(movie.id) {
-        viewModelMain.getInformationMovie(movie.id)
+        mainViewModel.getInformationMovie(movie.id)
     }
 
     Column(
@@ -243,7 +243,9 @@ fun DetailsCardFilm(
                                 onClick = {
                                     // Преобразуем MovieData в SelectedMovie
                                     val selectedMovie = movie.toSelectedMovie()
-                                    viewModel.addSelectedMovie(selectedMovie)
+                                    selectedMovieViewModel.addMovieToPersonalList(
+                                        userId, selectedMovie
+                                    )
 
                                     if (statusExist == "error") {
                                         showToast(context, errorToast)
@@ -264,11 +266,11 @@ fun DetailsCardFilm(
                                     contentColor = MaterialTheme.colorScheme.onSecondary
                                 ),
                                 onClick = { // TODO: Добавить проверку
-                                    viewModelFirebase.savingChangeRecord(
+                                    firebaseViewModel.savingChangeRecord(
                                         user,
                                         "добавил(а) фильм: ${movie.nameRu}"
                                     )
-                                    viewModelFirebase.saveMovie(NODE_LIST_MOVIES, movie.toSelectedMovie())
+                                    firebaseViewModel.saveMovie(NODE_LIST_MOVIES, movie.toSelectedMovie())
                                     showToast(context, addToGeneralList)
                                     onClick()
                                 },
@@ -287,11 +289,11 @@ fun DetailsCardFilm(
                                     contentColor = MaterialTheme.colorScheme.onSecondary
                                 ),
                                 onClick = { // TODO: Добавить проверку
-                                    viewModelFirebase.savingChangeRecord(
+                                    firebaseViewModel.savingChangeRecord(
                                         user,
                                         "добавил(а) сериал: ${movie.nameRu}"
                                     )
-                                    viewModelFirebase.saveMovie(NODE_LIST_SERIALS, movie.toSelectedMovie())
+                                    firebaseViewModel.saveMovie(NODE_LIST_SERIALS, movie.toSelectedMovie())
                                     showToast(context, addToGeneralList)
                                     onClick()
                                 },
@@ -310,11 +312,11 @@ fun DetailsCardFilm(
                                     contentColor = MaterialTheme.colorScheme.onSecondary
                                 ),
                                 onClick = {
-                                    viewModelFirebase.savingChangeRecord(
+                                    firebaseViewModel.savingChangeRecord(
                                         user,
                                         "Пополнил(а) коллекцию новогодней подборки: ${movie.nameRu}"
                                     )
-                                    viewModelFirebase.saveMovie(NODE_NEW_YEAR_LIST, movie.toSelectedMovie())
+                                    firebaseViewModel.saveMovie(NODE_NEW_YEAR_LIST, movie.toSelectedMovie())
                                     showToast(context, addToGeneralList)
                                     onClick()
                                 }
