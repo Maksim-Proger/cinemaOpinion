@@ -98,8 +98,8 @@ fun ListSelectedMovies(
     }
 
     LaunchedEffect(selectedMovie) {
-        if (selectedMovie != null) {
-            mainViewModel.getInformationMovie(selectedMovie!!.id)
+        selectedMovie?.let { movie ->
+            mainViewModel.getInformationMovie(movie.id)
         }
     }
 
@@ -220,7 +220,7 @@ fun ListSelectedMovies(
                                 .fillMaxSize(),
                             contentPadding = PaddingValues(10.dp)
                         ) {
-                            items(listSelectedMovies) { movie ->
+                            items(listSelectedMovies, key = { it.id }) { movie ->
 
                                 var isVisible by remember { mutableStateOf(true) }
 
@@ -268,7 +268,7 @@ fun ListSelectedMovies(
                                                             delay(300)
                                                             selectedMovieViewModel
                                                                 .deleteSelectedMovie(
-                                                                    userId, movie.id.toString()
+                                                                    userId, movie.id
                                                                 )
                                                         }
                                                     }

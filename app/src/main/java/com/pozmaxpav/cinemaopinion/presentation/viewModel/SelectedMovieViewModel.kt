@@ -62,7 +62,7 @@ class SelectedMovieViewModel @Inject constructor(
         }
     }
 
-    fun deleteSelectedMovie(userId: String, selectedMovieId: String) {
+    fun deleteSelectedMovie(userId: String, selectedMovieId: Int) {
         viewModelScope.launch {
             try {
                 deleteMovieFromPersonalListUseCase(userId, selectedMovieId)
