@@ -42,7 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
@@ -81,7 +81,7 @@ fun ListWaitingContinuationSeries(
 //    val user by userViewModel.users.collectAsState()
     var username by remember { mutableStateOf("") }
     var openBottomSheetComments by remember { mutableStateOf(false) }
-    var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
+    var selectedNote by remember { mutableStateOf<SelectedMovieModel?>(null) }
     var showTopBar by remember { mutableStateOf(false) }
     var (comment, setComment) = remember { mutableStateOf("") }
     val listState = rememberLazyListState()

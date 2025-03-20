@@ -2,7 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments.AddCommentUseCase
@@ -51,7 +51,7 @@ class FirebaseViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage = _errorMessage.asStateFlow()
 
-    private val _movies = MutableStateFlow<List<SelectedMovie>>(emptyList())
+    private val _movies = MutableStateFlow<List<SelectedMovieModel>>(emptyList())
     val movies = _movies.asStateFlow()
 
     private val _comments = MutableStateFlow<List<DomainCommentModel>>(emptyList())
@@ -205,7 +205,7 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun saveMovie(dataSource: String, selectedMovie: SelectedMovie) {
+    fun saveMovie(dataSource: String, selectedMovie: SelectedMovieModel) {
         viewModelScope.launch {
             try {
                 saveMovieUseCase(dataSource, selectedMovie)

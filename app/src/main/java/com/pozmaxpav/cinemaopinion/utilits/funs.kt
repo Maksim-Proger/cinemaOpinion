@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.Country
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData
@@ -130,7 +130,7 @@ fun CustomTextField(
 
 @Composable
 fun SelectedMovieItem(
-    movie: SelectedMovie,
+    movie: SelectedMovieModel,
     onClick: () -> Unit,
     showTopBar: () -> Unit = {}
 ) {
@@ -219,7 +219,7 @@ fun WorkerWithImage(
 
 @Composable
 fun WorkerWithImageSelectedMovie(
-    movie: SelectedMovie,
+    movie: SelectedMovieModel,
     height: Dp
 ) {
     AsyncImage(
@@ -271,24 +271,24 @@ fun deletingOldRecords(timestamp: Long): Boolean {
 }
 
 // Кастуем объект MovieData в SelectedMovie
-fun MovieData.toSelectedMovie(): SelectedMovie {
+fun MovieData.toSelectedMovie(): SelectedMovieModel {
     return when (this) {
-        is MovieData.Movie -> SelectedMovie(
+        is MovieData.Movie -> SelectedMovieModel(
             id = this.kinopoiskId,
             nameFilm = this.nameRu,
             posterUrl = this.posterUrl
         )
-        is MovieData.MovieTop -> SelectedMovie(
+        is MovieData.MovieTop -> SelectedMovieModel(
             id = this.filmId,
             nameFilm = this.nameRu,
             posterUrl = this.posterUrl
         )
-        is MovieData.MovieSearch -> SelectedMovie(
+        is MovieData.MovieSearch -> SelectedMovieModel(
             id = this.kinopoiskId,
             nameFilm = this.nameRu?: "Нет названия",
             posterUrl = this.posterUrl
         )
-        is MovieData.MovieSearch2 -> SelectedMovie(
+        is MovieData.MovieSearch2 -> SelectedMovieModel(
             id = this.filmId,
             nameFilm = this.nameRu?: "Нет названия",
             posterUrl = this.posterUrl

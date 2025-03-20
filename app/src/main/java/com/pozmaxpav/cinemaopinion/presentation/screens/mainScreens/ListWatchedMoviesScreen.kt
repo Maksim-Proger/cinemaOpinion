@@ -42,7 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
@@ -72,7 +72,7 @@ fun ListWatchedMovies(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listMovies by firebaseViewModel.movies.collectAsState()
     val listComments by firebaseViewModel.comments.collectAsState()
-    var selectedNote by remember { mutableStateOf<SelectedMovie?>(null) }
+    var selectedNote by remember { mutableStateOf<SelectedMovieModel?>(null) }
     var showTopBar by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val stateMovies by firebaseViewModel.movieDownloadStatus.collectAsState()

@@ -10,11 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovie
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 
 @Composable
 fun NewYearMovieItem(
-    newYearMovie: SelectedMovie,
+    newYearMovie: SelectedMovieModel,
     onClick: () -> Unit
 ) {
     Card(

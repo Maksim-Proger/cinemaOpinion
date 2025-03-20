@@ -146,7 +146,7 @@ fun SeriesControlScreen(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
-        Spacer(Modifier.padding(innerPadding))
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -216,10 +216,9 @@ fun SeriesControlScreen(
         }
     }
 
-    // Останавливаем наблюдение при выходе из экрана
     DisposableEffect(Unit) {
         onDispose {
-            seriesControlViewModel.onCleared() // Останавливаем слушатель
+            seriesControlViewModel.onCleared()
         }
     }
 }

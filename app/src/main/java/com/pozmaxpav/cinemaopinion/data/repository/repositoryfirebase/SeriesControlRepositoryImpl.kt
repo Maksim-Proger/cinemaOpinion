@@ -37,17 +37,19 @@ class SeriesControlRepositoryImpl @Inject constructor(
             if (userSnapshot.exists()) {
                 val userKey = userSnapshot.children.firstOrNull()?.key
 
-                val entriesSnapshot = databaseReference
-                    .child(NODE_LIST_USERS)
-                    .child(userKey!!)
-                    .child(NODE_SERIES_CONTROL)
-                    .get()
-                    .await()
+                if (userKey != null) {
+                    val entriesSnapshot = databaseReference
+                        .child(NODE_LIST_USERS)
+                        .child(userKey)
+                        .child(NODE_SERIES_CONTROL)
+                        .get()
+                        .await()
 
-                for (entrySnapshot in entriesSnapshot.children) {
-                    val entry = entrySnapshot.getValue(DomainSeriesControlModel::class.java)
-                    if (entry != null) {
-                        entries.add(entry)
+                    for (entrySnapshot in entriesSnapshot.children) {
+                        val entry = entrySnapshot.getValue(DomainSeriesControlModel::class.java)
+                        if (entry != null) {
+                            entries.add(entry)
+                        }
                     }
                 }
             } else {
@@ -119,7 +121,7 @@ class SeriesControlRepositoryImpl @Inject constructor(
                     .setValue(entry)
                     .await()
             } else {
-                throw IllegalArgumentException("Movie with ID $userId not found.")
+                throw IllegalArgumentException("User with ID $userId not found.")
             }
         }
     }
