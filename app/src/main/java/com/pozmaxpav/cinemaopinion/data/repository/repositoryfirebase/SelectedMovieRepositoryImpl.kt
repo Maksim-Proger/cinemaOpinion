@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -126,7 +127,7 @@ class SelectedMovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteMovieFromPersonalList(userId: String, selectedMovieId: String) {
+    override suspend fun deleteMovieFromPersonalList(userId: String, selectedMovieId: Int) {
         if (userId.isNotEmpty()) {
             val userSnapshot = databaseReference
                 .child(NODE_LIST_USERS)
@@ -148,7 +149,7 @@ class SelectedMovieRepositoryImpl @Inject constructor(
 
                     if (selectedMoviesSnapshot.exists() && selectedMoviesSnapshot.hasChildren()) {
                         for (movie in selectedMoviesSnapshot.children) {
-                            if (movie.child("id").getValue(String::class.java) == selectedMovieId) {
+                            if (movie.child("id").getValue(Int::class.java) == selectedMovieId) {
                                 movie.ref.removeValue().await()
                                 break
                             }

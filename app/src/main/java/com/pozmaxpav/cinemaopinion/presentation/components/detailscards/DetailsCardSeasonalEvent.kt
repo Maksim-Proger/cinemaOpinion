@@ -69,7 +69,7 @@ fun DetailsCard(
     }
 
     LaunchedEffect(newYearMovie.id) {
-        mainViewModel.getInformationMovie(newYearMovie.id)
+        mainViewModel.getInformationMovie(newYearMovie.id.toInt())
     }
 
     Column(

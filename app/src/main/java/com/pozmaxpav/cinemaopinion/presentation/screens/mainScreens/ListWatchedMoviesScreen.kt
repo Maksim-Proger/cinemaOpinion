@@ -49,6 +49,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 //import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
@@ -66,7 +67,7 @@ import java.util.Locale
 fun ListWatchedMovies(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = hiltViewModel(),
-//    userViewModel: UserViewModel = hiltViewModel(),
+    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
     viewModel: FirebaseViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -78,13 +79,11 @@ fun ListWatchedMovies(
     val stateMovies by firebaseViewModel.movieDownloadStatus.collectAsState()
     var openBottomSheetComments by remember { mutableStateOf(false) }
     val (comment, setComment) = remember { mutableStateOf("") }
-//    val user by userViewModel.users.collectAsState()
-    var username by remember { mutableStateOf("") }
+    val userData by auxiliaryUserViewModel.userData.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         firebaseViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
-//        userViewModel.fitchUser()
     }
 
     Scaffold(
@@ -101,14 +100,6 @@ fun ListWatchedMovies(
             }
         }
     ) { innerPadding ->
-
-//        if (user != null) {
-//            user.let { userInfo ->
-//                username = userInfo?.firstName ?: "Таинственный пользователь"
-//            }
-//        } else {
-//            username = "Таинственный пользователь"
-//        }
 
         if (openBottomSheetComments) {
             MyBottomSheet(
@@ -136,7 +127,7 @@ fun ListWatchedMovies(
                                 viewModel.addComment(
                                     NODE_LIST_WATCHED_MOVIES,
                                     selectedNote!!.id.toDouble(),
-                                    username,
+                                    userData!!.nikName,
                                     comment
                                 )
 //                                viewModel.savingChangeRecord(
@@ -214,7 +205,7 @@ fun ListWatchedMovies(
                             .padding(innerPadding),
                         contentPadding = PaddingValues(10.dp)
                     ) {
-                        items(listMovies) { movie ->
+                        items(listMovies, key = { it.id }) { movie ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth(),

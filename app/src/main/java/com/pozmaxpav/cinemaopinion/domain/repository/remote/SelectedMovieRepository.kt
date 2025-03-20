@@ -9,5 +9,5 @@ interface SelectedMovieRepository {
     suspend fun observeListSelectedMovies(
         userId: String, onSelectedMoviesUpdated: (List<SelectedMovieModel>) -> Unit
     )
-    suspend fun deleteMovieFromPersonalList(userId: String, selectedMovieId: String)
+    suspend fun deleteMovieFromPersonalList(userId: String, selectedMovieId: Int)
 }

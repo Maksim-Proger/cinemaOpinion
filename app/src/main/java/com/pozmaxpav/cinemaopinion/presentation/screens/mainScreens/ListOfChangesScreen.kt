@@ -102,8 +102,8 @@ fun ListOfChangesScreen(
                 contentPadding = PaddingValues(10.dp)
             ) {
                 itemsIndexed(list.reversed()) { index, it ->
-                    var color = colorMethod(it.noteText)
-                    var icon = iconMethod(it.noteText)
+                    val color = colorMethod(it.noteText)
+                    val icon = iconMethod(it.noteText)
 
                     Card (
                         modifier = Modifier
@@ -213,7 +213,7 @@ fun iconMethod(text: String): ImageVector {
         text.contains("переместил(а) сериал в лист ожидания") -> Icons.Default.Start
         text.contains("переместил(а) сериал в просмотренные") -> Icons.Default.Start
         text.contains("переместил(а) фильм в просмотренные") -> Icons.Default.Start
-        else -> Icons.Default.Comment
+        else -> Icons.Default.CommentBank
     }
 }
 

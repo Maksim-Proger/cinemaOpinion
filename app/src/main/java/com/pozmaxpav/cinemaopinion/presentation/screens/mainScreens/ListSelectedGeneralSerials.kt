@@ -55,6 +55,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 //import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
@@ -77,30 +78,28 @@ import java.util.Locale
 @Composable
 fun ListSelectedGeneralSerials(
     navController: NavHostController,
-    viewModel: FirebaseViewModel = hiltViewModel(),
-//    userViewModel: UserViewModel = hiltViewModel(),
-    viewModelMain: MainViewModel = hiltViewModel()
+    firebaseViewModel: FirebaseViewModel = hiltViewModel(),
+    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
-    val listSerials by viewModel.movies.collectAsState()
-    val listComments by viewModel.comments.collectAsState()
+    val listSerials by firebaseViewModel.movies.collectAsState()
+    val listComments by firebaseViewModel.comments.collectAsState()
     var selectedSerial by remember { mutableStateOf<SelectedMovieModel?>(null) }
-//    val user by userViewModel.users.collectAsState()
-    var username by remember { mutableStateOf("") }
-    val info by viewModelMain.informationMovie.collectAsState()
+    val userData by auxiliaryUserViewModel.userData.collectAsState()
+    val info by mainViewModel.informationMovie.collectAsState()
     val (comment, setComment) = remember { mutableStateOf("") }
     val context = LocalContext.current
     val listState = rememberLazyListState()
     var openBottomSheetComments by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewModel.getMovies(NODE_LIST_SERIALS)
-        viewModel.observeListMovies(NODE_LIST_SERIALS)
-//        userViewModel.fitchUser()
+        firebaseViewModel.getMovies(NODE_LIST_SERIALS)
+        firebaseViewModel.observeListMovies(NODE_LIST_SERIALS)
     }
     LaunchedEffect(selectedSerial) {
-        if (selectedSerial != null) { // TODO: Надо проверить на утечку запросов
-            viewModelMain.getInformationMovie(selectedSerial!!.id)
+        selectedSerial?.let { movie ->
+            mainViewModel.getInformationMovie(movie.id)
         }
     }
 
@@ -110,13 +109,6 @@ fun ListSelectedGeneralSerials(
             .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 45.dp)
     ) {
-//        if (user != null) {
-//            user.let { userInfo ->
-//                username = userInfo?.firstName ?: "Таинственный пользователь"
-//            }
-//        } else {
-//            username = "Таинственный пользователь"
-//        }
 
         if (openBottomSheetComments) {
             MyBottomSheet(
@@ -141,14 +133,14 @@ fun ListSelectedGeneralSerials(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                viewModel.addComment(
+                                firebaseViewModel.addComment(
                                     NODE_LIST_SERIALS,
                                     selectedSerial!!.id.toDouble(),
-                                    username,
+                                    userData!!.nikName,
                                     comment
                                 )
-                                viewModel.savingChangeRecord(
-                                    username,
+                                firebaseViewModel.savingChangeRecord(
+                                    userData!!.nikName,
                                     "добавил(а) комментарий к сериалу: ${selectedSerial!!.nameFilm}"
                                 )
                                 showToast(context, "Комментарий добавлен")
@@ -207,14 +199,14 @@ fun ListSelectedGeneralSerials(
                 movieTransferButtonToWaitingList = {
                     Button(
                         onClick = {
-                            viewModel.sendingToTheViewedFolder(
+                            firebaseViewModel.sendingToTheViewedFolder(
                                 NODE_LIST_SERIALS,
                                 NODE_LIST_WAITING_CONTINUATION_SERIES,
                                 selectedSerial!!.id.toDouble()
                             )
                             showToast(context, "Сериал успешно перенесен в лист ожидания")
-                            viewModel.savingChangeRecord(
-                                username,
+                            firebaseViewModel.savingChangeRecord(
+                                userData!!.nikName,
                                 "переместил(а) сериал в лист ожидания: ${selectedSerial!!.nameFilm}"
                             )
                         }
@@ -228,14 +220,14 @@ fun ListSelectedGeneralSerials(
                 movieTransferButton = {
                     Button(
                         onClick = {
-                            viewModel.sendingToTheViewedFolder(
+                            firebaseViewModel.sendingToTheViewedFolder(
                                 NODE_LIST_SERIALS,
                                 NODE_LIST_WATCHED_MOVIES,
                                 selectedSerial!!.id.toDouble()
                             )
                             showToast(context, "Сериал успешно перенесен")
-                            viewModel.savingChangeRecord(
-                                username,
+                            firebaseViewModel.savingChangeRecord(
+                                userData!!.nikName,
                                 "переместил(а) сериал в просмотренные: ${selectedSerial!!.nameFilm}"
                             )
                         }
@@ -264,15 +256,15 @@ fun ListSelectedGeneralSerials(
                         .fillMaxSize(),
                     contentPadding = PaddingValues(10.dp)
                 ) {
-                    items(listSerials) { movie ->
+                    items(listSerials, key = { it.id }) { movie ->
 
-                        var isVisible by remember { mutableStateOf(true) } // Состояние видимости
+                        var isVisible by remember { mutableStateOf(true) }
 
                         AnimatedVisibility(
                             visible = isVisible,
                             exit = slideOutHorizontally(
-                                targetOffsetX = { -it }, // Уходит влево
-                                animationSpec = tween(durationMillis = 300) // Длительность анимации
+                                targetOffsetX = { -it },
+                                animationSpec = tween(durationMillis = 300)
                             )
                         ) {
                             Row(
@@ -308,16 +300,16 @@ fun ListSelectedGeneralSerials(
 
                                         IconButton(
                                             onClick = {
-                                                isVisible = false // Скрываем элемент перед удалением
+                                                isVisible = false
                                                 CoroutineScope(Dispatchers.Main).launch {
                                                     delay(300)
-                                                    viewModel.removeMovie(
+                                                    firebaseViewModel.removeMovie(
                                                         NODE_LIST_SERIALS,
                                                         movie.id.toDouble()
                                                     )
                                                 }
-                                                viewModel.savingChangeRecord(
-                                                    username,
+                                                firebaseViewModel.savingChangeRecord(
+                                                    userData!!.nikName,
                                                     "удалил(а) сериал: ${movie.nameFilm}"
                                                 )
                                             }

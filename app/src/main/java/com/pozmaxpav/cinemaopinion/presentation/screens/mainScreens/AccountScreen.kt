@@ -63,7 +63,7 @@ fun AccountScreen(
 
     Card(
         modifier = Modifier
-            .fillMaxHeight(0.7f),
+            .fillMaxHeight(0.9f),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -225,7 +225,7 @@ fun AccountScreen(
                                 )
                                 Text(
                                     text = "Наград пока нет",
-                                    style = MaterialTheme.typography.displayMedium,
+                                    style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier
                                         .padding(bottom = 16.dp)
                                         .align(alignment = Alignment.CenterHorizontally)

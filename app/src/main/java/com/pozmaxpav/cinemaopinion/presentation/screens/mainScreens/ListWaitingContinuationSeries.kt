@@ -70,13 +70,13 @@ fun ListWaitingContinuationSeries(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = hiltViewModel(),
 //    userViewModel: UserViewModel = hiltViewModel(),
-    viewModelMain: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listMovies by firebaseViewModel.movies.collectAsState()
     val listComments by firebaseViewModel.comments.collectAsState()
-    val info by viewModelMain.informationMovie.collectAsState()
+    val info by mainViewModel.informationMovie.collectAsState()
     val stateMovies by firebaseViewModel.movieDownloadStatus.collectAsState()
 //    val user by userViewModel.users.collectAsState()
     var username by remember { mutableStateOf("") }
@@ -94,8 +94,8 @@ fun ListWaitingContinuationSeries(
     }
 
     LaunchedEffect(selectedNote) {
-        if (selectedNote != null) { // TODO: Надо проверить на утечку запросов
-            viewModelMain.getInformationMovie(selectedNote!!.id)
+        selectedNote?.let { movie ->
+            mainViewModel.getInformationMovie(movie.id)
         }
     }
 
@@ -259,7 +259,7 @@ fun ListWaitingContinuationSeries(
                             .padding(innerPadding),
                         contentPadding = PaddingValues(10.dp)
                     ) {
-                        items(listMovies) { movie ->
+                        items(listMovies, key = { it.id }) { movie ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth(),

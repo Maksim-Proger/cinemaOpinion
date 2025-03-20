@@ -158,8 +158,8 @@ fun SeriesControlScreen(
                 AnimatedVisibility(
                     visible = isVisible,
                     exit = slideOutHorizontally(
-                        targetOffsetX = { -it }, // Уходит влево
-                        animationSpec = tween(durationMillis = 300) // Длительность анимации
+                        targetOffsetX = { -it },
+                        animationSpec = tween(durationMillis = 300)
                     )
                 ) {
                     Row(
@@ -193,7 +193,7 @@ fun SeriesControlScreen(
                                 }
                                 IconButton(
                                     onClick = {
-                                        isVisible = false // Скрываем элемент перед удалением
+                                        isVisible = false
                                         CoroutineScope(Dispatchers.Main).launch {
                                             delay(300)
                                             seriesControlViewModel.deleteMovie(userId, entry.id)
