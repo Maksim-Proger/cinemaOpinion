@@ -1,7 +1,7 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
 import com.google.firebase.database.DatabaseReference
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.RecordsOfChangesRepository
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import kotlinx.coroutines.tasks.await

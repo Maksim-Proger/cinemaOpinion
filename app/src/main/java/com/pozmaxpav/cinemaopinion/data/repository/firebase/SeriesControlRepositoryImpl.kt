@@ -4,7 +4,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainSeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_SERIES_CONTROL

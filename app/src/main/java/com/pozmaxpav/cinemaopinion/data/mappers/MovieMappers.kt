@@ -1,22 +1,22 @@
 package com.pozmaxpav.cinemaopinion.data.mappers
 
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiCountry
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiGenre
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovie
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieList
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearch
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearch2
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieTop
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieTopList
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearchList
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.ApiMovieSearchList2
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.Country
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.Genre
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieList
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieTopList
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList2
+import com.pozmaxpav.cinemaopinion.data.models.api.ApiCountry
+import com.pozmaxpav.cinemaopinion.data.models.api.ApiGenre
+import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovie
+import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieList
+import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieSearch
+import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieSearch2
+import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieTop
+import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieTopList
+import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieSearchList
+import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieSearchList2
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Country
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Genre
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieList
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieTopList
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList2
 
 fun ApiGenre.toDomain(): Genre {
     return Genre(

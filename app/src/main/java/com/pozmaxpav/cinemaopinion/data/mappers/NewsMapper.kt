@@ -1,7 +1,7 @@
 package com.pozmaxpav.cinemaopinion.data.mappers
 
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.news.ApiNewsList
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.news.ApiNewsModel
+import com.pozmaxpav.cinemaopinion.data.models.api.news.ApiNewsList
+import com.pozmaxpav.cinemaopinion.data.models.api.news.ApiNewsModel
 import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsList
 import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsModel
 

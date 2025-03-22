@@ -34,10 +34,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.Country
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.Genre
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Country
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Genre
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import java.time.DateTimeException
 import java.time.LocalDateTime
 import java.time.Month
@@ -130,7 +130,7 @@ fun CustomTextField(
 
 @Composable
 fun SelectedMovieItem(
-    movie: SelectedMovieModel,
+    movie: DomainSelectedMovieModel,
     onClick: () -> Unit,
     showTopBar: () -> Unit = {}
 ) {
@@ -219,7 +219,7 @@ fun WorkerWithImage(
 
 @Composable
 fun WorkerWithImageSelectedMovie(
-    movie: SelectedMovieModel,
+    movie: DomainSelectedMovieModel,
     height: Dp
 ) {
     AsyncImage(
@@ -271,24 +271,24 @@ fun deletingOldRecords(timestamp: Long): Boolean {
 }
 
 // Кастуем объект MovieData в SelectedMovie
-fun MovieData.toSelectedMovie(): SelectedMovieModel {
+fun MovieData.toSelectedMovie(): DomainSelectedMovieModel {
     return when (this) {
-        is MovieData.Movie -> SelectedMovieModel(
+        is MovieData.Movie -> DomainSelectedMovieModel(
             id = this.kinopoiskId,
             nameFilm = this.nameRu,
             posterUrl = this.posterUrl
         )
-        is MovieData.MovieTop -> SelectedMovieModel(
+        is MovieData.MovieTop -> DomainSelectedMovieModel(
             id = this.filmId,
             nameFilm = this.nameRu,
             posterUrl = this.posterUrl
         )
-        is MovieData.MovieSearch -> SelectedMovieModel(
+        is MovieData.MovieSearch -> DomainSelectedMovieModel(
             id = this.kinopoiskId,
             nameFilm = this.nameRu?: "Нет названия",
             posterUrl = this.posterUrl
         )
-        is MovieData.MovieSearch2 -> SelectedMovieModel(
+        is MovieData.MovieSearch2 -> DomainSelectedMovieModel(
             id = this.filmId,
             nameFilm = this.nameRu?: "Нет названия",
             posterUrl = this.posterUrl

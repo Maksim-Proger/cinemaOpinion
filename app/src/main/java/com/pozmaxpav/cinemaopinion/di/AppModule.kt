@@ -11,24 +11,20 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.pozmaxpav.cinemaopinion.data.api.GetMovieInformationApi
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
-import com.pozmaxpav.cinemaopinion.data.local.datastore.LocalUserManagerImpl
-import com.pozmaxpav.cinemaopinion.data.local.room.appdb.AppDatabase
-import com.pozmaxpav.cinemaopinion.data.local.room.dao.CommentPersonalListDao
+import com.pozmaxpav.cinemaopinion.data.db.datastore.LocalUserManagerImpl
 import com.pozmaxpav.cinemaopinion.data.repository.api.GetMovieInformationApiRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.api.MovieRepositoryApiImpl
-import com.pozmaxpav.cinemaopinion.data.repository.firebase.CommentPersonalListRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.RecordsOfChangesRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.firebase.SelectedMovieRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.PersonalMovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.system.SharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
-import com.pozmaxpav.cinemaopinion.domain.repository.firebase.CommentPersonalListRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.RecordsOfChangesRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SelectedMovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemSharedPreferencesRepository
@@ -122,15 +118,15 @@ object AppModule {
 
     // region Room
 
-    @Provides
-    @Singleton
-    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
-        return Room.databaseBuilder(
-            context,
-            AppDatabase::class.java,
-            "user_database"
-        ).build()
-    }
+//    @Provides
+//    @Singleton
+//    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+//        return Room.databaseBuilder(
+//            context,
+//            AppDatabase::class.java,
+//            "user_database"
+//        ).build()
+//    }
 
     // endregion
 
@@ -162,8 +158,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSelectedMovieRepository(databaseReference: DatabaseReference): SelectedMovieRepository {
-        return SelectedMovieRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
+    fun providePersonalMovieRepository(databaseReference: DatabaseReference): PersonalMovieRepository {
+        return PersonalMovieRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
     }
 
     @Provides
@@ -194,20 +190,6 @@ object AppModule {
             readAppEntry = ReadAppEntry(localUserManager),
             saveAppEntry = SaveAppEntry(localUserManager)
         )
-
-    // endregion
-
-    // region CommentPersonalList
-
-    @Provides
-    fun provideCommentPersonalListDao(appDatabase: AppDatabase): CommentPersonalListDao {
-        return appDatabase.commentPersonalListDao()
-    }
-
-    @Provides
-    fun provideCommentPersonalListRepository(commentPersonalListDao: CommentPersonalListDao): CommentPersonalListRepository {
-        return CommentPersonalListRepositoryImpl(commentPersonalListDao)
-    }
 
     // endregion
 

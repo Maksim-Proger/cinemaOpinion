@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.AddUserUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.CheckLoginAndPasswordUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.GetUserDataUseCase

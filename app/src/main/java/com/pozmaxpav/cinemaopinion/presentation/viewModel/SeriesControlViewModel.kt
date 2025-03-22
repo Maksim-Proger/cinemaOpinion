@@ -2,7 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainSeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.seriescontrol.DeleteEntryUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.seriescontrol.GetListEntriesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.seriescontrol.AddNewEntryUseCase

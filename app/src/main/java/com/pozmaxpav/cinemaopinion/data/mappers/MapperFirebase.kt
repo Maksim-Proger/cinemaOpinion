@@ -1,9 +1,9 @@
 package com.pozmaxpav.cinemaopinion.data.mappers
 
-import com.pozmaxpav.cinemaopinion.data.remote.firebase.models.DataChangelogModel
-import com.pozmaxpav.cinemaopinion.data.remote.firebase.models.DataComment
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.data.models.firebase.DataChangelogModel
+import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 
 fun DataComment.commentToDomain(): DomainCommentModel {
     return DomainCommentModel(

@@ -1,13 +1,12 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData.MovieSearch
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieList
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList2
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieTopList
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData.MovieSearch
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieList
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList2
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.api.information.Information
 import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsList
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetPremiereMoviesUseCase

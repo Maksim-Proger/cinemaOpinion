@@ -59,7 +59,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
+import com.pozmaxpav.cinemaopinion.domain.models.system.CompositeRequest
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.utilits.parsYearsToString

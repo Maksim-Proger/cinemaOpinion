@@ -1,13 +1,13 @@
 package com.pozmaxpav.cinemaopinion.domain.repository.firebase
 
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 
 interface MovieRepository {
-    suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovieModel)
+    suspend fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel)
     suspend fun removeMovie(dataSource: String, id: Double)
-    suspend fun getMovie(dataSource: String): List<SelectedMovieModel>
-    suspend fun observeListMovies(dataSource: String, onMoviesUpdated: (List<SelectedMovieModel>) -> Unit)
+    suspend fun getMovie(dataSource: String): List<DomainSelectedMovieModel>
+    suspend fun observeListMovies(dataSource: String, onMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit)
 
     suspend fun addCommentToMovie(dataSource: String, movieId: Double, comment: DomainCommentModel)
     suspend fun getCommentsForMovie(dataSource: String, movieId: Double): List<DomainCommentModel>

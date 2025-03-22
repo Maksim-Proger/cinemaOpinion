@@ -48,12 +48,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
-import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
@@ -84,7 +84,7 @@ fun ListSelectedGeneralSerials(
 
     val listSerials by firebaseViewModel.movies.collectAsState()
     val listComments by firebaseViewModel.comments.collectAsState()
-    var selectedSerial by remember { mutableStateOf<SelectedMovieModel?>(null) }
+    var selectedSerial by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val info by mainViewModel.informationMovie.collectAsState()
@@ -180,7 +180,7 @@ fun ListSelectedGeneralSerials(
         }
 
         if (selectedSerial != null) {
-            ShowSelectedMovie(
+            DetailsCardSelectedMovie(
                 movie = selectedSerial!!,
                 isGeneralList = true,
                 isShowCommentButton = true,

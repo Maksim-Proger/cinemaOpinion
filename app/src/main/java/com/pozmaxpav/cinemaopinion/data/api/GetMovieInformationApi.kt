@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.data.api
 
-import com.pozmaxpav.cinemaopinion.data.api.models.moviemodelsapi.information.ApiInformation
+import com.pozmaxpav.cinemaopinion.data.models.api.information.ApiInformation
 import com.pozmaxpav.cinemaopinion.utilits.Constants.API_KEY_DEV
 import retrofit2.http.GET
 import retrofit2.http.Headers

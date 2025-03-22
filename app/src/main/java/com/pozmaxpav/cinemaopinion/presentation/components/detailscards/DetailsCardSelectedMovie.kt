@@ -23,12 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 
 @Composable
-fun ShowSelectedMovie(
-    movie: SelectedMovieModel,
+fun DetailsCardSelectedMovie(
+    movie: DomainSelectedMovieModel,
     isGeneralList: Boolean,
     isShowCommentButton: Boolean,
     content: @Composable () -> Unit = {},
@@ -43,8 +43,7 @@ fun ShowSelectedMovie(
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = Modifier
-            .wrapContentSize()
+        modifier = Modifier.wrapContentSize()
     ) {
         Card(
             modifier = Modifier
