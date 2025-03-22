@@ -39,11 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
@@ -51,7 +53,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSele
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
-//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
@@ -68,7 +70,7 @@ fun ListWatchedMovies(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
-    viewModel: FirebaseViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listMovies by firebaseViewModel.movies.collectAsState()
@@ -79,11 +81,15 @@ fun ListWatchedMovies(
     val stateMovies by firebaseViewModel.movieDownloadStatus.collectAsState()
     var openBottomSheetComments by remember { mutableStateOf(false) }
     val (comment, setComment) = remember { mutableStateOf("") }
+    val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         firebaseViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
+    }
+    LaunchedEffect(userId) {
+        auxiliaryUserViewModel.getUserData(userId)
     }
 
     Scaffold(
@@ -91,7 +97,8 @@ fun ListWatchedMovies(
         topBar = {
             if (!showTopBar) {
                 ClassicTopAppBar(
-                    title = "Просмотренные фильмы",
+                    context,
+                    titleId = R.string.title_listWatched_movies,
                     scrollBehavior = scrollBehavior,
                     onTransitionAction = {
                         navigateFunction(navController, Route.MainScreen.route)
@@ -112,7 +119,8 @@ fun ListWatchedMovies(
                         onValueChange = setComment,
                         placeholder = {
                             Text(
-                                text = "Оставьте свой комментарий"
+                                text = stringResource(R.string.placeholder_for_comment_field),
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         },
                         leadingIcon = {
@@ -124,19 +132,23 @@ fun ListWatchedMovies(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                viewModel.addComment(
-                                    NODE_LIST_WATCHED_MOVIES,
-                                    selectedNote!!.id.toDouble(),
-                                    userData!!.nikName,
-                                    comment
-                                )
-//                                viewModel.savingChangeRecord(
-//                                    username,
-//                                    "добавил(а) комментарий к фильму: ${selectedNote!!.nameFilm}"
-//                                )
-                                showToast(context, "Комментарий добавлен")
-                                setComment("")
-                                openBottomSheetComments = !openBottomSheetComments
+                                if (userData != null) {
+                                    firebaseViewModel.addComment(
+                                        NODE_LIST_WATCHED_MOVIES,
+                                        selectedNote!!.id.toDouble(),
+                                        userData!!.nikName,
+                                        comment
+                                    )
+                                    firebaseViewModel.savingChangeRecord(
+                                        context,
+                                        userData!!.nikName,
+                                        R.string.record_added_comment_to_movie_in_the_viewed,
+                                        selectedNote!!.nameFilm
+                                    )
+                                    showToast(context, R.string.comment_added)
+                                    setComment("")
+                                    openBottomSheetComments = !openBottomSheetComments
+                                }
                             }
                         )
                     )
@@ -167,7 +179,7 @@ fun ListWatchedMovies(
                             onClick = { openBottomSheetComments = !openBottomSheetComments }
                         ) {
                             Text(
-                                text = "Оставить комментарий",
+                                text = stringResource(R.string.button_leave_comment),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -197,6 +209,7 @@ fun ListWatchedMovies(
                         )
                     }
                 }
+
                 is State.Success -> {
                     LazyColumn(
                         state = listState,
@@ -231,6 +244,7 @@ fun ListWatchedMovies(
                         }
                     }
                 }
+
                 is State.Error -> {}
             }
         }
@@ -250,13 +264,14 @@ fun ShowCommentWatchedMoviesList(
         firebaseViewModel.observeComments(NODE_LIST_WATCHED_MOVIES, id)
     }
 
-    when(stateComments) {
+    when (stateComments) {
         is State.Loading -> {
             CustomLottieAnimation(
                 nameFile = "loading_animation.lottie",
                 modifier = Modifier.scale(0.5f)
             )
         }
+
         is State.Success -> {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -274,7 +289,7 @@ fun ShowCommentWatchedMoviesList(
                             contentColor = MaterialTheme.colorScheme.onSecondary
                         )
                     ) {
-                        Column( // TODO: Переделать стили
+                        Column(
                             modifier = Modifier
                                 .padding(8.dp)
                         ) {
@@ -319,6 +334,7 @@ fun ShowCommentWatchedMoviesList(
                 }
             }
         }
+
         is State.Error -> {}
     }
 }

@@ -81,6 +81,7 @@ fun SeriesControlScreen(
     var selectedEntry by remember { mutableStateOf<DomainSeriesControlModel?>(null) }
     var openBottomSheetAdd by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(userId) {
         seriesControlViewModel.getListEntries(userId)
@@ -89,14 +90,14 @@ fun SeriesControlScreen(
 
     if (openBottomSheetAdd) {
         MyBottomSheet(
-            onClose = {
-                openBottomSheetAdd = false
-            },
+            onClose = { openBottomSheetAdd = false },
             content = {
                 AddItem(
                     seriesControlViewModel,
                     userId
-                ) { openBottomSheetAdd = false }
+                ) {
+                    openBottomSheetAdd = false
+                }
             },
             fraction = 0.3f
         )
@@ -128,7 +129,8 @@ fun SeriesControlScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             ClassicTopAppBar(
-                title = "Контроль серий",
+                context = context,
+                titleId = R.string.title_series_control_screen,
                 scrollBehavior = scrollBehavior,
                 onTransitionAction = {
                     navigateFunction(navController, Route.MainScreen.route)
@@ -138,8 +140,8 @@ fun SeriesControlScreen(
         floatingActionButton = {
             FabButton(
                 imageIcon = Icons.Default.Add,
-                contentDescription = "Кнопка добавить",
-                textFloatingButton = "Добавить",
+                contentDescription = stringResource(R.string.content_description_for_button_add),
+                textFloatingButton = stringResource(R.string.button_add),
                 onButtonClick = { openBottomSheetAdd = true },
                 expanded = true
             )
@@ -253,7 +255,12 @@ private fun AddItem(
     CustomTextField(
         value = titleMovie,
         onValueChange = setTitleMovie,
-        placeholder = { Text("Введите название фильма/сериала") },
+        placeholder = {
+            Text(
+                stringResource(R.string.enter_the_name_of_the_movie_series),
+                style = MaterialTheme.typography.bodySmall
+            )
+        },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Add,
@@ -264,7 +271,7 @@ private fun AddItem(
         keyboardActions = KeyboardActions(
             onDone = {
                 seriesControlViewModel.addNewEntry(userId, titleMovie)
-                showToast(context, "Элемент добавлен")
+                showToast(context, R.string.element_has_been_added)
                 setTitleMovie("")
                 onClickCloseButton()
             }

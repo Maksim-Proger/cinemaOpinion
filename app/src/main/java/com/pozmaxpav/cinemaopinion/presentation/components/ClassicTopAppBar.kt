@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
+import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,7 +18,8 @@ import com.pozmaxpav.cinemaopinion.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassicTopAppBar(
-    title: String,
+    context: Context,
+    titleId: Int,
     scrollBehavior: TopAppBarScrollBehavior,
     onShowTransitionAction: Boolean = true,
     onTransitionAction: () -> Unit = {}
@@ -26,7 +28,7 @@ fun ClassicTopAppBar(
         scrollBehavior = scrollBehavior,
         title = {
             Text(
-                text = title,
+                text = context.getString(titleId),
                 style = MaterialTheme.typography.displayLarge,
                 color = MaterialTheme.colorScheme.onPrimary
             )

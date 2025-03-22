@@ -48,8 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
@@ -58,7 +58,6 @@ import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WAITING_CONTINUATION_SERIES
@@ -86,6 +85,7 @@ fun ListSelectedGeneralSerials(
     val listSerials by firebaseViewModel.movies.collectAsState()
     val listComments by firebaseViewModel.comments.collectAsState()
     var selectedSerial by remember { mutableStateOf<SelectedMovieModel?>(null) }
+    val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val info by mainViewModel.informationMovie.collectAsState()
     val (comment, setComment) = remember { mutableStateOf("") }
@@ -96,6 +96,9 @@ fun ListSelectedGeneralSerials(
     LaunchedEffect(Unit) {
         firebaseViewModel.getMovies(NODE_LIST_SERIALS)
         firebaseViewModel.observeListMovies(NODE_LIST_SERIALS)
+    }
+    LaunchedEffect(userId) {
+        auxiliaryUserViewModel.getUserData(userId)
     }
     LaunchedEffect(selectedSerial) {
         selectedSerial?.let { movie ->
@@ -121,7 +124,8 @@ fun ListSelectedGeneralSerials(
                         onValueChange = setComment,
                         placeholder = {
                             Text(
-                                text = "Оставьте свой комментарий"
+                                text = stringResource(R.string.placeholder_for_comment_field),
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         },
                         leadingIcon = {
@@ -133,19 +137,23 @@ fun ListSelectedGeneralSerials(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                firebaseViewModel.addComment(
-                                    NODE_LIST_SERIALS,
-                                    selectedSerial!!.id.toDouble(),
-                                    userData!!.nikName,
-                                    comment
-                                )
-                                firebaseViewModel.savingChangeRecord(
-                                    userData!!.nikName,
-                                    "добавил(а) комментарий к сериалу: ${selectedSerial!!.nameFilm}"
-                                )
-                                showToast(context, "Комментарий добавлен")
-                                setComment("")
-                                openBottomSheetComments = !openBottomSheetComments
+                                if (userData != null) {
+                                    firebaseViewModel.addComment(
+                                        NODE_LIST_SERIALS,
+                                        selectedSerial!!.id.toDouble(),
+                                        userData!!.nikName,
+                                        comment
+                                    )
+                                    firebaseViewModel.savingChangeRecord(
+                                        context,
+                                        userData!!.nikName,
+                                        R.string.record_added_comment_to_series,
+                                        selectedSerial!!.nameFilm
+                                    )
+                                    showToast(context, R.string.comment_added)
+                                    setComment("")
+                                    openBottomSheetComments = !openBottomSheetComments
+                                }
                             }
                         )
                     )
@@ -158,7 +166,9 @@ fun ListSelectedGeneralSerials(
         }
 
         if (selectedSerial == null) {
-            Row(modifier = Modifier.fillMaxWidth().padding(vertical = 7.dp)) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 7.dp)) {
                 IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
                     Icon(
                         Icons.Default.ArrowBackIosNew,
@@ -182,8 +192,8 @@ fun ListSelectedGeneralSerials(
                 },
                 openDescription = {
                     ExpandedCard(
-                        title = "Описание",
-                        description = info?.description ?: "К сожалению, суточный лимит закончился"
+                        title = stringResource(R.string.text_for_expandedCard_field),
+                        description = info?.description ?: stringResource(R.string.limit_is_over)
                     )
                 },
                 commentButton = {
@@ -191,7 +201,7 @@ fun ListSelectedGeneralSerials(
                         onClick = { openBottomSheetComments = !openBottomSheetComments }
                     ) {
                         Text(
-                            text = "Оставить комментарий",
+                            text = stringResource(R.string.button_leave_comment),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -204,10 +214,12 @@ fun ListSelectedGeneralSerials(
                                 NODE_LIST_WAITING_CONTINUATION_SERIES,
                                 selectedSerial!!.id.toDouble()
                             )
-                            showToast(context, "Сериал успешно перенесен в лист ожидания")
+                            showToast(context, R.string.series_has_been_moved_to_waiting_list)
                             firebaseViewModel.savingChangeRecord(
+                                context,
                                 userData!!.nikName,
-                                "переместил(а) сериал в лист ожидания: ${selectedSerial!!.nameFilm}"
+                                R.string.record_series_has_been_moved_to_waiting_list,
+                                selectedSerial!!.nameFilm
                             )
                         }
                     ) {
@@ -225,10 +237,12 @@ fun ListSelectedGeneralSerials(
                                 NODE_LIST_WATCHED_MOVIES,
                                 selectedSerial!!.id.toDouble()
                             )
-                            showToast(context, "Сериал успешно перенесен")
+                            showToast(context, R.string.series_has_been_moved)
                             firebaseViewModel.savingChangeRecord(
+                                context,
                                 userData!!.nikName,
-                                "переместил(а) сериал в просмотренные: ${selectedSerial!!.nameFilm}"
+                                R.string.record_series_has_been_moved_to_viewed,
+                                selectedSerial!!.nameFilm
                             )
                         }
                     ) {
@@ -309,8 +323,10 @@ fun ListSelectedGeneralSerials(
                                                     )
                                                 }
                                                 firebaseViewModel.savingChangeRecord(
+                                                    context,
                                                     userData!!.nikName,
-                                                    "удалил(а) сериал: ${movie.nameFilm}"
+                                                    R.string.record_deleted_the_series,
+                                                    movie.nameFilm
                                                 )
                                             }
                                         ) {
@@ -399,13 +415,14 @@ fun ShowCommentGeneralListSerials(
         firebaseViewModel.observeComments(NODE_LIST_SERIALS, id)
     }
 
-    when(stateComments) {
+    when (stateComments) {
         is State.Loading -> {
             CustomLottieAnimation(
                 nameFile = "loading_animation.lottie",
                 modifier = Modifier.scale(0.5f)
             )
         }
+
         is State.Success -> {
             LazyColumn(
                 contentPadding = PaddingValues(5.dp)
@@ -467,6 +484,7 @@ fun ShowCommentGeneralListSerials(
                 }
             }
         }
+
         is State.Error -> {}
     }
 }

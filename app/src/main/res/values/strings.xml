@@ -3,12 +3,35 @@
     <string name="app_name">Cinema Opinion</string>
     <string name="top_app_bar_header_name_all_movies">Фильмы</string>
     <string name="top_app_bar_header_name_top_list_movies">Топ фильмов</string>
-    <string name="title_account_screen">Профиль</string>
     <string name="top_app_bar_header_name_user_information">Данные пользователя</string>
     <string name="no_movie_title">Нет названия фильма</string>
     <string name="no_year_of_release_of_the_film">Нет года выпуска фильма</string>
+    <string name="developer_message">Добро пожаловать в новую версию приложения!</string>
+    <string name="developer_message2">Ничего не произошло</string>
+
+    <!--  TopAppBarTitle  -->
+    <string name="title_list_waiting_continuation_series">Лист ожидания</string>
+    <string name="title_list_of_changes_series">Последние изменения</string>
     <string name="title_for_advanced_search_screen">Расширенный поиск</string>
     <string name="title_for_adding_new_user_screen">Добавление нового пользователя</string>
+    <string name="title_account_screen">Профиль</string>
+    <string name="title_series_control_screen">Контроль серий</string>
+    <string name="title_media_news_screen">Медиа новости</string>
+    <string name="title_login_screen">Вход / Регистрация</string>
+    <string name="title_listWatched_movies">Просмотренные фильмы</string>
+
+    <!--  Text for Changes Records Screen  -->
+    <string name="record_added_comment_to_movie">добавил(а) комментарий к фильму: </string>
+    <string name="record_added_comment_to_movie_in_the_viewed">добавил(а) комментарий к фильму в просмотренных: </string>
+    <string name="record_added_comment_to_series">добавил(а) комментарий к сериалу: </string>
+    <string name="record_movie_has_been_moved_to_viewed">переместил(а) фильм в просмотренные: </string>
+    <string name="record_series_has_been_moved_to_viewed">переместил(а) сериал в просмотренные: </string>
+    <string name="record_series_has_been_moved_to_waiting_list">переместил(а) сериал в лист ожидания: </string>
+    <string name="record_series_has_been_moved_to_series_list">переместил(а) сериал в список с сериалами: </string>
+    <string name="record_deleted_the_movie">удалил(а) фильм: </string>
+    <string name="record_deleted_the_series">удалил(а) сериал: </string>
+    <string name="record_added_movie">добавил(а) фильм: </string>
+    <string name="record_added_series">добавил(а) сериал: </string>
 
     <!--   Text for Drop-Down Menu   -->
     <string name="drop_down_menu_item_edit">Изменить данные пользователя</string>
@@ -23,14 +46,29 @@
     <!--   Text of the fields   -->
     <string name="text_for_edit_nik_name_field">Имя пользователя</string>
     <string name="placeholder_for_edit_nik_name_field">Введите новое имя пользователя</string>
-<!--    <string name="text_for_add_lastName_field">Фамилия пользователя</string>-->
     <string name="placeholder_for_add_lastName_field">Введите фамилию пользователя</string>
     <string name="text_for_add_name_field">Имя пользователя</string>
     <string name="placeholder_for_add_name_field">Введите имя пользователя</string>
     <string name="text_for_edit_email_field">Email</string>
     <string name="placeholder_for_edit_email_field">Введите новый Email</string>
-    <string name="text_for_edit_password_field">пароль</string>
+    <string name="text_for_edit_password_field">Пароль</string>
     <string name="placeholder_for_edit_password_field">Введите новый пароль</string>
+    <string name="placeholder_for_comment_field">Оставьте свой комментарий</string>
+    <string name="text_for_expandedCard_field">Описание</string>
+    <string name="enter_the_name_of_the_movie_series">Введите название фильма/сериала</string>
+
+    <!--  Text Button  -->
+    <string name="button_leave_comment">Оставить комментарий</string>
+    <string name="button_viewed">Просмотрен</string>
+    <string name="button_registration">Регистрация</string>
+    <string name="button_login">Вход</string>
+    <string name="button_add">Добавить</string>
+    <string name="button_save">Сохранить</string>
+    <string name="button_viewed_screen">Просмотренные</string>
+    <string name="button_move_to_series">Переместить в сериалы</string>
+
+    <!--  Content Description  -->
+    <string name="content_description_for_button_add">Кнопка добавить</string>
 
     <!--  ShowToast String  -->
     <string name="movie_has_been_added">Фильм добавлен в личный список</string>
@@ -40,6 +78,12 @@
     <string name="login_error">Неверно введен логин или пароль</string>
     <string name="login_completed">Вход выполнен</string>
     <string name="edit_personal_information">Данные пользователя обновлены</string>
+    <string name="comment_added">Комментарий добавлен</string>
+    <string name="element_has_been_added">Элемент добавлен</string>
+    <string name="movie_has_been_moved_to_viewed">Фильм успешно перенесен в просмотренные</string>
+    <string name="series_has_been_moved_to_viewed">Сериал успешно перенесен в просмотренные</string>
+    <string name="series_has_been_moved_to_waiting_list">Сериал успешно перенесен в лист ожидания</string>
+    <string name="series_has_been_moved">Сериал успешно перенесен</string>
 
     <!--  Title Icons  -->
     <string name="my_list_movies">Личный список</string>
@@ -78,5 +122,9 @@
 
     <!--  Seasonal lines  -->
     <string name="title_of_the_list_for_the_new_year">Почувствуй новый год!</string>
+    <string name="record_added_to_new_year_collection">Пополнил(а) коллекцию новогодней подборки: </string>
+
+    <!--  Text Error  -->
+    <string name="limit_is_over">К сожалению, суточный лимит закончился</string>
     
 </resources>

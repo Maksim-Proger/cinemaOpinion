@@ -296,7 +296,8 @@ fun MovieData.toSelectedMovie(): SelectedMovieModel {
     }
 }
 
-fun showToast(context: Context, message: String) {
+fun showToast(context: Context, messageId: Int) {
+    val message = context.getString(messageId)
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 

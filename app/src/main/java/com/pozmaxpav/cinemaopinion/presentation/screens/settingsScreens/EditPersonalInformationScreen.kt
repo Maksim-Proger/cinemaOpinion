@@ -34,7 +34,6 @@ import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -69,7 +68,6 @@ fun EditPersonalInformationScreen(
         }
     }
 
-    val dataUpdatedToast = stringResource(R.string.edit_personal_information)
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
 
@@ -77,7 +75,8 @@ fun EditPersonalInformationScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             ClassicTopAppBar(
-                title = stringResource(id = R.string.top_app_bar_header_name_user_information),
+                context = context,
+                titleId = R.string.top_app_bar_header_name_user_information,
                 scrollBehavior = scrollBehavior,
                 onTransitionAction = { navigateFunction(navController, Route.MainScreen.route) }
             )
@@ -90,7 +89,7 @@ fun EditPersonalInformationScreen(
                 onButtonClick = {
                     auxiliaryUserViewModel.updatingUserData(userData?.id!!, nikName, email, password)
                     navigateFunction(navController, Route.MainScreen.route)
-                    showToast(context, dataUpdatedToast)
+                    showToast(context, R.string.edit_personal_information)
                 },
                 expanded = true
             )

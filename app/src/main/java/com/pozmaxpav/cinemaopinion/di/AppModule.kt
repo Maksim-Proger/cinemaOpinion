@@ -14,21 +14,25 @@ import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
 import com.pozmaxpav.cinemaopinion.data.local.datastore.LocalUserManagerImpl
 import com.pozmaxpav.cinemaopinion.data.local.room.appdb.AppDatabase
 import com.pozmaxpav.cinemaopinion.data.local.room.dao.CommentPersonalListDao
-import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.CommentPersonalListRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.repositoryapi.GetMovieInformationApiRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.repositoryapi.MovieRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.SelectedMovieRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.api.GetMovieInformationApiRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.api.MovieRepositoryApiImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.CommentPersonalListRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.MovieRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.RecordsOfChangesRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.SelectedMovieRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.SeriesControlRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.system.SharedPreferencesRepository
-import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.FirebaseRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase.SeriesControlRepositoryImpl
-import com.pozmaxpav.cinemaopinion.domain.repository.remote.CommentPersonalListRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.remote.SelectedMovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.CommentPersonalListRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.RecordsOfChangesRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SelectedMovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemSharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.system.ThemeRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.remote.FirebaseRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.remote.SeriesControlRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -67,8 +71,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMovieRepository(api: MovieListApi): MovieRepository {
-        return MovieRepositoryImpl(api)
+    fun provideMovieRepositoryApi(api: MovieListApi): MovieRepositoryApi {
+        return MovieRepositoryApiImpl(api)
     }
 
     @Provides
@@ -98,7 +102,7 @@ object AppModule {
 
     // endregion
 
-    // region Shared Preferences
+    // region SharedPreferences
 
     @Provides
     @Singleton
@@ -146,8 +150,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseRepository(databaseReference: DatabaseReference): FirebaseRepository {
-        return FirebaseRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
+    fun provideMovieRepository(databaseReference: DatabaseReference): MovieRepository {
+        return MovieRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
     }
 
     @Provides
@@ -160,6 +164,18 @@ object AppModule {
     @Singleton
     fun provideSelectedMovieRepository(databaseReference: DatabaseReference): SelectedMovieRepository {
         return SelectedMovieRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(databaseReference: DatabaseReference): UserRepository {
+        return UserRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecordsOfChangesRepository(databaseReference: DatabaseReference): RecordsOfChangesRepository {
+        return RecordsOfChangesRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
     }
 
     // endregion

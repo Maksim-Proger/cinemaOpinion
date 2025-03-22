@@ -179,7 +179,9 @@ fun AccountScreen(
 
                 // region Awards
                 Column(
-                    modifier = Modifier.padding(10.dp).weight(1f),
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .weight(1f),
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     if (listAwards.isNotEmpty()) {

@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.data.repository.repositoryapi
+package com.pozmaxpav.cinemaopinion.data.repository.api
 
 import com.pozmaxpav.cinemaopinion.data.api.GetMovieInformationApi
 import com.pozmaxpav.cinemaopinion.data.mappers.toDomain

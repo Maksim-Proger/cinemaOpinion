@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.AddUserUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.CheckLoginAndPasswordUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.CheckLoginAndPasswordUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.GetUserDataUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.GetUsersUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.users.UpdateSpecificFieldUseCase

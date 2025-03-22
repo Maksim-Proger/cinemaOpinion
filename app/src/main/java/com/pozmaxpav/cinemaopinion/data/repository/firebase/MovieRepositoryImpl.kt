@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase
+package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -8,121 +8,19 @@ import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
 import com.pozmaxpav.cinemaopinion.data.remote.firebase.models.DataComment
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
-import com.pozmaxpav.cinemaopinion.domain.repository.remote.FirebaseRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
 import com.pozmaxpav.cinemaopinion.utilits.NODE_COMMENTS
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class FirebaseRepositoryImpl @Inject constructor(
+class MovieRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference
-) : FirebaseRepository {
-
-    override suspend fun getUsers(): List<User> {
-        val snapshot = databaseReference.child(NODE_LIST_USERS).get().await()
-        return snapshot.children.mapNotNull { childrenSnapshot ->
-            childrenSnapshot.getValue(User::class.java)
-        }
-            .map {
-                User(
-                    id = it.id,
-                    nikName = it.nikName,
-                    email = it.email,
-                    password = it.password,
-                    awards = it.awards,
-                    professionalPoints = it.professionalPoints,
-                    seasonalEventPoints = it.seasonalEventPoints
-                )
-            }
-    }
-
-    override suspend fun addUser(user: User) {
-        val userId = user.id
-        if (userId.isNotEmpty()) databaseReference.child(NODE_LIST_USERS).child(userId)
-            .setValue(user).await()
-        else throw Exception("User ID is missing")
-    }
-
-    override suspend fun updatingUserData(user: User) {
-        val userId = user.id
-        if (userId.isNotEmpty()) {
-            // Сохраняем данные по ID
-            databaseReference.child(NODE_LIST_USERS).child(userId).setValue(user).await()
-        } else {
-            throw Exception("User ID is missing")
-        }
-    }
-
-    override suspend fun checkLoginAndPassword(email: String, password: String): User? {
-        val query = databaseReference.child(NODE_LIST_USERS).orderByChild("email").equalTo(email)
-        val userSnapshot = query.get().await()
-
-        if (!userSnapshot.exists()) {
-            return null
-        }
-
-        for (snapshot in userSnapshot.children) {
-            val user = snapshot.getValue(User::class.java)
-            if (user != null) {
-                // Проверяем совпадение пароля
-                if (user.password == password) {
-                    return user // Возвращаем пользователя, если пароль совпал
-                } else {
-                    return null // Пароль не совпал
-                }
-            }
-        }
-
-        return null
-    }
-
-    override suspend fun getUserData(userId: String): User? {
-        if (userId.isEmpty()) {
-            return null
-        }
-
-        val snapshot = databaseReference.child(NODE_LIST_USERS).child(userId).get().await()
-        return snapshot.getValue(User::class.java)?.let { userSnapshot ->
-            User(
-                id = userSnapshot.id,
-                nikName = userSnapshot.nikName,
-                email = userSnapshot.email,
-                password = userSnapshot.password,
-                awards = userSnapshot.awards,
-                professionalPoints = userSnapshot.professionalPoints,
-                seasonalEventPoints = userSnapshot.seasonalEventPoints
-            )
-        }
-    }
-
-    override suspend fun updateSpecificField(
-        userId: String,
-        fieldName: String,
-        newValue: Any
-    ) {
-        if (userId.isNotEmpty() && fieldName.isNotEmpty()) {
-            val updates = mapOf(
-                fieldName to newValue
-            )
-
-            databaseReference.child(NODE_LIST_USERS).child(userId).updateChildren(updates).await()
-        } else {
-            throw Exception("User ID is missing")
-        }
-    }
+) : MovieRepository {
 
     override suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovieModel) {
-//        val filmData = SelectedMovie( // TODO: Надо разобрать зачем мне тут снова создавать модель?
-//            selectedMovie.id,
-//            selectedMovie.nameFilm,
-//            selectedMovie.posterUrl,
-//        )
         val key = databaseReference.child(dataSource).push().key
         key?.let {
             databaseReference.child(dataSource).child(it).setValue(selectedMovie).await()
@@ -283,58 +181,6 @@ class FirebaseRepositoryImpl @Inject constructor(
                     // TODO: Добавить отлов ошибки
                 }
             })
-    }
-
-    override suspend fun savingChangeRecord(domainChangelogModel: DomainChangelogModel) {
-        val key = databaseReference.child(NODE_LIST_CHANGES).push().key
-        key?.let {
-            val record = DomainChangelogModel(
-                noteId = it,
-                username = domainChangelogModel.username,
-                noteText = domainChangelogModel.noteText,
-                timestamp = domainChangelogModel.timestamp
-            )
-
-            databaseReference.child(NODE_LIST_CHANGES).child(it).setValue(record).await()
-        } ?: throw Exception("Failed to generate key")
-    }
-
-    override suspend fun getRecordsOfChanges(): List<DomainChangelogModel> {
-        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
-        return snapshot.children.mapNotNull { childSnapshot ->
-            childSnapshot.getValue(DomainChangelogModel::class.java)
-        }
-            .map {
-                DomainChangelogModel(
-                    noteId = it.noteId,
-                    username = it.username,
-                    noteText = it.noteText,
-                    timestamp = it.timestamp
-                )
-            }
-    }
-
-    override suspend fun removeRecordsOfChanges(id: String) {
-        try {
-            val snapshot = databaseReference
-                .child(NODE_LIST_CHANGES)
-                .orderByKey()
-                .equalTo(id)
-                .get()
-                .await()
-
-            if (snapshot.exists() && snapshot.hasChildren()) {
-                // Проходим по всем найденным элементам
-                for (filmSnapshot in snapshot.children) {
-                    filmSnapshot.ref.removeValue().await() // Удаляем запись
-                }
-            } else {
-                // TODO: Добавить отлов ошибки
-            }
-
-        } catch (e: Exception) {
-            // TODO: Добавить отлов ошибки
-        }
     }
 
     override suspend fun sendingToTheViewedFolder(

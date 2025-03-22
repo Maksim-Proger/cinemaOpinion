@@ -48,9 +48,6 @@ import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 
 @Composable
 fun DetailsCardFilm(
-    addToPersonalList: String,
-    errorToast: String,
-    addToGeneralList: String,
     movie: MovieData,
     onClick: () -> Unit,
     padding: PaddingValues,
@@ -248,8 +245,8 @@ fun DetailsCardFilm(
                                     )
 
                                     if (statusExist == "error") {
-                                        showToast(context, errorToast)
-                                    } else showToast(context, addToPersonalList)
+                                        showToast(context, R.string.movie_has_already_been_added)
+                                    } else showToast(context, R.string.movie_has_been_added)
 
                                     onClick()
                                 },
@@ -267,11 +264,13 @@ fun DetailsCardFilm(
                                 ),
                                 onClick = { // TODO: Добавить проверку
                                     firebaseViewModel.savingChangeRecord(
+                                        context,
                                         user,
-                                        "добавил(а) фильм: ${movie.nameRu}"
+                                        R.string.record_added_movie,
+                                        movie.nameRu.toString()
                                     )
                                     firebaseViewModel.saveMovie(NODE_LIST_MOVIES, movie.toSelectedMovie())
-                                    showToast(context, addToGeneralList)
+                                    showToast(context, R.string.movie_has_been_added_to_general_list)
                                     onClick()
                                 },
                             ) {
@@ -290,11 +289,13 @@ fun DetailsCardFilm(
                                 ),
                                 onClick = { // TODO: Добавить проверку
                                     firebaseViewModel.savingChangeRecord(
+                                        context,
                                         user,
-                                        "добавил(а) сериал: ${movie.nameRu}"
+                                        R.string.record_added_series,
+                                        movie.nameRu.toString()
                                     )
                                     firebaseViewModel.saveMovie(NODE_LIST_SERIALS, movie.toSelectedMovie())
-                                    showToast(context, addToGeneralList)
+                                    showToast(context, R.string.movie_has_been_added_to_general_list)
                                     onClick()
                                 },
                             ) {
@@ -306,26 +307,28 @@ fun DetailsCardFilm(
                                 )
                             }
 
-                            Button(
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                    contentColor = MaterialTheme.colorScheme.onSecondary
-                                ),
-                                onClick = {
-                                    firebaseViewModel.savingChangeRecord(
-                                        user,
-                                        "Пополнил(а) коллекцию новогодней подборки: ${movie.nameRu}"
-                                    )
-                                    firebaseViewModel.saveMovie(NODE_NEW_YEAR_LIST, movie.toSelectedMovie())
-                                    showToast(context, addToGeneralList)
-                                    onClick()
-                                }
-                            ) {
-                                Text(
-                                    text = "В новогоднюю коллекцию",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
+//                            Button(
+//                                colors = ButtonDefaults.buttonColors(
+//                                    containerColor = MaterialTheme.colorScheme.secondary,
+//                                    contentColor = MaterialTheme.colorScheme.onSecondary
+//                                ),
+//                                onClick = {
+//                                    firebaseViewModel.savingChangeRecord(
+//                                        context,
+//                                        user,
+//                                        R.string.record_added_to_new_year_collection,
+//                                        movie.nameRu.toString()
+//                                    )
+//                                    firebaseViewModel.saveMovie(NODE_NEW_YEAR_LIST, movie.toSelectedMovie())
+//                                    showToast(context, R.string.movie_has_been_added_to_general_list)
+//                                    onClick()
+//                                }
+//                            ) {
+//                                Text(
+//                                    text = "В новогоднюю коллекцию",
+//                                    style = MaterialTheme.typography.bodyMedium
+//                                )
+//                            }
                         }
                     }
                 }

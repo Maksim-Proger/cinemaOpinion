@@ -1,11 +1,11 @@
-package com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase
+package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainSeriesControlModel
-import com.pozmaxpav.cinemaopinion.domain.repository.remote.SeriesControlRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_SERIES_CONTROL
 import kotlinx.coroutines.tasks.await

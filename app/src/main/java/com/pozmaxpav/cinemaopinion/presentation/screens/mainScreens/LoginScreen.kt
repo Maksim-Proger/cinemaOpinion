@@ -21,7 +21,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +47,6 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,9 +60,6 @@ fun LoginScreen(
     val (login, setLogin) = remember { mutableStateOf("") }
     val (password, setPassword) = remember { mutableStateOf("") }
     var openBottomSheet by remember { mutableStateOf(false) }
-    val nameToast = stringResource(R.string.add_new_account)
-    val loginErrorToast = stringResource(R.string.login_error)
-    val loginCompleted = stringResource(R.string.login_completed)
     val loginVerificationResult by auxiliaryUserViewModel.loginVerificationResult.collectAsState()
     val showToast by auxiliaryUserViewModel.showToast.collectAsState()
 
@@ -76,7 +71,7 @@ fun LoginScreen(
         if (loginVerificationResult != null) {
             mainViewModel.saveRegistrationFlag(true)
             mainViewModel.saveUserId(loginVerificationResult!!.id)
-            showToast(context, loginCompleted)
+            showToast(context, R.string.login_completed)
             navigateFunction(navController, Route.MainScreen.route)
         }
     }
@@ -85,7 +80,8 @@ fun LoginScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             ClassicTopAppBar(
-                title = "Вход / Регистрация",
+                context,
+                titleId = R.string.title_login_screen,
                 scrollBehavior = scrollBehavior,
                 onShowTransitionAction = false
             )
@@ -102,7 +98,7 @@ fun LoginScreen(
                         focusManager,
                         onClose = {
                             openBottomSheet = false
-                            showToast(context, nameToast)
+                            showToast(context, R.string.add_new_account)
                         }
                     )
                 },
@@ -111,7 +107,7 @@ fun LoginScreen(
         }
 
         if (showToast) {
-            showToast(context, loginErrorToast)
+            showToast(context, R.string.login_error)
             auxiliaryUserViewModel.resetToastState()
         }
 
@@ -126,6 +122,12 @@ fun LoginScreen(
             CustomTextField(
                 value = login,
                 onValueChange = setLogin,
+                label = {
+                    Text(
+                        stringResource(id = R.string.text_for_edit_email_field),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
                 leadingIcon = {
                     androidx.compose.material3.Icon(
                         imageVector = Icons.Default.Person,
@@ -143,11 +145,14 @@ fun LoginScreen(
                 imeAction = ImeAction.Next
             )
             // endregion
+
             Spacer(Modifier.padding(10.dp))
+
             // region Password
             CustomTextField(
                 value = password,
                 onValueChange = setPassword,
+                label = { Text(stringResource(id = R.string.text_for_edit_password_field)) },
                 leadingIcon = {
                     androidx.compose.material3.Icon(
                         imageVector = Icons.Default.Person,
@@ -166,7 +171,9 @@ fun LoginScreen(
                 imeAction = ImeAction.Done
             )
             // endregion
+
             Spacer(Modifier.padding(26.dp))
+
             // region Buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -174,13 +181,11 @@ fun LoginScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CustomTextButton(
-                    textButton = "Регистрация",
-                    onClickButton = {
-                        openBottomSheet = true
-                    }
+                    textButton = stringResource(R.string.button_registration),
+                    onClickButton = { openBottomSheet = true }
                 )
                 CustomTextButton(
-                    textButton = "Вход",
+                    textButton = stringResource(R.string.button_login),
                     onClickButton = {
                         auxiliaryUserViewModel.checkLoginAndPassword(login, password)
                     }
@@ -232,6 +237,7 @@ fun RegistrationWindow(
         CustomTextField(
             value = email,
             onValueChange = setEmail,
+            label = { Text(stringResource(id = R.string.text_for_edit_email_field)) },
             leadingIcon = {
                 androidx.compose.material3.Icon(
                     imageVector = Icons.Default.Person,
@@ -252,6 +258,7 @@ fun RegistrationWindow(
         CustomTextField(
             value = password,
             onValueChange = setPassword,
+            label = { Text(stringResource(id = R.string.text_for_edit_password_field)) },
             leadingIcon = {
                 androidx.compose.material3.Icon(
                     imageVector = Icons.Default.Person,
@@ -276,7 +283,7 @@ fun RegistrationWindow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             CustomTextButton(
-                textButton = "Сохранить",
+                textButton = stringResource(R.string.button_save),
                 paddingEnd = 15.dp,
                 onClickButton = {
                     auxiliaryUserViewModel.addUser(nikName, email, password)

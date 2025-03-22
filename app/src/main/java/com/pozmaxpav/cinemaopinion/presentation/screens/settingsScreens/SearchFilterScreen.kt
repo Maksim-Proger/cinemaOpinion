@@ -52,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -76,6 +77,7 @@ fun SearchFilterScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var showGenresList by remember { mutableStateOf(false) }
     var showCountriesList by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     // Переменные для хранения выбранной страны и жанра
     var selectedCountry by remember { mutableStateOf<Pair<Int, String>?>(null) }
@@ -96,7 +98,8 @@ fun SearchFilterScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             ClassicTopAppBar(
-                title = stringResource(R.string.title_for_advanced_search_screen),
+                context = context,
+                titleId = R.string.title_for_advanced_search_screen,
                 scrollBehavior = scrollBehavior,
                 onTransitionAction = onClickClose
             )
