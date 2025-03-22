@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.repository.firebase
 
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainSeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
 
 interface SeriesControlRepository {
     fun removeListener()

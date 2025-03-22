@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -27,13 +26,10 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -45,23 +41,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
-import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
-import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -74,18 +69,19 @@ import kotlinx.coroutines.launch
 @Composable
 fun ListSelectedMovies(
     navController: NavHostController,
-    selectedMovieViewModel: SelectedMovieViewModel = hiltViewModel(),
+    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     firebaseViewModel: FirebaseViewModel = hiltViewModel(),
-//    viewModelComments: CommentPersonalListViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel(),
+    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
 ) {
 
     val stateMovie by firebaseViewModel.movieDownloadStatus.collectAsState()
-    val listSelectedMovies by selectedMovieViewModel.selectedMovies.collectAsState()
+    val listSelectedMovies by personalMovieViewModel.selectedMovies.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
+    val userData by auxiliaryUserViewModel.userData.collectAsState()
 //    val listComments by viewModelComments.comments.collectAsState()
     val info by mainViewModel.informationMovie.collectAsState()
-    var selectedMovie by remember { mutableStateOf<SelectedMovieModel?>(null) }
+    var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     val (comment, setComment) = remember { mutableStateOf("") }
 
@@ -93,8 +89,9 @@ fun ListSelectedMovies(
     val listState = rememberLazyListState()
 
     LaunchedEffect(userId) {
-        selectedMovieViewModel.getListPersonalMovies(userId)
-        selectedMovieViewModel.observeListSelectedMovies(userId)
+        personalMovieViewModel.getListPersonalMovies(userId)
+        personalMovieViewModel.observeListSelectedMovies(userId)
+        auxiliaryUserViewModel.getUserData(userId)
     }
 
     LaunchedEffect(selectedMovie) {
@@ -131,13 +128,15 @@ fun ListSelectedMovies(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-//                                    viewModelComments.insertComment(
-//                                        selectedNote!!.id.toDouble(),
-//                                        comment
-//                                    )
+                                    personalMovieViewModel.addCommentToPersonalList(
+                                        userId,
+                                        selectedMovie!!.id,
+                                        userData!!.nikName,
+                                        comment
+                                    )
 //                                    showToast(context, "Комментарий добавлен")
-//                                    setComment("")
-//                                    openBottomSheetComments = !openBottomSheetComments
+                                    setComment("")
+                                    openBottomSheetComments = !openBottomSheetComments
                             }
                         )
                     )
@@ -162,7 +161,7 @@ fun ListSelectedMovies(
         }
 
         if (selectedMovie != null) {
-            ShowSelectedMovie(
+            DetailsCardSelectedMovie(
                 movie = selectedMovie!!,
                 isGeneralList = false,
                 isShowCommentButton = true,
@@ -266,7 +265,7 @@ fun ListSelectedMovies(
                                                         isVisible = false
                                                         CoroutineScope(Dispatchers.Main).launch {
                                                             delay(300)
-                                                            selectedMovieViewModel
+                                                            personalMovieViewModel
                                                                 .deleteSelectedMovie(
                                                                     userId, movie.id
                                                                 )
@@ -295,7 +294,7 @@ fun ListSelectedMovies(
 
     DisposableEffect(Unit) {
         onDispose {
-            selectedMovieViewModel.onCleared()
+            personalMovieViewModel.onCleared()
         }
     }
 }

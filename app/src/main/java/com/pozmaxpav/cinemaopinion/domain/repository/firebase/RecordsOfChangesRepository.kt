@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.repository.firebase
 
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
 
 interface RecordsOfChangesRepository {
     suspend fun savingChangeRecord(domainChangelogModel: DomainChangelogModel)

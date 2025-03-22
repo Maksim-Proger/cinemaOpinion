@@ -32,14 +32,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
-import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 import com.pozmaxpav.cinemaopinion.utilits.formatCountries
 import com.pozmaxpav.cinemaopinion.utilits.formatGenres
@@ -52,7 +51,7 @@ fun DetailsCardFilm(
     onClick: () -> Unit,
     padding: PaddingValues,
     user: String,
-    selectedMovieViewModel: SelectedMovieViewModel = hiltViewModel(),
+    selectedMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     firebaseViewModel: FirebaseViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel()
 ) {

@@ -1,7 +1,7 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
 import com.google.firebase.database.DatabaseReference
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepository
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
 import kotlinx.coroutines.tasks.await

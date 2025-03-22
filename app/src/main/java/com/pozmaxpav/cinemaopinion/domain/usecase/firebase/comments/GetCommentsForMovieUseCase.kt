@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments
 
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
 import javax.inject.Inject
 

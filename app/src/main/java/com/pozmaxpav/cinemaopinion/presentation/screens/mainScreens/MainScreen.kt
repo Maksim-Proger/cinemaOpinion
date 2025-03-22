@@ -43,9 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.CompositeRequest
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.system.CompositeRequest
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
@@ -137,7 +137,7 @@ fun MainScreen(navController: NavHostController) {
     var saveSearchQuery by remember { mutableStateOf("") } // Сохраняем содержание поиска
 
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
-    var selectedNewYearMovie by remember { mutableStateOf<SelectedMovieModel?>(null) }
+    var selectedNewYearMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
 
     // endregion
 
@@ -323,9 +323,7 @@ fun MainScreen(navController: NavHostController) {
                     DetailsCard(
                         selectedNewYearMovie!!,
                         onCloseButton = { selectedNewYearMovie = null },
-                        padding,
-                        stringResource(R.string.movie_has_been_added),
-                        stringResource(R.string.movie_has_already_been_added)
+                        padding
                     )
                     BackHandler {
                         selectedNewYearMovie = null

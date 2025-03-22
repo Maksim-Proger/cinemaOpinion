@@ -3,9 +3,9 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainChangelogModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments.AddCommentUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments.GetCommentsForMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.GetMovieUseCase
@@ -52,7 +52,7 @@ class FirebaseViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage = _errorMessage.asStateFlow()
 
-    private val _movies = MutableStateFlow<List<SelectedMovieModel>>(emptyList())
+    private val _movies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
     val movies = _movies.asStateFlow()
 
     private val _comments = MutableStateFlow<List<DomainCommentModel>>(emptyList())
@@ -208,7 +208,7 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun saveMovie(dataSource: String, selectedMovie: SelectedMovieModel) {
+    fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
                 saveMovieUseCase(dataSource, selectedMovie)

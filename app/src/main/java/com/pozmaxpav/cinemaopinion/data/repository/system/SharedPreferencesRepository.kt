@@ -1,7 +1,7 @@
 package com.pozmaxpav.cinemaopinion.data.repository.system
 
 import android.content.Context
-import com.pozmaxpav.cinemaopinion.data.sharedpreferences.SharedPreferences
+import com.pozmaxpav.cinemaopinion.data.db.sharedpreferences.SharedPreferences
 import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemSharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.system.ThemeRepository
 import javax.inject.Inject

@@ -44,13 +44,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
-import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
@@ -83,7 +83,7 @@ fun ListWaitingContinuationSeries(
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     var openBottomSheetComments by remember { mutableStateOf(false) }
-    var selectedNote by remember { mutableStateOf<SelectedMovieModel?>(null) }
+    var selectedNote by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var showTopBar by remember { mutableStateOf(false) }
     var (comment, setComment) = remember { mutableStateOf("") }
     val listState = rememberLazyListState()
@@ -177,7 +177,7 @@ fun ListWaitingContinuationSeries(
                     }
                 }
 
-                ShowSelectedMovie( // TODO: Доработать все действия
+                DetailsCardSelectedMovie( // TODO: Доработать все действия
                     movie = selectedNote!!,
                     isGeneralList = true,
                     isShowCommentButton = true,

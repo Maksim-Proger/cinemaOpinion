@@ -6,9 +6,9 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
-import com.pozmaxpav.cinemaopinion.data.remote.firebase.models.DataComment
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
 import com.pozmaxpav.cinemaopinion.utilits.NODE_COMMENTS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
@@ -20,7 +20,7 @@ class MovieRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference
 ) : MovieRepository {
 
-    override suspend fun saveMovie(dataSource: String, selectedMovie: SelectedMovieModel) {
+    override suspend fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel) {
         val key = databaseReference.child(dataSource).push().key
         key?.let {
             databaseReference.child(dataSource).child(it).setValue(selectedMovie).await()
@@ -48,13 +48,13 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMovie(dataSource: String): List<SelectedMovieModel> {
+    override suspend fun getMovie(dataSource: String): List<DomainSelectedMovieModel> {
         val snapshot = databaseReference.child(dataSource).get().await()
         return snapshot.children.mapNotNull { childSnapshot ->
-            childSnapshot.getValue(SelectedMovieModel::class.java)
+            childSnapshot.getValue(DomainSelectedMovieModel::class.java)
         }
             .map {
-                SelectedMovieModel(
+                DomainSelectedMovieModel(
                     id = it.id,
                     nameFilm = it.nameFilm,
                     posterUrl = it.posterUrl
@@ -64,14 +64,14 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun observeListMovies(
         dataSource: String,
-        onMoviesUpdated: (List<SelectedMovieModel>) -> Unit
+        onMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit
     ) {
         databaseReference
             .child(dataSource)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val movies = snapshot.children.mapNotNull { movieSnapshot ->
-                        movieSnapshot.getValue(SelectedMovieModel::class.java)
+                        movieSnapshot.getValue(DomainSelectedMovieModel::class.java)
                     }
                     onMoviesUpdated(movies)
                 }

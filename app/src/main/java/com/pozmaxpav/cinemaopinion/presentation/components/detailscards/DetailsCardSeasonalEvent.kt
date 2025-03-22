@@ -33,26 +33,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
+import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarScaffold
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.SelectedMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.PersonalMovieViewModel
 //import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
 @Composable
 fun DetailsCard(
-    newYearMovie: SelectedMovieModel,
+    newYearMovie: DomainSelectedMovieModel,
     onCloseButton: () -> Unit,
     padding: PaddingValues,
-    addToPersonalList: String,
-    errorToast: String,
     mainViewModel: MainViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
-    selectedMovieViewModel: SelectedMovieViewModel = hiltViewModel(),
+    selectedMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
 ) {
 
     val userId by mainViewModel.userId.collectAsState()
@@ -69,7 +68,7 @@ fun DetailsCard(
     }
 
     LaunchedEffect(newYearMovie.id) {
-        mainViewModel.getInformationMovie(newYearMovie.id.toInt())
+        mainViewModel.getInformationMovie(newYearMovie.id)
     }
 
     Column(
@@ -178,8 +177,8 @@ fun DetailsCard(
                             onClick = {
                                 selectedMovieViewModel.addMovieToPersonalList(userId, newYearMovie)
                                 if (statusExist == "error") {
-                                    showToast(context, errorToast)
-                                } else showToast(context, addToPersonalList)
+                                    showToast(context, R.string.movie_has_already_been_added)
+                                } else showToast(context, R.string.movie_has_been_added)
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondary,

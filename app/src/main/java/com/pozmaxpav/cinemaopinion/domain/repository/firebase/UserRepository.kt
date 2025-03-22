@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.repository.firebase
 
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.User
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
 
 interface UserRepository {
     suspend fun getUsers(): List<User>
