@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
@@ -12,8 +13,8 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments.ObserveComme
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.ObserveListMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SaveMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SendingToTheSerialsListUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.SendingToTheViewedFolderUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SendingToTheSerialsListUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SendingToTheViewedFolderUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.RemoveRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeRecordUseCase
@@ -124,7 +125,9 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun savingChangeRecord(username: String, noteText: String) {
+    fun savingChangeRecord(context: Context, username: String, stringResourceId: Int, title: String) {
+        val stringResource = context.getString(stringResourceId)
+        val noteText = stringResource + title
         val note = DomainChangelogModel(
             noteId = "", // Оставляем пустым, так как key будет сгенерирован позже
             username = username,

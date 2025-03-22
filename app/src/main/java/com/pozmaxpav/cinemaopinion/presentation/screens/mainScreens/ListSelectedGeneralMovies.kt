@@ -82,8 +82,9 @@ fun ListSelectedGeneralMovies(
 ) {
     val listMovies by firebaseViewModel.movies.collectAsState()
     val listComments by firebaseViewModel.comments.collectAsState()
-    var selectedNote by remember { mutableStateOf<SelectedMovieModel?>(null) }
+    var selectedMovie by remember { mutableStateOf<SelectedMovieModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
+    val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val stateMovie by firebaseViewModel.movieDownloadStatus.collectAsState()
     val info by mainViewModel.informationMovie.collectAsState()
@@ -96,8 +97,12 @@ fun ListSelectedGeneralMovies(
         firebaseViewModel.observeListMovies(NODE_LIST_MOVIES)
     }
 
-    LaunchedEffect(selectedNote) {
-        selectedNote?.let { movie ->
+    LaunchedEffect(userId) {
+        auxiliaryUserViewModel.getUserData(userId)
+    }
+
+    LaunchedEffect(selectedMovie) {
+        selectedMovie?.let { movie ->
             mainViewModel.getInformationMovie(movie.id)
         }
     }
@@ -120,7 +125,8 @@ fun ListSelectedGeneralMovies(
                         onValueChange = setComment,
                         placeholder = {
                             Text(
-                                text = "Оставьте свой комментарий"
+                                text = stringResource(R.string.placeholder_for_comment_field),
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         },
                         leadingIcon = {
@@ -132,19 +138,23 @@ fun ListSelectedGeneralMovies(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                firebaseViewModel.addComment(
-                                    NODE_LIST_MOVIES,
-                                    selectedNote!!.id.toDouble(),
-                                    userData!!.nikName,
-                                    comment
-                                )
-                                firebaseViewModel.savingChangeRecord(
-                                    userData!!.nikName,
-                                    "добавил(а) комментарий к фильму: ${selectedNote!!.nameFilm}"
-                                )
-                                showToast(context, "Комментарий добавлен")
-                                setComment("")
-                                openBottomSheetComments = !openBottomSheetComments
+                                if (userData != null) {
+                                    firebaseViewModel.addComment(
+                                        NODE_LIST_MOVIES,
+                                        selectedMovie!!.id.toDouble(),
+                                        userData!!.nikName,
+                                        comment
+                                    )
+                                    firebaseViewModel.savingChangeRecord(
+                                        context,
+                                        userData!!.nikName,
+                                        R.string.record_added_comment_to_movie,
+                                        selectedMovie!!.nameFilm
+                                    )
+                                    showToast(context, R.string.comment_added)
+                                    setComment("")
+                                    openBottomSheetComments = !openBottomSheetComments
+                                }
                             }
                         )
                     )
@@ -156,10 +166,12 @@ fun ListSelectedGeneralMovies(
             }
         }
 
-        if (selectedNote == null) {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 7.dp)) {
+        if (selectedMovie == null) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 7.dp)
+            ) {
                 IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
                     Icon(
                         Icons.Default.ArrowBackIosNew,
@@ -170,21 +182,21 @@ fun ListSelectedGeneralMovies(
             }
         }
 
-        if (selectedNote != null) {
+        if (selectedMovie != null) {
             ShowSelectedMovie(
-                movie = selectedNote!!,
+                movie = selectedMovie!!,
                 isGeneralList = true,
                 isShowCommentButton = true,
                 content = {
                     ShowCommentGeneralList(
                         listComments,
-                        selectedNote!!.id.toDouble()
+                        selectedMovie!!.id.toDouble()
                     )
                 },
                 openDescription = {
                     ExpandedCard(
-                        title = "Описание",
-                        description = info?.description ?: "К сожалению, суточный лимит закончился"
+                        title = stringResource(R.string.text_for_expandedCard_field),
+                        description = info?.description ?: stringResource(R.string.limit_is_over)
                     )
                 },
                 commentButton = {
@@ -192,7 +204,7 @@ fun ListSelectedGeneralMovies(
                         onClick = { openBottomSheetComments = !openBottomSheetComments }
                     ) {
                         Text(
-                            text = "Оставить комментарий",
+                            text = stringResource(R.string.button_leave_comment),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -203,17 +215,19 @@ fun ListSelectedGeneralMovies(
                             firebaseViewModel.sendingToTheViewedFolder(
                                 NODE_LIST_MOVIES,
                                 NODE_LIST_WATCHED_MOVIES,
-                                selectedNote!!.id.toDouble()
+                                selectedMovie!!.id.toDouble()
                             )
-                            showToast(context, "Фильм успешно перенесен в просмотренные")
+                            showToast(context, R.string.movie_has_been_moved_to_viewed)
                             firebaseViewModel.savingChangeRecord(
+                                context,
                                 userData!!.nikName,
-                                "переместил(а) фильм в просмотренные: ${selectedNote!!.nameFilm}"
+                                R.string.record_movie_has_been_moved_to_viewed,
+                                selectedMovie!!.nameFilm
                             )
                         }
                     ) {
                         Text(
-                            text = "Просмотрен",
+                            text = stringResource(R.string.button_viewed),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -221,24 +235,26 @@ fun ListSelectedGeneralMovies(
                 movieTransferButtonToSerialsList = {
                     Button(
                         onClick = {
-                            firebaseViewModel.sendingToTheSerialsList(selectedNote!!.id.toDouble())
-                            showToast(context, "Сериал успешно перенесен")
+                            firebaseViewModel.sendingToTheSerialsList(selectedMovie!!.id.toDouble())
+                            showToast(context, R.string.series_has_been_moved)
                             firebaseViewModel.savingChangeRecord(
+                                context,
                                 userData!!.nikName,
-                                "переместил(а) сериал в список с сериалами: ${selectedNote!!.nameFilm}"
+                                R.string.record_series_has_been_moved_to_series_list,
+                                selectedMovie!!.nameFilm
                             )
                         }
                     ) {
                         Text(
-                            text = "Переместить в сериалы",
+                            text = stringResource(R.string.button_move_to_series),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 },
-                onClick = { selectedNote = null }
+                onClick = { selectedMovie = null }
             )
             BackHandler {
-                selectedNote = null
+                selectedMovie = null
             }
 
         } else {
@@ -306,7 +322,7 @@ fun ListSelectedGeneralMovies(
                                                 ) {
                                                     SelectedMovieItem(
                                                         movie = movie,
-                                                        onClick = { selectedNote = movie }
+                                                        onClick = { selectedMovie = movie }
                                                     )
                                                 }
 
@@ -321,8 +337,10 @@ fun ListSelectedGeneralMovies(
                                                             )
                                                         }
                                                         firebaseViewModel.savingChangeRecord(
+                                                            context,
                                                             userData!!.nikName,
-                                                            "удалил(а) фильм: ${movie.nameFilm}"
+                                                            R.string.record_deleted_the_movie,
+                                                            movie.nameFilm
                                                         )
                                                     }
                                                 ) {
@@ -341,7 +359,7 @@ fun ListSelectedGeneralMovies(
                         }
                     }
 
-                    is State.Error -> {}
+                    is State.Error -> {/* TODO: Добавить лог ошибки */}
                 }
             }
         }
@@ -370,7 +388,7 @@ fun ListSelectedGeneralMovies(
                     modifier = Modifier.padding(10.dp)
                 ) {
                     Text(
-                        text = "Просмотренные",
+                        text = stringResource(R.string.button_viewed_screen),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

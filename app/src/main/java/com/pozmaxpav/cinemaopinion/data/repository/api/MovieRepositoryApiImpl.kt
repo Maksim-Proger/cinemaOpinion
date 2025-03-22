@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.data.repository.repositoryapi
+package com.pozmaxpav.cinemaopinion.data.repository.api
 
 import com.pozmaxpav.cinemaopinion.data.mappers.toDomain
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
@@ -8,10 +8,10 @@ import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.models.api.films.MovieSearchList2
 import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsList
-import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
 import javax.inject.Inject
 
-class MovieRepositoryImpl @Inject constructor(private val api: MovieListApi) : MovieRepository {
+class MovieRepositoryApiImpl @Inject constructor(private val api: MovieListApi) : MovieRepositoryApi {
 
     override suspend fun getPremiereMovies(year: Int, month: String): MovieList {
         return api.requestMoviesByYearAndMonth(year, month).toDomain()

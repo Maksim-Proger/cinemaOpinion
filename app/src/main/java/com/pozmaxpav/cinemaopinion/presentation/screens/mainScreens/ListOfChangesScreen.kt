@@ -14,21 +14,17 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.CommentBank
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material.icons.filled.Start
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,11 +34,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.theme.CommentAddedColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.DeveloperCommentColor
@@ -62,6 +60,8 @@ fun ListOfChangesScreen(
     viewModel: FirebaseViewModel = hiltViewModel()
 ) {
     val list by viewModel.listOfChanges.collectAsState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.getRecordsOfChanges()
@@ -69,28 +69,13 @@ fun ListOfChangesScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Последние изменения",
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                },
-                actions = {
-                    IconButton(onClick = {
-                        navigateFunction(navController, Route.MainScreen.route)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = stringResource(id = R.string.description_icon_home_button),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+            ClassicTopAppBar(
+                context = context,
+                titleId = R.string.title_list_of_changes_series,
+                scrollBehavior = scrollBehavior,
+                onTransitionAction = {
+                    navigateFunction(navController, Route.MainScreen.route)
+                }
             )
         },
     ) { innerPadding ->
@@ -101,11 +86,11 @@ fun ListOfChangesScreen(
                     .padding(innerPadding),
                 contentPadding = PaddingValues(10.dp)
             ) {
-                itemsIndexed(list.reversed()) { index, it ->
+                itemsIndexed(list.reversed()) { _, it ->
                     val color = colorMethod(it.noteText)
                     val icon = iconMethod(it.noteText)
 
-                    Card (
+                    Card(
                         modifier = Modifier
                             .wrapContentHeight()
                             .fillMaxWidth(),
@@ -137,7 +122,7 @@ fun ListOfChangesScreen(
                             ) {
                                 if (it.username.contains("Разработчик")) {
                                     Text(
-                                        text = "Добро пожаловать в новую версию приложения!",
+                                        text = stringResource(R.string.developer_message),
                                         style = MaterialTheme.typography.displayMedium
                                     )
                                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
@@ -153,7 +138,10 @@ fun ListOfChangesScreen(
                                             style = MaterialTheme.typography.bodyLarge
                                         )
                                         Text(
-                                            text = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date(it.timestamp)),
+                                            text = SimpleDateFormat(
+                                                "dd.MM.yyyy",
+                                                Locale.getDefault()
+                                            ).format(Date(it.timestamp)),
                                             style = MaterialTheme.typography.bodyLarge
                                         )
                                     }
@@ -178,7 +166,8 @@ fun ListOfChangesScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Ничего не произошло..."
+                    text = stringResource(R.string.developer_message2),
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }

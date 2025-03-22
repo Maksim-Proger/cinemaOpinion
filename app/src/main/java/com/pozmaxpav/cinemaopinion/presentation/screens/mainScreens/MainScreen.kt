@@ -309,9 +309,6 @@ fun MainScreen(navController: NavHostController) {
             if (!searchBarActive) {
                 if (selectedMovie != null) {
                     DetailsCardFilm(
-                        stringResource(R.string.movie_has_been_added),
-                        stringResource(R.string.movie_has_already_been_added),
-                        stringResource(R.string.movie_has_been_added_to_general_list),
                         selectedMovie!!,
                         onClick = { selectedMovie = null },
                         padding,

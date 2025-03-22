@@ -1,12 +1,11 @@
-package com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase
+package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
-import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.repository.remote.SelectedMovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SelectedMovieRepository
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_PERSONAL_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
 import kotlinx.coroutines.tasks.await

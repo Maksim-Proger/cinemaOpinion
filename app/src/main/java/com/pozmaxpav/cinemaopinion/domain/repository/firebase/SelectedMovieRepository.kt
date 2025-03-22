@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.domain.repository.remote
+package com.pozmaxpav.cinemaopinion.domain.repository.firebase
 
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 

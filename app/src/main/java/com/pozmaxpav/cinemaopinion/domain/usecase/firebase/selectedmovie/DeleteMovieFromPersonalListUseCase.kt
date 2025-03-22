@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedmovie
 
-import com.pozmaxpav.cinemaopinion.domain.repository.remote.SelectedMovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SelectedMovieRepository
 import javax.inject.Inject
 
 class DeleteMovieFromPersonalListUseCase @Inject constructor(

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetMovieInformationUseCase @Inject constructor(
     private val repository: GetMovieInformationApiRepository
 ) {
-    suspend operator fun invoke(movieId: Int): Information { // TODO: Почему тут надо operate а в других нет?
+    suspend operator fun invoke(movieId: Int): Information {
         return repository.getMovieInformation(movieId)
     }
 }

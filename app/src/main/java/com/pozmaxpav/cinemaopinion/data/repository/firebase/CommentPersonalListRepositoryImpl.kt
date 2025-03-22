@@ -1,10 +1,10 @@
-package com.pozmaxpav.cinemaopinion.data.repository.repositoryfirebase
+package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
 import com.pozmaxpav.cinemaopinion.data.local.room.dao.CommentPersonalListDao
 import com.pozmaxpav.cinemaopinion.data.mappers.toDomain
 import com.pozmaxpav.cinemaopinion.data.mappers.toEntity
 import com.pozmaxpav.cinemaopinion.domain.models.room.models.CommentPersonalListModel
-import com.pozmaxpav.cinemaopinion.domain.repository.remote.CommentPersonalListRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.CommentPersonalListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

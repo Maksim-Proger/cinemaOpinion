@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -62,9 +63,10 @@ fun MediaNewsScreen(
     val newsToDisplay: List<NewsModel> = mediaNewsList.value?.items ?: emptyList()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var scrollToTop by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-    // TODO: rememberSaveable = позволяет сохранять состояние между пересозданиями. Разобраться!
-    var isFirstLoad by rememberSaveable { mutableStateOf(true) } // Флаг для предотвращения повторных запусков
+    // Флаг для предотвращения повторных запусков
+    var isFirstLoad by rememberSaveable { mutableStateOf(true) }
 
     // Логика переключения страниц
     val listState = rememberLazyListState()
@@ -116,7 +118,8 @@ fun MediaNewsScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             ClassicTopAppBar(
-                title = "Медиа новости",
+                context = context,
+                titleId = R.string.title_media_news_screen,
                 scrollBehavior = scrollBehavior,
                 onTransitionAction = { navigateFunction(navController, Route.MainScreen.route) }
             )
@@ -133,8 +136,8 @@ fun MediaNewsScreen(
                 .padding(innerPadding),
             contentPadding = PaddingValues(5.dp)
         ) {
-            items(newsToDisplay, key = { it.kinopoiskId }) { it ->
-                NewsItem(it, navController)
+            items(newsToDisplay, key = { it.kinopoiskId }) { item ->
+                NewsItem(item, navController)
             }
 
             if (showPageSwitchingButtons) {
@@ -144,7 +147,6 @@ fun MediaNewsScreen(
                             .wrapContentWidth()
                             .padding(vertical = 16.dp)
                     ) {
-
                         if (canGoForward) {
                             IconButton(
                                 modifier = Modifier.wrapContentWidth(),
@@ -222,8 +224,8 @@ fun NewsItem(
             color = UrlLinkColor,
             modifier = Modifier
                 .clickable {
-                    val encodedUrl = Uri.encode(item.url) // Кодируем URL для передачи через NavController
-                    navController.navigate("webView/$encodedUrl") // Навигация к экрану WebView, передаем закодированный URL
+                    val encodedUrl = Uri.encode(item.url)
+                    navController.navigate("webView/$encodedUrl")
                 }
         )
 

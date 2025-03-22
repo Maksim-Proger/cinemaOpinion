@@ -39,20 +39,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.ShowSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WAITING_CONTINUATION_SERIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
@@ -69,7 +71,7 @@ import java.util.Locale
 fun ListWaitingContinuationSeries(
     navController: NavHostController,
     firebaseViewModel: FirebaseViewModel = hiltViewModel(),
-//    userViewModel: UserViewModel = hiltViewModel(),
+    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
@@ -78,8 +80,8 @@ fun ListWaitingContinuationSeries(
     val listComments by firebaseViewModel.comments.collectAsState()
     val info by mainViewModel.informationMovie.collectAsState()
     val stateMovies by firebaseViewModel.movieDownloadStatus.collectAsState()
-//    val user by userViewModel.users.collectAsState()
-    var username by remember { mutableStateOf("") }
+    val userId by mainViewModel.userId.collectAsState()
+    val userData by auxiliaryUserViewModel.userData.collectAsState()
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var selectedNote by remember { mutableStateOf<SelectedMovieModel?>(null) }
     var showTopBar by remember { mutableStateOf(false) }
@@ -90,9 +92,10 @@ fun ListWaitingContinuationSeries(
     LaunchedEffect(Unit) {
         firebaseViewModel.getMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
         firebaseViewModel.observeListMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
-//        userViewModel.fitchUser()
     }
-
+    LaunchedEffect(userId) {
+        auxiliaryUserViewModel.getUserData(userId)
+    }
     LaunchedEffect(selectedNote) {
         selectedNote?.let { movie ->
             mainViewModel.getInformationMovie(movie.id)
@@ -104,7 +107,8 @@ fun ListWaitingContinuationSeries(
         topBar = {
             if (!showTopBar) {
                 ClassicTopAppBar(
-                    title = "Лист ожидания",
+                    context,
+                    titleId = R.string.title_list_waiting_continuation_series,
                     scrollBehavior = scrollBehavior,
                     onTransitionAction = {
                         navigateFunction(navController, Route.MainScreen.route)
@@ -121,14 +125,6 @@ fun ListWaitingContinuationSeries(
                     .padding(vertical = 45.dp, horizontal = 16.dp)
             ) {
 
-//                if (user != null) {
-//                    user.let { userInfo ->
-//                        username = userInfo?.firstName ?: "Таинственный пользователь"
-//                    }
-//                } else {
-//                    username = "Таинственный пользователь"
-//                }
-
                 if (openBottomSheetComments) {
                     MyBottomSheet(
                         onClose = {
@@ -140,7 +136,8 @@ fun ListWaitingContinuationSeries(
                                 onValueChange = setComment,
                                 placeholder = {
                                     Text(
-                                        text = "Оставьте свой комментарий"
+                                        text = stringResource(R.string.button_leave_comment),
+                                        style = MaterialTheme.typography.bodyMedium
                                     )
                                 },
                                 leadingIcon = {
@@ -152,19 +149,23 @@ fun ListWaitingContinuationSeries(
                                 },
                                 keyboardActions = KeyboardActions(
                                     onDone = {
-                                        firebaseViewModel.addComment(
-                                            NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                            selectedNote!!.id.toDouble(),
-                                            username,
-                                            comment
-                                        )
-                                        firebaseViewModel.savingChangeRecord(
-                                            username,
-                                            "добавил(а) комментарий к сериалу: ${selectedNote!!.nameFilm}"
-                                        )
-                                        showToast(context, "Комментарий добавлен")
-                                        setComment("")
-                                        openBottomSheetComments = !openBottomSheetComments
+                                        if (userData != null) {
+                                            firebaseViewModel.addComment(
+                                                NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                                selectedNote!!.id.toDouble(),
+                                                userData!!.nikName,
+                                                comment
+                                            )
+                                            firebaseViewModel.savingChangeRecord(
+                                                context,
+                                                userData!!.nikName,
+                                                R.string.record_added_comment_to_series,
+                                                selectedNote!!.nameFilm
+                                            )
+                                            showToast(context, R.string.comment_added)
+                                            setComment("")
+                                            openBottomSheetComments = !openBottomSheetComments
+                                        }
                                     }
                                 )
                             )
@@ -188,8 +189,9 @@ fun ListWaitingContinuationSeries(
                     },
                     openDescription = {
                         ExpandedCard(
-                            title = "Описание",
-                            description = info?.description ?: "К сожалению, суточный лимит закончился"
+                            title = stringResource(R.string.text_for_expandedCard_field),
+                            description = info?.description
+                                ?: stringResource(R.string.limit_is_over)
                         )
                     },
                     commentButton = {
@@ -199,7 +201,7 @@ fun ListWaitingContinuationSeries(
                             }
                         ) {
                             Text(
-                                text = "Оставить комментарий",
+                                text = stringResource(R.string.button_leave_comment),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -207,21 +209,24 @@ fun ListWaitingContinuationSeries(
                     movieTransferButton = {
                         Button(
                             onClick = {
-
-                                firebaseViewModel.sendingToTheViewedFolder(
-                                    NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                    NODE_LIST_WATCHED_MOVIES,
-                                    selectedNote!!.id.toDouble()
-                                )
-                                showToast(context, "Сериал успешно перенесен в просмотренные")
-                                firebaseViewModel.savingChangeRecord(
-                                    username,
-                                    "переместил(а) сериал в просмотренные: ${selectedNote!!.nameFilm}"
-                                )
+                                if (userData != null) {
+                                    firebaseViewModel.sendingToTheViewedFolder(
+                                        NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                        NODE_LIST_WATCHED_MOVIES,
+                                        selectedNote!!.id.toDouble()
+                                    )
+                                    showToast(context, R.string.series_has_been_moved_to_viewed)
+                                    firebaseViewModel.savingChangeRecord(
+                                        context,
+                                        userData!!.nikName,
+                                        R.string.record_series_has_been_moved_to_viewed,
+                                        selectedNote!!.nameFilm
+                                    )
+                                }
                             }
                         ) {
                             Text(
-                                text = "Просмотрен",
+                                text = stringResource(R.string.button_viewed),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -251,6 +256,7 @@ fun ListWaitingContinuationSeries(
                         )
                     }
                 }
+
                 is State.Success -> {
                     LazyColumn(
                         state = listState,
@@ -285,6 +291,7 @@ fun ListWaitingContinuationSeries(
                         }
                     }
                 }
+
                 is State.Error -> {}
             }
         }
@@ -304,13 +311,14 @@ fun ShowCommentWaitingContinuationSeriesList(
         firebaseViewModel.observeComments(NODE_LIST_WAITING_CONTINUATION_SERIES, id)
     }
 
-    when(stateComments) {
+    when (stateComments) {
         is State.Loading -> {
             CustomLottieAnimation(
                 nameFile = "loading_animation.lottie",
                 modifier = Modifier.scale(0.5f)
             )
         }
+
         is State.Success -> {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -372,6 +380,7 @@ fun ShowCommentWaitingContinuationSeriesList(
                 }
             }
         }
+
         is State.Error -> {}
     }
 }

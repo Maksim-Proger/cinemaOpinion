@@ -1,7 +1,7 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.firebase.selectedmovie
 
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.models.SelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.repository.remote.SelectedMovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SelectedMovieRepository
 import javax.inject.Inject
 
 class AddMovieToPersonalListUseCase @Inject constructor(

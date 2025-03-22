@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -52,6 +53,7 @@ fun SettingsScreen(
     val myStringArray = stringArrayResource(R.array.my_string_array)
     val optionsList = myStringArray.toList()
     var developerMode by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     // Для режима разработчика
     val (developerComment, setDeveloperComment) = remember { mutableStateOf("") }
@@ -60,7 +62,8 @@ fun SettingsScreen(
     Scaffold (
         topBar = {
             ClassicTopAppBar(
-                title = stringResource(id = R.string.drop_down_menu_item_settings),
+                context = context,
+                titleId = R.string.drop_down_menu_item_settings,
                 scrollBehavior = scrollBehavior,
                 onTransitionAction = { navigateFunction(navController, Route.MainScreen.route) }
             )
@@ -101,47 +104,48 @@ fun SettingsScreen(
                 )
             }
 
-            if (developerMode) {
-                Spacer(modifier = Modifier.padding(16.dp))
-                Text(
-                    text = "Технический комментарий",
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-                )
-                TextField(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    value = developerComment,
-                    onValueChange = setDeveloperComment,
-                    trailingIcon = if (developerComment.isNotEmpty()) {
-                        {
-                            IconButton(onClick = { setDeveloperComment("") }) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = stringResource(id = R.string.description_clear_text),
-                                    tint = MaterialTheme.colorScheme.onPrimary
-                                )
-                            }
-                        }
-                    } else null,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            viewModelFirebase.savingChangeRecord(
-                                "Разработчик",
-                                if (developerComment.isEmpty()) "добавил важный комментарий: $DEVELOPER_COMMENT"
-                                else "добавил важный комментарий: $developerComment"
-                            )
-                            keyboardController?.hide()
-                        }
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiaryContainer
-                    )
-                )
-            }
+//            if (developerMode) {
+//                Spacer(modifier = Modifier.padding(16.dp))
+//                Text(
+//                    text = "Технический комментарий",
+//                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+//                )
+//                TextField(
+//                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+//                    value = developerComment,
+//                    onValueChange = setDeveloperComment,
+//                    trailingIcon = if (developerComment.isNotEmpty()) {
+//                        {
+//                            IconButton(onClick = { setDeveloperComment("") }) {
+//                                Icon(
+//                                    imageVector = Icons.Default.Close,
+//                                    contentDescription = stringResource(id = R.string.description_clear_text),
+//                                    tint = MaterialTheme.colorScheme.onPrimary
+//                                )
+//                            }
+//                        }
+//                    } else null,
+//                    keyboardOptions = KeyboardOptions(
+//                        keyboardType = KeyboardType.Text,
+//                        imeAction = ImeAction.Done
+//                    ),
+//                    keyboardActions = KeyboardActions(
+//                        onDone = {
+//                            viewModelFirebase.savingChangeRecord(
+//                                context,
+//                                "Разработчик",
+//                                if (developerComment.isEmpty()) "добавил важный комментарий: $DEVELOPER_COMMENT"
+//                                else "добавил важный комментарий: $developerComment"
+//                            )
+//                            keyboardController?.hide()
+//                        }
+//                    ),
+//                    colors = TextFieldDefaults.colors(
+//                        focusedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
+//                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+//                    )
+//                )
+//            }
         }
     }
 }

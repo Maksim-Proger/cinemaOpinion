@@ -3,8 +3,8 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.room.models.CommentPersonalListModel
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.commentPersonalList.CPLGetComments
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.commentPersonalList.CPLInsertUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.commentPersonalList.GetCommentsFromPersonalListUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.commentPersonalList.AddCommentToPersonalListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,8 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommentPersonalListViewModel @Inject constructor(
-    private val insert: CPLInsertUseCase,
-    private val getComments: CPLGetComments
+    private val insert: AddCommentToPersonalListUseCase,
+    private val getComments: GetCommentsFromPersonalListUseCase
 ) : ViewModel() {
     private val _comments = MutableStateFlow<List<CommentPersonalListModel>>(emptyList())
     val comments: StateFlow<List<CommentPersonalListModel>> = _comments
