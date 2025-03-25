@@ -127,25 +127,18 @@ class MovieRepositoryImpl @Inject constructor(
         dataSource: String,
         movieId: Double
     ): List<DomainCommentModel> {
-        // Ищем узел с нужным фильмом
         val movieSnapshot = databaseReference
             .child(dataSource)
             .orderByChild("id")
             .equalTo(movieId)
             .get()
             .await()
+            .children.firstOrNull()
+            ?: throw IllegalArgumentException("Movie with ID $movieId not found")
 
-        // Проверяем, найден ли фильм с заданным id
-        val movieNode = movieSnapshot.children.firstOrNull()
-
-        // Если фильм найден, переходим к узлу comments
-        val commentsSnapshot = movieNode
-            ?.child(NODE_COMMENTS)
-            ?.children
-            ?.mapNotNull { it.getValue(DataComment::class.java)?.commentToDomain() }
-            ?: emptyList() // Возвращаем пустой список, если фильм или комментарии не найдены
-
-        return commentsSnapshot
+        return movieSnapshot
+            .child(NODE_COMMENTS)
+            .children.mapNotNull { it.getValue(DataComment::class.java)?.commentToDomain() }
     }
 
     override suspend fun observeCommentsForMovie(
@@ -264,5 +257,3 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
 }
-
-
