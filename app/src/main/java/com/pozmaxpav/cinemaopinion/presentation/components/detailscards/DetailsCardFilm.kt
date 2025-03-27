@@ -34,9 +34,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
@@ -52,18 +53,19 @@ fun DetailsCardFilm(
     padding: PaddingValues,
     user: String,
     selectedMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    firebaseViewModel: FirebaseViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel()
+    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
+    apiViewModel: ApiViewModel = hiltViewModel()
 ) {
     val statusExist by selectedMovieViewModel.status.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
-    val info by mainViewModel.informationMovie.collectAsState()
+    val info by apiViewModel.informationMovie.collectAsState()
 
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
     LaunchedEffect(movie.id) {
-        mainViewModel.getInformationMovie(movie.id)
+        apiViewModel.getInformationMovie(movie.id)
     }
 
     Column(

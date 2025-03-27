@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.viewModel
+package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,6 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.DeleteM
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.GetListPersonalMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.AddMovieToPersonalListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.GetCommentsFromPersonalListUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.ObserveCommentsFromPersonalListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.ObserveListSelectedMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

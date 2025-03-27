@@ -2,21 +2,11 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -27,9 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -37,9 +24,8 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsRadioButtons
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
-import com.pozmaxpav.cinemaopinion.utilits.Constants.DEVELOPER_COMMENT
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +34,7 @@ fun SettingsScreen(
     themeViewModel: ThemeViewModel,
     navController: NavHostController
 ) {
-    val viewModelFirebase: FirebaseViewModel = hiltViewModel()
+    val viewModelFirebase: FireBaseMovieViewModel = hiltViewModel()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val myStringArray = stringArrayResource(R.array.my_string_array)
     val optionsList = myStringArray.toList()

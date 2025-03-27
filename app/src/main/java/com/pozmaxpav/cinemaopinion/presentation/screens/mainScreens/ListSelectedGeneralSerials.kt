@@ -55,9 +55,10 @@ import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WAITING_CONTINUATION_SERIES
@@ -77,9 +78,10 @@ import java.util.Locale
 @Composable
 fun ListSelectedGeneralSerials(
     navController: NavHostController,
-    firebaseViewModel: FirebaseViewModel = hiltViewModel(),
+    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel(),
+    apiViewModel: ApiViewModel = hiltViewModel(),
 ) {
 
     val listSerials by firebaseViewModel.movies.collectAsState()
@@ -87,7 +89,7 @@ fun ListSelectedGeneralSerials(
     var selectedSerial by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
-    val info by mainViewModel.informationMovie.collectAsState()
+    val info by apiViewModel.informationMovie.collectAsState()
     val (comment, setComment) = remember { mutableStateOf("") }
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -102,7 +104,7 @@ fun ListSelectedGeneralSerials(
     }
     LaunchedEffect(selectedSerial) {
         selectedSerial?.let { movie ->
-            mainViewModel.getInformationMovie(movie.id)
+            apiViewModel.getInformationMovie(movie.id)
         }
     }
 
@@ -406,7 +408,7 @@ fun ListSelectedGeneralSerials(
 fun ShowCommentGeneralListSerials(
     listComments: List<DomainCommentModel>,
     id: Double,
-    firebaseViewModel: FirebaseViewModel = hiltViewModel(),
+    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
 ) {
     val stateComments by firebaseViewModel.commentsDownloadStatus.collectAsState()
 

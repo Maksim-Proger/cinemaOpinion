@@ -46,7 +46,8 @@ import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.theme.UrlLinkColor
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatDate
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import kotlinx.coroutines.flow.filterNotNull
@@ -59,7 +60,8 @@ fun MediaNewsScreen(
     navController: NavHostController
 ) {
     val viewModel: MainViewModel = hiltViewModel()
-    val mediaNewsList = viewModel.mediaNews.collectAsState()
+    val apiViewModel: ApiViewModel = hiltViewModel()
+    val mediaNewsList = apiViewModel.mediaNews.collectAsState()
     val newsToDisplay: List<NewsModel> = mediaNewsList.value?.items ?: emptyList()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var scrollToTop by remember { mutableStateOf(false) }
@@ -78,7 +80,7 @@ fun MediaNewsScreen(
     LaunchedEffect(isFirstLoad) {
         if (isFirstLoad) {
             // 1. Первый запрос для получения общего количества страниц
-            viewModel.getMediaNews(1) // Получаем первую страницу и totalPages
+            apiViewModel.getMediaNews(1) // Получаем первую страницу и totalPages
 
             // Ждем обновления totalPages // TODO: Особенно с этим куском!
             snapshotFlow { mediaNewsList.value?.totalPages }
@@ -89,7 +91,7 @@ fun MediaNewsScreen(
 
                         // 2. Переходим на последнюю страницу, если страниц больше одной
                         currentPage = pages
-                        viewModel.getMediaNews(pages)
+                        apiViewModel.getMediaNews(pages)
                     }
                 }
             isFirstLoad = false
@@ -152,7 +154,7 @@ fun MediaNewsScreen(
                                 modifier = Modifier.wrapContentWidth(),
                                 onClick = {
                                     currentPage++
-                                    viewModel.getMediaNews(currentPage)
+                                    apiViewModel.getMediaNews(currentPage)
                                     scrollToTop = true
                                 }
                             ) {
@@ -169,7 +171,7 @@ fun MediaNewsScreen(
                                 modifier = Modifier.wrapContentWidth(),
                                 onClick = {
                                     currentPage--
-                                    viewModel.getMediaNews(currentPage)
+                                    apiViewModel.getMediaNews(currentPage)
                                     scrollToTop = true
                                 }
                             ) {

@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.viewModel
+package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -95,7 +95,6 @@ class AuxiliaryUserViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val userData = getUserDataUseCase(userId)
-//                Log.d("@@@", "Из getUserData = $userData")
                 _userData.value = userData
             } catch (e: Exception) {
                 e.printStackTrace()

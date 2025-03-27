@@ -53,10 +53,11 @@ import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -70,8 +71,9 @@ import kotlinx.coroutines.launch
 fun ListSelectedMovies(
     navController: NavHostController,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    firebaseViewModel: FirebaseViewModel = hiltViewModel(),
+    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
+    apiViewModel: ApiViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
 ) {
 
@@ -80,7 +82,7 @@ fun ListSelectedMovies(
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
 //    val listComments by viewModelComments.comments.collectAsState()
-    val info by mainViewModel.informationMovie.collectAsState()
+    val info by apiViewModel.informationMovie.collectAsState()
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     val (comment, setComment) = remember { mutableStateOf("") }
@@ -96,7 +98,7 @@ fun ListSelectedMovies(
 
     LaunchedEffect(selectedMovie) {
         selectedMovie?.let { movie ->
-            mainViewModel.getInformationMovie(movie.id)
+            apiViewModel.getInformationMovie(movie.id)
         }
     }
 

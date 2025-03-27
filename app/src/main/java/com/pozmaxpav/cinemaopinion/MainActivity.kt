@@ -1,7 +1,6 @@
 package com.pozmaxpav.cinemaopinion
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,14 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.rememberNavController
 import com.pozmaxpav.cinemaopinion.presentation.navigation.NavGraph
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.LoginScreen
 import com.pozmaxpav.cinemaopinion.presentation.theme.CinemaOpinionTheme
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.introduction.IntroductionScreensViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.ThemeViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.introduction.IntroductionScreensViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CheckAndUpdateAppVersion
 import dagger.hilt.android.AndroidEntryPoint
 

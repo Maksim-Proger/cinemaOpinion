@@ -240,8 +240,9 @@ class PersonalMovieRepositoryImpl @Inject constructor(
         selectedMovieId: Int,
         onCommentsUpdated: (List<DomainCommentModel>) -> Unit
     ) {
-        TODO("Not yet implemented")
+        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
+        removeListener()
+        databaseReference
     }
-
 
 }

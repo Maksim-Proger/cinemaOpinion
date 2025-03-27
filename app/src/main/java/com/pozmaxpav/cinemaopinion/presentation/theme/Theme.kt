@@ -14,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.ThemeViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.ThemeViewModel
 
 private val LightColorScheme = lightColorScheme(
     background = LightBackground, // Основной фон приложения.
