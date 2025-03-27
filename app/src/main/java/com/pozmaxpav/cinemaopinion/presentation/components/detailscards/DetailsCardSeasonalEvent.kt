@@ -37,10 +37,10 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarScaffold
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.PersonalMovieViewModel
-//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
@@ -52,10 +52,11 @@ fun DetailsCard(
     mainViewModel: MainViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
     selectedMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
+    apiViewModel: ApiViewModel = hiltViewModel()
 ) {
 
     val userId by mainViewModel.userId.collectAsState()
-    val info by mainViewModel.informationMovie.collectAsState()
+    val info by apiViewModel.informationMovie.collectAsState()
     var showRatingBar by remember { mutableStateOf(false) }
     val quantitySeasonalEventPoints by auxiliaryUserViewModel.seasonalEventPoints.collectAsState()
     val statusExist by selectedMovieViewModel.status.collectAsState()
@@ -68,7 +69,7 @@ fun DetailsCard(
     }
 
     LaunchedEffect(newYearMovie.id) {
-        mainViewModel.getInformationMovie(newYearMovie.id)
+        apiViewModel.getInformationMovie(newYearMovie.id)
     }
 
     Column(

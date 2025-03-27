@@ -47,7 +47,7 @@ import com.pozmaxpav.cinemaopinion.presentation.theme.DeveloperCommentColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.FilmAddedColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.FilmDeleteColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.MovingElement
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -57,7 +57,7 @@ import java.util.Locale
 @Composable
 fun ListOfChangesScreen(
     navController: NavHostController,
-    viewModel: FirebaseViewModel = hiltViewModel()
+    viewModel: FireBaseMovieViewModel = hiltViewModel()
 ) {
     val list by viewModel.listOfChanges.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.viewModel
+package com.pozmaxpav.cinemaopinion.presentation.viewModel.system
 
 import androidx.lifecycle.ViewModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.theme.GetModeActivationSystemTheme

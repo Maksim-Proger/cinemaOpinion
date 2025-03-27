@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -77,7 +78,7 @@ class MovieRepositoryImpl @Inject constructor(
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // TODO: Добавить отлов ошибки
+                    Log.e("Firebase", "Movies load cancelled: ${error.message}")
                 }
             })
     }

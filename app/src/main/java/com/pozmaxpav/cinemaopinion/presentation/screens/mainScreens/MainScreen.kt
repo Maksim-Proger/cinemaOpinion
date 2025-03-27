@@ -60,8 +60,9 @@ import com.pozmaxpav.cinemaopinion.presentation.components.ShowDialogEvents
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 //import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
@@ -110,15 +111,16 @@ fun MainScreen(navController: NavHostController) {
 
     // Работаем с ViewModel
     val viewModel: MainViewModel = hiltViewModel()
+    val apiViewModel: ApiViewModel = hiltViewModel()
 //    val userViewModel:UserViewModel = hiltViewModel()
-    val firebaseViewModel: FirebaseViewModel = hiltViewModel()
-    val premiereMovies = viewModel.premiersMovies.collectAsState()
-    val topListMovies = viewModel.topListMovies.collectAsState()
-    val searchMovies = viewModel.searchMovies.collectAsState()
-    val searchMovies2 = viewModel.searchMovies2.collectAsState()
+    val firebaseViewModel: FireBaseMovieViewModel = hiltViewModel()
+    val premiereMovies = apiViewModel.premiersMovies.collectAsState()
+    val topListMovies = apiViewModel.topListMovies.collectAsState()
+    val searchMovies = apiViewModel.searchMovies.collectAsState()
+    val searchMovies2 = apiViewModel.searchMovies2.collectAsState()
     val newYearMoviesList by firebaseViewModel.movies.collectAsState()
 //    val user by userViewModel.users.collectAsState()
-    val state by viewModel.state.collectAsState()
+    val state by apiViewModel.state.collectAsState()
     val showDialogEvents by viewModel.resultChecking.collectAsState()
 
     // Получаем username
@@ -145,8 +147,8 @@ fun MainScreen(navController: NavHostController) {
 
     // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
-        viewModel.fetchPremiersMovies(2025, "March")
-        viewModel.fetchTopListMovies(currentPage)
+        apiViewModel.fetchPremiersMovies(2025, "March")
+        apiViewModel.fetchTopListMovies(currentPage)
     }
 
 //    LaunchedEffect(user) {
@@ -286,14 +288,14 @@ fun MainScreen(navController: NavHostController) {
 
             if (dateSelectionComplete) {
                 selectedDate?.let {
-                    viewModel.fetchPremiersMovies(it.first, formatMonth(it.second))
+                    apiViewModel.fetchPremiersMovies(it.first, formatMonth(it.second))
                     dateSelectionComplete = false
                 }
             }
 
             if (sendRequestCompleted) {
                 requestBody.let { compositeRequest  ->
-                    viewModel.searchFilmsByFilters(
+                    apiViewModel.searchFilmsByFilters(
                         compositeRequest.type,
                         compositeRequest.keyword,
                         compositeRequest.countries,
@@ -449,9 +451,9 @@ fun MainScreen(navController: NavHostController) {
                                                         onClick = {
                                                             currentPage--
                                                             if (onFilterButtonClick) {
-                                                                viewModel.fetchTopListMovies(currentPage)
+                                                                apiViewModel.fetchTopListMovies(currentPage)
                                                             } else if (searchCompleted) {
-                                                                viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                                                apiViewModel.fetchSearchMovies(saveSearchQuery, currentPage)
                                                             }
                                                             scrollToTop = true
                                                         },
@@ -470,9 +472,9 @@ fun MainScreen(navController: NavHostController) {
                                                         onClick = {
                                                             currentPage++
                                                             if (onFilterButtonClick) {
-                                                                viewModel.fetchTopListMovies(currentPage)
+                                                                apiViewModel.fetchTopListMovies(currentPage)
                                                             } else if (searchCompleted) {
-                                                                viewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                                                apiViewModel.fetchSearchMovies(saveSearchQuery, currentPage)
                                                             }
                                                             scrollToTop = true
                                                         },
@@ -524,7 +526,7 @@ fun MainScreen(navController: NavHostController) {
                     onQueryChange = { newQuery -> query = newQuery },
                     onSearch = { searchQuery ->
                         currentPage = 1
-                        viewModel.fetchSearchMovies(searchQuery, currentPage)
+                        apiViewModel.fetchSearchMovies(searchQuery, currentPage)
                         saveSearchQuery = searchQuery
                         searchHistory.add(searchQuery)
                         searchCompleted = true

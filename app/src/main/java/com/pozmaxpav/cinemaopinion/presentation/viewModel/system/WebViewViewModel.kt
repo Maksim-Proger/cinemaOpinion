@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.viewModel
+package com.pozmaxpav.cinemaopinion.presentation.viewModel.system
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

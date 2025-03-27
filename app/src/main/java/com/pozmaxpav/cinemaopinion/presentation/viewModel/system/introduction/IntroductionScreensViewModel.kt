@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.viewModel.introduction
+package com.pozmaxpav.cinemaopinion.presentation.viewModel.system.introduction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

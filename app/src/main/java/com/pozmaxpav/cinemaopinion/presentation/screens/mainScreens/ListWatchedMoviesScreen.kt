@@ -51,9 +51,9 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.FirebaseViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
@@ -68,7 +68,7 @@ import java.util.Locale
 @Composable
 fun ListWatchedMovies(
     navController: NavHostController,
-    firebaseViewModel: FirebaseViewModel = hiltViewModel(),
+    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
@@ -255,7 +255,7 @@ fun ListWatchedMovies(
 fun ShowCommentWatchedMoviesList(
     listComments: List<DomainCommentModel>,
     id: Double,
-    firebaseViewModel: FirebaseViewModel = hiltViewModel(),
+    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
 ) {
     val stateComments by firebaseViewModel.commentsDownloadStatus.collectAsState()
 

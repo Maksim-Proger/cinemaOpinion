@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.viewModel
+package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FirebaseViewModel @Inject constructor(
+class FireBaseMovieViewModel @Inject constructor(
     private val saveMovieUseCase: SaveMovieUseCase,
     private val removeMovieUseCase: RemoveMovieUseCase,
     private val getMovieUseCase: GetMovieUseCase,
@@ -49,9 +49,6 @@ class FirebaseViewModel @Inject constructor(
     private val _commentsDownloadStatus = MutableStateFlow<State>(State.Success)
     val commentsDownloadStatus = _commentsDownloadStatus.asStateFlow()
 
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage = _errorMessage.asStateFlow()
-
     private val _movies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
     val movies = _movies.asStateFlow()
 
@@ -61,31 +58,74 @@ class FirebaseViewModel @Inject constructor(
     private val _listOfChanges = MutableStateFlow<List<DomainChangelogModel>>(emptyList())
     val listOfChanges = _listOfChanges.asStateFlow()
 
-    fun sendingToTheViewedFolder(
-        dataSource: String,
-        directionDataSource: String,
-        movieId: Double
-    ) {
+    fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
-                sendingToTheViewedFolderUseCase(dataSource, directionDataSource, movieId)
+                saveMovieUseCase(dataSource, selectedMovie)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    fun getMovies(dataSource: String) {
+        viewModelScope.launch {
+            _movieDownloadStatus.value = State.Loading
+            try {
+                val moviesList = getMovieUseCase(dataSource)
+                _movies.value = moviesList
+                delay(500)
+                _movieDownloadStatus.value = State.Success
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    fun observeListMovies(dataSource: String) {
+        viewModelScope.launch {
+            observeListMoviesUseCase(dataSource) { updateListMovies ->
+                _movies.value = updateListMovies
+            }
+        }
+    }
+    fun removeMovie(dataSource: String, id: Double) {
+        viewModelScope.launch {
+            try {
+                removeMovieUseCase(dataSource, id)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    fun sendingToTheSerialsList(movieId: Double) {
+    fun getRecordsOfChanges() {
         viewModelScope.launch {
             try {
-                sendingToTheSerialsListUseCase(movieId)
+                val list = getRecordsOfChangesUseCase()
+                _listOfChanges.value = list
+                removeOldRecords() // Удаляем старые записи
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-
-    fun removeRecordsOfChanges(id: String) {
+    fun savingChangeRecord(context: Context, username: String, stringResourceId: Int, title: String) {
+        val stringResource = context.getString(stringResourceId)
+        val noteText = stringResource + title
+        val note = DomainChangelogModel(
+            noteId = "", // Оставляем пустым, так как key будет сгенерирован позже
+            username = username,
+            noteText = noteText,
+            timestamp = System.currentTimeMillis()
+        )
+        viewModelScope.launch {
+            try {
+                savingChangeRecordUseCase(note)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    private fun removeRecordsOfChanges(id: String) {
         viewModelScope.launch {
             try {
                 removeRecordsOfChangesUseCase(id)
@@ -94,7 +134,6 @@ class FirebaseViewModel @Inject constructor(
             }
         }
     }
-
     private fun removeOldRecords() { // Удаление записей из базы данных и списка
         viewModelScope.launch {
             val currentList = _listOfChanges.value
@@ -113,64 +152,7 @@ class FirebaseViewModel @Inject constructor(
         }
     }
 
-    fun getRecordsOfChanges() {
-        viewModelScope.launch {
-            try {
-                val list = getRecordsOfChangesUseCase()
-                _listOfChanges.value = list
-                removeOldRecords() // Удаляем старые записи
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    fun savingChangeRecord(context: Context, username: String, stringResourceId: Int, title: String) {
-        val stringResource = context.getString(stringResourceId)
-        val noteText = stringResource + title
-        val note = DomainChangelogModel(
-            noteId = "", // Оставляем пустым, так как key будет сгенерирован позже
-            username = username,
-            noteText = noteText,
-            timestamp = System.currentTimeMillis()
-        )
-        viewModelScope.launch {
-            try {
-                savingChangeRecordUseCase(note)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    fun getComments(dataSource: String, movieId: Double) {
-        viewModelScope.launch {
-            _commentsDownloadStatus.value = State.Loading
-            try {
-                val commentList = getCommentsForMovieUseCase(dataSource, movieId)
-                _comments.value = commentList
-                delay(500)
-                _commentsDownloadStatus.value = State.Success
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    fun observeComments(dataSource: String, movieId: Double) {
-        viewModelScope.launch {
-            observeCommentsForMovieUseCase(dataSource, movieId) { updatedComments ->
-                _comments.value = updatedComments
-            }
-        }
-    }
-
-    fun addComment(
-        dataSource: String,
-        movieId: Double,
-        username: String,
-        commentUser: String
-    ) {
+    fun addComment(dataSource: String, movieId: Double, username: String, commentUser: String) {
         val comment = DomainCommentModel(
             commentId = "", // Оставляем пустым, так как key будет сгенерирован позже
             username = username,
@@ -185,46 +167,42 @@ class FirebaseViewModel @Inject constructor(
             }
         }
     }
-
-    fun getMovies(dataSource: String) {
+    fun getComments(dataSource: String, movieId: Double) {
         viewModelScope.launch {
-            _movieDownloadStatus.value = State.Loading
+            _commentsDownloadStatus.value = State.Loading
             try {
-                val moviesList = getMovieUseCase(dataSource)
-                _movies.value = moviesList
+                val commentList = getCommentsForMovieUseCase(dataSource, movieId)
+                _comments.value = commentList
                 delay(500)
-                _movieDownloadStatus.value = State.Success
+                _commentsDownloadStatus.value = State.Success
             } catch (e: Exception) {
-                _errorMessage.value = e.message
+                e.printStackTrace()
             }
         }
     }
-
-    fun observeListMovies(dataSource: String) {
+    fun observeComments(dataSource: String, movieId: Double) {
         viewModelScope.launch {
-            observeListMoviesUseCase(dataSource) { updateListMovies ->
-                _movies.value = updateListMovies
+            observeCommentsForMovieUseCase(dataSource, movieId) { updatedComments ->
+                _comments.value = updatedComments
             }
         }
     }
 
-    fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel) {
-        viewModelScope.launch {
-            try {
-                saveMovieUseCase(dataSource, selectedMovie)
-                _errorMessage.value = null // Зачем это нам?
-            } catch (e: Exception) {
-                _errorMessage.value = e.message
-            }
-        }
-    }
-
-    fun removeMovie(dataSource: String, id: Double) {
+    fun sendingToTheViewedFolder(dataSource: String, directionDataSource: String, movieId: Double) {
         viewModelScope.launch {
             try {
-                removeMovieUseCase(dataSource, id)
+                sendingToTheViewedFolderUseCase(dataSource, directionDataSource, movieId)
             } catch (e: Exception) {
-                _errorMessage.value = e.message
+                e.printStackTrace()
+            }
+        }
+    }
+    fun sendingToTheSerialsList(movieId: Double) {
+        viewModelScope.launch {
+            try {
+                sendingToTheSerialsListUseCase(movieId)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
