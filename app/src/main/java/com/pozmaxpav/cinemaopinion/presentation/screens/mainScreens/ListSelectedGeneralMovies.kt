@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
@@ -83,13 +82,13 @@ fun ListSelectedGeneralMovies(
     apiViewModel: ApiViewModel = hiltViewModel(),
 ) {
     val listMovies by firebaseViewModel.movies.collectAsState()
-    val listComments by firebaseViewModel.comments.collectAsState()
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val stateMovie by firebaseViewModel.movieDownloadStatus.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
+
     val (comment, setComment) = remember { mutableStateOf("") }
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -98,11 +97,9 @@ fun ListSelectedGeneralMovies(
         firebaseViewModel.getMovies(NODE_LIST_MOVIES)
         firebaseViewModel.observeListMovies(NODE_LIST_MOVIES)
     }
-
     LaunchedEffect(userId) {
         auxiliaryUserViewModel.getUserData(userId)
     }
-
     LaunchedEffect(selectedMovie) {
         selectedMovie?.let { movie ->
             apiViewModel.getInformationMovie(movie.id)
@@ -190,10 +187,7 @@ fun ListSelectedGeneralMovies(
                 isGeneralList = true,
                 isShowCommentButton = true,
                 content = {
-                    ShowCommentGeneralList(
-                        listComments,
-                        selectedMovie!!.id.toDouble()
-                    )
+                    ShowCommentGeneralList(selectedMovie!!.id)
                 },
                 openDescription = {
                     ExpandedCard(
@@ -402,15 +396,15 @@ fun ListSelectedGeneralMovies(
 
 @Composable
 fun ShowCommentGeneralList(
-    listComments: List<DomainCommentModel>,
-    id: Double,
+    movieId: Int,
     firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
 ) {
     val stateComments by firebaseViewModel.commentsDownloadStatus.collectAsState()
+    val listComments by firebaseViewModel.comments.collectAsState()
 
-    LaunchedEffect(id) {
-        firebaseViewModel.getComments(NODE_LIST_MOVIES, id)
-        firebaseViewModel.observeComments(NODE_LIST_MOVIES, id)
+    LaunchedEffect(movieId) {
+        firebaseViewModel.getComments(NODE_LIST_MOVIES, movieId)
+        firebaseViewModel.observeComments(NODE_LIST_MOVIES, movieId)
     }
 
     when (stateComments) {
@@ -422,9 +416,7 @@ fun ShowCommentGeneralList(
         }
 
         is State.Success -> {
-            LazyColumn(
-                contentPadding = PaddingValues(5.dp)
-            ) {
+            LazyColumn(contentPadding = PaddingValues(5.dp)) {
                 items(listComments) { comment ->
                     Card(
                         modifier = Modifier

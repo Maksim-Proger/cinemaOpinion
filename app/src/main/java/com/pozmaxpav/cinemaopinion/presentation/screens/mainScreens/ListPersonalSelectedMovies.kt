@@ -31,7 +31,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -56,16 +55,20 @@ import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ListSelectedMovies(
@@ -81,7 +84,6 @@ fun ListSelectedMovies(
     val listSelectedMovies by personalMovieViewModel.selectedMovies.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
-//    val listComments by viewModelComments.comments.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
@@ -95,7 +97,6 @@ fun ListSelectedMovies(
         personalMovieViewModel.observeListSelectedMovies(userId)
         auxiliaryUserViewModel.getUserData(userId)
     }
-
     LaunchedEffect(selectedMovie) {
         selectedMovie?.let { movie ->
             apiViewModel.getInformationMovie(movie.id)
@@ -119,7 +120,10 @@ fun ListSelectedMovies(
                         value = comment,
                         onValueChange = setComment,
                         placeholder = {
-                            Text(text = "Оставьте свой комментарий")
+                            Text(
+                                text = stringResource(R.string.placeholder_for_comment_field),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         },
                         leadingIcon = {
                             Icon(
@@ -130,15 +134,15 @@ fun ListSelectedMovies(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                    personalMovieViewModel.addCommentToPersonalList(
-                                        userId,
-                                        selectedMovie!!.id,
-                                        userData!!.nikName,
-                                        comment
-                                    )
-//                                    showToast(context, "Комментарий добавлен")
-                                    setComment("")
-                                    openBottomSheetComments = !openBottomSheetComments
+                                personalMovieViewModel.addCommentToPersonalList(
+                                    userId,
+                                    selectedMovie!!.id,
+                                    userData!!.nikName,
+                                    comment
+                                )
+                                showToast(context, R.string.comment_added)
+                                setComment("")
+                                openBottomSheetComments = !openBottomSheetComments
                             }
                         )
                     )
@@ -151,7 +155,9 @@ fun ListSelectedMovies(
         }
 
         if (selectedMovie == null) {
-            Row(modifier = Modifier.fillMaxWidth().padding(vertical = 7.dp)) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 7.dp)) {
                 IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
                     Icon(
                         Icons.Default.ArrowBackIosNew,
@@ -168,15 +174,15 @@ fun ListSelectedMovies(
                 isGeneralList = false,
                 isShowCommentButton = true,
                 content = {
-//                        ShowListComments(
-//                            listComments,
-//                            selectedNote!!.id.toDouble()
-//                        )
+                    ShowListComments(
+                        userId,
+                        selectedMovie!!.id
+                    )
                 },
                 openDescription = {
                     ExpandedCard(
-                        title = "Описание",
-                        description = info?.description ?: "К сожалению, суточный лимит закончился"
+                        title = stringResource(R.string.text_for_expandedCard_field),
+                        description = info?.description ?: stringResource(R.string.limit_is_over)
                     )
                 },
                 commentButton = {
@@ -185,18 +191,20 @@ fun ListSelectedMovies(
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text(
-                            text = "Оставить комментарий",
+                            text = stringResource(R.string.placeholder_for_comment_field),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 },
-                onClick = { selectedMovie = null }
+                onClick = {
+                    selectedMovie = null
+                }
             )
             BackHandler {
                 selectedMovie = null
             }
         } else {
-            Column (
+            Column(
                 modifier = Modifier
                     .weight(1f)
                     .background(MaterialTheme.colorScheme.background)
@@ -214,6 +222,7 @@ fun ListSelectedMovies(
                             )
                         }
                     }
+
                     is State.Success -> {
                         LazyColumn(
                             state = listState,
@@ -288,67 +297,79 @@ fun ListSelectedMovies(
                             }
                         }
                     }
-                    is State.Error -> {}
+
+                    is State.Error -> {
+                        // TODO: Добавить логику работы при ошибке.
+                    }
                 }
             }
         }
     }
+}
 
-    DisposableEffect(Unit) {
-        onDispose {
-            personalMovieViewModel.onCleared()
+@Composable
+private fun ShowListComments(
+    userId: String,
+    selectedMovieId: Int,
+    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel()
+) {
+
+    val listComments by personalMovieViewModel.listComments.collectAsState()
+
+    LaunchedEffect(userId) {
+        personalMovieViewModel.getCommentsFromPersonalList(userId, selectedMovieId)
+        personalMovieViewModel.observeCommentsForMovieFromPersonalList(userId, selectedMovieId)
+    }
+
+    LazyColumn(contentPadding = PaddingValues(5.dp)) {
+        items(listComments) { comment ->
+            Card(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .padding(vertical = 7.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                )
+            ) {
+                Column(modifier = Modifier.padding(8.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = comment.username,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                    Text(
+                        text = comment.commentText,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = SimpleDateFormat(
+                                "dd.MM.yyyy HH:mm",
+                                Locale.getDefault()
+                            ).format(
+                                Date(comment.timestamp)
+                            ),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
         }
     }
 }
-
-//@Composable
-//private fun ShowListComments(
-//    listComments: List<CommentPersonalListModel>,
-//    id: Double,
-//    viewModelComments: CommentPersonalListViewModel = hiltViewModel()
-//) {
-//
-//    LaunchedEffect(Unit) {
-//        viewModelComments.getCommentsList()
-//    }
-//
-//    LazyColumn(
-//        modifier = Modifier
-//            .fillMaxSize(),
-//        contentPadding = PaddingValues(16.dp)
-//    ) {
-//        if (listComments.isNotEmpty()) {
-//            items(listComments) { comment ->
-//                Card(
-//                    modifier = Modifier
-//                        .wrapContentHeight()
-//                        .fillMaxWidth()
-//                        .padding(vertical = 7.dp),
-//                    elevation = CardDefaults.cardElevation(8.dp),
-//                    colors = CardDefaults.cardColors(
-//                        containerColor = MaterialTheme.colorScheme.secondary,
-//                        contentColor = MaterialTheme.colorScheme.onSecondary
-//                    )
-//                ) {
-//                    if (id == comment.movieId) {
-//                        Column(modifier = Modifier.padding(8.dp)) {
-//                            Text(
-//                                text = comment.commentText,
-//                                fontWeight = FontWeight.Bold
-//                            )
-//                            Text(
-//                                text = SimpleDateFormat(
-//                                    "dd.MM.yyyy HH:mm",
-//                                    Locale.getDefault()
-//                                ).format(
-//                                    Date(comment.timestamp)
-//                                )
-//
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}

@@ -12,6 +12,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.pozmaxpav.cinemaopinion.data.api.GetMovieInformationApi
 import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
 import com.pozmaxpav.cinemaopinion.data.db.datastore.LocalUserManagerImpl
+import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
 import com.pozmaxpav.cinemaopinion.data.repository.api.GetMovieInformationApiRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.api.MovieRepositoryApiImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.MovieRepositoryImpl
@@ -146,8 +147,17 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMovieRepository(databaseReference: DatabaseReference): MovieRepository {
-        return MovieRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
+    fun provideFirebaseListenerHolder(databaseReference: DatabaseReference): FirebaseListenerHolder {
+        return FirebaseListenerHolder(databaseReference)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMovieRepository(
+        databaseReference: DatabaseReference,
+        listenerHolder: FirebaseListenerHolder
+    ): MovieRepository {
+        return MovieRepositoryImpl(databaseReference, listenerHolder) // Передача DatabaseReference в репозиторий
     }
 
     @Provides
@@ -158,8 +168,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePersonalMovieRepository(databaseReference: DatabaseReference): PersonalMovieRepository {
-        return PersonalMovieRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
+    fun providePersonalMovieRepository(
+        databaseReference: DatabaseReference,
+        listenerHolder: FirebaseListenerHolder
+    ): PersonalMovieRepository {
+        return PersonalMovieRepositoryImpl(databaseReference, listenerHolder) // Передача DatabaseReference в репозиторий
     }
 
     @Provides
