@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetCommentsForMovieUseCase @Inject constructor(
     private val firebaseRepository: MovieRepository
 ) {
-    suspend operator fun invoke(dataSource: String, movieId: Double):  List<DomainCommentModel> {
+    suspend operator fun invoke(dataSource: String, movieId: Int):  List<DomainCommentModel> {
         return firebaseRepository.getCommentsForMovie(dataSource, movieId)
     }
 }

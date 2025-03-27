@@ -10,8 +10,8 @@ interface MovieRepository {
     suspend fun observeListMovies(dataSource: String, onMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit)
 
     suspend fun addCommentToMovie(dataSource: String, movieId: Double, comment: DomainCommentModel)
-    suspend fun getCommentsForMovie(dataSource: String, movieId: Double): List<DomainCommentModel>
-    suspend fun observeCommentsForMovie(dataSource:String, movieId: Double, onCommentsUpdated: (List<DomainCommentModel>) -> Unit)
+    suspend fun getCommentsForMovie(dataSource: String, movieId: Int): List<DomainCommentModel>
+    suspend fun observeCommentsForMovie(dataSource:String, movieId: Int, onCommentsUpdated: (List<DomainCommentModel>) -> Unit)
 
     suspend fun sendingToTheViewedFolder(dataSource: String, directionDataSource: String, movieId: Double)
     suspend fun sendingToTheSerialsList(movieId: Double)

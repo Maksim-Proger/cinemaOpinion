@@ -5,6 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
 import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
@@ -14,20 +15,17 @@ import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepos
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_PERSONAL_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_PERSONAL_COMMENTS
+import com.pozmaxpav.cinemaopinion.utilits.SELECTED_COMMENTS_KEY_LISTENER
+import com.pozmaxpav.cinemaopinion.utilits.SELECTED_MOVIES_KEY_LISTENER
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PersonalMovieRepositoryImpl @Inject constructor(
-    private val databaseReference: DatabaseReference
+    private val databaseReference: DatabaseReference,
+    private val listenerHolder: FirebaseListenerHolder
 ) : PersonalMovieRepository {
-
-    private var valueEventListener: ValueEventListener? = null
-    override fun removeListener() {
-        valueEventListener?.let { listener ->
-            databaseReference.removeEventListener(listener)
-            valueEventListener = null
-        }
-    }
 
     override suspend fun addMovieToPersonalList(userId: String, selectedMovie: DomainSelectedMovieModel) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
@@ -81,7 +79,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
         onSelectedMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit
     ) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
-        removeListener()
+
         databaseReference
             .child(NODE_LIST_USERS)
             .orderByChild("id")
@@ -97,9 +95,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
 
                     val moviesRef = userSnapshot.child(NODE_LIST_PERSONAL_MOVIES).ref
 
-                    removeListener() // Удаляем старый слушатель перед созданием нового
-
-                    valueEventListener = moviesRef.addValueEventListener(object : ValueEventListener {
+                    val listener = moviesRef.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(selectedMovieSnapshot: DataSnapshot) {
                             val selectedMovies = selectedMovieSnapshot.children.mapNotNull {
                                 runCatching { it.getValue(DomainSelectedMovieModel::class.java) }.getOrNull()
@@ -111,6 +107,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                             Log.e("Firebase", "Error loading selected movies: ${error.message}")
                         }
                     })
+                    listenerHolder.addListener(SELECTED_MOVIES_KEY_LISTENER, listener)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -241,8 +238,76 @@ class PersonalMovieRepositoryImpl @Inject constructor(
         onCommentsUpdated: (List<DomainCommentModel>) -> Unit
     ) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
-        removeListener()
+
         databaseReference
+            .child(NODE_LIST_USERS)
+            .orderByChild("id")
+            .equalTo(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(userSnapshot: DataSnapshot) {
+                    val userKey = userSnapshot.children.firstOrNull()?.key
+                    if (userKey == null) {
+                        onCommentsUpdated(emptyList())
+                        return
+                    }
+
+                    databaseReference
+                        .child(NODE_LIST_USERS)
+                        .child(userKey)
+                        .child(NODE_LIST_PERSONAL_MOVIES)
+                        .orderByChild("id")
+                        .equalTo(selectedMovieId.toDouble())
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(movieSnapshot: DataSnapshot) {
+                                val movieKey = movieSnapshot.children.firstOrNull()?.key
+                                if (movieKey == null) {
+                                    onCommentsUpdated(emptyList())
+                                    return
+                                }
+
+                                val commentsRef = databaseReference
+                                    .child(NODE_LIST_USERS)
+                                    .child(userKey)
+                                    .child(NODE_LIST_PERSONAL_MOVIES)
+                                    .child(movieKey)
+                                    .child(NODE_PERSONAL_COMMENTS)
+
+                                val listener = commentsRef.addValueEventListener(object : ValueEventListener {
+                                    override fun onDataChange(commentsSnapshot: DataSnapshot) {
+                                        val comments = commentsSnapshot.children.mapNotNull {
+                                            it.getValue(DataComment::class.java)?.commentToDomain()
+                                        }
+                                        onCommentsUpdated(comments)
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+                                        Log.e("Firebase", "Error loading comments: ${error.message}")
+                                        onCommentsUpdated(emptyList())
+                                    }
+                                })
+                                listenerHolder.addListener(SELECTED_COMMENTS_KEY_LISTENER, listener)
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                Log.e("Firebase", "Error fetching movie data: ${error.message}")
+                                onCommentsUpdated(emptyList())
+                            }
+                        })
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Firebase", "Error fetching user data: ${error.message}")
+                    onCommentsUpdated(emptyList())
+                }
+            })
+    }
+
+    override fun removeSelectedMoviesListener() {
+        listenerHolder.removeListener(SELECTED_MOVIES_KEY_LISTENER)
+    }
+
+    override fun removeCommentsSelectedMoviesListener() {
+        listenerHolder.removeListener(SELECTED_COMMENTS_KEY_LISTENER)
     }
 
 }

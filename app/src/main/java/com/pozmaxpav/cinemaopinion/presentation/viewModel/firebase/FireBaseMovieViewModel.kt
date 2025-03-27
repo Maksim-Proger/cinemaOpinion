@@ -167,7 +167,7 @@ class FireBaseMovieViewModel @Inject constructor(
             }
         }
     }
-    fun getComments(dataSource: String, movieId: Double) {
+    fun getComments(dataSource: String, movieId: Int) {
         viewModelScope.launch {
             _commentsDownloadStatus.value = State.Loading
             try {
@@ -180,7 +180,7 @@ class FireBaseMovieViewModel @Inject constructor(
             }
         }
     }
-    fun observeComments(dataSource: String, movieId: Double) {
+    fun observeComments(dataSource: String, movieId: Int) {
         viewModelScope.launch {
             observeCommentsForMovieUseCase(dataSource, movieId) { updatedComments ->
                 _comments.value = updatedComments

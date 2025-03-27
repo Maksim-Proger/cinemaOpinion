@@ -4,7 +4,8 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 
 interface PersonalMovieRepository {
-    fun removeListener()
+    fun removeSelectedMoviesListener()
+    fun removeCommentsSelectedMoviesListener()
     suspend fun addMovieToPersonalList(userId: String, selectedMovie: DomainSelectedMovieModel)
     suspend fun getListPersonalMovies(userId: String, ): List<DomainSelectedMovieModel>
     suspend fun observeListSelectedMovies(userId: String, onSelectedMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit)

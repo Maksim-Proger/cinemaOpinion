@@ -5,6 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
 import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
@@ -18,7 +19,8 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
-    private val databaseReference: DatabaseReference
+    private val databaseReference: DatabaseReference,
+    private val listenerHolder: FirebaseListenerHolder
 ) : MovieRepository {
 
     override suspend fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel) {
@@ -126,12 +128,12 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getCommentsForMovie(
         dataSource: String,
-        movieId: Double
+        movieId: Int
     ): List<DomainCommentModel> {
         val movieSnapshot = databaseReference
             .child(dataSource)
             .orderByChild("id")
-            .equalTo(movieId)
+            .equalTo(movieId.toDouble())
             .get()
             .await()
             .children.firstOrNull()
@@ -144,13 +146,13 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun observeCommentsForMovie(
         dataSource: String,
-        movieId: Double,
+        movieId: Int,
         onCommentsUpdated: (List<DomainCommentModel>) -> Unit
     ) {
         databaseReference
             .child(dataSource)
             .orderByChild("id")
-            .equalTo(movieId)
+            .equalTo(movieId.toDouble())
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val movieSnapshot = snapshot.children.firstOrNull()
