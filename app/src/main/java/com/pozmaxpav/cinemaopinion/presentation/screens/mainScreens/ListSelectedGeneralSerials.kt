@@ -25,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -48,9 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
@@ -78,14 +77,13 @@ import java.util.Locale
 @Composable
 fun ListSelectedGeneralSerials(
     navController: NavHostController,
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
+    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
 ) {
 
-    val listSerials by firebaseViewModel.movies.collectAsState()
-    val listComments by firebaseViewModel.comments.collectAsState()
+    val listSerials by fireBaseMovieViewModel.movies.collectAsState()
     var selectedSerial by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
@@ -96,8 +94,8 @@ fun ListSelectedGeneralSerials(
     var openBottomSheetComments by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        firebaseViewModel.getMovies(NODE_LIST_SERIALS)
-        firebaseViewModel.observeListMovies(NODE_LIST_SERIALS)
+        fireBaseMovieViewModel.getMovies(NODE_LIST_SERIALS)
+        fireBaseMovieViewModel.observeListMovies(NODE_LIST_SERIALS)
     }
     LaunchedEffect(userId) {
         auxiliaryUserViewModel.getUserData(userId)
@@ -140,13 +138,13 @@ fun ListSelectedGeneralSerials(
                         keyboardActions = KeyboardActions(
                             onDone = {
                                 if (userData != null) {
-                                    firebaseViewModel.addComment(
+                                    fireBaseMovieViewModel.addComment(
                                         NODE_LIST_SERIALS,
                                         selectedSerial!!.id.toDouble(),
                                         userData!!.nikName,
                                         comment
                                     )
-                                    firebaseViewModel.savingChangeRecord(
+                                    fireBaseMovieViewModel.savingChangeRecord(
                                         context,
                                         userData!!.nikName,
                                         R.string.record_added_comment_to_series,
@@ -187,74 +185,72 @@ fun ListSelectedGeneralSerials(
                 isGeneralList = true,
                 isShowCommentButton = true,
                 content = {
-                    ShowCommentGeneralListSerials(
-                        listComments,
-                        selectedSerial!!.id.toDouble()
-                    )
+                    ShowCommentGeneralListSerials(selectedSerial!!.id)
                 },
                 openDescription = {
                     ExpandedCard(
                         title = stringResource(R.string.text_for_expandedCard_field),
-                        description = info?.description ?: stringResource(R.string.limit_is_over)
+                        description = info?.description ?: stringResource(R.string.limit_is_over),
+                        bottomPadding = 7.dp
                     )
                 },
                 commentButton = {
-                    Button(
-                        onClick = { openBottomSheetComments = !openBottomSheetComments }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.button_leave_comment),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+                    CustomTextButton(
+                        textButton = context.getString(R.string.button_leave_comment),
+                        bottomPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+                    )
                 },
                 movieTransferButtonToWaitingList = {
-                    Button(
-                        onClick = {
-                            firebaseViewModel.sendingToTheViewedFolder(
+                    CustomTextButton(
+                        textButton = context.getString(R.string.button_move_to_waiting_list),
+                        topPadding = 7.dp,
+                        bottomPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = {
+                            fireBaseMovieViewModel.sendingToTheViewedFolder(
                                 NODE_LIST_SERIALS,
                                 NODE_LIST_WAITING_CONTINUATION_SERIES,
                                 selectedSerial!!.id.toDouble()
                             )
                             showToast(context, R.string.series_has_been_moved_to_waiting_list)
-                            firebaseViewModel.savingChangeRecord(
+                            fireBaseMovieViewModel.savingChangeRecord(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_series_has_been_moved_to_waiting_list,
                                 selectedSerial!!.nameFilm
                             )
                         }
-                    ) {
-                        Text(
-                            text = "Перенести в лист ожидания",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+                    )
                 },
                 movieTransferButton = {
-                    Button(
-                        onClick = {
-                            firebaseViewModel.sendingToTheViewedFolder(
+                    CustomTextButton(
+                        textButton = context.getString(R.string.button_viewed),
+                        topPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = {
+                            fireBaseMovieViewModel.sendingToTheViewedFolder(
                                 NODE_LIST_SERIALS,
                                 NODE_LIST_WATCHED_MOVIES,
                                 selectedSerial!!.id.toDouble()
                             )
                             showToast(context, R.string.series_has_been_moved)
-                            firebaseViewModel.savingChangeRecord(
+                            fireBaseMovieViewModel.savingChangeRecord(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_series_has_been_moved_to_viewed,
                                 selectedSerial!!.nameFilm
                             )
                         }
-                    ) {
-                        Text(
-                            text = "Просмотрен",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+                    )
                 },
-                onClick = { selectedSerial = null }
+                onClick = {
+                    selectedSerial = null
+                }
             )
             BackHandler {
                 selectedSerial = null
@@ -319,12 +315,12 @@ fun ListSelectedGeneralSerials(
                                                 isVisible = false
                                                 CoroutineScope(Dispatchers.Main).launch {
                                                     delay(300)
-                                                    firebaseViewModel.removeMovie(
+                                                    fireBaseMovieViewModel.removeMovie(
                                                         NODE_LIST_SERIALS,
-                                                        movie.id.toDouble()
+                                                        movie.id
                                                     )
                                                 }
-                                                firebaseViewModel.savingChangeRecord(
+                                                fireBaseMovieViewModel.savingChangeRecord(
                                                     context,
                                                     userData!!.nikName,
                                                     R.string.record_deleted_the_series,
@@ -406,15 +402,15 @@ fun ListSelectedGeneralSerials(
 
 @Composable
 fun ShowCommentGeneralListSerials(
-    listComments: List<DomainCommentModel>,
-    id: Double,
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
+    movieId: Int,
+    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
 ) {
-    val stateComments by firebaseViewModel.commentsDownloadStatus.collectAsState()
+    val stateComments by fireBaseMovieViewModel.commentsDownloadStatus.collectAsState()
+    val listComments by fireBaseMovieViewModel.comments.collectAsState()
 
-    LaunchedEffect(id) {
-        firebaseViewModel.getComments(NODE_LIST_SERIALS, id)
-        firebaseViewModel.observeComments(NODE_LIST_SERIALS, id)
+    LaunchedEffect(movieId) {
+        fireBaseMovieViewModel.getComments(NODE_LIST_SERIALS, movieId)
+        fireBaseMovieViewModel.observeComments(NODE_LIST_SERIALS, movieId)
     }
 
     when (stateComments) {
@@ -424,27 +420,22 @@ fun ShowCommentGeneralListSerials(
                 modifier = Modifier.scale(0.5f)
             )
         }
-
         is State.Success -> {
-            LazyColumn(
-                contentPadding = PaddingValues(5.dp)
-            ) {
+            LazyColumn {
                 items(listComments) { comment ->
                     Card(
                         modifier = Modifier
                             .wrapContentHeight()
                             .fillMaxWidth()
                             .padding(vertical = 7.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(16.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary
                         )
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(8.dp)
-                        ) {
+                        Column(modifier = Modifier.padding(8.dp)) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -486,7 +477,8 @@ fun ShowCommentGeneralListSerials(
                 }
             }
         }
-
-        is State.Error -> {}
+        is State.Error -> {
+            // TODO: Добавить логику работы при ошибке.
+        }
     }
 }

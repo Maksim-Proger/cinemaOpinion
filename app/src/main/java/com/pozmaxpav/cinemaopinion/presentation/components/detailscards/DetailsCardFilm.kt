@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -33,13 +34,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
+import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 import com.pozmaxpav.cinemaopinion.utilits.formatCountries
 import com.pozmaxpav.cinemaopinion.utilits.formatGenres
@@ -48,24 +52,28 @@ import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 
 @Composable
 fun DetailsCardFilm(
-    movie: MovieData,
+    movie: MovieData?,
     onClick: () -> Unit,
     padding: PaddingValues,
-    user: String,
     selectedMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
-    apiViewModel: ApiViewModel = hiltViewModel()
+    apiViewModel: ApiViewModel = hiltViewModel(),
+    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
 ) {
     val statusExist by selectedMovieViewModel.status.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
+    val userData by auxiliaryUserViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
 
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(movie.id) {
-        apiViewModel.getInformationMovie(movie.id)
+    LaunchedEffect(userId) {
+        auxiliaryUserViewModel.getUserData(userId)
+    }
+    LaunchedEffect(movie?.id) {
+        movie?.let { apiViewModel.getInformationMovie(it.id) }
     }
 
     Column(
@@ -77,7 +85,7 @@ fun DetailsCardFilm(
             modifier = Modifier
                 .wrapContentHeight()
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(7.dp),
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -87,7 +95,9 @@ fun DetailsCardFilm(
             Row(
                 modifier = Modifier
                     .padding(10.dp)
-                    .clickable { onClick() }
+                    .clickable { onClick() },
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
@@ -104,15 +114,15 @@ fun DetailsCardFilm(
                     .verticalScroll(scrollState)
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 7.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    WorkerWithImage(
-                        movie = movie,
-                        height = 200.dp
-                    )
+                    movie?.let {
+                        WorkerWithImage(
+                            movie = it,
+                            height = 200.dp
+                        )
+                    }
                 }
 
                 Column(
@@ -121,8 +131,7 @@ fun DetailsCardFilm(
                         .padding(vertical = 7.dp)
                 ) {
                     Text(
-                        text = "Название фильма: ${movie.nameRu 
-                            ?: stringResource(id = R.string.no_movie_title)}",
+                        text = "Название фильма: ${movie?.nameRu ?: stringResource(id = R.string.no_movie_title)}",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -130,14 +139,14 @@ fun DetailsCardFilm(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Страна: ${formatCountries(movie.countries)}",
+                        text = "Страна: ${movie?.let { formatCountries(it.countries) }}",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.secondary
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    when(movie) {
+                    when (movie) {
                         is MovieData.Movie -> {
                             Text(
                                 text = "Премьера в России: ${movie.premiereRu}",
@@ -152,9 +161,8 @@ fun DetailsCardFilm(
                             )
                             Spacer(modifier = Modifier.padding(15.dp))
                             ExpandedCard(
-                                title = "Описание",
-                                description = info?.description
-                                    ?: "К сожалению, суточный лимит закончился"
+                                title = stringResource(R.string.text_for_expandedCard_field),
+                                description = info?.description ?: stringResource(R.string.limit_is_over)
                             )
 
                         }
@@ -170,11 +178,10 @@ fun DetailsCardFilm(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.secondary
                             )
-                            Spacer(modifier = Modifier.padding(15.dp))
+                            Spacer(modifier = Modifier.padding(7.dp))
                             ExpandedCard(
-                                title = "Описание",
-                                description = info?.description
-                                    ?: "К сожалению, суточный лимит закончился"
+                                title = stringResource(R.string.text_for_expandedCard_field),
+                                description = info?.description ?: stringResource(R.string.limit_is_over)
                             )
                         }
                         is MovieData.MovieSearch -> {
@@ -185,23 +192,20 @@ fun DetailsCardFilm(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Рейтинг Kinopoisk: ${movie.ratingKinopoisk 
-                                    ?: "Нет данных о рейтинге"}",
+                                text = "Рейтинг Kinopoisk: ${movie.ratingKinopoisk ?: "Нет данных о рейтинге"}",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.secondary
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Рейтинг Imdb: ${movie.ratingImdb 
-                                    ?: "Нет данных о рейтинге"}",
+                                text = "Рейтинг Imdb: ${movie.ratingImdb ?: "Нет данных о рейтинге"}",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.secondary
                             )
-                            Spacer(modifier = Modifier.padding(15.dp))
+                            Spacer(modifier = Modifier.padding(7.dp))
                             ExpandedCard(
-                                title = "Описание",
-                                description = info?.description
-                                    ?: "К сожалению, суточный лимит закончился"
+                                title = stringResource(R.string.text_for_expandedCard_field),
+                                description = info?.description ?: stringResource(R.string.limit_is_over)
                             )
                         }
                         is MovieData.MovieSearch2 -> {
@@ -216,122 +220,114 @@ fun DetailsCardFilm(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.secondary
                             )
-                            Spacer(modifier = Modifier.padding(15.dp))
+                            Spacer(modifier = Modifier.padding(7.dp))
                             ExpandedCard(
-                                title = "Описание",
-                                description = info?.description
-                                    ?: "К сожалению, суточный лимит закончился"
+                                title = stringResource(R.string.text_for_expandedCard_field),
+                                description = info?.description ?: stringResource(R.string.limit_is_over)
+                            )
+                        }
+                        null -> { // Обработка случая, когда movie == null
+                            Text(
+                                text = stringResource(id = R.string.movie_is_not_uploaded),
+                                color = MaterialTheme.colorScheme.error
                             )
                         }
                     }
+                }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 7.dp)
-                    ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Button(
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                    contentColor = MaterialTheme.colorScheme.onSecondary
-                                ),
-                                onClick = {
-                                    // Преобразуем MovieData в SelectedMovie
-                                    val selectedMovie = movie.toSelectedMovie()
-                                    selectedMovieViewModel.addMovieToPersonalList(
-                                        userId, selectedMovie
-                                    )
-
-                                    if (statusExist == "error") {
-                                        showToast(context, R.string.movie_has_already_been_added)
-                                    } else showToast(context, R.string.movie_has_been_added)
-
-                                    onClick()
-                                },
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.text_buttons_film_card_to_my_list),
-                                    style = MaterialTheme.typography.bodyMedium
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    CustomTextButton(
+                        textButton = context.getString(R.string.text_buttons_film_card_to_my_list),
+                        topPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = {
+                            // Преобразуем MovieData в SelectedMovie
+                            val selectedMovie = movie?.toSelectedMovie()
+                            selectedMovie?.let {
+                                selectedMovieViewModel.addMovieToPersonalList(
+                                    userId, it
                                 )
                             }
+                            if (statusExist == "error") {
+                                showToast(context, R.string.movie_has_already_been_added)
+                            } else showToast(context, R.string.movie_has_been_added)
 
-                            Button(
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                    contentColor = MaterialTheme.colorScheme.onSecondary
-                                ),
-                                onClick = { // TODO: Добавить проверку
-                                    firebaseViewModel.savingChangeRecord(
-                                        context,
-                                        user,
-                                        R.string.record_added_movie,
-                                        movie.nameRu.toString()
-                                    )
-                                    firebaseViewModel.saveMovie(NODE_LIST_MOVIES, movie.toSelectedMovie())
-                                    showToast(context, R.string.movie_has_been_added_to_general_list)
-                                    onClick()
-                                },
-                            ) {
-                                Text(
-                                    text = stringResource(
-                                        R.string.text_buttons_film_card_to_general_list_movies
-                                    ),
-                                    style = MaterialTheme.typography.bodyMedium
+                            onClick()
+                        } // TODO: Добавить проверку
+                    )
+                    CustomTextButton(
+                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
+                        topPadding = 7.dp,
+                        bottomPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = {
+                            userData?.let {
+                                firebaseViewModel.savingChangeRecord(
+                                    context,
+                                    it.nikName,
+                                    R.string.record_added_movie,
+                                    movie?.nameRu ?: context.getString(R.string.untitled_movie)
                                 )
                             }
-
-                            Button(
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                    contentColor = MaterialTheme.colorScheme.onSecondary
-                                ),
-                                onClick = { // TODO: Добавить проверку
-                                    firebaseViewModel.savingChangeRecord(
-                                        context,
-                                        user,
-                                        R.string.record_added_series,
-                                        movie.nameRu.toString()
-                                    )
-                                    firebaseViewModel.saveMovie(NODE_LIST_SERIALS, movie.toSelectedMovie())
-                                    showToast(context, R.string.movie_has_been_added_to_general_list)
-                                    onClick()
-                                },
-                            ) {
-                                Text(
-                                    text = stringResource(
-                                        R.string.text_buttons_film_card_to_general_list_serials
-                                    ),
-                                    style = MaterialTheme.typography.bodyMedium
+                            movie?.let {
+                                firebaseViewModel.saveMovie(
+                                    NODE_LIST_MOVIES,
+                                    it.toSelectedMovie()
                                 )
                             }
-
-//                            Button(
-//                                colors = ButtonDefaults.buttonColors(
-//                                    containerColor = MaterialTheme.colorScheme.secondary,
-//                                    contentColor = MaterialTheme.colorScheme.onSecondary
-//                                ),
-//                                onClick = {
-//                                    firebaseViewModel.savingChangeRecord(
-//                                        context,
-//                                        user,
-//                                        R.string.record_added_to_new_year_collection,
-//                                        movie.nameRu.toString()
-//                                    )
-//                                    firebaseViewModel.saveMovie(NODE_NEW_YEAR_LIST, movie.toSelectedMovie())
-//                                    showToast(context, R.string.movie_has_been_added_to_general_list)
-//                                    onClick()
-//                                }
-//                            ) {
-//                                Text(
-//                                    text = "В новогоднюю коллекцию",
-//                                    style = MaterialTheme.typography.bodyMedium
+                            showToast(context, R.string.movie_has_been_added_to_general_list)
+                            onClick()
+                        } // TODO: Добавить проверку
+                    )
+                    CustomTextButton(
+                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
+                        bottomPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = {
+                            userData?.let {
+                                firebaseViewModel.savingChangeRecord(
+                                    context,
+                                    it.nikName,
+                                    R.string.record_added_series,
+                                    movie?.nameRu.toString()
+                                )
+                            }
+                            movie?.let {
+                                firebaseViewModel.saveMovie(
+                                    NODE_LIST_SERIALS,
+                                    it.toSelectedMovie()
+                                )
+                            }
+                            showToast(context, R.string.movie_has_been_added_to_general_list)
+                            onClick()
+                        } // TODO: Добавить проверку
+                    )
+//                    CustomTextButton(
+//                        textButton = context.getString(R.string.button_add_to_new_year_list),
+//                        containerColor = MaterialTheme.colorScheme.secondary,
+//                        contentColor = MaterialTheme.colorScheme.onSecondary,
+//                        onClickButton = {
+//                            userData?.let {
+//                                firebaseViewModel.savingChangeRecord(
+//                                    context,
+//                                    it.nikName,
+//                                    R.string.record_added_to_new_year_collection,
+//                                    movie?.nameRu.toString()
 //                                )
 //                            }
-                        }
-                    }
+//                            movie?.let {
+//                                firebaseViewModel.saveMovie(
+//                                    NODE_NEW_YEAR_LIST,
+//                                    it.toSelectedMovie()
+//                                )
+//                            }
+//                            showToast(context, R.string.movie_has_been_added_to_general_list)
+//                            onClick()
+//                        } // TODO: Добавить проверку
+//                    )
                 }
             }
         }

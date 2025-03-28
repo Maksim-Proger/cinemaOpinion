@@ -12,5 +12,5 @@ const val NODE_LIST_WATCHED_MOVIES = "list_watched_movies"
 const val NODE_LIST_WAITING_CONTINUATION_SERIES = "list_waiting_continuation_series"
 const val NODE_LIST_USERS = "list_users"
 
-const val SELECTED_MOVIES_KEY_LISTENER = "selected_movies_list"
-const val SELECTED_COMMENTS_KEY_LISTENER = "selected_movie_comments"
+const val MOVIES_KEY_LISTENER = "movies_key_listener"
+const val COMMENTS_KEY_LISTENER = "comments_key_listener"

@@ -87,10 +87,10 @@ class FireBaseMovieViewModel @Inject constructor(
             }
         }
     }
-    fun removeMovie(dataSource: String, id: Double) {
+    fun removeMovie(dataSource: String, movieId: Int) {
         viewModelScope.launch {
             try {
-                removeMovieUseCase(dataSource, id)
+                removeMovieUseCase(dataSource, movieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

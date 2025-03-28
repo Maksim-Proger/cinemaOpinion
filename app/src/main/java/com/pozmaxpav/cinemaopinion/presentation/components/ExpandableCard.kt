@@ -30,11 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import com.pozmaxpav.cinemaopinion.R
 
 @Composable
 fun ExpandedCard(
@@ -45,18 +47,20 @@ fun ExpandedCard(
     descriptionFontSize: TextUnit = MaterialTheme.typography.bodyLarge.fontSize,
     descriptionFontWeight: FontWeight = FontWeight.Normal,
     shape: Shape = RoundedCornerShape(16.dp),
-    padding: Dp = 5.dp
+    padding: Dp = 5.dp,
+    bottomPadding: Dp = 0.dp
 ) {
     var expandedState by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
         targetValue = if (expandedState) 180f else 0f,
-        label = "Анимация для поворота иконки"
+        label = stringResource(R.string.animation_for_rotating_icon)
     )
     val scrollState = rememberScrollState()
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(bottom = bottomPadding)
             .animateContentSize( // Анимация для изменения размера карточки при раскрытии
                 animationSpec = tween(
                     durationMillis = 300,
@@ -64,9 +68,7 @@ fun ExpandedCard(
                 )
             ),
         shape = shape,
-        onClick = {
-            expandedState = !expandedState
-        },
+        onClick = { expandedState = !expandedState },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary,
             contentColor = MaterialTheme.colorScheme.onSecondary
@@ -82,8 +84,7 @@ fun ExpandedCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    modifier = Modifier
-                        .weight(6f),
+                    modifier = Modifier.weight(6f),
                     text = title,
                     fontSize = titleFontSize,
                     fontWeight = titleFontWeight,
