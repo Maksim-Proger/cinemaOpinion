@@ -42,13 +42,12 @@ fun DetailsCardSelectedMovie(
 
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier.wrapContentSize()
-    ) {
+    Column(modifier = Modifier.wrapContentSize()) {
         Card(
             modifier = Modifier
                 .wrapContentHeight()
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(horizontal = 7.dp),
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -77,9 +76,7 @@ fun DetailsCardSelectedMovie(
                     .verticalScroll(scrollState)
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 7.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     WorkerWithImageSelectedMovie(
@@ -101,20 +98,10 @@ fun DetailsCardSelectedMovie(
                     )
                 }
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 7.dp),
-                ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     if (isGeneralList) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            ) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Column(modifier = Modifier.fillMaxWidth()) {
                                 movieTransferButton()
                                 movieTransferButtonToWaitingList()
                                 movieTransferButtonToSerialsList()
@@ -141,8 +128,6 @@ fun DetailsCardSelectedMovie(
                             }
                         }
                     }
-
-                    Spacer(Modifier.padding(vertical = 7.dp))
                     openDescription()
                 }
 

@@ -12,6 +12,8 @@ import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
+import com.pozmaxpav.cinemaopinion.utilits.COMMENTS_KEY_LISTENER
+import com.pozmaxpav.cinemaopinion.utilits.MOVIES_KEY_LISTENER
 import com.pozmaxpav.cinemaopinion.utilits.NODE_COMMENTS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
@@ -26,24 +28,27 @@ class MovieRepositoryImpl @Inject constructor(
     override suspend fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel) {
         val key = databaseReference.child(dataSource).push().key
         key?.let {
-            databaseReference.child(dataSource).child(it).setValue(selectedMovie).await()
+            databaseReference
+                .child(dataSource)
+                .child(it)
+                .setValue(selectedMovie)
+                .await()
         } ?: throw Exception("Failed to generate key")
     }
 
-    override suspend fun removeMovie(dataSource: String, id: Double) {
+    override suspend fun removeMovie(dataSource: String, movieId: Int) {
         try {
-            val snapshot =
-                databaseReference
-                    .child(dataSource)
-                    .orderByChild("id")
-                    .equalTo(id)
-                    .get()
-                    .await()
+            val snapshot = databaseReference
+                .child(dataSource)
+                .orderByChild("id")
+                .equalTo(movieId.toDouble())
+                .get()
+                .await()
 
-            if (snapshot.exists() && snapshot.hasChildren()) {
-                // Проходим по всем найденным элементам
-                for (filmSnapshot in snapshot.children) {
-                    filmSnapshot.ref.removeValue().await()
+            snapshot.takeIf { it.exists() && it.hasChildren() }?.children?.forEach { movie ->
+                if (movie.child("id").getValue(Int::class.java) == movieId) {
+                    movie.ref.removeValue().await()
+                    return
                 }
             }
         } catch (e: Exception) {
@@ -52,24 +57,21 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMovie(dataSource: String): List<DomainSelectedMovieModel> {
-        val snapshot = databaseReference.child(dataSource).get().await()
-        return snapshot.children.mapNotNull { childSnapshot ->
+        val generalListMovies = databaseReference
+            .child(dataSource)
+            .get()
+            .await()
+        
+        return generalListMovies.children.mapNotNull { childSnapshot ->
             childSnapshot.getValue(DomainSelectedMovieModel::class.java)
         }
-            .map {
-                DomainSelectedMovieModel(
-                    id = it.id,
-                    nameFilm = it.nameFilm,
-                    posterUrl = it.posterUrl
-                )
-            }
     }
 
     override suspend fun observeListMovies(
         dataSource: String,
         onMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit
     ) {
-        databaseReference
+        val listener = databaseReference
             .child(dataSource)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -83,6 +85,7 @@ class MovieRepositoryImpl @Inject constructor(
                     Log.e("Firebase", "Movies load cancelled: ${error.message}")
                 }
             })
+        listenerHolder.addListener(MOVIES_KEY_LISTENER, listener)
     }
 
     override suspend fun addCommentToMovie(
@@ -155,26 +158,33 @@ class MovieRepositoryImpl @Inject constructor(
             .equalTo(movieId.toDouble())
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val movieSnapshot = snapshot.children.firstOrNull()
-                    movieSnapshot?.child(NODE_COMMENTS)?.ref?.addValueEventListener(object :
-                        ValueEventListener {
+                    val movieSnapshot = snapshot.children.firstOrNull() ?: run {
+                        onCommentsUpdated(emptyList())
+                        return
+                    }
+
+                    val commentsRef = databaseReference
+                        .child(dataSource)
+                        .child(movieSnapshot.key ?: return)
+                        .child(NODE_COMMENTS)
+
+                    val listener = commentsRef.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(commentsSnapshot: DataSnapshot) {
                             val comments = commentsSnapshot.children.mapNotNull {
-                                it.getValue(
-                                    DataComment::class.java
-                                )?.commentToDomain()
+                                it.getValue(DataComment::class.java)?.commentToDomain()
                             }
                             onCommentsUpdated(comments)
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            // TODO: Добавить отлов ошибки
+                            Log.e("Firebase", "Comments load error: ${error.message}")
                         }
                     })
+                    listenerHolder.addListener(COMMENTS_KEY_LISTENER, listener)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // TODO: Добавить отлов ошибки
+                    Log.e("Firebase", "Movie query error: ${error.message}")
                 }
             })
     }

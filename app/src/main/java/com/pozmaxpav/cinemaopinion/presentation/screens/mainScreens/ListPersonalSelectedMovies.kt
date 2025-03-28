@@ -18,12 +18,12 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -48,6 +48,7 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
@@ -182,19 +183,19 @@ fun ListSelectedMovies(
                 openDescription = {
                     ExpandedCard(
                         title = stringResource(R.string.text_for_expandedCard_field),
-                        description = info?.description ?: stringResource(R.string.limit_is_over)
+                        description = info?.description ?: stringResource(R.string.limit_is_over),
+                        bottomPadding = 7.dp
                     )
                 },
                 commentButton = {
-                    Button(
-                        onClick = { openBottomSheetComments = !openBottomSheetComments },
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.placeholder_for_comment_field),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+                    CustomTextButton(
+                        textButton = context.getString(R.string.placeholder_for_comment_field),
+                        topPadding = 7.dp,
+                        bottomPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+                    )
                 },
                 onClick = {
                     selectedMovie = null
@@ -222,7 +223,6 @@ fun ListSelectedMovies(
                             )
                         }
                     }
-
                     is State.Success -> {
                         LazyColumn(
                             state = listState,
@@ -297,7 +297,6 @@ fun ListSelectedMovies(
                             }
                         }
                     }
-
                     is State.Error -> {
                         // TODO: Добавить логику работы при ошибке.
                     }
@@ -321,14 +320,15 @@ private fun ShowListComments(
         personalMovieViewModel.observeCommentsForMovieFromPersonalList(userId, selectedMovieId)
     }
 
-    LazyColumn(contentPadding = PaddingValues(5.dp)) {
+    LazyColumn {
         items(listComments) { comment ->
             Card(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
                     .padding(vertical = 7.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(16.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = MaterialTheme.colorScheme.onSecondary

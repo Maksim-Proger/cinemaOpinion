@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.components
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -16,18 +17,21 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomTextButton(
     textButton: String,
-    paddingEnd: Dp = 0.dp,
+    topPadding: Dp = 0.dp,
+    bottomPadding: Dp = 0.dp,
+    containerColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     onClickButton: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
             .clickable(onClick = onClickButton)
-            .padding(end = paddingEnd),
+            .padding(top = topPadding, bottom = bottomPadding),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = containerColor,
+            contentColor = contentColor
         )
     ) {
         Box(

@@ -284,7 +284,6 @@ fun RegistrationWindow(
         ) {
             CustomTextButton(
                 textButton = stringResource(R.string.button_save),
-                paddingEnd = 15.dp,
                 onClickButton = {
                     auxiliaryUserViewModel.addUser(nikName, email, password)
                     onClose()

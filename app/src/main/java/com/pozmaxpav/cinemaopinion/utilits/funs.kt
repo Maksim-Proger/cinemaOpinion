@@ -13,14 +13,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,10 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Country
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import java.time.DateTimeException
 import java.time.LocalDateTime
 import java.time.Month
@@ -73,7 +71,6 @@ fun AccountListItem(
     }
 }
 
-
 @Composable
 fun CustomTextField(
     value: String,
@@ -107,7 +104,7 @@ fun CustomTextField(
         label = label,
         placeholder = placeholder,
         leadingIcon = leadingIcon,
-        trailingIcon =  if (value.isNotEmpty()) {
+        trailingIcon = if (value.isNotEmpty()) {
             {
                 IconButton(onClick = { onValueChange("") }) {
                     Icon(
@@ -155,8 +152,6 @@ fun SelectedMovieItem(
     }
 }
 
-// TODO: Переписать цвета
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextFieldForComments(
     value: String,
@@ -172,18 +167,19 @@ fun CustomTextFieldForComments(
         value = value,
         shape = RoundedCornerShape(16.dp),
         onValueChange = onValueChange,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
+        colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
             focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
             unfocusedLabelColor = MaterialTheme.colorScheme.outline,
             focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
             unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
             focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
+            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+            cursorColor = MaterialTheme.colorScheme.onPrimary
         ),
         placeholder = placeholder,
         leadingIcon = leadingIcon,
-        trailingIcon =  if (value.isNotEmpty()) {
+        trailingIcon = if (value.isNotEmpty()) {
             {
                 IconButton(onClick = { onValueChange("") }) {
                     Icon(
@@ -195,9 +191,7 @@ fun CustomTextFieldForComments(
             }
         } else null,
         keyboardOptions = KeyboardOptions(
-            // Указываем какой тип клавиатуры будет использоваться.
             keyboardType = KeyboardType.Text,
-            // Указываем, каким образом будет обрабатываться нажатие клавиши Enter.
             imeAction = ImeAction.Done
         ),
         keyboardActions = keyboardActions,
@@ -256,7 +250,7 @@ fun formatMonth(month: String): String {
     }
 }
 
-fun formatDate(date: String) : String {
+fun formatDate(date: String): String {
     val formatterInput = DateTimeFormatter.ISO_LOCAL_DATE_TIME
     val formatterOutput = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
     val dateTime = LocalDateTime.parse(date, formatterInput)
@@ -265,7 +259,8 @@ fun formatDate(date: String) : String {
 
 fun deletingOldRecords(timestamp: Long): Boolean {
     val currentTimeMillis = System.currentTimeMillis() // Получаем текущую дату
-    val differenceInMillis = abs(currentTimeMillis - timestamp) // Рассчитываем разницу между текущим временем и входящей датой
+    val differenceInMillis =
+        abs(currentTimeMillis - timestamp) // Рассчитываем разницу между текущим временем и входящей датой
     val daysDifference = differenceInMillis / (1000 * 60 * 60 * 24) // Конвертируем разницу в дни
     return daysDifference > 7
 }
@@ -278,19 +273,22 @@ fun MovieData.toSelectedMovie(): DomainSelectedMovieModel {
             nameFilm = this.nameRu,
             posterUrl = this.posterUrl
         )
+
         is MovieData.MovieTop -> DomainSelectedMovieModel(
             id = this.filmId,
             nameFilm = this.nameRu,
             posterUrl = this.posterUrl
         )
+
         is MovieData.MovieSearch -> DomainSelectedMovieModel(
             id = this.kinopoiskId,
-            nameFilm = this.nameRu?: "Нет названия",
+            nameFilm = this.nameRu ?: "Нет названия",
             posterUrl = this.posterUrl
         )
+
         is MovieData.MovieSearch2 -> DomainSelectedMovieModel(
             id = this.filmId,
-            nameFilm = this.nameRu?: "Нет названия",
+            nameFilm = this.nameRu ?: "Нет названия",
             posterUrl = this.posterUrl
         )
     }
@@ -312,9 +310,8 @@ fun navigateFunction(
     }
 }
 
-// TODO: Подумать над методом еще
-fun parsYearsToString(range:ClosedFloatingPointRange<Float>): List<String> {
-    val yearsList = listOf<String>(
+fun parsYearsToString(range: ClosedFloatingPointRange<Float>): List<String> {
+    val yearsList = listOf(
         range.start.toInt().toString(),
         range.endInclusive.toInt().toString()
     )

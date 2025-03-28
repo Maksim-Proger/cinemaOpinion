@@ -15,8 +15,8 @@ import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepos
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_PERSONAL_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_PERSONAL_COMMENTS
-import com.pozmaxpav.cinemaopinion.utilits.SELECTED_COMMENTS_KEY_LISTENER
-import com.pozmaxpav.cinemaopinion.utilits.SELECTED_MOVIES_KEY_LISTENER
+import com.pozmaxpav.cinemaopinion.utilits.COMMENTS_KEY_LISTENER
+import com.pozmaxpav.cinemaopinion.utilits.MOVIES_KEY_LISTENER
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,6 +29,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
 
     override suspend fun addMovieToPersonalList(userId: String, selectedMovie: DomainSelectedMovieModel) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
+
         val userSnapshot = databaseReference
             .child(NODE_LIST_USERS)
             .orderByChild("id")
@@ -107,7 +108,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                             Log.e("Firebase", "Error loading selected movies: ${error.message}")
                         }
                     })
-                    listenerHolder.addListener(SELECTED_MOVIES_KEY_LISTENER, listener)
+                    listenerHolder.addListener(MOVIES_KEY_LISTENER, listener)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -285,7 +286,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                                         onCommentsUpdated(emptyList())
                                     }
                                 })
-                                listenerHolder.addListener(SELECTED_COMMENTS_KEY_LISTENER, listener)
+                                listenerHolder.addListener(COMMENTS_KEY_LISTENER, listener)
                             }
 
                             override fun onCancelled(error: DatabaseError) {
@@ -303,11 +304,11 @@ class PersonalMovieRepositoryImpl @Inject constructor(
     }
 
     override fun removeSelectedMoviesListener() {
-        listenerHolder.removeListener(SELECTED_MOVIES_KEY_LISTENER)
+        listenerHolder.removeListener(MOVIES_KEY_LISTENER)
     }
 
     override fun removeCommentsSelectedMoviesListener() {
-        listenerHolder.removeListener(SELECTED_COMMENTS_KEY_LISTENER)
+        listenerHolder.removeListener(COMMENTS_KEY_LISTENER)
     }
 
 }

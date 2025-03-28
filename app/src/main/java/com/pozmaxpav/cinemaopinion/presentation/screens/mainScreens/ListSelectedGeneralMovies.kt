@@ -25,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -50,6 +49,7 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
@@ -192,22 +192,26 @@ fun ListSelectedGeneralMovies(
                 openDescription = {
                     ExpandedCard(
                         title = stringResource(R.string.text_for_expandedCard_field),
-                        description = info?.description ?: stringResource(R.string.limit_is_over)
+                        description = info?.description ?: stringResource(R.string.limit_is_over),
+                        bottomPadding = 7.dp
                     )
                 },
                 commentButton = {
-                    Button(
-                        onClick = { openBottomSheetComments = !openBottomSheetComments }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.button_leave_comment),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+                    CustomTextButton(
+                        textButton = context.getString(R.string.button_leave_comment),
+                        bottomPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+                    )
                 },
                 movieTransferButton = {
-                    Button(
-                        onClick = {
+                    CustomTextButton(
+                        textButton = context.getString(R.string.button_viewed),
+                        topPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = {
                             firebaseViewModel.sendingToTheViewedFolder(
                                 NODE_LIST_MOVIES,
                                 NODE_LIST_WATCHED_MOVIES,
@@ -221,16 +225,16 @@ fun ListSelectedGeneralMovies(
                                 selectedMovie!!.nameFilm
                             )
                         }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.button_viewed),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+                    )
                 },
                 movieTransferButtonToSerialsList = {
-                    Button(
-                        onClick = {
+                    CustomTextButton(
+                        textButton = context.getString(R.string.button_move_to_series),
+                        topPadding = 7.dp,
+                        bottomPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = {
                             firebaseViewModel.sendingToTheSerialsList(selectedMovie!!.id.toDouble())
                             showToast(context, R.string.series_has_been_moved)
                             firebaseViewModel.savingChangeRecord(
@@ -240,12 +244,7 @@ fun ListSelectedGeneralMovies(
                                 selectedMovie!!.nameFilm
                             )
                         }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.button_move_to_series),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+                    )
                 },
                 onClick = { selectedMovie = null }
             )
@@ -272,7 +271,6 @@ fun ListSelectedGeneralMovies(
                             )
                         }
                     }
-
                     is State.Success -> {
                         LazyColumn(
                             state = listState,
@@ -329,7 +327,7 @@ fun ListSelectedGeneralMovies(
                                                             delay(300)
                                                             firebaseViewModel.removeMovie(
                                                                 NODE_LIST_MOVIES,
-                                                                movie.id.toDouble()
+                                                                movie.id
                                                             )
                                                         }
                                                         firebaseViewModel.savingChangeRecord(
@@ -354,8 +352,9 @@ fun ListSelectedGeneralMovies(
                             }
                         }
                     }
-
-                    is State.Error -> {/* TODO: Добавить лог ошибки */}
+                    is State.Error -> {
+                        // TODO: Добавить логику работы при ошибке.
+                    }
                 }
             }
         }
@@ -370,9 +369,7 @@ fun ListSelectedGeneralMovies(
         ) {
             Card(
                 modifier = Modifier
-                    .clickable {
-                        navigateFunction(navController, Route.ListWatchedMovies.route)
-                    },
+                    .clickable { navigateFunction(navController, Route.ListWatchedMovies.route) },
                 shape = RoundedCornerShape(8.dp),
                 elevation = CardDefaults.cardElevation(8.dp),
                 colors = CardDefaults.cardColors(
@@ -380,9 +377,7 @@ fun ListSelectedGeneralMovies(
                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             ) {
-                Box(
-                    modifier = Modifier.padding(10.dp)
-                ) {
+                Box(modifier = Modifier.padding(10.dp)) {
                     Text(
                         text = stringResource(R.string.button_viewed_screen),
                         style = MaterialTheme.typography.bodyMedium
@@ -414,25 +409,22 @@ fun ShowCommentGeneralList(
                 modifier = Modifier.scale(0.5f)
             )
         }
-
         is State.Success -> {
-            LazyColumn(contentPadding = PaddingValues(5.dp)) {
+            LazyColumn {
                 items(listComments) { comment ->
                     Card(
                         modifier = Modifier
                             .wrapContentHeight()
                             .fillMaxWidth()
                             .padding(vertical = 7.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(16.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary
                         )
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(8.dp)
-                        ) {
+                        Column(modifier = Modifier.padding(8.dp)) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -474,8 +466,9 @@ fun ShowCommentGeneralList(
                 }
             }
         }
-
-        is State.Error -> {}
+        is State.Error -> {
+            // TODO: Добавить логику работы при ошибке.
+        }
     }
 }
 

@@ -8,6 +8,9 @@
     <string name="no_year_of_release_of_the_film">Нет года выпуска фильма</string>
     <string name="developer_message">Добро пожаловать в новую версию приложения!</string>
     <string name="developer_message2">Ничего не произошло</string>
+    <string name="untitled_movie">Фильм без названия</string>
+    <string name="movie_is_not_uploaded">Фильм не загружен</string>
+    <string name="animation_for_rotating_icon">Анимация для поворота иконки</string>
 
     <!--  TopAppBarTitle  -->
     <string name="title_list_waiting_continuation_series">Лист ожидания</string>
@@ -64,8 +67,14 @@
     <string name="button_login">Вход</string>
     <string name="button_add">Добавить</string>
     <string name="button_save">Сохранить</string>
+    <string name="button_add_to_yourself">Добавить к себе</string>
+    <string name="button_add_to_new_year_list">В новогоднюю коллекцию</string>
+    <string name="text_buttons_film_card_to_my_list">В свой список</string>
+    <string name="text_buttons_film_card_to_general_list_movies">В общий список с фильмами</string>
+    <string name="text_buttons_film_card_to_general_list_serials">В общий список с сериалами</string>
     <string name="button_viewed_screen">Просмотренные</string>
     <string name="button_move_to_series">Переместить в сериалы</string>
+    <string name="button_move_to_waiting_list">Переместить в лист ожидания</string>
 
     <!--  Content Description  -->
     <string name="content_description_for_button_add">Кнопка добавить</string>
@@ -114,11 +123,6 @@
     <string name="description_icon_previous_page_button">Icon Previous Page Button</string>
     <string name="description_icon_next_page_button">Icon Next Page Button</string>
     <string name="description_icon_back_button">Icon Back Button</string>
-
-    <!--  Details Films Card   -->
-    <string name="text_buttons_film_card_to_my_list">В свой список</string>
-    <string name="text_buttons_film_card_to_general_list_movies">В общий список с фильмами</string>
-    <string name="text_buttons_film_card_to_general_list_serials">В общий список с сериалами</string>
 
     <!--  Seasonal lines  -->
     <string name="title_of_the_list_for_the_new_year">Почувствуй новый год!</string>

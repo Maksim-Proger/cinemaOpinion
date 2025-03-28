@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
@@ -67,7 +68,6 @@ fun DetailsCard(
         auxiliaryUserViewModel.getUserData(userId)
         auxiliaryUserViewModel.getSeasonalEventPoints(userId)
     }
-
     LaunchedEffect(newYearMovie.id) {
         apiViewModel.getInformationMovie(newYearMovie.id)
     }
@@ -147,8 +147,8 @@ fun DetailsCard(
                     Spacer(modifier = Modifier.padding(15.dp))
 
                     ExpandedCard(
-                        title = "Описание",
-                        description = info?.description ?: "К сожалению, суточный лимит закончился"
+                        title = stringResource(R.string.text_for_expandedCard_field),
+                        description = info?.description ?: stringResource(R.string.limit_is_over)
                     )
 
                     Row(
@@ -158,7 +158,7 @@ fun DetailsCard(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
 
-                        // region watched
+                        // region кнопка "Посмотрел"
                         Button(
                             onClick = {
                                 auxiliaryUserViewModel.updatingEventData(userId)
@@ -169,17 +169,19 @@ fun DetailsCard(
                                 contentColor = MaterialTheme.colorScheme.onSecondary
                             ),
                         ) {
-                            Text(text = "Я посмотрел",)
+                            Text(
+                                text = stringResource(R.string.button_viewed),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         }
                         // endregion
 
-                        // region ButtonAddToPersonalList
+                        // region кнопка "Добавить к себе"
                         Button(
                             onClick = {
                                 selectedMovieViewModel.addMovieToPersonalList(userId, newYearMovie)
-                                if (statusExist == "error") {
-                                    showToast(context, R.string.movie_has_already_been_added)
-                                } else showToast(context, R.string.movie_has_been_added)
+                                if (statusExist == "error") showToast(context, R.string.movie_has_already_been_added)
+                                else showToast(context, R.string.movie_has_been_added)
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondary,
@@ -187,7 +189,8 @@ fun DetailsCard(
                             ),
                         ) {
                             Text(
-                                text = "Добавить к себе"
+                                text = stringResource(R.string.button_add_to_yourself),
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
                         // endregion

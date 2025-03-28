@@ -71,21 +71,28 @@ import com.pozmaxpav.cinemaopinion.utilits.state.State
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun MainScreen(
+    navController: NavHostController,
+    viewModel: MainViewModel = hiltViewModel(),
+    apiViewModel: ApiViewModel = hiltViewModel(),
+    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel()
+) {
 
     // region Переменные
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     // DatePicker
-    var selectedDate by remember { mutableStateOf<Pair<Int, String>?>(null) } // Значение выбранной даты
-    var dateSelectionComplete by remember { mutableStateOf(false) } // Флаг подтверждения, что дата выбрана и можно отправлять запрос
+    // Значение выбранной даты
+    var selectedDate by remember { mutableStateOf<Pair<Int, String>?>(null) }
+    // Флаг подтверждения, что дата выбрана и можно отправлять запрос
+    var dateSelectionComplete by remember { mutableStateOf(false) }
 
     // Блок поиска
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
     var searchCompleted by remember { mutableStateOf(false) } // Флаг для отображения списка фильмов после поиска
-    val searchHistory = mutableListOf<String>()
+    val searchHistory = mutableListOf<String>() // TODO: Не работает
 
     // Расширенный поиск
     var requestBody by remember {
@@ -96,7 +103,8 @@ fun MainScreen(navController: NavHostController) {
             )
         )
     }
-    var sendRequestCompleted by remember { mutableStateOf(false) } // Флаг для предотвращения повторной отправки запроса
+    // Флаг для предотвращения повторной отправки запроса
+    var sendRequestCompleted by remember { mutableStateOf(false) }
 
     // Состояния для открытия страниц
     var showDatePicker by remember { mutableStateOf(false) }
@@ -110,16 +118,11 @@ fun MainScreen(navController: NavHostController) {
     var titleTopBarState by remember { mutableStateOf(false) }
 
     // Работаем с ViewModel
-    val viewModel: MainViewModel = hiltViewModel()
-    val apiViewModel: ApiViewModel = hiltViewModel()
-//    val userViewModel:UserViewModel = hiltViewModel()
-    val firebaseViewModel: FireBaseMovieViewModel = hiltViewModel()
     val premiereMovies = apiViewModel.premiersMovies.collectAsState()
     val topListMovies = apiViewModel.topListMovies.collectAsState()
     val searchMovies = apiViewModel.searchMovies.collectAsState()
     val searchMovies2 = apiViewModel.searchMovies2.collectAsState()
     val newYearMoviesList by firebaseViewModel.movies.collectAsState()
-//    val user by userViewModel.users.collectAsState()
     val state by apiViewModel.state.collectAsState()
     val showDialogEvents by viewModel.resultChecking.collectAsState()
 
@@ -145,22 +148,10 @@ fun MainScreen(navController: NavHostController) {
 
     // region Launchers
 
-    // Используем LaunchedEffect для вызова методов выборки при первом отображении Composable.
     LaunchedEffect(Unit) {
         apiViewModel.fetchPremiersMovies(2025, "March")
         apiViewModel.fetchTopListMovies(currentPage)
     }
-
-//    LaunchedEffect(user) {
-//        if (user != null) {
-//            user.let { userInfo ->
-//                username = userInfo?.firstName ?: "Таинственный пользователь"
-////                firebaseViewModel.updatingUserData(user!!) // Нужно, чтобы инициализировать первичное обновление
-//            }
-//        } else {
-//            username = "Таинственный пользователь"
-//        }
-//    }
 
     LaunchedEffect(onAccountButtonClick) {
         firebaseViewModel.getMovies(NODE_NEW_YEAR_LIST)
@@ -185,8 +176,7 @@ fun MainScreen(navController: NavHostController) {
 
                 // Если достигнут конец списка, показываем кнопку "Следующая страница"
                 // Устанавливаем showPageSwitchingButtons в true, если последний видимый элемент - это последний элемент списка и фильтр активен
-                showPageSwitchingButtons =
-                    lastVisibleItemIndex >= totalItems - 1 /* && onFilterButtonClick || searchCompleted */
+                showPageSwitchingButtons = lastVisibleItemIndex >= totalItems - 1
             }
     }
 
@@ -259,7 +249,7 @@ fun MainScreen(navController: NavHostController) {
                                 onAction = {
                                     navigateFunction(navController, Route.MediaNewsScreen.route)
                                 },
-                                title = "Интересное (beta version)",
+                                title = "Интересное",
                                 leadingIcon = {
                                     Icon(
                                         Icons.Default.Newspaper,
@@ -281,10 +271,7 @@ fun MainScreen(navController: NavHostController) {
         }
     ) { padding ->
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
 
             if (dateSelectionComplete) {
                 selectedDate?.let {
@@ -311,17 +298,15 @@ fun MainScreen(navController: NavHostController) {
             if (!searchBarActive) {
                 if (selectedMovie != null) {
                     DetailsCardFilm(
-                        selectedMovie!!,
+                        movie = selectedMovie!!,
                         onClick = { selectedMovie = null },
-                        padding,
-                        user = username
+                        padding = padding,
                     )
                     BackHandler {
                         selectedMovie = null
                     }
 
-                }
-                else if (selectedNewYearMovie != null) {
+                } else if (selectedNewYearMovie != null) {
                     DetailsCard(
                         selectedNewYearMovie!!,
                         onCloseButton = { selectedNewYearMovie = null },
@@ -574,7 +559,7 @@ fun MainScreen(navController: NavHostController) {
                 SearchFilterScreen(
                     onClickClose = { onAdvancedSearchButtonClick = false },
                     onSendRequest = { sendRequestCompleted = true },
-                    onSearch = { it ->
+                    onSearch = {
                         requestBody = it
                         searchCompleted = true
                     }

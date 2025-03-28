@@ -15,10 +15,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,10 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
@@ -79,7 +79,6 @@ fun ListWaitingContinuationSeries(
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listMovies by firebaseViewModel.movies.collectAsState()
-    val listComments by firebaseViewModel.comments.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     val stateMovies by firebaseViewModel.movieDownloadStatus.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
@@ -87,7 +86,7 @@ fun ListWaitingContinuationSeries(
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var selectedNote by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var showTopBar by remember { mutableStateOf(false) }
-    var (comment, setComment) = remember { mutableStateOf("") }
+    val (comment, setComment) = remember { mutableStateOf("") }
     val listState = rememberLazyListState()
     val context = LocalContext.current
 
@@ -124,7 +123,7 @@ fun ListWaitingContinuationSeries(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
-                    .padding(vertical = 45.dp, horizontal = 16.dp)
+                    .padding(vertical = 45.dp)
             ) {
 
                 if (openBottomSheetComments) {
@@ -179,38 +178,37 @@ fun ListWaitingContinuationSeries(
                     }
                 }
 
-                DetailsCardSelectedMovie( // TODO: Доработать все действия
+                DetailsCardSelectedMovie(
                     movie = selectedNote!!,
                     isGeneralList = true,
                     isShowCommentButton = true,
                     content = {
-                        ShowCommentWaitingContinuationSeriesList(
-                            listComments = listComments,
-                            id = selectedNote!!.id.toDouble()
-                        )
+                        ShowCommentWaitingContinuationSeriesList(selectedNote!!.id)
                     },
                     openDescription = {
                         ExpandedCard(
                             title = stringResource(R.string.text_for_expandedCard_field),
-                            description = info?.description
-                                ?: stringResource(R.string.limit_is_over)
+                            description = info?.description ?: stringResource(R.string.limit_is_over),
+                            bottomPadding = 7.dp
                         )
                     },
                     commentButton = {
-                        Button(
-                            onClick = {
-                                openBottomSheetComments = !openBottomSheetComments
-                            }
-                        ) {
-                            Text(
-                                text = stringResource(R.string.button_leave_comment),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_leave_comment),
+                            topPadding = 7.dp,
+                            bottomPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+                        )
                     },
                     movieTransferButton = {
-                        Button(
-                            onClick = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_viewed),
+                            topPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = {
                                 if (userData != null) {
                                     firebaseViewModel.sendingToTheViewedFolder(
                                         NODE_LIST_WAITING_CONTINUATION_SERIES,
@@ -226,12 +224,7 @@ fun ListWaitingContinuationSeries(
                                     )
                                 }
                             }
-                        ) {
-                            Text(
-                                text = stringResource(R.string.button_viewed),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
+                        )
                     },
                     onClick = {
                         selectedNote = null
@@ -258,7 +251,6 @@ fun ListWaitingContinuationSeries(
                         )
                     }
                 }
-
                 is State.Success -> {
                     LazyColumn(
                         state = listState,
@@ -293,8 +285,9 @@ fun ListWaitingContinuationSeries(
                         }
                     }
                 }
-
-                is State.Error -> {}
+                is State.Error -> {
+                    // TODO: Добавить логику работы при ошибке.
+                }
             }
         }
     }
@@ -302,15 +295,15 @@ fun ListWaitingContinuationSeries(
 
 @Composable
 fun ShowCommentWaitingContinuationSeriesList(
-    listComments: List<DomainCommentModel>,
-    id: Double,
+    movieId: Int,
     firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
 ) {
     val stateComments by firebaseViewModel.commentsDownloadStatus.collectAsState()
+    val listComments by firebaseViewModel.comments.collectAsState()
 
-    LaunchedEffect(id) {
-        firebaseViewModel.getComments(NODE_LIST_WAITING_CONTINUATION_SERIES, id)
-        firebaseViewModel.observeComments(NODE_LIST_WAITING_CONTINUATION_SERIES, id)
+    LaunchedEffect(movieId) {
+        firebaseViewModel.getComments(NODE_LIST_WAITING_CONTINUATION_SERIES, movieId)
+        firebaseViewModel.observeComments(NODE_LIST_WAITING_CONTINUATION_SERIES, movieId)
     }
 
     when (stateComments) {
@@ -320,27 +313,22 @@ fun ShowCommentWaitingContinuationSeriesList(
                 modifier = Modifier.scale(0.5f)
             )
         }
-
         is State.Success -> {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(5.dp)
-            ) {
+            LazyColumn {
                 items(listComments) { comment ->
                     Card(
                         modifier = Modifier
                             .wrapContentHeight()
                             .fillMaxWidth()
                             .padding(vertical = 7.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(16.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary
                         )
                     ) {
-                        Column( // TODO: Переделать стили
-                            modifier = Modifier.padding(8.dp)
-                        ) {
+                        Column(modifier = Modifier.padding(8.dp)) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -382,7 +370,8 @@ fun ShowCommentWaitingContinuationSeriesList(
                 }
             }
         }
-
-        is State.Error -> {}
+        is State.Error -> {
+            // TODO: Добавить логику работы при ошибке.
+        }
     }
 }
