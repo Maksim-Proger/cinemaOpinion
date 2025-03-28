@@ -37,7 +37,6 @@ class SeriesControlViewModel @Inject constructor(
             }
         }
     }
-
     fun observeListEntries(userId: String) {
         viewModelScope.launch {
             observeListEntriesUseCase(userId) { onEntriesUpdated ->
@@ -45,7 +44,6 @@ class SeriesControlViewModel @Inject constructor(
             }
         }
     }
-
     fun addNewEntry(userId: String, title: String, season: Int = 0, series: Int = 0) {
         viewModelScope.launch {
             try {
@@ -61,7 +59,6 @@ class SeriesControlViewModel @Inject constructor(
             }
         }
     }
-
     fun deleteMovie(userId: String, entryId: String) {
         viewModelScope.launch {
             try {
@@ -71,7 +68,6 @@ class SeriesControlViewModel @Inject constructor(
             }
         }
     }
-
     fun updateMovie(userId: String, entryId: String, title: String, season: Int, series: Int) {
         viewModelScope.launch {
             try {
@@ -89,8 +85,8 @@ class SeriesControlViewModel @Inject constructor(
     }
 
     public override fun onCleared() {
+        observeListEntriesUseCase.removeListener()
         super.onCleared()
-        observeListEntriesUseCase.removeListener() // Удаляем слушатель при уничтожении ViewModel
     }
 
 }

@@ -4,6 +4,9 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 
 interface MovieRepository {
+    fun removeSelectedMoviesListener()
+    fun removeCommentsSelectedMoviesListener()
+
     suspend fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel)
     suspend fun removeMovie(dataSource: String, movieId: Int)
     suspend fun getMovie(dataSource: String): List<DomainSelectedMovieModel>

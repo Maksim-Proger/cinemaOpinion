@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments
+package com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments
 
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository

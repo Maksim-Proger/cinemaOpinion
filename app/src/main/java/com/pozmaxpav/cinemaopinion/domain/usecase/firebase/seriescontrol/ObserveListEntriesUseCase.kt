@@ -5,13 +5,13 @@ import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepos
 import javax.inject.Inject
 
 class ObserveListEntriesUseCase @Inject constructor(
-    private val seriesControlRepository: SeriesControlRepository
+    private val repository: SeriesControlRepository
 ) {
     suspend operator fun invoke(userId: String, onEntriesUpdated: (List<DomainSeriesControlModel>) -> Unit) {
-        seriesControlRepository.observeListEntries(userId, onEntriesUpdated)
+        repository.observeListEntries(userId, onEntriesUpdated)
     }
 
     fun removeListener() {
-        seriesControlRepository.removeListener()
+        repository.removeEntriesListener()
     }
 }

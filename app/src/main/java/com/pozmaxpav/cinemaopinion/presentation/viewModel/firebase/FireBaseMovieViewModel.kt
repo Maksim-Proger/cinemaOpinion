@@ -6,10 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments.AddCommentUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments.GetCommentsForMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.AddCommentUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.GetCommentsForMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.GetMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.comments.ObserveCommentsForMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.ObserveCommentsForMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.ObserveListMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SaveMovieUseCase
@@ -205,6 +205,12 @@ class FireBaseMovieViewModel @Inject constructor(
                 e.printStackTrace()
             }
         }
+    }
+
+    public override fun onCleared() {
+        observeListMoviesUseCase.removeListener()
+        observeCommentsForMovieUseCase.removeListener()
+        super.onCleared()
     }
 }
 
