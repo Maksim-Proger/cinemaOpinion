@@ -157,13 +157,16 @@ object AppModule {
         databaseReference: DatabaseReference,
         listenerHolder: FirebaseListenerHolder
     ): MovieRepository {
-        return MovieRepositoryImpl(databaseReference, listenerHolder) // Передача DatabaseReference в репозиторий
+        return MovieRepositoryImpl(databaseReference, listenerHolder)
     }
 
     @Provides
     @Singleton
-    fun provideSeriesControlRepository(databaseReference: DatabaseReference): SeriesControlRepository {
-        return SeriesControlRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
+    fun provideSeriesControlRepository(
+        databaseReference: DatabaseReference,
+        listenerHolder: FirebaseListenerHolder
+    ): SeriesControlRepository {
+        return SeriesControlRepositoryImpl(databaseReference, listenerHolder)
     }
 
     @Provides
@@ -172,19 +175,19 @@ object AppModule {
         databaseReference: DatabaseReference,
         listenerHolder: FirebaseListenerHolder
     ): PersonalMovieRepository {
-        return PersonalMovieRepositoryImpl(databaseReference, listenerHolder) // Передача DatabaseReference в репозиторий
+        return PersonalMovieRepositoryImpl(databaseReference, listenerHolder)
     }
 
     @Provides
     @Singleton
     fun provideUserRepository(databaseReference: DatabaseReference): UserRepository {
-        return UserRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
+        return UserRepositoryImpl(databaseReference)
     }
 
     @Provides
     @Singleton
     fun provideRecordsOfChangesRepository(databaseReference: DatabaseReference): RecordsOfChangesRepository {
-        return RecordsOfChangesRepositoryImpl(databaseReference) // Передача DatabaseReference в репозиторий
+        return RecordsOfChangesRepositoryImpl(databaseReference)
     }
 
     // endregion

@@ -19,7 +19,9 @@ import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class MovieRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference,
     private val listenerHolder: FirebaseListenerHolder
@@ -267,6 +269,14 @@ class MovieRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    override fun removeSelectedMoviesListener() {
+        listenerHolder.removeListener(MOVIES_KEY_LISTENER)
+    }
+
+    override fun removeCommentsSelectedMoviesListener() {
+        listenerHolder.removeListener(COMMENTS_KEY_LISTENER)
     }
 
 }

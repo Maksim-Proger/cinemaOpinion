@@ -1,28 +1,25 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
+import com.pozmaxpav.cinemaopinion.utilits.ENTRIES_KEY_LISTENER
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_SERIES_CONTROL
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SeriesControlRepositoryImpl @Inject constructor(
-    private val databaseReference: DatabaseReference
+    private val databaseReference: DatabaseReference,
+    private val listenerHolder: FirebaseListenerHolder
 ) : SeriesControlRepository {
-
-    private var valueEventListener: ValueEventListener? = null
-
-    override fun removeListener() {
-        valueEventListener?.let { listener ->
-            databaseReference.removeEventListener(listener)
-            valueEventListener = null
-        }
-    }
 
     override suspend fun getListEntries(userId: String): List<DomainSeriesControlModel> {
         val entries = mutableListOf<DomainSeriesControlModel>()
@@ -63,37 +60,43 @@ class SeriesControlRepositoryImpl @Inject constructor(
         userId: String,
         onEntriesUpdated: (List<DomainSeriesControlModel>) -> Unit
     ) {
-        removeListener() // Удаляем предыдущий слушатель перед добавлением нового
-        if (userId.isNotEmpty()) {
-            databaseReference
-                .child(NODE_LIST_USERS)
-                .orderByChild("id")
-                .equalTo(userId)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val userSnapshot = snapshot.children.firstOrNull()
-                        valueEventListener = userSnapshot?.child(NODE_SERIES_CONTROL)?.ref?.addValueEventListener(object :
-                            ValueEventListener {
-                            override fun onDataChange(entrySnapshot: DataSnapshot) {
-                                val entry = entrySnapshot.children.mapNotNull {
-                                    it.getValue(
-                                        DomainSeriesControlModel::class.java
-                                    )
-                                }
-                                onEntriesUpdated(entry)
-                            }
+        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
-                            override fun onCancelled(error: DatabaseError) {
-                                // TODO: Добавить отлов ошибки
-                            }
-                        })
+        databaseReference
+            .child(NODE_LIST_USERS)
+            .orderByChild("id")
+            .equalTo(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val userSnapshot = snapshot.children.firstOrNull()
+
+                    if (userSnapshot == null) {
+                        onEntriesUpdated(emptyList()) // Если пользователь не найден, вернуть пустой список
+                        return
                     }
 
-                    override fun onCancelled(error: DatabaseError) {
-                        // TODO: Добавить отлов ошибки
-                    }
-                })
-        }
+                    val entriesRef = userSnapshot.child(NODE_SERIES_CONTROL).ref
+
+                    val listener = entriesRef.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(entrySnapshot: DataSnapshot) {
+                            val entry = entrySnapshot.children.mapNotNull {
+                                runCatching { it.getValue(DomainSeriesControlModel::class.java) }.getOrNull()
+                            }
+                            onEntriesUpdated(entry)
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Log.e("Firebase", "Error loading entries: ${error.message}")
+                        }
+                    })
+                    listenerHolder.addListener(ENTRIES_KEY_LISTENER, listener)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Firebase", "Error fetching user data: ${error.message}")
+                    onEntriesUpdated(emptyList())
+                }
+            })
     }
 
     override suspend fun addNewEntry(userId: String, entry: DomainSeriesControlModel) {
@@ -146,7 +149,7 @@ class SeriesControlRepositoryImpl @Inject constructor(
                         .get()
                         .await()
 
-                    if(entriesSnapshot.exists() && entriesSnapshot.hasChildren()) {
+                    if (entriesSnapshot.exists() && entriesSnapshot.hasChildren()) {
                         for (entry in entriesSnapshot.children) {
                             if (entry.child("id").getValue(String::class.java) == entryId) {
                                 entry.ref.removeValue().await()
@@ -159,7 +162,11 @@ class SeriesControlRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateEntry(userId: String, entryId: String, selectedEntry: DomainSeriesControlModel) {
+    override suspend fun updateEntry(
+        userId: String,
+        entryId: String,
+        selectedEntry: DomainSeriesControlModel
+    ) {
         if (userId.isNotEmpty()) {
             val userSnapshot = databaseReference
                 .child(NODE_LIST_USERS)
@@ -179,7 +186,7 @@ class SeriesControlRepositoryImpl @Inject constructor(
                         .get()
                         .await()
 
-                    if(entriesSnapshot.exists() && entriesSnapshot.hasChildren()) {
+                    if (entriesSnapshot.exists() && entriesSnapshot.hasChildren()) {
                         for (entry in entriesSnapshot.children) {
                             if (entry.child("id").getValue(String::class.java) == entryId) {
                                 entry.ref.setValue(selectedEntry).await()
@@ -190,6 +197,10 @@ class SeriesControlRepositoryImpl @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun removeEntriesListener() {
+        listenerHolder.removeListener(ENTRIES_KEY_LISTENER)
     }
 
 }

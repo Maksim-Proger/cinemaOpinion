@@ -14,3 +14,4 @@ const val NODE_LIST_USERS = "list_users"
 
 const val MOVIES_KEY_LISTENER = "movies_key_listener"
 const val COMMENTS_KEY_LISTENER = "comments_key_listener"
+const val ENTRIES_KEY_LISTENER = "entries_key_listener"
