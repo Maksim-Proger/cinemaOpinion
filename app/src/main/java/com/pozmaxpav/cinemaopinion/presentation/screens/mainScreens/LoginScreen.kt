@@ -125,7 +125,7 @@ fun LoginScreen(
                 label = {
                     Text(
                         stringResource(id = R.string.text_for_edit_email_field),
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 },
                 leadingIcon = {
@@ -152,7 +152,12 @@ fun LoginScreen(
             CustomTextField(
                 value = password,
                 onValueChange = setPassword,
-                label = { Text(stringResource(id = R.string.text_for_edit_password_field)) },
+                label = {
+                    Text(
+                        stringResource(id = R.string.text_for_edit_password_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
                 leadingIcon = {
                     androidx.compose.material3.Icon(
                         imageVector = Icons.Default.Person,
@@ -167,7 +172,7 @@ fun LoginScreen(
                         focusManager.clearFocus()
                     }
                 ),
-                keyboardType = KeyboardType.Email,
+                keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             )
             // endregion
@@ -216,7 +221,12 @@ fun RegistrationWindow(
         CustomTextField(
             value = nikName,
             onValueChange = setNikName,
-            label = { Text(stringResource(id = R.string.text_for_add_name_field)) },
+            label = {
+                Text(
+                    stringResource(id = R.string.text_for_add_name_field),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
             leadingIcon = {
                 androidx.compose.material3.Icon(
                     imageVector = Icons.Default.Person,
@@ -237,7 +247,12 @@ fun RegistrationWindow(
         CustomTextField(
             value = email,
             onValueChange = setEmail,
-            label = { Text(stringResource(id = R.string.text_for_edit_email_field)) },
+            label = {
+                Text(
+                    stringResource(id = R.string.text_for_edit_email_field),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
             leadingIcon = {
                 androidx.compose.material3.Icon(
                     imageVector = Icons.Default.Person,
@@ -258,7 +273,12 @@ fun RegistrationWindow(
         CustomTextField(
             value = password,
             onValueChange = setPassword,
-            label = { Text(stringResource(id = R.string.text_for_edit_password_field)) },
+            label = {
+                Text(
+                    stringResource(id = R.string.text_for_edit_password_field),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
             leadingIcon = {
                 androidx.compose.material3.Icon(
                     imageVector = Icons.Default.Person,
@@ -284,6 +304,7 @@ fun RegistrationWindow(
         ) {
             CustomTextButton(
                 textButton = stringResource(R.string.button_save),
+                endPadding = 15.dp,
                 onClickButton = {
                     auxiliaryUserViewModel.addUser(nikName, email, password)
                     onClose()

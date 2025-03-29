@@ -46,6 +46,8 @@ class ApiViewModel @Inject constructor(
     private val _topListMovies = MutableStateFlow<MovieTopList?>(null)
     val topListMovies: StateFlow<MovieTopList?> get() = _topListMovies.asStateFlow()
 
+    var isInitialized = false
+
     private val _searchMovies = MutableStateFlow<MovieSearchList?>(null)
     val searchMovies = _searchMovies.asStateFlow()
     private val _searchMovies2 = MutableStateFlow<MovieSearchList2?>(null)
@@ -85,6 +87,7 @@ class ApiViewModel @Inject constructor(
                 _premiereMovies.value = movies
                 delay(500)
                 _state.value = State.Success
+                isInitialized = true
             } catch (e: Exception) {
                 e.printStackTrace()
             }

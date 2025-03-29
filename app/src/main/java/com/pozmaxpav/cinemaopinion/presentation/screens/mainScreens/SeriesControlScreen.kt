@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -185,9 +187,7 @@ fun SeriesControlScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(
-                                    modifier = Modifier.weight(0.9f)
-                                ) {
+                                Row(modifier = Modifier.weight(0.9f)) {
                                     Item(entry) {
                                         selectedEntry = entry
                                         openBottomSheetChange = true
@@ -218,11 +218,11 @@ fun SeriesControlScreen(
         }
     }
 
-    DisposableEffect(Unit) {
-        onDispose {
-            seriesControlViewModel.onCleared()
-        }
-    }
+//    DisposableEffect(Unit) {
+//        onDispose {
+//            seriesControlViewModel.onCleared()
+//        }
+//    }
 }
 
 @Composable
@@ -230,15 +230,31 @@ private fun Item(
     movie: DomainSeriesControlModel,
     onClick: () -> Unit
 ) {
-    Row(
+    Column(
         modifier = Modifier
+            .fillMaxWidth()
             .clickable { onClick() }
             .padding(10.dp)
     ) {
-        Text(
-            text = "${movie.title} - ${movie.season} сезон ${movie.series} серия",
-            style = MaterialTheme.typography.bodyLarge
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = movie.title,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+        Spacer(Modifier.padding(vertical = 3.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "${movie.season} сезон ${movie.series} серия",
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
     }
 }
 

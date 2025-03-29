@@ -110,7 +110,7 @@ class FireBaseMovieViewModel @Inject constructor(
     }
     fun savingChangeRecord(context: Context, username: String, stringResourceId: Int, title: String) {
         val stringResource = context.getString(stringResourceId)
-        val noteText = stringResource + title
+        val noteText = "$stringResource $title"
         val note = DomainChangelogModel(
             noteId = "", // Оставляем пустым, так как key будет сгенерирован позже
             username = username,

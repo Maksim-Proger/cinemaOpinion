@@ -152,6 +152,19 @@ fun SelectedMovieItem(
     }
 }
 
+fun capitalizeSentences(text: String): String {
+    if (text.isEmpty()) return text
+    val sentences = text.split("(?<=[.!?]\\s)|(?<=[.!?]\$)".toRegex())
+    return sentences.joinToString("") { sentence ->
+        if (sentence.isBlank()) sentence
+        else {
+            sentence.trimStart().replaceFirstChar { firstChar ->
+                if (firstChar.isLowerCase()) firstChar.titlecase() else firstChar.toString()
+            }
+        }
+    }
+}
+
 @Composable
 fun CustomTextFieldForComments(
     value: String,
@@ -166,7 +179,13 @@ fun CustomTextFieldForComments(
             .padding(horizontal = 15.dp, vertical = 15.dp),
         value = value,
         shape = RoundedCornerShape(16.dp),
-        onValueChange = onValueChange,
+        onValueChange = { newText ->
+            if (newText.endsWith('.') || newText.endsWith('!') || newText.endsWith('?')) {
+                onValueChange(capitalizeSentences(newText))
+            } else {
+                onValueChange(newText)
+            }
+        },
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
             focusedLabelColor = MaterialTheme.colorScheme.onPrimary,

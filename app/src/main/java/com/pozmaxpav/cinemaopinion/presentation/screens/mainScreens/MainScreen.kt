@@ -63,7 +63,6 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFi
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
-//import com.pozmaxpav.cinemaopinion.presentation.viewModel.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -73,9 +72,9 @@ import com.pozmaxpav.cinemaopinion.utilits.state.State
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    viewModel: MainViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel()
+    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel()
 ) {
 
     // region Переменные
@@ -83,10 +82,8 @@ fun MainScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     // DatePicker
-    // Значение выбранной даты
-    var selectedDate by remember { mutableStateOf<Pair<Int, String>?>(null) }
-    // Флаг подтверждения, что дата выбрана и можно отправлять запрос
-    var dateSelectionComplete by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf<Pair<Int, String>?>(null) } // Значение выбранной даты
+    var dateSelectionComplete by remember { mutableStateOf(false) } // Флаг подтверждения, что дата выбрана и можно отправлять запрос
 
     // Блок поиска
     var query by remember { mutableStateOf("") }
@@ -122,12 +119,11 @@ fun MainScreen(
     val topListMovies = apiViewModel.topListMovies.collectAsState()
     val searchMovies = apiViewModel.searchMovies.collectAsState()
     val searchMovies2 = apiViewModel.searchMovies2.collectAsState()
-    val newYearMoviesList by firebaseViewModel.movies.collectAsState()
+    val newYearMoviesList by fireBaseMovieViewModel.movies.collectAsState()
     val state by apiViewModel.state.collectAsState()
-    val showDialogEvents by viewModel.resultChecking.collectAsState()
+    val showDialogEvents by mainViewModel.resultChecking.collectAsState()
 
-    // Получаем username
-    val username by remember { mutableStateOf("") }
+    val isInitialized = apiViewModel.isInitialized // Флаг для отправки запроса к Api
 
     // Работаем с Fab
     val listState = rememberLazyListState()
@@ -149,12 +145,14 @@ fun MainScreen(
     // region Launchers
 
     LaunchedEffect(Unit) {
-        apiViewModel.fetchPremiersMovies(2025, "March")
-        apiViewModel.fetchTopListMovies(currentPage)
+        if (!isInitialized) {
+            apiViewModel.fetchPremiersMovies(2025, "March")
+            apiViewModel.fetchTopListMovies(currentPage)
+        }
     }
 
     LaunchedEffect(onAccountButtonClick) {
-        firebaseViewModel.getMovies(NODE_NEW_YEAR_LIST)
+        fireBaseMovieViewModel.getMovies(NODE_NEW_YEAR_LIST)
     }
 
     // Эффект, который реагирует на изменение scrollToTop и прокручивает список
@@ -549,7 +547,7 @@ fun MainScreen(
             }
         )
         LaunchedEffect(flag) {
-            viewModel.resetResultChecking()
+            mainViewModel.resetResultChecking()
         }
     }
 
