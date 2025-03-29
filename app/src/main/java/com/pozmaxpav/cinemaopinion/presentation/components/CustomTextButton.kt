@@ -19,6 +19,7 @@ fun CustomTextButton(
     textButton: String,
     topPadding: Dp = 0.dp,
     bottomPadding: Dp = 0.dp,
+    endPadding: Dp = 0.dp,
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     onClickButton: () -> Unit = {}
@@ -26,7 +27,7 @@ fun CustomTextButton(
     Card(
         modifier = Modifier
             .clickable(onClick = onClickButton)
-            .padding(top = topPadding, bottom = bottomPadding),
+            .padding(top = topPadding, bottom = bottomPadding, end = endPadding),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(16.dp),
         colors = CardDefaults.cardColors(
