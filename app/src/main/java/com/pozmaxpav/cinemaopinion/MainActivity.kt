@@ -27,10 +27,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        /**
-         * Настройка окна для использования всего экрана, включая области системы (такие, как статус-бар).
-         * Это позволяет содержимому окна отображаться за пределами системных областей.
-         */
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
