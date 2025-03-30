@@ -47,30 +47,23 @@ import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.theme.UrlLinkColor
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatDate
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaNewsScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    apiViewModel: ApiViewModel = hiltViewModel()
 ) {
-    val viewModel: MainViewModel = hiltViewModel()
-    val apiViewModel: ApiViewModel = hiltViewModel()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val mediaNewsList = apiViewModel.mediaNews.collectAsState()
     val newsToDisplay: List<NewsModel> = mediaNewsList.value?.items ?: emptyList()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var scrollToTop by remember { mutableStateOf(false) }
     val context = LocalContext.current
-
-    // Флаг для предотвращения повторных запусков
-    var isFirstLoad by rememberSaveable { mutableStateOf(true) }
-
-    // Логика переключения страниц
+    var isFirstLoad by rememberSaveable { mutableStateOf(true) } // Флаг для предотвращения повторных запусков
     val listState = rememberLazyListState()
     var currentPage by remember { mutableIntStateOf(1) }
     var totalPages by remember { mutableIntStateOf(1) }
@@ -97,8 +90,6 @@ fun MediaNewsScreen(
             isFirstLoad = false
         }
     }
-
-    // Показываем кнопки при скролле
     LaunchedEffect(Unit) {
         snapshotFlow { listState.layoutInfo }
             .collect { layoutInfo ->
@@ -108,7 +99,6 @@ fun MediaNewsScreen(
                     lastVisibleItemIndex >= totalItems - 1
             }
     }
-
     LaunchedEffect(scrollToTop) {
         if (scrollToTop) {
             listState.animateScrollToItem(0)
@@ -144,11 +134,9 @@ fun MediaNewsScreen(
 
             if (showPageSwitchingButtons) {
                 item {
-                    Row(
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .padding(vertical = 16.dp)
-                    ) {
+                    Row(modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(vertical = 16.dp)) {
                         if (canGoForward) {
                             IconButton(
                                 modifier = Modifier.wrapContentWidth(),

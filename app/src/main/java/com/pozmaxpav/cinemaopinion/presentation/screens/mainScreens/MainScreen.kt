@@ -1,15 +1,25 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -22,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,21 +54,22 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.system.CompositeRequest
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.system.CompositeRequest
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
-import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCard
-import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
+import com.pozmaxpav.cinemaopinion.presentation.components.NewYearMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
 import com.pozmaxpav.cinemaopinion.presentation.components.ShowDialogEvents
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCard
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
@@ -79,19 +91,19 @@ fun MainScreen(
 
     // region Переменные
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-    // DatePicker
+    // region DatePicker
     var selectedDate by remember { mutableStateOf<Pair<Int, String>?>(null) } // Значение выбранной даты
     var dateSelectionComplete by remember { mutableStateOf(false) } // Флаг подтверждения, что дата выбрана и можно отправлять запрос
+    // endregion
 
-    // Блок поиска
+    // region Блок поиска
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
     var searchCompleted by remember { mutableStateOf(false) } // Флаг для отображения списка фильмов после поиска
     val searchHistory = mutableListOf<String>() // TODO: Не работает
+    // endregion
 
-    // Расширенный поиск
+    // region Расширенный поиск
     var requestBody by remember {
         mutableStateOf(
             CompositeRequest(
@@ -100,21 +112,19 @@ fun MainScreen(
             )
         )
     }
-    // Флаг для предотвращения повторной отправки запроса
-    var sendRequestCompleted by remember { mutableStateOf(false) }
+    var sendRequestCompleted by remember { mutableStateOf(false) } // Флаг для предотвращения повторной отправки запроса
+    // endregion
 
-    // Состояния для открытия страниц
+    // region Состояния для открытия страниц
     var showDatePicker by remember { mutableStateOf(false) }
     var onFilterButtonClick by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
     var onAdvancedSearchButtonClick by remember { mutableStateOf(false) }
     var locationShowDialogEvents by remember { mutableStateOf(false) }
     var locationShowPageAppDescription by remember { mutableStateOf(false) }
+    // endregion
 
-    // Заголовок для AppBar
-    var titleTopBarState by remember { mutableStateOf(false) }
-
-    // Работаем с ViewModel
+    // region Работаем с ViewModel
     val premiereMovies = apiViewModel.premiersMovies.collectAsState()
     val topListMovies = apiViewModel.topListMovies.collectAsState()
     val searchMovies = apiViewModel.searchMovies.collectAsState()
@@ -122,52 +132,51 @@ fun MainScreen(
     val newYearMoviesList by fireBaseMovieViewModel.movies.collectAsState()
     val state by apiViewModel.state.collectAsState()
     val showDialogEvents by mainViewModel.resultChecking.collectAsState()
+    // endregion
 
-    val isInitialized = apiViewModel.isInitialized // Флаг для отправки запроса к Api
-
-    // Работаем с Fab
+    // region Работаем с Fab
     val listState = rememberLazyListState()
     val lisStateRow = rememberLazyListState()
     val isExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
     val isScrolling = remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     var scrollToTop by remember { mutableStateOf(false) }
+    // endregion
 
-    // Логика переключения страницы
+    var titleTopBarState by remember { mutableStateOf(false) } // Заголовок для AppBar
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val isInitialized = apiViewModel.isInitialized // Флаг для отправки запроса к Api
+    var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
+    var selectedNewYearMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+
+    // region Логика переключения страницы
     var currentPage by remember { mutableIntStateOf(1) }
     var showPageSwitchingButtons by remember { mutableStateOf(false) }
     var saveSearchQuery by remember { mutableStateOf("") } // Сохраняем содержание поиска
-
-    var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
-    var selectedNewYearMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    // endregion
 
     // endregion
 
     // region Launchers
-
     LaunchedEffect(Unit) {
         if (!isInitialized) {
             apiViewModel.fetchPremiersMovies(2025, "March")
             apiViewModel.fetchTopListMovies(currentPage)
         }
     }
-
     LaunchedEffect(onAccountButtonClick) {
         fireBaseMovieViewModel.getMovies(NODE_NEW_YEAR_LIST)
     }
-
-    // Эффект, который реагирует на изменение scrollToTop и прокручивает список
     LaunchedEffect(scrollToTop) {
         if (scrollToTop) {
             listState.animateScrollToItem(0)
             scrollToTop = false
         }
-    }
-
-    // Эффект, который будет зависеть от состояния списка (для переключения страницы)
+    } // Эффект, который реагирует на изменение scrollToTop и прокручивает список
     LaunchedEffect(Unit) {
         snapshotFlow { listState.layoutInfo } // Создаем поток, который будет отслеживать изменения в состоянии layoutInfo списка
             .collect { layoutInfo -> // Подписываемся на изменения в этом потоке
-                val totalItems = layoutInfo.totalItemsCount // Получаем общее количество элементов в списке
+                val totalItems =
+                    layoutInfo.totalItemsCount // Получаем общее количество элементов в списке
 
                 // Получаем индекс последнего видимого элемента; если нет видимых элементов, устанавливаем 0
                 val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
@@ -176,8 +185,7 @@ fun MainScreen(
                 // Устанавливаем showPageSwitchingButtons в true, если последний видимый элемент - это последний элемент списка и фильтр активен
                 showPageSwitchingButtons = lastVisibleItemIndex >= totalItems - 1
             }
-    }
-
+    } // Эффект, который будет зависеть от состояния списка (для переключения страницы)
     // endregion
 
     Scaffold(
@@ -191,10 +199,17 @@ fun MainScreen(
                         stringResource(id = R.string.top_app_bar_header_name_top_list_movies)
                     },
                     onSearchButtonClick = { searchBarActive = !searchBarActive },
-                    onAdvancedSearchButtonClick = { onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick },
+                    onAdvancedSearchButtonClick = {
+                        onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick
+                    },
                     onAccountButtonClick = { onAccountButtonClick = !onAccountButtonClick },
                     scrollBehavior = scrollBehavior,
-                    onTransitionAction = { navigateFunction(navController, Route.ListOfChangesScreen.route) }
+                    onTransitionAction = {
+                        navigateFunction(
+                            navController,
+                            Route.ListOfChangesScreen.route
+                        )
+                    }
                 )
             }
         },
@@ -279,7 +294,7 @@ fun MainScreen(
             }
 
             if (sendRequestCompleted) {
-                requestBody.let { compositeRequest  ->
+                requestBody.let { compositeRequest ->
                     apiViewModel.searchFilmsByFilters(
                         compositeRequest.type,
                         compositeRequest.keyword,
@@ -288,7 +303,8 @@ fun MainScreen(
                         compositeRequest.ratingFrom,
                         compositeRequest.yearFrom,
                         compositeRequest.yearTo,
-                        currentPage)
+                        currentPage
+                    )
                     sendRequestCompleted = false
                 }
             }
@@ -300,9 +316,7 @@ fun MainScreen(
                         onClick = { selectedMovie = null },
                         padding = padding,
                     )
-                    BackHandler {
-                        selectedMovie = null
-                    }
+                    BackHandler { selectedMovie = null }
 
                 } else if (selectedNewYearMovie != null) {
                     DetailsCard(
@@ -310,21 +324,16 @@ fun MainScreen(
                         onCloseButton = { selectedNewYearMovie = null },
                         padding
                     )
-                    BackHandler {
-                        selectedNewYearMovie = null
-                    }
-                }
-                else {
+                    BackHandler { selectedNewYearMovie = null }
+                } else {
                     val moviesToDisplay: List<MovieData> = when {
                         searchCompleted -> {
                             val mainMovies = searchMovies.value
                             val fallbackMovies = searchMovies2.value
-                            if (mainMovies != null && mainMovies.items.isNotEmpty()) {
-                                mainMovies.items
-                            } else {
-                                fallbackMovies?.films ?: emptyList()
-                            }
+                            if (mainMovies != null && mainMovies.items.isNotEmpty()) mainMovies.items
+                            else fallbackMovies?.films ?: emptyList()
                         }
+
                         onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
                         else -> premiereMovies.value?.items ?: emptyList()
                     }
@@ -332,12 +341,10 @@ fun MainScreen(
                         searchCompleted -> {
                             val mainMovies = searchMovies.value
                             val fallbackMovies = searchMovies2.value
-                            if (mainMovies != null && mainMovies.totalPages != 0) {
-                                mainMovies.totalPages
-                            } else {
-                                fallbackMovies?.pagesCount ?: 0
-                            }
+                            if (mainMovies != null && mainMovies.totalPages != 0) mainMovies.totalPages
+                            else fallbackMovies?.pagesCount ?: 0
                         }
+
                         onFilterButtonClick -> topListMovies.value?.pagesCount ?: 0
                         else -> 0
                     }
@@ -352,7 +359,7 @@ fun MainScreen(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(padding),
-                                contentAlignment = Alignment.Center // Центрируем содержимое
+                                contentAlignment = Alignment.Center
                             ) {
                                 CustomLottieAnimation(
                                     nameFile = "loading_animation.lottie",
@@ -360,54 +367,17 @@ fun MainScreen(
                                 )
                             }
                         }
+
                         is State.Success -> {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(padding)
-                            ) {
-//                                AnimatedVisibility(
-//                                    visible = !isScrolling.value,
-//                                    enter = slideInHorizontally(
-//                                        initialOffsetX = { -it },
-//                                        animationSpec = tween(durationMillis = 300)
-//                                    ),
-//                                    exit = slideOutHorizontally(
-//                                        targetOffsetX = { -it },
-//                                        animationSpec = tween(durationMillis = 300)
-//                                    )
-//                                ) {
-//                                    Column {
-//                                        Row(
-//                                            modifier = Modifier
-//                                                .fillMaxWidth()
-//                                                .padding(horizontal = 16.dp),
-//                                            horizontalArrangement = Arrangement.Center
-//                                        ) {
-//                                            Text(
-//                                                text = stringResource(R.string.title_of_the_list_for_the_new_year),
-//                                                style = MaterialTheme.typography.displayMedium
-//                                            )
-//                                        }
-//                                        Spacer(modifier = Modifier.padding(6.dp))
-//                                        LazyRow(
-//                                            modifier = Modifier
-//                                                .fillMaxWidth()
-//                                                .height(150.dp)
-//                                                .padding(horizontal = 16.dp)
-//                                                .background(
-//                                                    color = MaterialTheme.colorScheme.surface
-//                                                ),
-//                                            state = lisStateRow
-//                                        ) {
-//                                            items(newYearMoviesList, key = { it.id }) { newYearMovie ->
-//                                                NewYearMovieItem(newYearMovie = newYearMovie) {
-//                                                    selectedNewYearMovie = newYearMovie
-//                                                }
-//                                            }
-//                                        }
-//                                    }
-//                                }
+                            Column(modifier = Modifier
+                                .fillMaxSize()
+                                .padding(padding)) {
+//                                SeasonalEventList(
+//                                    isScrolling,
+//                                    lisStateRow,
+//                                    newYearMoviesList,
+//                                    selectedNewYearMovie
+//                                )
 
                                 LazyColumn(
                                     state = listState,
@@ -417,9 +387,7 @@ fun MainScreen(
                                     contentPadding = PaddingValues(13.dp)
                                 ) {
                                     items(moviesToDisplay, key = { it.id }) { movie ->
-                                        MovieItem(movie = movie) {
-                                            selectedMovie = movie
-                                        }
+                                        MovieItem(movie = movie) { selectedMovie = movie }
                                     }
 
                                     if (showPageSwitchingButtons) {
@@ -430,13 +398,18 @@ fun MainScreen(
                                                     .padding(vertical = 16.dp)
                                             ) {
                                                 if (canGoBack) {
-                                                    IconButton (
+                                                    IconButton(
                                                         onClick = {
                                                             currentPage--
                                                             if (onFilterButtonClick) {
-                                                                apiViewModel.fetchTopListMovies(currentPage)
+                                                                apiViewModel.fetchTopListMovies(
+                                                                    currentPage
+                                                                )
                                                             } else if (searchCompleted) {
-                                                                apiViewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                                                apiViewModel.fetchSearchMovies(
+                                                                    saveSearchQuery,
+                                                                    currentPage
+                                                                )
                                                             }
                                                             scrollToTop = true
                                                         },
@@ -449,15 +422,19 @@ fun MainScreen(
                                                         )
                                                     }
                                                 }
-
                                                 if (canGoForward) {
                                                     IconButton(
                                                         onClick = {
                                                             currentPage++
                                                             if (onFilterButtonClick) {
-                                                                apiViewModel.fetchTopListMovies(currentPage)
+                                                                apiViewModel.fetchTopListMovies(
+                                                                    currentPage
+                                                                )
                                                             } else if (searchCompleted) {
-                                                                apiViewModel.fetchSearchMovies(saveSearchQuery, currentPage)
+                                                                apiViewModel.fetchSearchMovies(
+                                                                    saveSearchQuery,
+                                                                    currentPage
+                                                                )
                                                             }
                                                             scrollToTop = true
                                                         },
@@ -476,6 +453,7 @@ fun MainScreen(
                                 }
                             }
                         }
+
                         is State.Error -> {}
                     }
                 }
@@ -588,6 +566,58 @@ fun MainScreen(
         )
     }
 
+}
+
+@Composable
+private fun SeasonalEventList( // Пока только для нового года
+    isScrolling: androidx.compose.runtime.State<Boolean>,
+    lisStateRow: LazyListState,
+    newYearMoviesList: List<DomainSelectedMovieModel>,
+    selectedNewYearMovie: DomainSelectedMovieModel?
+) {
+    var selectedNewYearMovie1 = selectedNewYearMovie
+    AnimatedVisibility(
+        visible = !isScrolling.value,
+        enter = slideInHorizontally(
+            initialOffsetX = { -it },
+            animationSpec = tween(durationMillis = 300)
+        ),
+        exit = slideOutHorizontally(
+            targetOffsetX = { -it },
+            animationSpec = tween(durationMillis = 300)
+        )
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.title_of_the_list_for_the_new_year),
+                    style = MaterialTheme.typography.displayMedium
+                )
+            }
+            Spacer(modifier = Modifier.padding(6.dp))
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .padding(horizontal = 16.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surface
+                    ),
+                state = lisStateRow
+            ) {
+                items(newYearMoviesList, key = { it.id }) { newYearMovie ->
+                    NewYearMovieItem(newYearMovie = newYearMovie) {
+                        selectedNewYearMovie1 = newYearMovie
+                    }
+                }
+            }
+        }
+    }
 }
 
 
