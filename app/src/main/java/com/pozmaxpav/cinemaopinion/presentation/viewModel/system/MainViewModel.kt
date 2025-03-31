@@ -2,20 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel.system
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieList
-import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList
-import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList2
-import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieTopList
-import com.pozmaxpav.cinemaopinion.domain.models.api.information.Information
-import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsList
-import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetPremiereMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchFilmsByFiltersUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchMovieByIdUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchMovies2UseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetTopMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.api.information.GetMovieInformationUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.api.news.GetMediaNewsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.ClearUserDataUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetAppVersionUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetRegistrationFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetResultCheckingUseCase
@@ -24,11 +11,8 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveAppVersionUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveRegistrationFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveResultCheckingUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveUserIdUseCase
-import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,7 +26,8 @@ class MainViewModel @Inject constructor(
     private val saveRegistrationFlagUseCase: SaveRegistrationFlagUseCase,
     private val getRegistrationFlagUseCase: GetRegistrationFlagUseCase,
     private val saveUserIdUseCase: SaveUserIdUseCase,
-    private val getUserIdUseCase: GetUserIdUseCase
+    private val getUserIdUseCase: GetUserIdUseCase,
+    private val clearUserDataUseCase: ClearUserDataUseCase
 ) : ViewModel() {
 
     private val _versionApp = MutableStateFlow("Unknown")
@@ -97,6 +82,15 @@ class MainViewModel @Inject constructor(
             try {
                 val id = getUserIdUseCase() ?: "Unknown"
                 _userId.value = id
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    fun clearUserData() {
+        viewModelScope.launch {
+            try {
+                clearUserDataUseCase()
             } catch (e: Exception) {
                 e.printStackTrace()
             }

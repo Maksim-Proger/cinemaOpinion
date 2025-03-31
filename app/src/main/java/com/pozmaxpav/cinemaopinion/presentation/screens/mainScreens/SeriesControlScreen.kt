@@ -36,7 +36,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,7 +49,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -60,8 +58,8 @@ import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SeriesControlViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
@@ -271,7 +269,7 @@ private fun AddItem(
     CustomTextField(
         value = titleMovie,
         onValueChange = setTitleMovie,
-        placeholder = {
+        label = {
             Text(
                 stringResource(R.string.enter_the_name_of_the_movie_series),
                 style = MaterialTheme.typography.bodySmall
@@ -390,14 +388,15 @@ private fun ChangeItem(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun textFieldColors() = TextFieldDefaults.outlinedTextFieldColors(
-    focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+private fun textFieldColors() = TextFieldDefaults.colors(
+    focusedIndicatorColor  = MaterialTheme.colorScheme.onPrimary,
+    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
     focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
     unfocusedLabelColor = MaterialTheme.colorScheme.outline,
     focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
     unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
     focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-    unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline
+    unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+    cursorColor = MaterialTheme.colorScheme.onPrimary
 )
 

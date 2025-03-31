@@ -35,9 +35,7 @@ fun CustomTextButton(
             contentColor = contentColor
         )
     ) {
-        Box(
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Box(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = textButton,
                 style = MaterialTheme.typography.bodyMedium
@@ -45,3 +43,4 @@ fun CustomTextButton(
         }
     }
 }
+

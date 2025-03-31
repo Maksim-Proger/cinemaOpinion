@@ -34,6 +34,9 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("release")  // Используем релизный ключ
+        }
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
@@ -54,7 +57,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
     packaging {
         resources {
@@ -69,13 +72,13 @@ dependencies {
     implementation("com.airbnb.android:lottie-compose:6.0.1")
 
     // WebView
-    implementation("androidx.webkit:webkit:1.12.1")
+    implementation("androidx.webkit:webkit:1.13.0")
 
     // Module
     implementation(project(":introductoryscreens"))
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
     implementation("com.google.firebase:firebase-database:21.0.0")
 
     // Dagger Hilt
@@ -84,7 +87,7 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     //Compose Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.navigation:navigation-compose:2.8.9")
 
     // Retrofit
     implementation(libs.retrofit)
@@ -107,7 +110,7 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.1.3")
+    implementation("androidx.datastore:datastore-preferences:1.1.4")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
+package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

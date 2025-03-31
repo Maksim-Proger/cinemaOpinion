@@ -17,110 +17,122 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pozmaxpav.cinemaopinion.utilits.Constants.GENERAL_TEXT_FOR_ALERT_DIALOG
-import com.pozmaxpav.cinemaopinion.utilits.Constants.NEW_YEAR_TEXT_FOR_ALERT_DIALOG
 
 @Composable
-fun ShowDialogEvents(
-    onDismiss: () -> Unit
-) {
+fun ShowDialogEvents(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Card (
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary
-                    )
-                ) {
-                    Box(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            text = "Отлично!",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
-                }
-            }
-//            TextButton(
-//                onClick = onDismiss
-//            ) {
-//                Card (
-//                    shape = RoundedCornerShape(8.dp),
-//                    elevation = CardDefaults.cardElevation(8.dp),
-//                    colors = CardDefaults.cardColors(
-//                        containerColor = MaterialTheme.colorScheme.secondary,
-//                        contentColor = MaterialTheme.colorScheme.onSecondary
-//                    )
-//                ) {
-//                    Box(
-//                        modifier = Modifier.padding(16.dp)
-//                    ) {
-//                        Text(
-//                            text = "Ура!!!! \uD83C\uDF89",
-//                            style = MaterialTheme.typography.titleMedium
-//                        )
-//                    }
-//                }
-//            }
+            WithoutEventButton(onDismiss)
+//            WithEventButton(onDismiss)
         },
         text = {
-            Column(
-                modifier = Modifier.wrapContentSize().padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Text(
-                        text = "\u0021",
-                        fontSize = 65.sp,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                Spacer(modifier = Modifier.padding(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = GENERAL_TEXT_FOR_ALERT_DIALOG,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-//            Column(
-//                modifier = Modifier.wrapContentSize().padding(16.dp)
-//            ) {
-//               Row(
-//                   modifier = Modifier.fillMaxWidth(),
-//                   horizontalArrangement = Arrangement.Start
-//               ) {
-//                   Text(
-//                       text = "\u2744",
-//                       fontSize = 65.sp
-//                   )
-//               }
-//               Spacer(modifier = Modifier.padding(16.dp))
-//               Row(
-//                   modifier = Modifier.fillMaxWidth()
-//               ) {
-//                   Text(
-//                       text = TEXT_FOR_ALERT_DIALOG,
-//                       style = MaterialTheme.typography.labelMedium,
-//                       color = MaterialTheme.colorScheme.secondary
-//                   )
-//               }
-//            }
+            WithoutEventText()
+//            WithEventText()
         }
     )
+}
+
+@Composable
+private fun WithEventText() {
+    Column(
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text = "\u2744",
+                fontSize = 65.sp
+            )
+        }
+        Spacer(modifier = Modifier.padding(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = GENERAL_TEXT_FOR_ALERT_DIALOG,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+    }
+}
+
+@Composable
+private fun WithoutEventText() {
+    Column(
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text = "\u0021",
+                fontSize = 65.sp,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+        Spacer(modifier = Modifier.padding(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = GENERAL_TEXT_FOR_ALERT_DIALOG,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+    }
+}
+
+@Composable
+private fun WithEventButton(onDismiss: () -> Unit) {
+    TextButton(onClick = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(8.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
+            )
+        ) {
+            Box(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Ура!!!! \uD83C\uDF89",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun WithoutEventButton(onDismiss: () -> Unit) {
+    TextButton(onClick = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(8.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
+            )
+        ) {
+            Box(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Отлично!",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
+    }
 }

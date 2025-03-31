@@ -22,10 +22,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SettingsMenu(
-    // Передаем элементы меню как один блок кода и функцию для закрытия меню
-    content: @Composable (closeMenu: () -> Unit) -> Unit
-) {
+fun SettingsMenu(content: @Composable (closeMenu: () -> Unit) -> Unit) {
     var menuOpeningStatus by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.wrapContentSize()) {
@@ -42,19 +39,13 @@ fun SettingsMenu(
                 .background(MaterialTheme.colorScheme.secondary),
             expanded = menuOpeningStatus,
             onDismissRequest = { menuOpeningStatus = false },
-            offset = DpOffset(x = 0.dp, y = 10.dp) // Смещение раскрывающегося меню вниз
+            offset = DpOffset(x = 0.dp, y = 10.dp)
         ) {
-            content { menuOpeningStatus = false }
-
-            /*
-            Эта запись позволяет передать функцию закрытия меню в контент. Когда вы вызываете
-            переданный блок в content, вы вызываете эту функцию и автоматически закрываете меню,
-            устанавливая menuOpeningStatus = false.
-             */
-        }
+            content {
+                menuOpeningStatus = false }
+            }
     }
 }
-
 
 @Composable
 fun MyDropdownMenuItem(
@@ -66,7 +57,7 @@ fun MyDropdownMenuItem(
         text = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSecondary
             )
         },

@@ -67,7 +67,8 @@ fun CustomTopAppBar(
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.primary,
+            scrolledContainerColor = MaterialTheme.colorScheme.primary
         )
     )
 }
