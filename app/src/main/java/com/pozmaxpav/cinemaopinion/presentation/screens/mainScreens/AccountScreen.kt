@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
@@ -27,6 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -43,6 +47,9 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUser
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunctionClearAllScreens
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 @Composable
 fun AccountScreen(
@@ -57,8 +64,10 @@ fun AccountScreen(
     val listAwards by auxiliaryUserViewModel.listAwards.collectAsState()
 
     LaunchedEffect(userId) {
-        auxiliaryUserViewModel.getUserData(userId)
-        auxiliaryUserViewModel.getAwardsList(userId)
+        if (userId != "Unknown") {
+            auxiliaryUserViewModel.getUserData(userId)
+            auxiliaryUserViewModel.getAwardsList(userId)
+        }
     }
 
     Card(
@@ -87,7 +96,7 @@ fun AccountScreen(
                 style = MaterialTheme.typography.displayLarge
             )
 
-            AccountSettingMenu(navController)
+            AccountSettingMenu(navController, mainViewModel)
 
         }
 
@@ -246,7 +255,14 @@ fun AccountScreen(
 
 
 @Composable
-private fun AccountSettingMenu(navController: NavHostController) {
+private fun AccountSettingMenu(
+    navController: NavHostController,
+    mainViewModel: MainViewModel,
+    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
+) {
+
+    val coroutineScope = rememberCoroutineScope()
+
     SettingsMenu { closeMenu ->
 
         MyDropdownMenuItem(
@@ -278,7 +294,25 @@ private fun AccountSettingMenu(navController: NavHostController) {
                 )
             }
         )
+
+        MyDropdownMenuItem(
+            onAction = {
+                coroutineScope.launch {
+                    mainViewModel.clearUserData()
+                    auxiliaryUserViewModel.clearFlag()
+                    navigateFunctionClearAllScreens(navController, Route.LoginScreen.route)
+                    closeMenu()
+                }
+            },
+            title = stringResource(R.string.drop_down_menu_item_exit),
+            leadingIcon = {
+                Icon(
+                    Icons.AutoMirrored.Filled.Logout,
+                    contentDescription = stringResource(id = R.string.description_icon_exit),
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+        )
     }
 }
-
 

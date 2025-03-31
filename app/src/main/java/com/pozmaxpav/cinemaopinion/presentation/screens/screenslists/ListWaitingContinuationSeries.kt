@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
+package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -48,13 +48,16 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
+import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WAITING_CONTINUATION_SERIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -66,29 +69,38 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListWatchedMovies(
+fun ListWaitingContinuationSeries(
     navController: NavHostController,
     firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel(),
+    apiViewModel: ApiViewModel = hiltViewModel(),
 ) {
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listMovies by firebaseViewModel.movies.collectAsState()
-    var selectedNote by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
-    var showTopBar by remember { mutableStateOf(false) }
-    val listState = rememberLazyListState()
+    val info by apiViewModel.informationMovie.collectAsState()
     val stateMovies by firebaseViewModel.movieDownloadStatus.collectAsState()
-    var openBottomSheetComments by remember { mutableStateOf(false) }
-    val (comment, setComment) = remember { mutableStateOf("") }
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
+    var openBottomSheetComments by remember { mutableStateOf(false) }
+    var selectedNote by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    var showTopBar by remember { mutableStateOf(false) }
+    val (comment, setComment) = remember { mutableStateOf("") }
+    val listState = rememberLazyListState()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        firebaseViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
+        firebaseViewModel.getMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
+        firebaseViewModel.observeListMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
     }
     LaunchedEffect(userId) {
         auxiliaryUserViewModel.getUserData(userId)
+    }
+    LaunchedEffect(selectedNote) {
+        selectedNote?.let { movie ->
+            apiViewModel.getInformationMovie(movie.id)
+        }
     }
 
     Scaffold(
@@ -97,7 +109,7 @@ fun ListWatchedMovies(
             if (!showTopBar) {
                 ClassicTopAppBar(
                     context,
-                    titleId = R.string.title_listWatched_movies,
+                    titleId = R.string.title_list_waiting_continuation_series,
                     scrollBehavior = scrollBehavior,
                     onTransitionAction = {
                         navigateFunction(navController, Route.MainScreen.route)
@@ -106,56 +118,6 @@ fun ListWatchedMovies(
             }
         }
     ) { innerPadding ->
-
-        if (openBottomSheetComments) {
-            MyBottomSheet(
-                onClose = {
-                    openBottomSheetComments = !openBottomSheetComments
-                },
-                content = {
-                    CustomTextFieldForComments(
-                        value = comment,
-                        onValueChange = setComment,
-                        placeholder = {
-                            Text(
-                                text = stringResource(R.string.placeholder_for_comment_field),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.outline
-                            )
-                        },
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                if (userData != null) {
-                                    firebaseViewModel.addComment(
-                                        NODE_LIST_WATCHED_MOVIES,
-                                        selectedNote!!.id.toDouble(),
-                                        userData!!.nikName,
-                                        comment
-                                    )
-                                    firebaseViewModel.savingChangeRecord(
-                                        context,
-                                        userData!!.nikName,
-                                        R.string.record_added_comment_to_movie_in_the_viewed,
-                                        selectedNote!!.nameFilm
-                                    )
-                                    showToast(context, R.string.comment_added)
-                                    setComment("")
-                                    openBottomSheetComments = !openBottomSheetComments
-                                }
-                            }
-                        )
-                    )
-                },
-                fraction = 0.7f
-            )
-        }
-
         if (selectedNote != null) {
             Column(
                 modifier = Modifier
@@ -163,12 +125,72 @@ fun ListWatchedMovies(
                     .background(MaterialTheme.colorScheme.background)
                     .padding(vertical = 45.dp)
             ) {
+
+                if (openBottomSheetComments) {
+                    MyBottomSheet(
+                        onClose = {
+                            openBottomSheetComments = !openBottomSheetComments
+                        },
+                        content = {
+                            CustomTextFieldForComments(
+                                value = comment,
+                                onValueChange = setComment,
+                                placeholder = {
+                                    Text(
+                                        text = stringResource(R.string.button_leave_comment),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.outline
+                                    )
+                                },
+                                keyboardActions = KeyboardActions(
+                                    onDone = {
+                                        if (userData != null) {
+                                            firebaseViewModel.addComment(
+                                                NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                                selectedNote!!.id.toDouble(),
+                                                userData!!.nikName,
+                                                comment
+                                            )
+                                            firebaseViewModel.savingChangeRecord(
+                                                context,
+                                                userData!!.nikName,
+                                                R.string.record_added_comment_to_series,
+                                                selectedNote!!.nameFilm
+                                            )
+                                            showToast(context, R.string.comment_added)
+                                            setComment("")
+                                            openBottomSheetComments = !openBottomSheetComments
+                                        }
+                                    }
+                                )
+                            )
+                        },
+                        fraction = 0.7f
+                    )
+                    BackHandler {
+                        openBottomSheetComments = !openBottomSheetComments
+                    }
+                }
+
                 DetailsCardSelectedMovie(
                     movie = selectedNote!!,
-                    isGeneralList = false,
+                    isGeneralList = true,
                     isShowCommentButton = true,
                     content = {
-                        ShowCommentWatchedMoviesList(movieId = selectedNote!!.id)
+                        ShowCommentWaitingContinuationSeriesList(selectedNote!!.id)
+                    },
+                    openDescription = {
+                        ExpandedCard(
+                            title = stringResource(R.string.text_for_expandedCard_field),
+                            description = info?.description ?: stringResource(R.string.limit_is_over),
+                            bottomPadding = 7.dp
+                        )
                     },
                     commentButton = {
                         CustomTextButton(
@@ -178,6 +200,30 @@ fun ListWatchedMovies(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+                        )
+                    },
+                    movieTransferButton = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_viewed),
+                            topPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = {
+                                if (userData != null) {
+                                    firebaseViewModel.sendingToTheViewedFolder(
+                                        NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                        NODE_LIST_WATCHED_MOVIES,
+                                        selectedNote!!.id.toDouble()
+                                    )
+                                    showToast(context, R.string.series_has_been_moved_to_viewed)
+                                    firebaseViewModel.savingChangeRecord(
+                                        context,
+                                        userData!!.nikName,
+                                        R.string.record_series_has_been_moved_to_viewed,
+                                        selectedNote!!.nameFilm
+                                    )
+                                }
+                            }
                         )
                     },
                     onClick = {
@@ -248,7 +294,7 @@ fun ListWatchedMovies(
 }
 
 @Composable
-fun ShowCommentWatchedMoviesList(
+fun ShowCommentWaitingContinuationSeriesList(
     movieId: Int,
     firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
 ) {
@@ -256,8 +302,8 @@ fun ShowCommentWatchedMoviesList(
     val listComments by firebaseViewModel.comments.collectAsState()
 
     LaunchedEffect(movieId) {
-        firebaseViewModel.getComments(NODE_LIST_WATCHED_MOVIES, movieId)
-        firebaseViewModel.observeComments(NODE_LIST_WATCHED_MOVIES, movieId)
+        firebaseViewModel.getComments(NODE_LIST_WAITING_CONTINUATION_SERIES, movieId)
+        firebaseViewModel.observeComments(NODE_LIST_WAITING_CONTINUATION_SERIES, movieId)
     }
 
     when (stateComments) {

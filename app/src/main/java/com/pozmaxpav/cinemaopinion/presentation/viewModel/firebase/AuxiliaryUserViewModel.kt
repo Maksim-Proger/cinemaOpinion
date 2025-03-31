@@ -86,6 +86,9 @@ class AuxiliaryUserViewModel @Inject constructor(
             }
         }
     }
+    fun clearFlag() {
+        _loginVerificationResult.value = null
+    }
 
     fun resetToastState() {
         _showToast.value = false

@@ -318,14 +318,19 @@ fun showToast(context: Context, messageId: Int) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
-fun navigateFunction(
-    navController: NavHostController,
-    route: String
-) {
+fun navigateFunction(navController: NavHostController, route: String) {
     navController.navigate(route) {
         popUpTo(navController.graph.startDestinationId) { saveState = true }
         launchSingleTop = true
         restoreState = true
+    }
+}
+
+fun navigateFunctionClearAllScreens(navController: NavHostController, route: String) {
+    navController.navigate(route) {
+        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+//        popUpTo(0) // Очищаем весь стек
+        launchSingleTop = true
     }
 }
 

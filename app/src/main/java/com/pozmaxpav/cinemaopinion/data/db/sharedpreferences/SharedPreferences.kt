@@ -28,6 +28,13 @@ object SharedPreferences {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
         return sharedPreferences.getString(USER_ID, null)
     }
+    fun clearUserData(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
+        sharedPreferences.edit()
+            .remove(USER_ID)
+            .remove(REGISTRATION_FLAG)
+            .apply()
+    }
 
     fun saveAppVersion(context: Context, version: String) {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES, Context.MODE_PRIVATE)
