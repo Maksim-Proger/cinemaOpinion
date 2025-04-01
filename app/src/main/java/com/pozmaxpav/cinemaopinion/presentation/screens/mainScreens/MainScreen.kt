@@ -67,7 +67,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.NewYearMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
-import com.pozmaxpav.cinemaopinion.presentation.components.ShowDialogEvents
+import com.pozmaxpav.cinemaopinion.presentation.components.PreviewAlertDialog
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCard
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -504,7 +504,7 @@ fun MainScreen(
     if (!showDialogEvents && !locationShowDialogEvents) {
         CustomBoxShowOverlay(
             content = {
-                ShowDialogEvents {
+                PreviewAlertDialog {
                     locationShowDialogEvents = true
                     locationShowPageAppDescription = true
                 }

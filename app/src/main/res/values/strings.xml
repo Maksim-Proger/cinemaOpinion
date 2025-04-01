@@ -22,6 +22,7 @@
     <string name="title_media_news_screen">Медиа новости</string>
     <string name="title_login_screen">Вход / Регистрация</string>
     <string name="title_listWatched_movies">Просмотренные фильмы</string>
+    <string name="title_page_description">Что нового:</string>
 
     <!--  Text for Changes Records Screen  -->
     <string name="record_added_comment_to_movie">добавил(а) комментарий к фильму: </string>
@@ -73,6 +74,7 @@
     <string name="text_buttons_film_card_to_general_list_movies">В общий список с фильмами</string>
     <string name="text_buttons_film_card_to_general_list_serials">В общий список с сериалами</string>
     <string name="button_viewed_screen">Просмотренные</string>
+    <string name="button_to_begin">Погнали</string>
     <string name="button_move_to_series">Переместить в сериалы</string>
     <string name="button_move_to_waiting_list">Переместить в лист ожидания</string>
 

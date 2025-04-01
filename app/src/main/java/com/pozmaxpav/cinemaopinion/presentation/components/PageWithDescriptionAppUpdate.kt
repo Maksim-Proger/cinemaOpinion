@@ -15,24 +15,41 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.utilits.Constants.DEVELOPER_COMMENT
 import com.pozmaxpav.cinemaopinion.utilits.Constants.NEW_YEAR_TEXT
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PageDescription(onDismiss: () -> Unit) {
     val scrollState = rememberScrollState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val context = LocalContext.current
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        topBar = {
+            ClassicTopAppBar(
+                context = context,
+                titleId = R.string.title_page_description,
+                scrollBehavior = scrollBehavior
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { innerPadding ->
         WithoutEventText(innerPadding, scrollState, onDismiss)
 //        WithEventText(innerPadding, scrollState, onDismiss)
     }
@@ -70,23 +87,13 @@ private fun WithoutEventText(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = onDismiss) {
-                Card(
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary
-                    )
-                ) {
-                    Box(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Погнали",
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
-            }
+            CustomTextButton(
+                textButton = stringResource(R.string.button_to_begin),
+                textStyle = MaterialTheme.typography.displayLarge,
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+                onClickButton = onDismiss
+            )
         }
     }
 }

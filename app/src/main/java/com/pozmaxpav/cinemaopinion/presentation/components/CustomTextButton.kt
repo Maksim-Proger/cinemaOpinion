@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -22,6 +23,7 @@ fun CustomTextButton(
     endPadding: Dp = 0.dp,
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     onClickButton: () -> Unit = {}
 ) {
     Card(
@@ -38,7 +40,7 @@ fun CustomTextButton(
         Box(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = textButton,
-                style = MaterialTheme.typography.bodyMedium
+                style = textStyle
             )
         }
     }

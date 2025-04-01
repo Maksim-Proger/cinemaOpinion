@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.pozmaxpav.cinemaopinion.utilits.Constants.GENERAL_TEXT_FOR_ALERT_DIALOG
 
 @Composable
-fun ShowDialogEvents(onDismiss: () -> Unit) {
+fun PreviewAlertDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
@@ -32,7 +32,8 @@ fun ShowDialogEvents(onDismiss: () -> Unit) {
         text = {
             WithoutEventText()
 //            WithEventText()
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     )
 }
 
@@ -53,9 +54,7 @@ private fun WithEventText() {
             )
         }
         Spacer(modifier = Modifier.padding(16.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = GENERAL_TEXT_FOR_ALERT_DIALOG,
                 style = MaterialTheme.typography.labelMedium,
@@ -77,15 +76,13 @@ private fun WithoutEventText() {
             horizontalArrangement = Arrangement.Start
         ) {
             Text(
-                text = "\u0021",
+                text = "\uD83D\uDC4B",
                 fontSize = 65.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
         }
         Spacer(modifier = Modifier.padding(16.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = GENERAL_TEXT_FOR_ALERT_DIALOG,
                 style = MaterialTheme.typography.labelMedium,
@@ -97,42 +94,22 @@ private fun WithoutEventText() {
 
 @Composable
 private fun WithEventButton(onDismiss: () -> Unit) {
-    TextButton(onClick = onDismiss) {
-        Card(
-            shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary
-            )
-        ) {
-            Box(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "Ура!!!! \uD83C\uDF89",
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-        }
-    }
+    CustomTextButton(
+        textButton = "Ура!!!! \uD83C\uDF89",
+        textStyle = MaterialTheme.typography.labelMedium,
+        containerColor = MaterialTheme.colorScheme.secondary,
+        contentColor = MaterialTheme.colorScheme.onSecondary,
+        onClickButton = onDismiss
+    )
 }
 
 @Composable
 private fun WithoutEventButton(onDismiss: () -> Unit) {
-    TextButton(onClick = onDismiss) {
-        Card(
-            shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary
-            )
-        ) {
-            Box(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "Отлично!",
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-        }
-    }
+    CustomTextButton(
+        textButton = "Отлично!",
+        textStyle = MaterialTheme.typography.labelMedium,
+        containerColor = MaterialTheme.colorScheme.secondary,
+        contentColor = MaterialTheme.colorScheme.onSecondary,
+        onClickButton = onDismiss
+    )
 }
