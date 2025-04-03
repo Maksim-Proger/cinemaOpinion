@@ -20,26 +20,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import com.pozmaxpav.cinemaopinion.R
 
 @Composable
 fun SettingsRadioButtons(
     optionsList: List<String>,
-    onOptionClick: (String) -> Unit // TODO: Как это работает?
+    onOptionClick: (String) -> Unit
 ) {
     var selectedOption by remember { mutableStateOf(optionsList[0]) }
 
     Card(
-        modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(16.dp),
+        modifier = Modifier
+            .wrapContentHeight()
+            .fillMaxWidth()
+            .padding(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         )
     ) {
         Column(
-            modifier = Modifier.wrapContentHeight().fillMaxWidth(),
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.Center
         ) {
             optionsList.forEach { option ->
@@ -51,7 +54,7 @@ fun SettingsRadioButtons(
                             selected = selectedOption == option,
                             onClick = {
                                 selectedOption = option
-                                onOptionClick(option) // TODO: Как это работает?
+                                onOptionClick(option)
                             }
                         )
                         .padding(horizontal = 16.dp),

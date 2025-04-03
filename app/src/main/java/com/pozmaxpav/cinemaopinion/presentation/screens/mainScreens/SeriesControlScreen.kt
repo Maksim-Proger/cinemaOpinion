@@ -44,8 +44,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -55,6 +59,7 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -215,12 +220,6 @@ fun SeriesControlScreen(
             item { Spacer(Modifier.padding(45.dp)) }
         }
     }
-
-//    DisposableEffect(Unit) {
-//        onDispose {
-//            seriesControlViewModel.onCleared()
-//        }
-//    }
 }
 
 @Composable
@@ -303,77 +302,63 @@ private fun ChangeItem(
     val (season, setSeason) = remember { mutableStateOf("") }
     val (series, setSeries) = remember { mutableStateOf("") }
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     LaunchedEffect(Unit) {
         setSeason(selectedEntry.season.toString())
         setSeries(selectedEntry.series.toString())
     }
 
-    // region Season
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 15.dp),
+    CustomTextField(
         value = season,
         onValueChange = setSeason,
-        shape = RoundedCornerShape(16.dp),
-        placeholder = { Text("Укажите сезон") },
-        trailingIcon = if (season.isNotEmpty()) {
-            {
-                IconButton(onClick = { setSeason("") }) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(id = R.string.description_clear_text),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
+        label = {
+            Text(
+                text = "Укажите сезон",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
             }
-        } else null,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done
         ),
-        singleLine = true,
-        colors = textFieldColors()
+        keyboardType = KeyboardType.Number,
+        imeAction = ImeAction.Done
     )
-    // endregion
 
-    // region series
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 15.dp),
+    CustomTextField(
         value = series,
         onValueChange = setSeries,
-        shape = RoundedCornerShape(16.dp),
-        placeholder = { Text("Укажите серию") },
-        trailingIcon = if (series.isNotEmpty()) {
-            {
-                IconButton(onClick = { setSeries("") }) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(id = R.string.description_clear_text),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
+        label = {
+            Text(
+                text = "Укажите серию",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
             }
-        } else null,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done
         ),
-        singleLine = true,
-        colors = textFieldColors()
+        keyboardType = KeyboardType.Number,
+        imeAction = ImeAction.Done
     )
-    // endregion
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(end = 15.dp),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
-        Button(
-            onClick = {
+        CustomTextButton(
+            textButton = "Сохранить",
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary,
+            endPadding = 15.dp,
+            onClickButton = {
                 seriesControlViewModel.updateMovie(
                     userId,
                     selectedEntry.id,
@@ -383,20 +368,7 @@ private fun ChangeItem(
                 )
                 onClick()
             }
-        ) { Text(text = "Сохранить") }
+        )
     }
 }
-
-@Composable
-private fun textFieldColors() = TextFieldDefaults.colors(
-    focusedIndicatorColor  = MaterialTheme.colorScheme.onPrimary,
-    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
-    focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-    unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-    focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-    unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-    focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-    unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-    cursorColor = MaterialTheme.colorScheme.onPrimary
-)
 
