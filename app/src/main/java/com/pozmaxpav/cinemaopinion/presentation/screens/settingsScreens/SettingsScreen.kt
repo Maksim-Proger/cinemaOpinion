@@ -34,18 +34,13 @@ fun SettingsScreen(
     themeViewModel: ThemeViewModel,
     navController: NavHostController
 ) {
-    val viewModelFirebase: FireBaseMovieViewModel = hiltViewModel()
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val myStringArray = stringArrayResource(R.array.my_string_array)
     val optionsList = myStringArray.toList()
-    var developerMode by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    // Для режима разработчика
-    val (developerComment, setDeveloperComment) = remember { mutableStateOf("") }
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    Scaffold (
+    Scaffold(
         topBar = {
             ClassicTopAppBar(
                 context = context,
@@ -62,76 +57,21 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.padding(16.dp))
             SettingsRadioButtons(optionsList) { option ->
                 when (option) {
-                    optionsList[0] -> {
-                        // Логика для Темной темы
+                    optionsList[0] -> { // Логика для Темной темы
                         themeViewModel.changeModeTheme(true)
                         themeViewModel.changeStatusUsingSystemTheme(false)
                     }
-                    optionsList[1] -> {
-                        // Логика для Светлой темы
+
+                    optionsList[1] -> { // Логика для Светлой темы
                         themeViewModel.changeModeTheme(false)
                         themeViewModel.changeStatusUsingSystemTheme(false)
                     }
-                    optionsList[2] -> {
-                        // Логика для Системной темы
+
+                    optionsList[2] -> { // Логика для Системной темы
                         themeViewModel.changeStatusUsingSystemTheme(true)
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.padding(16.dp))
-            Button(
-                onClick = {
-                    developerMode = !developerMode
-                }
-            ) {
-                Text(
-                    text = "Открыть режим разработчика"
-                )
-            }
-
-//            if (developerMode) {
-//                Spacer(modifier = Modifier.padding(16.dp))
-//                Text(
-//                    text = "Технический комментарий",
-//                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-//                )
-//                TextField(
-//                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-//                    value = developerComment,
-//                    onValueChange = setDeveloperComment,
-//                    trailingIcon = if (developerComment.isNotEmpty()) {
-//                        {
-//                            IconButton(onClick = { setDeveloperComment("") }) {
-//                                Icon(
-//                                    imageVector = Icons.Default.Close,
-//                                    contentDescription = stringResource(id = R.string.description_clear_text),
-//                                    tint = MaterialTheme.colorScheme.onPrimary
-//                                )
-//                            }
-//                        }
-//                    } else null,
-//                    keyboardOptions = KeyboardOptions(
-//                        keyboardType = KeyboardType.Text,
-//                        imeAction = ImeAction.Done
-//                    ),
-//                    keyboardActions = KeyboardActions(
-//                        onDone = {
-//                            viewModelFirebase.savingChangeRecord(
-//                                context,
-//                                "Разработчик",
-//                                if (developerComment.isEmpty()) "добавил важный комментарий: $DEVELOPER_COMMENT"
-//                                else "добавил важный комментарий: $developerComment"
-//                            )
-//                            keyboardController?.hide()
-//                        }
-//                    ),
-//                    colors = TextFieldDefaults.colors(
-//                        focusedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
-//                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiaryContainer
-//                    )
-//                )
-//            }
         }
     }
 }
