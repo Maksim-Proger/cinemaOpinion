@@ -59,6 +59,9 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovie
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_PERSONAL_MOVIES
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
@@ -172,8 +175,6 @@ fun ListSelectedMovies(
         if (selectedMovie != null) {
             DetailsCardSelectedMovie(
                 movie = selectedMovie!!,
-                isGeneralList = false,
-                isShowCommentButton = true,
                 content = {
                     ShowListComments(
                         userId,
@@ -184,13 +185,56 @@ fun ListSelectedMovies(
                     ExpandedCard(
                         title = stringResource(R.string.text_for_expandedCard_field),
                         description = info?.description ?: stringResource(R.string.limit_is_over),
-                        bottomPadding = 7.dp
+                    )
+                },
+                movieTransferButtonToMoviesList = {
+                    CustomTextButton(
+                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
+                        topPadding = 7.dp,
+                        bottomPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = {
+                            firebaseViewModel.sendingToNewDirectory(
+                                NODE_LIST_PERSONAL_MOVIES,
+                                NODE_LIST_MOVIES,
+                                selectedMovie!!.id.toDouble()
+                            )
+                            showToast(context, R.string.movie_has_been_moved)
+                            firebaseViewModel.savingChangeRecord(
+                                context,
+                                userData!!.nikName,
+                                R.string.record_added_movie,
+                                selectedMovie!!.nameFilm
+                            )
+                        }
+                    )
+                },
+                movieTransferButtonToSerialsList = {
+                    CustomTextButton(
+                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
+                        bottomPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = {
+                            firebaseViewModel.sendingToNewDirectory(
+                                NODE_LIST_PERSONAL_MOVIES,
+                                NODE_LIST_SERIALS,
+                                selectedMovie!!.id.toDouble()
+                            )
+                            showToast(context, R.string.series_has_been_moved)
+                            firebaseViewModel.savingChangeRecord(
+                                context,
+                                userData!!.nikName,
+                                R.string.record_added_series,
+                                selectedMovie!!.nameFilm
+                            )
+                        }
                     )
                 },
                 commentButton = {
                     CustomTextButton(
                         textButton = context.getString(R.string.placeholder_for_comment_field),
-                        topPadding = 7.dp,
                         bottomPadding = 7.dp,
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,

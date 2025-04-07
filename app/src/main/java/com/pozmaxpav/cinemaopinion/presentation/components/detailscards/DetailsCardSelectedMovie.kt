@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,13 +28,12 @@ import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 @Composable
 fun DetailsCardSelectedMovie(
     movie: DomainSelectedMovieModel,
-    isGeneralList: Boolean,
-    isShowCommentButton: Boolean,
     content: @Composable () -> Unit = {},
     openDescription: @Composable () -> Unit = {},
     commentButton: @Composable () -> Unit = {},
-    movieTransferButton: @Composable () -> Unit = {},
+    movieTransferButtonToWatchedMoviesList: @Composable () -> Unit = {},
     movieTransferButtonToSerialsList: @Composable () -> Unit = {},
+    movieTransferButtonToMoviesList: @Composable () -> Unit = {},
     movieTransferButtonToWaitingList: @Composable () -> Unit = {},
     onClick: () -> Unit
 ) {
@@ -98,36 +96,14 @@ fun DetailsCardSelectedMovie(
                     )
                 }
 
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    if (isGeneralList) {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                movieTransferButton()
-                                movieTransferButtonToWaitingList()
-                                movieTransferButtonToSerialsList()
-                            }
-
-                            if (isShowCommentButton) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Start,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    commentButton()
-                                }
-                            }
-                        }
-                    } else {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (isShowCommentButton) {
-                                commentButton()
-                            }
-                        }
-                    }
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    movieTransferButtonToWatchedMoviesList()
+                    movieTransferButtonToWaitingList()
+                    movieTransferButtonToMoviesList()
+                    movieTransferButtonToSerialsList()
+                    commentButton()
                     openDescription()
                 }
 

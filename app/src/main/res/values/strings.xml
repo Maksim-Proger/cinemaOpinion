@@ -95,6 +95,7 @@
     <string name="series_has_been_moved_to_viewed">Сериал успешно перенесен в просмотренные</string>
     <string name="series_has_been_moved_to_waiting_list">Сериал успешно перенесен в лист ожидания</string>
     <string name="series_has_been_moved">Сериал успешно перенесен</string>
+    <string name="movie_has_been_moved">Фильм успешно перенесен</string>
 
     <!--  Title Icons  -->
     <string name="my_list_movies">Личный список</string>
@@ -131,6 +132,6 @@
     <string name="record_added_to_new_year_collection">Пополнил(а) коллекцию новогодней подборки: </string>
 
     <!--  Text Error  -->
-    <string name="limit_is_over">К сожалению, суточный лимит закончился</string>
+    <string name="limit_is_over">К сожалению, в базе пусто или суточный лимит закончился</string>
     
 </resources>

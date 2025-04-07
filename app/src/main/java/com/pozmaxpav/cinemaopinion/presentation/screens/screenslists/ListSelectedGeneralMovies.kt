@@ -60,6 +60,7 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovie
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -184,8 +185,6 @@ fun ListSelectedGeneralMovies(
         if (selectedMovie != null) {
             DetailsCardSelectedMovie(
                 movie = selectedMovie!!,
-                isGeneralList = true,
-                isShowCommentButton = true,
                 content = {
                     ShowCommentGeneralList(selectedMovie!!.id)
                 },
@@ -205,14 +204,14 @@ fun ListSelectedGeneralMovies(
                         onClickButton = { openBottomSheetComments = !openBottomSheetComments }
                     )
                 },
-                movieTransferButton = {
+                movieTransferButtonToWatchedMoviesList = {
                     CustomTextButton(
                         textButton = context.getString(R.string.button_viewed),
                         topPadding = 7.dp,
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            firebaseViewModel.sendingToTheViewedFolder(
+                            firebaseViewModel.sendingToNewDirectory(
                                 NODE_LIST_MOVIES,
                                 NODE_LIST_WATCHED_MOVIES,
                                 selectedMovie!!.id.toDouble()
@@ -235,7 +234,11 @@ fun ListSelectedGeneralMovies(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            firebaseViewModel.sendingToTheSerialsList(selectedMovie!!.id.toDouble())
+                            firebaseViewModel.sendingToNewDirectory(
+                                NODE_LIST_MOVIES,
+                                NODE_LIST_SERIALS,
+                                selectedMovie!!.id.toDouble()
+                            )
                             showToast(context, R.string.series_has_been_moved)
                             firebaseViewModel.savingChangeRecord(
                                 context,

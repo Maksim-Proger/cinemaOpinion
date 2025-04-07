@@ -13,8 +13,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.Obser
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.ObserveListMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SaveMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SendingToTheSerialsListUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SendingToTheViewedFolderUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SendingToNewDirectoryUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.RemoveRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeRecordUseCase
@@ -39,8 +38,7 @@ class FireBaseMovieViewModel @Inject constructor(
     private val savingChangeRecordUseCase: SavingChangeRecordUseCase,
     private val getRecordsOfChangesUseCase: GetRecordsOfChangesUseCase,
     private val removeRecordsOfChangesUseCase: RemoveRecordsOfChangesUseCase,
-    private val sendingToTheViewedFolderUseCase: SendingToTheViewedFolderUseCase,
-    private val sendingToTheSerialsListUseCase: SendingToTheSerialsListUseCase
+    private val sendingToNewDirectoryUseCase: SendingToNewDirectoryUseCase
 ) : ViewModel() {
 
     private val _movieDownloadStatus = MutableStateFlow<State>(State.Success)
@@ -188,19 +186,10 @@ class FireBaseMovieViewModel @Inject constructor(
         }
     }
 
-    fun sendingToTheViewedFolder(dataSource: String, directionDataSource: String, movieId: Double) {
+    fun sendingToNewDirectory(dataSource: String, directionDataSource: String, movieId: Double) {
         viewModelScope.launch {
             try {
-                sendingToTheViewedFolderUseCase(dataSource, directionDataSource, movieId)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-    fun sendingToTheSerialsList(movieId: Double) {
-        viewModelScope.launch {
-            try {
-                sendingToTheSerialsListUseCase(movieId)
+                sendingToNewDirectoryUseCase(dataSource, directionDataSource, movieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

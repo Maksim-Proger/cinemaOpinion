@@ -191,7 +191,7 @@ class MovieRepositoryImpl @Inject constructor(
             })
     }
 
-    override suspend fun sendingToTheViewedFolder(
+    override suspend fun sendingToNewDirectory(
         dataSource: String,
         directionDataSource: String,
         movieId: Double
@@ -222,44 +222,6 @@ class MovieRepositoryImpl @Inject constructor(
                     // Удаляем запись после переноса
                     databaseReference
                         .child(dataSource)
-                        .child(movieKey)
-                        .removeValue()
-                        .await()
-                }
-            }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    override suspend fun sendingToTheSerialsList(movieId: Double) {
-        try {
-            val snapshot = databaseReference
-                .child(NODE_LIST_MOVIES)
-                .orderByChild("id")
-                .equalTo(movieId)
-                .get()
-                .await()
-
-            if (snapshot.exists()) {
-                val movieSnapshot =
-                    snapshot.children.firstOrNull() // Берём первую подходящую запись
-                val movieKey = movieSnapshot?.key // Получаем ключ записи
-
-                if (movieSnapshot != null && movieKey != null) {
-                    val movieData = movieSnapshot.value // Получаем данные записи
-
-                    // Копируем запись в новую папку
-                    databaseReference
-                        .child(NODE_LIST_SERIALS)
-                        .child(movieKey)
-                        .setValue(movieData)
-                        .await()
-
-                    // Удаляем запись после переноса
-                    databaseReference
-                        .child(NODE_LIST_MOVIES)
                         .child(movieKey)
                         .removeValue()
                         .await()
