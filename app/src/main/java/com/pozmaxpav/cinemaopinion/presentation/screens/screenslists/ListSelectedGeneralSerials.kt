@@ -182,8 +182,6 @@ fun ListSelectedGeneralSerials(
         if (selectedSerial != null) {
             DetailsCardSelectedMovie(
                 movie = selectedSerial!!,
-                isGeneralList = true,
-                isShowCommentButton = true,
                 content = {
                     ShowCommentGeneralListSerials(selectedSerial!!.id)
                 },
@@ -211,7 +209,7 @@ fun ListSelectedGeneralSerials(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            fireBaseMovieViewModel.sendingToTheViewedFolder(
+                            fireBaseMovieViewModel.sendingToNewDirectory(
                                 NODE_LIST_SERIALS,
                                 NODE_LIST_WAITING_CONTINUATION_SERIES,
                                 selectedSerial!!.id.toDouble()
@@ -226,14 +224,14 @@ fun ListSelectedGeneralSerials(
                         }
                     )
                 },
-                movieTransferButton = {
+                movieTransferButtonToWatchedMoviesList = {
                     CustomTextButton(
                         textButton = context.getString(R.string.button_viewed),
                         topPadding = 7.dp,
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            fireBaseMovieViewModel.sendingToTheViewedFolder(
+                            fireBaseMovieViewModel.sendingToNewDirectory(
                                 NODE_LIST_SERIALS,
                                 NODE_LIST_WATCHED_MOVIES,
                                 selectedSerial!!.id.toDouble()

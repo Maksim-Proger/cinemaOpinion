@@ -165,8 +165,6 @@ fun ListWatchedMovies(
             ) {
                 DetailsCardSelectedMovie(
                     movie = selectedNote!!,
-                    isGeneralList = false,
-                    isShowCommentButton = true,
                     content = {
                         ShowCommentWatchedMoviesList(movieId = selectedNote!!.id)
                     },

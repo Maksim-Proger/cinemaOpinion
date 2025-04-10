@@ -180,8 +180,6 @@ fun ListWaitingContinuationSeries(
 
                 DetailsCardSelectedMovie(
                     movie = selectedNote!!,
-                    isGeneralList = true,
-                    isShowCommentButton = true,
                     content = {
                         ShowCommentWaitingContinuationSeriesList(selectedNote!!.id)
                     },
@@ -202,7 +200,7 @@ fun ListWaitingContinuationSeries(
                             onClickButton = { openBottomSheetComments = !openBottomSheetComments }
                         )
                     },
-                    movieTransferButton = {
+                    movieTransferButtonToWatchedMoviesList = {
                         CustomTextButton(
                             textButton = context.getString(R.string.button_viewed),
                             topPadding = 7.dp,
@@ -210,7 +208,7 @@ fun ListWaitingContinuationSeries(
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             onClickButton = {
                                 if (userData != null) {
-                                    firebaseViewModel.sendingToTheViewedFolder(
+                                    firebaseViewModel.sendingToNewDirectory(
                                         NODE_LIST_WAITING_CONTINUATION_SERIES,
                                         NODE_LIST_WATCHED_MOVIES,
                                         selectedNote!!.id.toDouble()
