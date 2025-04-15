@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.theme.CommentAddedColor
@@ -86,75 +88,17 @@ fun ListOfChangesScreen(
                     .padding(innerPadding),
                 contentPadding = PaddingValues(10.dp)
             ) {
-                itemsIndexed(list.reversed()) { _, it ->
-                    val color = colorMethod(it.noteText)
-                    val icon = iconMethod(it.noteText)
+                itemsIndexed(list.reversed()) { _, item ->
+                    val color = colorMethod(item.noteText)
+                    val icon = iconMethod(item.noteText)
 
-                    Card(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth(),
-                        shape = RoundedCornerShape(8.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiary,
-                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    ) {
-
-                        Row(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-
-                            Icon(
-                                imageVector = icon,
-                                tint = color,
-                                contentDescription = null,
-                                modifier = Modifier.padding(7.dp),
+                    ChangelogItem(icon, color, item) {
+                        navController.navigate(
+                            Route.MovieDetailScreen.createRoute(
+                                newDataSource = item.newDataSource,
+                                movieId = item.entityId
                             )
-
-                            Column(
-                                modifier = Modifier.padding(7.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                if (it.username.contains("Разработчик")) {
-                                    Text(
-                                        text = stringResource(R.string.developer_message),
-                                        style = MaterialTheme.typography.displayMedium
-                                    )
-                                    Spacer(modifier = Modifier.padding(vertical = 10.dp))
-                                } else {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp),
-                                        horizontalArrangement = Arrangement.End
-                                    ) {
-                                        Text(
-                                            text = "Изменения от: ",
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                        Text(
-                                            text = SimpleDateFormat(
-                                                "dd.MM.yyyy",
-                                                Locale.getDefault()
-                                            ).format(Date(it.timestamp)),
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    }
-                                }
-
-                                Spacer(modifier = Modifier.padding(vertical = 7.dp))
-                                Text(
-                                    text = "${it.username} ${it.noteText}",
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-
-                            }
-                        }
+                        )
                     }
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
                 }
@@ -169,6 +113,82 @@ fun ListOfChangesScreen(
                     text = stringResource(R.string.developer_message2),
                     style = MaterialTheme.typography.bodyLarge
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChangelogItem(
+    icon: ImageVector,
+    color: Color,
+    it: DomainChangelogModel,
+    onClick: () -> Unit
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier
+            .wrapContentHeight()
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiary,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    ) {
+
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Icon(
+                imageVector = icon,
+                tint = color,
+                contentDescription = null,
+                modifier = Modifier.padding(7.dp),
+            )
+
+            Column(
+                modifier = Modifier.padding(7.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                if (it.username.contains("Разработчик")) {
+                    Text(
+                        text = stringResource(R.string.developer_message),
+                        style = MaterialTheme.typography.displayMedium
+                    )
+                    Spacer(modifier = Modifier.padding(vertical = 10.dp))
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(
+                            text = "Изменения от: ",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = SimpleDateFormat(
+                                "dd.MM.yyyy",
+                                Locale.getDefault()
+                            ).format(Date(it.timestamp)),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.padding(vertical = 7.dp))
+                Text(
+                    text = "${it.username} ${it.noteText}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
             }
         }
     }

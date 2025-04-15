@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 
 @Composable
 fun DetailsCardSelectedMovie(
+    titleForMovieDetailScreen: String = "",
     movie: DomainSelectedMovieModel,
     content: @Composable () -> Unit = {},
     openDescription: @Composable () -> Unit = {},
@@ -64,6 +66,11 @@ fun DetailsCardSelectedMovie(
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.secondary
                 )
+                Spacer(Modifier.padding(start = 16.dp))
+                Text(
+                    text = titleForMovieDetailScreen,
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
 
             Column(
@@ -96,9 +103,7 @@ fun DetailsCardSelectedMovie(
                     )
                 }
 
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     movieTransferButtonToWatchedMoviesList()
                     movieTransferButtonToWaitingList()
                     movieTransferButtonToMoviesList()

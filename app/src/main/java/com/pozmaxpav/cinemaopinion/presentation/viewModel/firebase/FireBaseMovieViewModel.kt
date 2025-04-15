@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.GetMovieByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.AddCommentUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.GetCommentsForMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.GetMovieUseCase
@@ -32,6 +33,7 @@ class FireBaseMovieViewModel @Inject constructor(
     private val removeMovieUseCase: RemoveMovieUseCase,
     private val getMovieUseCase: GetMovieUseCase,
     private val observeListMoviesUseCase: ObserveListMoviesUseCase,
+    private val getMovieByIdUseCase: GetMovieByIdUseCase,
     private val addCommentUseCase: AddCommentUseCase,
     private val getCommentsForMovieUseCase: GetCommentsForMovieUseCase,
     private val observeCommentsForMovieUseCase: ObserveCommentsForMovieUseCase,
@@ -56,6 +58,9 @@ class FireBaseMovieViewModel @Inject constructor(
     private val _listOfChanges = MutableStateFlow<List<DomainChangelogModel>>(emptyList())
     val listOfChanges = _listOfChanges.asStateFlow()
 
+    private val _movie = MutableStateFlow<DomainSelectedMovieModel?>(null)
+    val movie = _movie.asStateFlow()
+
     fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
@@ -73,6 +78,16 @@ class FireBaseMovieViewModel @Inject constructor(
                 _movies.value = moviesList
                 delay(500)
                 _movieDownloadStatus.value = State.Success
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    fun getMovieById(dataSource: String, movieId: Int) {
+        viewModelScope.launch {
+            try {
+                val movie = getMovieByIdUseCase(dataSource, movieId)
+                _movie.value = movie
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -106,11 +121,20 @@ class FireBaseMovieViewModel @Inject constructor(
             }
         }
     }
-    fun savingChangeRecord(context: Context, username: String, stringResourceId: Int, title: String) {
+    fun savingChangeRecord(
+        context: Context,
+        username: String,
+        stringResourceId: Int,
+        title: String,
+        newDataSource: String,
+        entityId: Int = 0
+    ) {
         val stringResource = context.getString(stringResourceId)
         val noteText = "$stringResource $title"
         val note = DomainChangelogModel(
             noteId = "", // Оставляем пустым, так как key будет сгенерирован позже
+            entityId = entityId,
+            newDataSource = newDataSource,
             username = username,
             noteText = noteText,
             timestamp = System.currentTimeMillis()

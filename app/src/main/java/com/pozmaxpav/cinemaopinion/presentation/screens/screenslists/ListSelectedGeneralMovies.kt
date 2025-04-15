@@ -111,7 +111,7 @@ fun ListSelectedGeneralMovies(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(vertical = 45.dp)
+            .padding(vertical = 50.dp)
     ) {
 
         if (openBottomSheetComments) {
@@ -149,7 +149,9 @@ fun ListSelectedGeneralMovies(
                                         context,
                                         userData!!.nikName,
                                         R.string.record_added_comment_to_movie,
-                                        selectedMovie!!.nameFilm
+                                        selectedMovie!!.nameFilm,
+                                        NODE_LIST_MOVIES,
+                                        selectedMovie!!.id
                                     )
                                     showToast(context, R.string.comment_added)
                                     setComment("")
@@ -221,7 +223,9 @@ fun ListSelectedGeneralMovies(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_movie_has_been_moved_to_viewed,
-                                selectedMovie!!.nameFilm
+                                selectedMovie!!.nameFilm,
+                                NODE_LIST_WATCHED_MOVIES,
+                                selectedMovie!!.id
                             )
                         }
                     )
@@ -244,7 +248,9 @@ fun ListSelectedGeneralMovies(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_series_has_been_moved_to_series_list,
-                                selectedMovie!!.nameFilm
+                                selectedMovie!!.nameFilm,
+                                NODE_LIST_SERIALS,
+                                selectedMovie!!.id
                             )
                         }
                     )
@@ -337,7 +343,8 @@ fun ListSelectedGeneralMovies(
                                                             context,
                                                             userData!!.nikName,
                                                             R.string.record_deleted_the_movie,
-                                                            movie.nameFilm
+                                                            movie.nameFilm,
+                                                            "Фильм удален, страницы нет",
                                                         )
                                                     }
                                                 ) {

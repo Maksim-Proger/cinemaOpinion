@@ -20,6 +20,7 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MediaNewsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.SeriesControlScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.EditPersonalInformationScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.MovieDetailScreen
 //import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.EditPersonalInformationScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SettingsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.WebViewScreen
@@ -52,62 +53,39 @@ fun NavGraph(
                 )
             }
         }
-
-        composable(
-            Route.MainScreen.route
-        ) {
-            MainScreen(navController)
-        }
-
-        composable(Route.MediaNewsScreen.route) {
-            MediaNewsScreen(navController)
-        }
-
-        composable(Route.ListOfChangesScreen.route) {
-            ListOfChangesScreen(navController)
-        }
-
-        composable(Route.EditPersonalInformationScreen.route) {
-            EditPersonalInformationScreen(navController)
-        }
-
-        composable(Route.SeriesControlScreen.route) {
-            SeriesControlScreen(navController)
-        }
-
-        composable(Route.SettingsScreen.route) {
-            SettingsScreen(themeViewModel, navController)
-        }
+        composable(Route.MainScreen.route) { MainScreen(navController) }
+        composable(Route.MediaNewsScreen.route) { MediaNewsScreen(navController) }
+        composable(Route.ListOfChangesScreen.route) { ListOfChangesScreen(navController) }
+        composable(Route.EditPersonalInformationScreen.route) { EditPersonalInformationScreen(navController) }
+        composable(Route.SeriesControlScreen.route) { SeriesControlScreen(navController) }
+        composable(Route.SettingsScreen.route) { SettingsScreen(themeViewModel, navController) }
+        composable(Route.ListWatchedMovies.route) { ListWatchedMovies(navController) }
+        composable(Route.ListSelectedGeneralMovies.route) { ListSelectedGeneralMovies(navController) }
+        composable(Route.ListSelectedGeneralSerials.route) { ListSelectedGeneralSerials(navController) }
+        composable(Route.ListSelectedMovies.route) { ListSelectedMovies(navController) }
+        composable(Route.ListWaitingContinuationSeries.route) { ListWaitingContinuationSeries(navController) }
+        composable(Route.LoginScreen.route) { LoginScreen(navController) }
 
         composable( // TODO: В Route это заносить не нужно?
             "webView/{url}", // Шаблон маршрута с аргументом "url"
             arguments = listOf(navArgument("url") { type = NavType.StringType })
-        ) {
-            WebViewScreen()
-        }
+        ) { WebViewScreen() }
 
-        composable(Route.ListWatchedMovies.route) {
-            ListWatchedMovies(navController)
-        }
-
-        composable(Route.ListSelectedGeneralMovies.route) {
-            ListSelectedGeneralMovies(navController)
-        }
-
-        composable(Route.ListSelectedGeneralSerials.route) {
-            ListSelectedGeneralSerials(navController)
-        }
-
-        composable(Route.ListSelectedMovies.route) {
-            ListSelectedMovies(navController)
-        }
-
-        composable(Route.ListWaitingContinuationSeries.route) {
-            ListWaitingContinuationSeries(navController)
-        }
-
-        composable(Route.LoginScreen.route) {
-            LoginScreen(navController)
+        composable(
+            Route.MovieDetailScreen.route,
+            arguments = listOf(
+                navArgument("newDataSource") { type = NavType.StringType },
+                navArgument("movieId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val newDataSource = backStackEntry.arguments?.getString("newDataSource") ?: ""
+            val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
+            MovieDetailScreen(
+                navController = navController,
+                newDataSource = newDataSource,
+                movieId = movieId
+            )
         }
     }
 }
+
