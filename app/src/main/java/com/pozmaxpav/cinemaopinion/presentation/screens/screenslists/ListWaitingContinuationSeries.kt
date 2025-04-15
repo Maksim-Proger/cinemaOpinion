@@ -161,7 +161,9 @@ fun ListWaitingContinuationSeries(
                                                 context,
                                                 userData!!.nikName,
                                                 R.string.record_added_comment_to_series,
-                                                selectedNote!!.nameFilm
+                                                selectedNote!!.nameFilm,
+                                                NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                                selectedNote!!.id
                                             )
                                             showToast(context, R.string.comment_added)
                                             setComment("")
@@ -218,7 +220,9 @@ fun ListWaitingContinuationSeries(
                                         context,
                                         userData!!.nikName,
                                         R.string.record_series_has_been_moved_to_viewed,
-                                        selectedNote!!.nameFilm
+                                        selectedNote!!.nameFilm,
+                                        NODE_LIST_WATCHED_MOVIES,
+                                        selectedNote!!.id
                                     )
                                 }
                             }

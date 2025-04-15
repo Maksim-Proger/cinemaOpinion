@@ -265,7 +265,9 @@ fun DetailsCardFilm(
                                     context,
                                     it.nikName,
                                     R.string.record_added_movie,
-                                    movie?.nameRu ?: context.getString(R.string.untitled_movie)
+                                    movie?.nameRu ?: context.getString(R.string.untitled_movie),
+                                    NODE_LIST_MOVIES,
+                                    movie!!.id
                                 )
                             }
                             movie?.let {
@@ -289,7 +291,9 @@ fun DetailsCardFilm(
                                     context,
                                     it.nikName,
                                     R.string.record_added_series,
-                                    movie?.nameRu.toString()
+                                    movie?.nameRu.toString(),
+                                    NODE_LIST_SERIALS,
+                                    movie!!.id
                                 )
                             }
                             movie?.let {

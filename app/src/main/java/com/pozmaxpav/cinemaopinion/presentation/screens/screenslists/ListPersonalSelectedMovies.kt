@@ -205,7 +205,9 @@ fun ListSelectedMovies(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_added_movie,
-                                selectedMovie!!.nameFilm
+                                selectedMovie!!.nameFilm,
+                                NODE_LIST_MOVIES,
+                                selectedMovie!!.id
                             )
                         }
                     )
@@ -227,7 +229,9 @@ fun ListSelectedMovies(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_added_series,
-                                selectedMovie!!.nameFilm
+                                selectedMovie!!.nameFilm,
+                                NODE_LIST_SERIALS,
+                                selectedMovie!!.id
                             )
                         }
                     )

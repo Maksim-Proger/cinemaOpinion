@@ -69,6 +69,30 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getMovieById(dataSource: String, movieId: Int): DomainSelectedMovieModel? {
+        val movieSnapshot = databaseReference
+            .child(dataSource)
+            .orderByChild("id")
+            .equalTo(movieId.toDouble())
+            .get()
+            .await()
+
+        if (movieSnapshot.exists()) {
+            val movieKey = movieSnapshot.children.firstOrNull()?.key
+            if (movieKey != null) {
+                val movieData = databaseReference
+                    .child(dataSource)
+                    .child(movieKey)
+                    .get()
+                    .await()
+
+                return movieData.getValue(DomainSelectedMovieModel::class.java)
+            }
+        }
+        return null
+    }
+
+
     override suspend fun observeListMovies(
         dataSource: String,
         onMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit

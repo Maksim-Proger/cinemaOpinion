@@ -18,9 +18,10 @@ class RecordsOfChangesRepositoryImpl @Inject constructor(
                 noteId = it,
                 username = domainChangelogModel.username,
                 noteText = domainChangelogModel.noteText,
-                timestamp = domainChangelogModel.timestamp
+                timestamp = domainChangelogModel.timestamp,
+                newDataSource = domainChangelogModel.newDataSource,
+                entityId = domainChangelogModel.entityId
             )
-
             databaseReference.child(NODE_LIST_CHANGES).child(it).setValue(record).await()
         } ?: throw Exception("Failed to generate key")
     }
@@ -35,7 +36,9 @@ class RecordsOfChangesRepositoryImpl @Inject constructor(
                     noteId = it.noteId,
                     username = it.username,
                     noteText = it.noteText,
-                    timestamp = it.timestamp
+                    timestamp = it.timestamp,
+                    newDataSource = it.newDataSource,
+                    entityId = it.entityId
                 )
             }
     }

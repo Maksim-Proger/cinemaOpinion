@@ -142,7 +142,9 @@ fun ListWatchedMovies(
                                         context,
                                         userData!!.nikName,
                                         R.string.record_added_comment_to_movie_in_the_viewed,
-                                        selectedNote!!.nameFilm
+                                        selectedNote!!.nameFilm,
+                                        NODE_LIST_WATCHED_MOVIES,
+                                        selectedNote!!.id
                                     )
                                     showToast(context, R.string.comment_added)
                                     setComment("")

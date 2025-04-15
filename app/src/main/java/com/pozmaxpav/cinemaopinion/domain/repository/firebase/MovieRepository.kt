@@ -10,6 +10,7 @@ interface MovieRepository {
     suspend fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel)
     suspend fun removeMovie(dataSource: String, movieId: Int)
     suspend fun getMovie(dataSource: String): List<DomainSelectedMovieModel>
+    suspend fun getMovieById(dataSource: String, movieId: Int): DomainSelectedMovieModel?
     suspend fun observeListMovies(dataSource: String, onMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit)
 
     suspend fun addCommentToMovie(dataSource: String, movieId: Double, comment: DomainCommentModel)

@@ -17,4 +17,11 @@ sealed class Route(
     data object ListSelectedMovies : Route(route = "list_selected_movies")
     data object ListWaitingContinuationSeries : Route(route = "list_waiting_continuation_series")
     data object LoginScreen : Route(route = "login_screen")
+
+    // Экран с параметрами newDataSource (String) и movieId (Int)
+    data object MovieDetailScreen : Route(route = "movie_details/{newDataSource}/{movieId}") {
+        // Функция для удобного создания пути с параметром
+        fun createRoute(newDataSource: String, movieId: Int) = "movie_details/$newDataSource/$movieId"
+    }
 }
+

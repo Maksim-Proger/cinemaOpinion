@@ -110,7 +110,7 @@ fun ListSelectedGeneralSerials(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(vertical = 45.dp)
+            .padding(vertical = 50.dp)
     ) {
 
         if (openBottomSheetComments) {
@@ -148,7 +148,9 @@ fun ListSelectedGeneralSerials(
                                         context,
                                         userData!!.nikName,
                                         R.string.record_added_comment_to_series,
-                                        selectedSerial!!.nameFilm
+                                        selectedSerial!!.nameFilm,
+                                        NODE_LIST_SERIALS,
+                                        selectedSerial!!.id
                                     )
                                     showToast(context, R.string.comment_added)
                                     setComment("")
@@ -219,7 +221,9 @@ fun ListSelectedGeneralSerials(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_series_has_been_moved_to_waiting_list,
-                                selectedSerial!!.nameFilm
+                                selectedSerial!!.nameFilm,
+                                NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                selectedSerial!!.id
                             )
                         }
                     )
@@ -241,7 +245,9 @@ fun ListSelectedGeneralSerials(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_series_has_been_moved_to_viewed,
-                                selectedSerial!!.nameFilm
+                                selectedSerial!!.nameFilm,
+                                NODE_LIST_WATCHED_MOVIES,
+                                selectedSerial!!.id
                             )
                         }
                     )
@@ -253,7 +259,6 @@ fun ListSelectedGeneralSerials(
             BackHandler {
                 selectedSerial = null
             }
-
         } else {
             Column(
                 modifier = Modifier
@@ -322,7 +327,8 @@ fun ListSelectedGeneralSerials(
                                                     context,
                                                     userData!!.nikName,
                                                     R.string.record_deleted_the_series,
-                                                    movie.nameFilm
+                                                    movie.nameFilm,
+                                                    "Фильм удален, страницы нет",
                                                 )
                                             }
                                         ) {
