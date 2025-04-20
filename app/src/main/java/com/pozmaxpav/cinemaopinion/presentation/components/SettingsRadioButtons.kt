@@ -24,10 +24,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingsRadioButtons(
+    indexSelectedTheme: Int,
     optionsList: List<String>,
     onOptionClick: (String) -> Unit
 ) {
-    var selectedOption by remember { mutableStateOf(optionsList[0]) }
+    var selectedOption by remember { mutableStateOf(optionsList[indexSelectedTheme]) }
 
     Card(
         modifier = Modifier

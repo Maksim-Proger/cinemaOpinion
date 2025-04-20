@@ -5,4 +5,6 @@ interface ThemeRepository {
     fun getModeApplicationTheme(): Boolean
     fun saveModeActivationSystemTheme(isSystemModeTheme: Boolean)
     fun getModeActivationSystemTheme(): Boolean
+    fun saveIndexTheme(index: Int)
+    fun getIndexTheme(): Int
 }

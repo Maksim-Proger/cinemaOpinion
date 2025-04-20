@@ -7,7 +7,7 @@ import javax.inject.Inject
 class SaveModeActivationSystemThemeUseCase @Inject constructor(
     @ThemeRepositoryQualifier private val themeRepository: ThemeRepository
 ) {
-    fun execute(isSystemModeTheme: Boolean) {
+    operator fun invoke(isSystemModeTheme: Boolean) {
         themeRepository.saveModeActivationSystemTheme(isSystemModeTheme)
     }
 }

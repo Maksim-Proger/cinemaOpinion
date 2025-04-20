@@ -48,7 +48,6 @@ private val DarkColorScheme = darkColorScheme(
     error = DarkRedError
 )
 
-
 @Composable
 fun CinemaOpinionTheme(
     themeViewModel: ThemeViewModel,

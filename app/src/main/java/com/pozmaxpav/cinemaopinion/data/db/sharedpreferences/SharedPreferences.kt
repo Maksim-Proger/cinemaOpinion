@@ -7,6 +7,7 @@ object SharedPreferences {
     private const val SYSTEM_PREFERENCES = "system_preferences"
     private const val MODE_APPLICATION_THEME = "mode_application_theme"
     private const val SYSTEM_THEME_ACTIVATION_MODE = "system_theme_activation_mode"
+    private const val INDEX_SELECTED_THEME_APP = "index_selected_theme_app"
     private const val APP_VERSION_KEY = "app_version_key"
     private const val RESULT_CHECKING_APP_VERSION = "result_checking"
     private const val REGISTRATION_FLAG = "registration_flag"
@@ -68,5 +69,13 @@ object SharedPreferences {
     fun getModeActivationSystemTheme(context: Context) : Boolean {
         val sharedPreferences = context.getSharedPreferences(THEME_PREFERENCES, Context.MODE_PRIVATE)
         return sharedPreferences.getBoolean(SYSTEM_THEME_ACTIVATION_MODE, false)
+    }
+    fun saveIndexTheme(context: Context, index: Int) {
+        val sharedPreferences = context.getSharedPreferences(THEME_PREFERENCES, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putInt(INDEX_SELECTED_THEME_APP, index).apply()
+    }
+    fun getIndexTheme(context: Context): Int {
+        val sharedPreferences = context.getSharedPreferences(THEME_PREFERENCES, Context.MODE_PRIVATE)
+        return sharedPreferences.getInt(INDEX_SELECTED_THEME_APP, 0)
     }
 }

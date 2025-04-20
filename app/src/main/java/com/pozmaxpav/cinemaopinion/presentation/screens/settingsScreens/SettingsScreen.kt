@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -35,6 +36,7 @@ fun SettingsScreen(
     navController: NavHostController
 ) {
 
+    val indexSelectedTheme by themeViewModel.indexSelectedTheme.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val myStringArray = stringArrayResource(R.array.my_string_array)
     val optionsList = myStringArray.toList()
@@ -55,19 +57,25 @@ fun SettingsScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             Spacer(modifier = Modifier.padding(16.dp))
-            SettingsRadioButtons(optionsList) { option ->
+            SettingsRadioButtons(
+                indexSelectedTheme,
+                optionsList
+            ) { option ->
                 when (option) {
                     optionsList[0] -> { // Логика для Темной темы
+                        themeViewModel.saveIndexTheme(0)
                         themeViewModel.changeModeTheme(true)
                         themeViewModel.changeStatusUsingSystemTheme(false)
                     }
 
                     optionsList[1] -> { // Логика для Светлой темы
+                        themeViewModel.saveIndexTheme(1)
                         themeViewModel.changeModeTheme(false)
                         themeViewModel.changeStatusUsingSystemTheme(false)
                     }
 
                     optionsList[2] -> { // Логика для Системной темы
+                        themeViewModel.saveIndexTheme(2)
                         themeViewModel.changeStatusUsingSystemTheme(true)
                     }
                 }
