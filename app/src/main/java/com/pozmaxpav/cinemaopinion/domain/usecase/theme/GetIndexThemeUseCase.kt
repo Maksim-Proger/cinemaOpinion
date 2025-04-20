@@ -4,10 +4,10 @@ import com.pozmaxpav.cinemaopinion.di.ThemeRepositoryQualifier
 import com.pozmaxpav.cinemaopinion.domain.repository.system.ThemeRepository
 import javax.inject.Inject
 
-class GetModeActivationSystemTheme @Inject constructor(
-    @ThemeRepositoryQualifier private val themeRepository: ThemeRepository
+class GetIndexThemeUseCase @Inject constructor(
+    @ThemeRepositoryQualifier private val repository: ThemeRepository
 ) {
-    fun execute(): Boolean {
-        return themeRepository.getModeActivationSystemTheme()
+    operator fun invoke(): Int {
+        return repository.getIndexTheme()
     }
 }

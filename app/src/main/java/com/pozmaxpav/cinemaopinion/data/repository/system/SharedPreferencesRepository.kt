@@ -22,8 +22,11 @@ class SharedPreferencesRepository @Inject constructor(
     override fun getModeActivationSystemTheme(): Boolean {
         return SharedPreferences.getModeActivationSystemTheme(context)
     }
-    override fun clearUserData() {
-        SharedPreferences.clearUserData(context)
+    override fun saveIndexTheme(index: Int) {
+        SharedPreferences.saveIndexTheme(context, index)
+    }
+    override fun getIndexTheme(): Int {
+        return SharedPreferences.getIndexTheme(context)
     }
 
     override fun saveAppVersion(version: String) {
@@ -50,6 +53,9 @@ class SharedPreferencesRepository @Inject constructor(
     }
     override fun getUserId(): String? {
         return SharedPreferences.getUserId(context)
+    }
+    override fun clearUserData() {
+        SharedPreferences.clearUserData(context)
     }
 
 }
