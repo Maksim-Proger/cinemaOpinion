@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -40,6 +41,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -100,7 +102,7 @@ fun MainScreen(
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
     var searchCompleted by remember { mutableStateOf(false) } // Флаг для отображения списка фильмов после поиска
-    val searchHistory = mutableListOf<String>() // TODO: Не работает
+    val searchHistory = remember { mutableStateListOf<String>() } // TODO: Не работает
     // endregion
 
     // region Расширенный поиск
@@ -140,6 +142,7 @@ fun MainScreen(
     val isExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
     val isScrolling = remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     var scrollToTop by remember { mutableStateOf(false) }
+    var menuExpanded by remember { mutableStateOf(false) }
     // endregion
 
     var titleTopBarState by remember { mutableStateOf(false) } // Заголовок для AppBar
@@ -159,7 +162,7 @@ fun MainScreen(
     // region Launchers
     LaunchedEffect(Unit) {
         if (!isInitialized) {
-            apiViewModel.fetchPremiersMovies(2025, "March")
+            apiViewModel.fetchPremiersMovies(2025, "April")
             apiViewModel.fetchTopListMovies(currentPage)
         }
     }
@@ -193,22 +196,14 @@ fun MainScreen(
         topBar = {
             if (!searchBarActive) {
                 CustomTopAppBar(
-                    title = if (!titleTopBarState) {
-                        stringResource(id = R.string.top_app_bar_header_name_all_movies)
-                    } else {
-                        stringResource(id = R.string.top_app_bar_header_name_top_list_movies)
-                    },
+                    title = if (!titleTopBarState) stringResource(id = R.string.top_app_bar_header_name_all_movies)
+                            else stringResource(id = R.string.top_app_bar_header_name_top_list_movies),
                     onSearchButtonClick = { searchBarActive = !searchBarActive },
-                    onAdvancedSearchButtonClick = {
-                        onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick
-                    },
+                    onAdvancedSearchButtonClick = { onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick },
                     onAccountButtonClick = { onAccountButtonClick = !onAccountButtonClick },
                     scrollBehavior = scrollBehavior,
                     onTransitionAction = {
-                        navigateFunction(
-                            navController,
-                            Route.ListOfChangesScreen.route
-                        )
+                        navigateFunction(navController, Route.ListOfChangesScreen.route)
                     }
                 )
             }
@@ -220,8 +215,8 @@ fun MainScreen(
             ) {
                 FabButtonWithMenu(
                     imageIcon = if (isScrolling.value) Icons.Default.ArrowUpward else Icons.Default.Settings,
-                    contentDescription = "Меню настроек",
-                    textFloatingButton = if (isScrolling.value) "" else "Настройки",
+                    contentDescription = stringResource(R.string.description_icon_fab_button_with_menu),
+                    textFloatingButton = stringResource(R.string.fab_button_with_menu_main_screen),
                     content = {
                         if (!isScrolling.value) {
                             MyCustomDropdownMenuItem(
@@ -230,11 +225,8 @@ fun MainScreen(
                                     titleTopBarState = !titleTopBarState
                                     searchCompleted = false
                                 },
-                                title = if (!titleTopBarState) {
-                                    stringResource(id = R.string.drop_down_menu_item_premiere_movies)
-                                } else {
-                                    stringResource(id = R.string.drop_down_menu_item_topList_movies)
-                                },
+                                title = if (!titleTopBarState) stringResource(id = R.string.drop_down_menu_item_premiere_movies)
+                                        else stringResource(id = R.string.drop_down_menu_item_topList_movies),
                                 leadingIcon = {
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_movies),
@@ -262,7 +254,7 @@ fun MainScreen(
                                 onAction = {
                                     navigateFunction(navController, Route.MediaNewsScreen.route)
                                 },
-                                title = "Интересное",
+                                title = stringResource(R.string.drop_down_menu_item_nac_to_media_news_screen),
                                 leadingIcon = {
                                     Icon(
                                         Icons.Default.Newspaper,
@@ -273,11 +265,9 @@ fun MainScreen(
                             )
                         }
                     },
-                    onButtonClick = { // TODO: Надо еще раз подумать на этой кнопкой, не хочу чтобы при поднятии вверх открывалось меню.
-                        if (isScrolling.value) {
-                            scrollToTop = true
-                        }
-                    },
+                    onButtonClick = { menuExpanded = !menuExpanded },
+                    onButtonClickToTop = { scrollToTop = true },
+                    menuExpanded = menuExpanded,
                     expanded = isExpanded
                 )
             }
@@ -367,7 +357,6 @@ fun MainScreen(
                                 )
                             }
                         }
-
                         is State.Success -> {
                             Column(modifier = Modifier
                                 .fillMaxSize()
@@ -453,7 +442,6 @@ fun MainScreen(
                                 }
                             }
                         }
-
                         is State.Error -> {}
                     }
                 }

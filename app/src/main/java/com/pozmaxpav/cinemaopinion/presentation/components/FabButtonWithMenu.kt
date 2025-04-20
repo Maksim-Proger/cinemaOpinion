@@ -30,10 +30,10 @@ fun FabButtonWithMenu(
     textFloatingButton: String,
     content: @Composable () -> Unit,
     onButtonClick: () -> Unit = {},
+    onButtonClickToTop: () -> Unit = {},
+    menuExpanded: Boolean = false,
     expanded: Boolean
 ) {
-
-    var menuExpanded by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -53,10 +53,7 @@ fun FabButtonWithMenu(
                 imageIcon = imageIcon,
                 contentDescription = contentDescription,
                 textFloatingButton = textFloatingButton,
-                onButtonClick = {
-                    onButtonClick()
-                    menuExpanded = !menuExpanded
-                },
+                onButtonClick = if (expanded) onButtonClick else onButtonClickToTop,
                 expanded = expanded
             )
         }
