@@ -41,6 +41,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -87,6 +88,8 @@ fun SeriesControlScreen(
     var openBottomSheetAdd by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(userId) {
         seriesControlViewModel.getListEntries(userId)
@@ -170,8 +173,7 @@ fun SeriesControlScreen(
                     )
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Card(
@@ -199,7 +201,7 @@ fun SeriesControlScreen(
                                 IconButton(
                                     onClick = {
                                         isVisible = false
-                                        CoroutineScope(Dispatchers.Main).launch {
+                                        coroutineScope.launch {
                                             delay(300)
                                             seriesControlViewModel.deleteMovie(userId, entry.id)
                                         }
