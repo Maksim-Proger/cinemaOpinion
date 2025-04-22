@@ -76,6 +76,8 @@ fun ApiMovieSearch.toDomain(): MovieData.MovieSearch {
         year = year,
         ratingKinopoisk = ratingKinopoisk,
         ratingImdb = ratingImdb,
+        filmLength = filmLength,
+        genres = genres.map { it },
         countries = countries.map { it.toDomain() }
     )
 }
@@ -83,7 +85,6 @@ fun ApiMovieSearch.toDomain(): MovieData.MovieSearch {
 fun ApiMovieSearch2.toDomain(): MovieData.MovieSearch2 {
     return MovieData.MovieSearch2(
         filmId = filmId,
-//        rating = rating,
         nameEn = nameEn,
         nameRu = nameRu,
         posterUrl = posterUrl,
