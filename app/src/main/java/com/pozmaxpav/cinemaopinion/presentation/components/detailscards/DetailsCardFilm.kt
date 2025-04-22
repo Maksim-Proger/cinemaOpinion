@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
@@ -62,10 +64,13 @@ fun DetailsCardFilm(
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
-
+    val detailedInformationAboutFilm by apiViewModel.detailedInformationAboutFilm.collectAsState()
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
+    LaunchedEffect(movie?.id) {
+        movie?.let { apiViewModel.getSearchMovieById(it.id) }
+    }
     LaunchedEffect(userId) {
         auxiliaryUserViewModel.getUserData(userId)
     }
@@ -156,7 +161,11 @@ fun DetailsCardFilm(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.secondary
                             )
-                            Spacer(modifier = Modifier.padding(15.dp))
+                            Spacer(modifier = Modifier.height(7.dp))
+
+                            Details(detailedInformationAboutFilm)
+
+                            Spacer(modifier = Modifier.padding(7.dp))
                             ExpandedCard(
                                 title = stringResource(R.string.text_for_expandedCard_field),
                                 description = info?.description ?: stringResource(R.string.limit_is_over)
@@ -175,6 +184,10 @@ fun DetailsCardFilm(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.secondary
                             )
+                            Spacer(modifier = Modifier.height(7.dp))
+
+                            Details(detailedInformationAboutFilm)
+
                             Spacer(modifier = Modifier.padding(7.dp))
                             ExpandedCard(
                                 title = stringResource(R.string.text_for_expandedCard_field),
@@ -199,6 +212,10 @@ fun DetailsCardFilm(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.secondary
                             )
+                            Spacer(modifier = Modifier.height(7.dp))
+
+                            Details(detailedInformationAboutFilm)
+
                             Spacer(modifier = Modifier.padding(7.dp))
                             ExpandedCard(
                                 title = stringResource(R.string.text_for_expandedCard_field),
@@ -217,6 +234,10 @@ fun DetailsCardFilm(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.secondary
                             )
+                            Spacer(modifier = Modifier.height(7.dp))
+
+                            Details(detailedInformationAboutFilm)
+
                             Spacer(modifier = Modifier.padding(7.dp))
                             ExpandedCard(
                                 title = stringResource(R.string.text_for_expandedCard_field),
@@ -333,5 +354,39 @@ fun DetailsCardFilm(
             }
         }
     }
+}
+
+@Composable
+private fun Details(detailedInformationAboutFilm: MovieData.MovieSearch?) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary
+        )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(7.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Text(
+                text = "Кинопоиск\n${detailedInformationAboutFilm?.ratingKinopoisk ?: "Н/Д"}",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "IMDb\n${detailedInformationAboutFilm?.ratingImdb ?: "Н/Д"}",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "Длительность\n${detailedInformationAboutFilm?.filmLength ?: "Н/Д"} мин.",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+
 }
 

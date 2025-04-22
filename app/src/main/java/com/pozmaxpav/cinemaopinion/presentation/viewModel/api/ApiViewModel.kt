@@ -3,6 +3,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel.api
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.api.information.Information
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList2
@@ -56,9 +57,22 @@ class ApiViewModel @Inject constructor(
     private val _informationMovie = MutableStateFlow<Information?>(null)
     val informationMovie: StateFlow<Information?> get() = _informationMovie.asStateFlow()
 
+    private val _detailedInformationAboutFilm = MutableStateFlow<MovieData.MovieSearch?>(null)
+    val detailedInformationAboutFilm = _detailedInformationAboutFilm.asStateFlow()
+
     private val _mediaNews = MutableStateFlow<NewsList?>(null)
     val mediaNews: StateFlow<NewsList?> get() = _mediaNews.asStateFlow()
 
+    fun getSearchMovieById(id: Int) {
+        viewModelScope.launch {
+            try {
+                val info = getSearchMovieByIdUseCase(id)
+                _detailedInformationAboutFilm.value = info
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
     fun getMediaNews(page:Int) {
         viewModelScope.launch {
             try {
