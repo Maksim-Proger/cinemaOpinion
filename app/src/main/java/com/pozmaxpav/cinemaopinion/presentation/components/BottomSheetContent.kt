@@ -22,7 +22,8 @@ fun MyBottomSheet(
     fraction: Float
 ) {
     val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
+        skipPartiallyExpanded = true,
+        confirmValueChange = { false }
     )
 
     ModalBottomSheet(
@@ -32,7 +33,11 @@ fun MyBottomSheet(
         dragHandle = { BottomSheetDefaults.DragHandle(Modifier.size(0.dp)) },
         containerColor = MaterialTheme.colorScheme.background
     ) {
-        Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(fraction)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(fraction)
+        ) {
             content()
         }
     }

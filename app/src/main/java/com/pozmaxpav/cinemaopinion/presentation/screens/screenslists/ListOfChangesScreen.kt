@@ -136,7 +136,6 @@ private fun ChangelogItem(
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         )
     ) {
-
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.Center,
