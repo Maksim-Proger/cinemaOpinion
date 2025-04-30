@@ -42,6 +42,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -93,6 +95,8 @@ fun ListSelectedGeneralMovies(
     val (comment, setComment) = remember { mutableStateOf("") }
     val context = LocalContext.current
     val listState = rememberLazyListState()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
         firebaseViewModel.getMovies(NODE_LIST_MOVIES)
@@ -138,6 +142,22 @@ fun ListSelectedGeneralMovies(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            }
+                        )
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        CustomTextButton(
+                            textButton = "Добавить",
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            endPadding = 15.dp,
+                            onClickButton = {
                                 if (userData != null) {
                                     firebaseViewModel.addComment(
                                         NODE_LIST_MOVIES,
@@ -159,7 +179,7 @@ fun ListSelectedGeneralMovies(
                                 }
                             }
                         )
-                    )
+                    }
                 },
                 fraction = 0.7f
             )

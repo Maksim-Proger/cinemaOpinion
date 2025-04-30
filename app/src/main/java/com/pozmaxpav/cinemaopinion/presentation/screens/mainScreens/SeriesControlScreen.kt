@@ -82,13 +82,14 @@ fun SeriesControlScreen(
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     val listMovies by seriesControlViewModel.listMovies.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
     var selectedEntry by remember { mutableStateOf<DomainSeriesControlModel?>(null) }
     var openBottomSheetAdd by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(userId) {
