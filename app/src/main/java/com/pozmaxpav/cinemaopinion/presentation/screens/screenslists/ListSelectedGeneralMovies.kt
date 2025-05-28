@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -41,10 +43,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -115,7 +119,7 @@ fun ListSelectedGeneralMovies(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(vertical = 50.dp)
+            .padding(bottom = 50.dp)
     ) {
 
         if (openBottomSheetComments) {
@@ -192,7 +196,8 @@ fun ListSelectedGeneralMovies(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 7.dp)
+                    .padding(vertical = 7.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
                     Icon(
@@ -201,6 +206,11 @@ fun ListSelectedGeneralMovies(
                         tint = MaterialTheme.colorScheme.secondary
                     )
                 }
+                Text(
+                    text = "Список с фильмами",
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
 
@@ -303,77 +313,62 @@ fun ListSelectedGeneralMovies(
                     is State.Success -> {
                         LazyColumn(
                             state = listState,
-                            modifier = Modifier
-                                .fillMaxSize(),
+                            modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(10.dp)
                         ) {
                             items(listMovies, key = { it.id }) { movie ->
-
                                 var isVisible by remember { mutableStateOf(true) }
+
+                                LaunchedEffect(isVisible) {
+                                    if (!isVisible) {
+                                        firebaseViewModel.removeMovie(NODE_LIST_MOVIES, movie.id)
+                                        firebaseViewModel.savingChangeRecord(
+                                            context,
+                                            userData!!.nikName,
+                                            R.string.record_deleted_the_movie,
+                                            movie.nameFilm,
+                                            "Фильм удален, страницы нет",
+                                        )
+                                    }
+                                }
 
                                 AnimatedVisibility(
                                     visible = isVisible,
+                                    modifier = Modifier.animateItem(),
                                     exit = slideOutHorizontally(
                                         targetOffsetX = { -it },
                                         animationSpec = tween(durationMillis = 300)
                                     )
                                 ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
+                                    Card(
+                                        modifier = Modifier.wrapContentHeight(),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.secondary,
+                                            contentColor = MaterialTheme.colorScheme.onSecondary
+                                        )
                                     ) {
-                                        Card(
+                                        Row(
                                             modifier = Modifier
+                                                .fillMaxWidth()
                                                 .wrapContentHeight(),
-                                            colors = CardDefaults.cardColors(
-                                                containerColor = MaterialTheme.colorScheme.secondary,
-                                                contentColor = MaterialTheme.colorScheme.onSecondary
-                                            )
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
                                         ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .wrapContentHeight(),
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                verticalAlignment = Alignment.CenterVertically
+                                            Row(modifier = Modifier.weight(1f)) {
+                                                SelectedMovieItem(
+                                                    movie = movie,
+                                                    onClick = { selectedMovie = movie }
+                                                )
+                                            }
+                                            IconButton(
+                                                onClick = { isVisible = false },
+                                                modifier = Modifier.size(50.dp).padding(end = 10.dp)
                                             ) {
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .weight(0.9f)
-                                                ) {
-                                                    SelectedMovieItem(
-                                                        movie = movie,
-                                                        onClick = { selectedMovie = movie }
-                                                    )
-                                                }
-
-                                                IconButton(
-                                                    onClick = {
-                                                        isVisible = false
-                                                        CoroutineScope(Dispatchers.Main).launch {
-                                                            delay(300)
-                                                            firebaseViewModel.removeMovie(
-                                                                NODE_LIST_MOVIES,
-                                                                movie.id
-                                                            )
-                                                        }
-                                                        firebaseViewModel.savingChangeRecord(
-                                                            context,
-                                                            userData!!.nikName,
-                                                            R.string.record_deleted_the_movie,
-                                                            movie.nameFilm,
-                                                            "Фильм удален, страницы нет",
-                                                        )
-                                                    }
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Close,
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.onSecondary
-                                                    )
-                                                }
+                                                Icon(
+                                                    imageVector = Icons.Default.Close,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSecondary
+                                                )
                                             }
                                         }
                                     }

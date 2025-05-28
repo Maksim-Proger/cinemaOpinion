@@ -91,7 +91,12 @@ fun ListOfChangesScreen(
                     val color = colorMethod(item.noteText)
                     val icon = iconMethod(item.noteText)
 
-                    ChangelogItem(icon, color, item) {
+                    ChangelogItem(
+                        modifier = Modifier.animateItem(),
+                        icon,
+                        color,
+                        item
+                    ) {
                         navController.navigate(
                             Route.MovieDetailScreen.createRoute(
                                 newDataSource = item.newDataSource,
@@ -119,6 +124,7 @@ fun ListOfChangesScreen(
 
 @Composable
 private fun ChangelogItem(
+    modifier: Modifier = Modifier,
     icon: ImageVector,
     color: Color,
     it: DomainChangelogModel,
@@ -126,7 +132,7 @@ private fun ChangelogItem(
 ) {
     Card(
         onClick = onClick,
-        modifier = Modifier
+        modifier = modifier
             .wrapContentHeight()
             .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),

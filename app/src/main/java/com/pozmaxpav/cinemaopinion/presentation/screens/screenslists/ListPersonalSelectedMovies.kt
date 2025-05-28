@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -115,7 +116,7 @@ fun ListSelectedMovies(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(vertical = 45.dp)
+            .padding(bottom = 50.dp)
     ) {
 
         if (openBottomSheetComments) {
@@ -178,9 +179,12 @@ fun ListSelectedMovies(
         }
 
         if (selectedMovie == null) {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 7.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 7.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
                     Icon(
                         Icons.Default.ArrowBackIosNew,
@@ -188,6 +192,11 @@ fun ListSelectedMovies(
                         tint = MaterialTheme.colorScheme.secondary
                     )
                 }
+                Text(
+                    text = "Личный список",
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
 
@@ -293,69 +302,57 @@ fun ListSelectedMovies(
                     is State.Success -> {
                         LazyColumn(
                             state = listState,
-                            modifier = Modifier
-                                .fillMaxSize(),
+                            modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(10.dp)
                         ) {
                             items(listSelectedMovies, key = { it.id }) { movie ->
 
+                                // Новая анимация
                                 var isVisible by remember { mutableStateOf(true) }
+
+                                LaunchedEffect(isVisible) {
+                                    if (!isVisible) {
+                                        personalMovieViewModel.deleteSelectedMovie(userId, movie.id)
+                                    }
+                                }
 
                                 AnimatedVisibility(
                                     visible = isVisible,
+                                    modifier = Modifier.animateItem(),
                                     exit = slideOutHorizontally(
                                         targetOffsetX = { -it },
                                         animationSpec = tween(durationMillis = 300)
                                     )
                                 ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
+                                    Card(
+                                        modifier = Modifier.wrapContentHeight(),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.secondary,
+                                            contentColor = MaterialTheme.colorScheme.onSecondary
+                                        )
                                     ) {
-                                        Card(
-                                            modifier = Modifier.wrapContentHeight(),
-                                            colors = CardDefaults.cardColors(
-                                                containerColor = MaterialTheme.colorScheme.secondary,
-                                                contentColor = MaterialTheme.colorScheme.onSecondary
-                                            )
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .wrapContentHeight(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
                                         ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .wrapContentHeight(),
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                verticalAlignment = Alignment.CenterVertically
+                                            Row(modifier = Modifier.weight(1f)) {
+                                                SelectedMovieItem(
+                                                    movie = movie,
+                                                    onClick = { selectedMovie = movie }
+                                                )
+                                            }
+                                            IconButton(
+                                                onClick = { isVisible = false },
+                                                modifier = Modifier.size(50.dp).padding(end = 10.dp)
                                             ) {
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .weight(0.9f)
-                                                ) {
-                                                    SelectedMovieItem(
-                                                        movie = movie,
-                                                        onClick = { selectedMovie = movie }
-                                                    )
-                                                }
-
-                                                IconButton(
-                                                    onClick = {
-                                                        isVisible = false
-                                                        CoroutineScope(Dispatchers.Main).launch {
-                                                            delay(300)
-                                                            personalMovieViewModel
-                                                                .deleteSelectedMovie(
-                                                                    userId, movie.id
-                                                                )
-                                                        }
-                                                    }
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Close,
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.onSecondary
-                                                    )
-                                                }
+                                                Icon(
+                                                    imageVector = Icons.Default.Close,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.onSecondary
+                                                )
                                             }
                                         }
                                     }

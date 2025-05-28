@@ -141,8 +141,7 @@ fun ListWatchedMovies(
                         )
                     )
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
                         CustomTextButton(
@@ -236,6 +235,7 @@ fun ListWatchedMovies(
                         items(listMovies, key = { it.id }) { movie ->
                             Row(
                                 modifier = Modifier
+                                    .animateItem()
                                     .fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
