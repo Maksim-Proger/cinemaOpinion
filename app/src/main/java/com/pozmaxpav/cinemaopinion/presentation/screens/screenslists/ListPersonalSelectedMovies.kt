@@ -116,7 +116,7 @@ fun ListSelectedMovies(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(bottom = 50.dp)
+            .padding(top = 35.dp, bottom = 50.dp)
     ) {
 
         if (openBottomSheetComments) {
