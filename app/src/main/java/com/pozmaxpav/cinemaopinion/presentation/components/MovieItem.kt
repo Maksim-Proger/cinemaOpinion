@@ -22,11 +22,12 @@ import com.pozmaxpav.cinemaopinion.utilits.formatGenres
 
 @Composable
 fun MovieItem(
+    modifier: Modifier = Modifier,
     movie: MovieData,
     onClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable { onClick() },

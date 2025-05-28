@@ -375,7 +375,10 @@ fun MainScreen(
                                     contentPadding = PaddingValues(13.dp)
                                 ) {
                                     items(moviesToDisplay, key = { it.id }) { movie ->
-                                        MovieItem(movie = movie) { selectedMovie = movie }
+                                        MovieItem(
+                                            modifier = Modifier.animateItem(),
+                                            movie = movie
+                                        ) { selectedMovie = movie }
                                     }
 
                                     if (showPageSwitchingButtons) {

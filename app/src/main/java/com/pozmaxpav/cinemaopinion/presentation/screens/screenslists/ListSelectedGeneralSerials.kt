@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -114,7 +115,7 @@ fun ListSelectedGeneralSerials(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(vertical = 50.dp)
+            .padding(bottom = 50.dp)
     ) {
 
         if (openBottomSheetComments) {
@@ -188,9 +189,12 @@ fun ListSelectedGeneralSerials(
         }
 
         if (selectedSerial == null) {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 7.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 7.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
                     Icon(
                         Icons.Default.ArrowBackIosNew,
@@ -198,6 +202,11 @@ fun ListSelectedGeneralSerials(
                         tint = MaterialTheme.colorScheme.secondary
                     )
                 }
+                Text(
+                    text = "Список с сериалами",
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
 
@@ -287,77 +296,66 @@ fun ListSelectedGeneralSerials(
             ) {
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(10.dp)
                 ) {
                     items(listSerials, key = { it.id }) { movie ->
 
                         var isVisible by remember { mutableStateOf(true) }
 
+                        LaunchedEffect(isVisible) {
+                            if (!isVisible) {
+                                fireBaseMovieViewModel.removeMovie(
+                                    NODE_LIST_SERIALS,
+                                    movie.id
+                                )
+                                fireBaseMovieViewModel.savingChangeRecord(
+                                    context,
+                                    userData!!.nikName,
+                                    R.string.record_deleted_the_series,
+                                    movie.nameFilm,
+                                    "Фильм удален, страницы нет",
+                                )
+                            }
+                        }
+
                         AnimatedVisibility(
                             visible = isVisible,
+                            modifier = Modifier.animateItem(),
                             exit = slideOutHorizontally(
                                 targetOffsetX = { -it },
                                 animationSpec = tween(durationMillis = 300)
                             )
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
+                            Card(
+                                modifier = Modifier.wrapContentHeight(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                    contentColor = MaterialTheme.colorScheme.onSecondary
+                                )
                             ) {
-                                Card(
+                                Row(
                                     modifier = Modifier
+                                        .fillMaxWidth()
                                         .wrapContentHeight(),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                        contentColor = MaterialTheme.colorScheme.onSecondary
-                                    )
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .wrapContentHeight(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
+                                    Row(modifier = Modifier.weight(1f)) {
+                                        SelectedMovieItem(
+                                            movie = movie,
+                                            onClick = { selectedSerial = movie }
+                                        )
+                                    }
+                                    IconButton(
+                                        onClick = { isVisible = false },
+                                        modifier = Modifier.size(50.dp).padding(end = 10.dp)
                                     ) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .weight(0.9f)
-                                        ) {
-                                            SelectedMovieItem(
-                                                movie = movie,
-                                                onClick = { selectedSerial = movie }
-                                            )
-                                        }
-
-                                        IconButton(
-                                            onClick = {
-                                                isVisible = false
-                                                CoroutineScope(Dispatchers.Main).launch {
-                                                    delay(300)
-                                                    fireBaseMovieViewModel.removeMovie(
-                                                        NODE_LIST_SERIALS,
-                                                        movie.id
-                                                    )
-                                                }
-                                                fireBaseMovieViewModel.savingChangeRecord(
-                                                    context,
-                                                    userData!!.nikName,
-                                                    R.string.record_deleted_the_series,
-                                                    movie.nameFilm,
-                                                    "Фильм удален, страницы нет",
-                                                )
-                                            }
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Close,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onSecondary
+                                        )
                                     }
                                 }
                             }

@@ -1,6 +1,9 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,10 +23,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -282,25 +288,64 @@ fun ListWaitingContinuationSeries(
                         contentPadding = PaddingValues(10.dp)
                     ) {
                         items(listMovies, key = { it.id }) { movie ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
+
+                            var isVisible by remember { mutableStateOf(true) }
+                            LaunchedEffect(isVisible) {
+                                if (!isVisible) {
+                                    firebaseViewModel.removeMovie(
+                                        NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                        movie.id
+                                    )
+                                    firebaseViewModel.savingChangeRecord(
+                                        context,
+                                        userData!!.nikName,
+                                        R.string.record_deleted_the_movie,
+                                        movie.nameFilm,
+                                        "Фильм удален, страницы нет",
+                                    )
+                                }
+                            }
+
+                            AnimatedVisibility(
+                                visible = isVisible,
+                                modifier = Modifier.animateItem(),
+                                exit = slideOutHorizontally(
+                                    targetOffsetX = { -it },
+                                    animationSpec = tween(durationMillis = 300)
+                                )
                             ) {
                                 Card(
-                                    modifier = Modifier
-                                        .wrapContentHeight()
-                                        .fillMaxWidth(),
+                                    modifier = Modifier.wrapContentHeight(),
                                     colors = CardDefaults.cardColors(
                                         containerColor = MaterialTheme.colorScheme.secondary,
                                         contentColor = MaterialTheme.colorScheme.onSecondary
                                     )
                                 ) {
-                                    SelectedMovieItem(
-                                        movie = movie,
-                                        onClick = { selectedNote = movie },
-                                        showTopBar = { showTopBar = !showTopBar }
-                                    )
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .wrapContentHeight(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(modifier = Modifier.weight(1f)) {
+                                            SelectedMovieItem(
+                                                movie = movie,
+                                                onClick = { selectedNote = movie },
+                                                showTopBar = { showTopBar = !showTopBar }
+                                            )
+                                        }
+                                        IconButton(
+                                            onClick = { isVisible = false },
+                                            modifier = Modifier.size(50.dp).padding(end = 10.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Close,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                    }
                                 }
                             }
                             Spacer(Modifier.padding(5.dp))
