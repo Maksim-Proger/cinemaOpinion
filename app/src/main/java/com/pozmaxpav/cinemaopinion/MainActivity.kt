@@ -38,25 +38,38 @@ class MainActivity : ComponentActivity() {
             val registrationFlag by mainViewModel.registrationFlag.collectAsState()
             val context = LocalContext.current
 
+            // Получаем "destination" из ярлыка
+            val destinationFromShortcut = intent.extras?.getString("destination")
+            val destination = destinationFromShortcut ?: if (registrationFlag) startDestination else Route.LoginScreen.route
+
             CinemaOpinionTheme(themeViewModel = themeViewModel) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
                     if (!isLoading) {
                         CheckAndUpdateAppVersion(context)
-                        if (registrationFlag) {
-                            NavGraph(
-                                themeViewModel = themeViewModel,
-                                startDestination = startDestination
-                            )
-                        } else {
-                            NavGraph(
-                                themeViewModel = themeViewModel,
-                                startDestination = Route.LoginScreen.route
-                            )
-                        }
+                        NavGraph(
+                            themeViewModel = themeViewModel,
+                            startDestination = destination
+                        )
                     }
+
+//                    if (!isLoading) {
+//                        CheckAndUpdateAppVersion(context)
+//                        if (registrationFlag) {
+//                            NavGraph(
+//                                themeViewModel = themeViewModel,
+//                                startDestination = startDestination
+//                            )
+//                        } else {
+//                            NavGraph(
+//                                themeViewModel = themeViewModel,
+//                                startDestination = Route.LoginScreen.route
+//                            )
+//                        }
+//                    }
                 }
             }
         }

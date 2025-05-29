@@ -1,4 +1,18 @@
 <resources>
+
+    <!--  Context Menu  -->
+    <string name="shortcut_series_control_short">Серии</string>
+    <string name="shortcut_series_control_long">Контроль серий</string>
+    <string name="shortcut_series_control_disabled">Недоступно</string>
+
+    <string name="shortcut_list_of_changes_screen_short">Уведомления</string>
+    <string name="shortcut_list_of_changes_screen_long">Уведомления</string>
+    <string name="shortcut_list_of_changes_screen_disabled">Недоступно</string>
+
+    <string name="shortcut_list_selected_movies_short">Избранное</string>
+    <string name="shortcut_list_selected_movies_long">Личный список</string>
+    <string name="shortcut_list_selected_movies_disabled">Недоступно</string>
+
     <!--  General Strings  -->
     <string name="app_name">Cinema Opinion</string>
     <string name="top_app_bar_header_name_all_movies">Фильмы</string>
