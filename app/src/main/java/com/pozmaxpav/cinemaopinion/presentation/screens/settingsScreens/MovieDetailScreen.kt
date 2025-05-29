@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,7 @@ fun MovieDetailScreen(
 
     LaunchedEffect(movieId) {
         if (newDataSource.isNotEmpty() && movieId != 0) {
+            Log.d("@@@", "$newDataSource, $movieId")
             fireBaseMovieViewModel.getMovieById(newDataSource, movieId)
         }
     }

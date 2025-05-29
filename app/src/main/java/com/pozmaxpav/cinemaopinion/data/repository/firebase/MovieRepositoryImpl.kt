@@ -9,12 +9,14 @@ import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
 import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
 import com.pozmaxpav.cinemaopinion.utilits.COMMENTS_KEY_LISTENER
 import com.pozmaxpav.cinemaopinion.utilits.MOVIES_KEY_LISTENER
 import com.pozmaxpav.cinemaopinion.utilits.NODE_COMMENTS
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import kotlinx.coroutines.tasks.await
@@ -249,11 +251,24 @@ class MovieRepositoryImpl @Inject constructor(
                         .child(movieKey)
                         .removeValue()
                         .await()
+
+                    changeRecords(movieId, directionDataSource)
                 }
             }
 
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
+        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
+        snapshot.children.forEach { childSnapshot ->
+            val result = childSnapshot.getValue(DomainChangelogModel::class.java)
+            if (result?.entityId == movieId.toInt()) {
+                val updates = mapOf("newDataSource" to directionDataSource)
+                databaseReference.child(NODE_LIST_CHANGES).child(childSnapshot.key!!).updateChildren(updates).await()
+            }
         }
     }
 
