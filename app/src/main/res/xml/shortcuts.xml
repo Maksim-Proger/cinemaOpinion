@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="id_series_control"
+        android:enabled="true"
+        android:icon="@drawable/ic_movie_list2"
+        android:shortcutShortLabel="@string/shortcut_series_control_short"
+        android:shortcutLongLabel="@string/shortcut_series_control_long"
+        android:shortcutDisabledMessage="@string/shortcut_series_control_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.pozmaxpav.cinemaopinion"
+            android:targetClass="com.pozmaxpav.cinemaopinion.MainActivity">
+            <extra android:name="destination" android:value="series_control_screen" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="id_list_of_changes_screen"
+        android:enabled="true"
+        android:icon="@drawable/ic_notification"
+        android:shortcutShortLabel="@string/shortcut_list_of_changes_screen_short"
+        android:shortcutLongLabel="@string/shortcut_list_of_changes_screen_long"
+        android:shortcutDisabledMessage="@string/shortcut_list_of_changes_screen_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.pozmaxpav.cinemaopinion"
+            android:targetClass="com.pozmaxpav.cinemaopinion.MainActivity">
+            <extra android:name="destination" android:value="list_of_changes_screen" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="id_list_selected_movies"
+        android:enabled="true"
+        android:icon="@drawable/ic_favorite"
+        android:shortcutShortLabel="@string/shortcut_list_selected_movies_short"
+        android:shortcutLongLabel="@string/shortcut_list_selected_movies_long"
+        android:shortcutDisabledMessage="@string/shortcut_list_of_changes_screen_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.pozmaxpav.cinemaopinion"
+            android:targetClass="com.pozmaxpav.cinemaopinion.MainActivity">
+            <extra android:name="destination" android:value="list_selected_movies" />
+        </intent>
+    </shortcut>
+</shortcuts>
