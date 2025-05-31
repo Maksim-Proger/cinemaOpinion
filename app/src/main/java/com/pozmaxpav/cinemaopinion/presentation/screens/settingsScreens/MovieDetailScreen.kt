@@ -174,7 +174,6 @@ fun ShowComment(
                 modifier = Modifier.scale(0.5f)
             )
         }
-
         is State.Success -> {
             LazyColumn {
                 items(listComments) { comment ->
@@ -232,7 +231,6 @@ fun ShowComment(
                 }
             }
         }
-
         is State.Error -> {
             // TODO: Добавить логику работы при ошибке.
         }

@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -57,6 +58,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SeriesControlViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
@@ -100,8 +102,10 @@ fun SeriesControlScreen(
             },
             fraction = 0.3f
         )
-        BackHandler {
-            openBottomSheetAdd = false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            OnBackInvokedHandler { openBottomSheetAdd = false }
+        } else {
+            BackHandler { openBottomSheetAdd = false }
         }
     }
 
@@ -119,8 +123,10 @@ fun SeriesControlScreen(
             },
             fraction = 0.5f
         )
-        BackHandler {
-            openBottomSheetChange = false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            OnBackInvokedHandler { openBottomSheetChange = false }
+        } else {
+            BackHandler { openBottomSheetChange = false }
         }
     }
 

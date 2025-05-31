@@ -83,7 +83,7 @@ fun SearchFilterScreen(
     var selectedCountry by remember { mutableStateOf<Pair<Int, String>?>(null) }
     var selectedGenre by remember { mutableStateOf<Pair<Int, String>?>(null) }
 
-    // Переменные для хранения выбранного типа
+    // Переменная для хранения выбранного типа
     var selectedType by remember { mutableStateOf("") }
 
     // Переменная для хранения слова поиска
@@ -106,9 +106,7 @@ fun SearchFilterScreen(
         }
     ) { innerPadding ->
 
-        Column(
-            Modifier.padding(innerPadding).fillMaxSize()
-        ) {
+        Column(Modifier.padding(innerPadding).fillMaxSize()) {
 
             SelectType(
                 onSelectedType = { type ->
@@ -306,8 +304,7 @@ fun SelectType(
     var selected5 by remember { mutableStateOf(false) }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Absolute.SpaceEvenly
     ) {
@@ -317,8 +314,7 @@ fun SelectType(
         ) {
             Column {
                 FilterChip(
-                    modifier = Modifier
-                        .width(fixWidth),
+                    modifier = Modifier.width(fixWidth),
                     colors = colors,
                     selected = selected1,
                     onClick = {
@@ -342,8 +338,7 @@ fun SelectType(
                     } else null
                 )
                 FilterChip(
-                    modifier = Modifier
-                        .width(fixWidth),
+                    modifier = Modifier.width(fixWidth),
                     colors = colors,
                     selected = selected2,
                     onClick = {
@@ -375,8 +370,7 @@ fun SelectType(
         ) {
             Column {
                 FilterChip(
-                    modifier = Modifier
-                        .width(fixWidth),
+                    modifier = Modifier.width(fixWidth),
                     colors = colors,
                     selected = selected3,
                     onClick = {
@@ -401,8 +395,7 @@ fun SelectType(
                 )
 
                 FilterChip(
-                    modifier = Modifier
-                        .width(fixWidth),
+                    modifier = Modifier.width(fixWidth),
                     colors = colors,
                     selected = selected4,
                     onClick = {

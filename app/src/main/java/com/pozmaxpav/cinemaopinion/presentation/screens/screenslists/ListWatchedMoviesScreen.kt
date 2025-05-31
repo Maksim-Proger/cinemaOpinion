@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +53,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
@@ -175,6 +177,11 @@ fun ListWatchedMovies(
                 },
                 fraction = 0.7f
             )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                OnBackInvokedHandler { openBottomSheetComments = false }
+            } else {
+                BackHandler { openBottomSheetComments = false }
+            }
         }
 
         if (selectedNote != null) {
@@ -204,9 +211,16 @@ fun ListWatchedMovies(
                         showTopBar = !showTopBar
                     }
                 )
-                BackHandler {
-                    selectedNote = null
-                    showTopBar = !showTopBar
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    OnBackInvokedHandler {
+                        selectedNote = null
+                        showTopBar = !showTopBar
+                    }
+                } else {
+                    BackHandler {
+                        selectedNote = null
+                        showTopBar = !showTopBar
+                    }
                 }
             }
         } else {
