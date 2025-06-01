@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -71,6 +72,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
 import com.pozmaxpav.cinemaopinion.presentation.components.PreviewAlertDialog
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCard
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
@@ -305,7 +307,11 @@ fun MainScreen(
                         onClick = { selectedMovie = null },
                         padding = padding,
                     )
-                    BackHandler { selectedMovie = null }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        OnBackInvokedHandler { selectedMovie = null }
+                    } else {
+                        BackHandler { selectedMovie = null }
+                    }
 
                 } else if (selectedNewYearMovie != null) {
                     DetailsCard(
@@ -313,7 +319,11 @@ fun MainScreen(
                         onCloseButton = { selectedNewYearMovie = null },
                         padding
                     )
-                    BackHandler { selectedNewYearMovie = null }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        OnBackInvokedHandler { selectedNewYearMovie = null }
+                    } else {
+                        BackHandler { selectedNewYearMovie = null }
+                    }
                 } else {
                     val moviesToDisplay: List<MovieData> = when {
                         searchCompleted -> {
@@ -459,8 +469,10 @@ fun MainScreen(
                         selectedDate = date
                     },
                 )
-                BackHandler {
-                    showDatePicker = !showDatePicker
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    OnBackInvokedHandler { showDatePicker = !showDatePicker }
+                } else {
+                    BackHandler { showDatePicker = !showDatePicker }
                 }
             }
 
@@ -530,8 +542,10 @@ fun MainScreen(
                         searchCompleted = true
                     }
                 )
-                BackHandler {
-                    onAdvancedSearchButtonClick = false
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    OnBackInvokedHandler { onAdvancedSearchButtonClick = false }
+                } else {
+                    BackHandler { onAdvancedSearchButtonClick = false }
                 }
             }
         )
@@ -549,8 +563,10 @@ fun MainScreen(
                     navController,
                     onClick = { onAccountButtonClick = false }
                 )
-                BackHandler {
-                    onAccountButtonClick = false
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    OnBackInvokedHandler { onAccountButtonClick = false }
+                } else {
+                    BackHandler { onAccountButtonClick = false }
                 }
             }
         )

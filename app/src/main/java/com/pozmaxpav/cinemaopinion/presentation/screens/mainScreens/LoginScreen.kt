@@ -233,10 +233,9 @@ fun RegistrationWindow(
                 )
             },
             leadingIcon = {
-                androidx.compose.material3.Icon(
+                Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = stringResource
-                        (id = R.string.description_icon_add_name),
+                    contentDescription = stringResource(id = R.string.description_icon_add_name),
                     tint = MaterialTheme.colorScheme.outline
                 )
             },
@@ -259,10 +258,9 @@ fun RegistrationWindow(
                 )
             },
             leadingIcon = {
-                androidx.compose.material3.Icon(
+                Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = stringResource
-                        (id = R.string.description_icon_add_name),
+                    contentDescription = stringResource(id = R.string.description_icon_add_name),
                     tint = MaterialTheme.colorScheme.outline
                 )
             },
@@ -285,10 +283,9 @@ fun RegistrationWindow(
                 )
             },
             leadingIcon = {
-                androidx.compose.material3.Icon(
+                Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = stringResource
-                        (id = R.string.description_icon_add_name),
+                    contentDescription = stringResource(id = R.string.description_icon_add_name),
                     tint = MaterialTheme.colorScheme.outline
                 )
             },

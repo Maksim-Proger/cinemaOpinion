@@ -53,9 +53,7 @@ fun SettingsScreen(
         },
     ) { innerPadding ->
 
-        Column(
-            modifier = Modifier.padding(innerPadding)
-        ) {
+        Column(modifier = Modifier.padding(innerPadding)) {
             Spacer(modifier = Modifier.padding(16.dp))
             SettingsRadioButtons(
                 indexSelectedTheme,
