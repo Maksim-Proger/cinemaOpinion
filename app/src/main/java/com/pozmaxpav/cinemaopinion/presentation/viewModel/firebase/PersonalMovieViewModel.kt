@@ -1,17 +1,17 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.AddCommentToPersonalListUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.DeleteMovieFromPersonalListUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.GetListPersonalMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.AddMovieToPersonalListUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.DeleteMovieFromPersonalListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.GetCommentsFromPersonalListUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.GetListPersonalMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.ObserveCommentsFromPersonalListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.ObserveListSelectedMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.SendingToNewDirectoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +27,8 @@ class PersonalMovieViewModel @Inject constructor(
     private val deleteMovieFromPersonalListUseCase: DeleteMovieFromPersonalListUseCase,
     private val addCommentToPersonalListUseCase: AddCommentToPersonalListUseCase,
     private val getCommentsFromPersonalListUseCase: GetCommentsFromPersonalListUseCase,
-    private val observeCommentsForMovieFromPersonalListUseCase: ObserveCommentsFromPersonalListUseCase
+    private val observeCommentsForMovieFromPersonalListUseCase: ObserveCommentsFromPersonalListUseCase,
+    private val sendingToNewDirectoryUseCase: SendingToNewDirectoryUseCase
     ) : ViewModel() {
 
     private val _selectedMovies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
@@ -116,6 +117,16 @@ class PersonalMovieViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 deleteMovieFromPersonalListUseCase(userId, selectedMovieId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun sendingToNewDirectory(userId: String, dataSource: String, directionDataSource: String, selectedMovieId: Int) {
+        viewModelScope.launch {
+            try {
+                sendingToNewDirectoryUseCase(userId, dataSource, directionDataSource, selectedMovieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

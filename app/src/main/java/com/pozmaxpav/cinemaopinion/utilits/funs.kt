@@ -323,17 +323,23 @@ fun showToast(context: Context, messageId: Int) {
 }
 
 fun navigateFunction(navController: NavHostController, route: String) {
+
+//    navController.navigate(route) {
+//        popUpTo(navController.graph.startDestinationId) { saveState = true }
+//        launchSingleTop = true
+//        restoreState = true
+//    }
+
     navController.navigate(route) {
-        popUpTo(navController.graph.startDestinationId) { saveState = true }
-        launchSingleTop = true
-        restoreState = true
+        // Открывает новый экран поверх текущего (стандартное поведение)
+        launchSingleTop = true  // предотвращает дубликаты, если экран уже наверху
     }
+
 }
 
 fun navigateFunctionClearAllScreens(navController: NavHostController, route: String) {
     navController.navigate(route) {
         popUpTo(navController.graph.startDestinationId) { inclusive = true }
-//        popUpTo(0) // Очищаем весь стек
         launchSingleTop = true
     }
 }

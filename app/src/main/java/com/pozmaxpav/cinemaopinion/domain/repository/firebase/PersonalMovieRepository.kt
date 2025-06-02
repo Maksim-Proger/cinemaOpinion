@@ -13,4 +13,5 @@ interface PersonalMovieRepository {
     suspend fun addCommentToMovieInPersonalList(userId: String, selectedMovieId: Int, comment: DomainCommentModel)
     suspend fun getCommentsForMovieFromPersonalList(userId: String, selectedMovieId: Int): List<DomainCommentModel>
     suspend fun observeCommentsForMovieFromPersonalList(userId: String, selectedMovieId: Int, onCommentsUpdated: (List<DomainCommentModel>) -> Unit)
+    suspend fun sendingToNewDirectory(userId: String, dataSource: String, directionDataSource: String, selectedMovieId: Int)
 }

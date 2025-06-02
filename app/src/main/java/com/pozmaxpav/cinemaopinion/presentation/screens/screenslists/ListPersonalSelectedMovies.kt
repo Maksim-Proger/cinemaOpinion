@@ -71,10 +71,6 @@ import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.state.State
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -227,10 +223,11 @@ fun ListSelectedMovies(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            firebaseViewModel.sendingToNewDirectory(
+                            personalMovieViewModel.sendingToNewDirectory(
+                                userId,
                                 NODE_LIST_PERSONAL_MOVIES,
                                 NODE_LIST_MOVIES,
-                                selectedMovie!!.id.toDouble()
+                                selectedMovie!!.id
                             )
                             showToast(context, R.string.movie_has_been_moved)
                             firebaseViewModel.savingChangeRecord(

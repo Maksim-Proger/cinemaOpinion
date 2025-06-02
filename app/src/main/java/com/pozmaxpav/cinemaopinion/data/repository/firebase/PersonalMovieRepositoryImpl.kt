@@ -9,6 +9,7 @@ import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
 import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepository
@@ -17,6 +18,7 @@ import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_PERSONAL_COMMENTS
 import com.pozmaxpav.cinemaopinion.utilits.COMMENTS_KEY_LISTENER
 import com.pozmaxpav.cinemaopinion.utilits.MOVIES_KEY_LISTENER
+import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -302,6 +304,83 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                 }
             })
     }
+
+    // TODO: Переписать два метода
+    override suspend fun sendingToNewDirectory(
+        userId: String,
+        dataSource: String,
+        directionDataSource: String,
+        selectedMovieId: Int
+    ) {
+        try {
+            if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
+
+            val userKey = databaseReference
+                .child(NODE_LIST_USERS)
+                .orderByChild("id")
+                .equalTo(userId)
+                .get()
+                .await()
+                .children.firstOrNull()?.key
+                ?: throw IllegalArgumentException("User with ID $userId not found.")
+
+            val movieKey = databaseReference
+                .child(NODE_LIST_USERS)
+                .child(userKey)
+                .child(NODE_LIST_PERSONAL_MOVIES)
+                .orderByChild("id")
+                .equalTo(selectedMovieId.toDouble())
+                .get()
+                .await()
+                .children.firstOrNull()?.key
+                ?: throw IllegalArgumentException("Movie with ID $selectedMovieId not found")
+
+            val movieSnapshot = databaseReference
+                .child(NODE_LIST_USERS)
+                .child(userKey)
+                .child(NODE_LIST_PERSONAL_MOVIES)
+                .child(movieKey)
+                .get()
+                .await()
+                ?: throw IllegalArgumentException("Movie with ID $selectedMovieId not found")
+
+            val movieData = movieSnapshot.value // Получаем данные записи
+
+            // Копируем запись в новую папку
+            databaseReference
+                .child(directionDataSource)
+                .child(movieKey)
+                .setValue(movieData)
+                .await()
+
+            // Удаляем запись после переноса
+            databaseReference
+                .child(NODE_LIST_USERS)
+                .child(userKey)
+                .child(NODE_LIST_PERSONAL_MOVIES)
+                .child(movieKey)
+                .removeValue()
+                .await()
+
+            changeRecords(selectedMovieId.toDouble(), directionDataSource)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
+        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
+        snapshot.children.forEach { childSnapshot ->
+            val result = childSnapshot.getValue(DomainChangelogModel::class.java)
+            if (result?.entityId == movieId.toInt()) {
+                val updates = mapOf("newDataSource" to directionDataSource)
+                databaseReference.child(NODE_LIST_CHANGES).child(childSnapshot.key!!).updateChildren(updates).await()
+            }
+        }
+    }
+
+    // Конец
 
     override fun removeSelectedMoviesListener() {
         listenerHolder.removeListener(MOVIES_KEY_LISTENER)
