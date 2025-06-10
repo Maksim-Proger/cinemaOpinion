@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
@@ -68,27 +69,28 @@ import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
+import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.state.State
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun ListSelectedGeneralMovies(
     navController: NavHostController,
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
+    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
 ) {
-    val listMovies by firebaseViewModel.movies.collectAsState()
+    val listMovies by fireBaseMovieViewModel.movies.collectAsState()
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
+    var openBottomSheetChange by remember { mutableStateOf(false) }
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
-    val stateMovie by firebaseViewModel.movieDownloadStatus.collectAsState()
+    val stateMovie by fireBaseMovieViewModel.movieDownloadStatus.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
 
     val (comment, setComment) = remember { mutableStateOf("") }
@@ -98,8 +100,8 @@ fun ListSelectedGeneralMovies(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
-        firebaseViewModel.getMovies(NODE_LIST_MOVIES)
-        firebaseViewModel.observeListMovies(NODE_LIST_MOVIES)
+        fireBaseMovieViewModel.getMovies(NODE_LIST_MOVIES)
+        fireBaseMovieViewModel.observeListMovies(NODE_LIST_MOVIES)
     }
     LaunchedEffect(userId) {
         auxiliaryUserViewModel.getUserData(userId)
@@ -116,6 +118,31 @@ fun ListSelectedGeneralMovies(
             .background(MaterialTheme.colorScheme.background)
             .padding(top = 35.dp, bottom = 50.dp)
     ) {
+
+        if (openBottomSheetChange) {
+            MyBottomSheet(
+                onClose = { openBottomSheetChange = false },
+                content = {
+                    userData?.let {
+                        ChangeComment(
+                            NODE_LIST_MOVIES,
+                            it.nikName,
+                            selectedMovie!!.id,
+                            selectedComment!!,
+                            fireBaseMovieViewModel
+                        ) {
+                            openBottomSheetChange = false
+                        }
+                    }
+                },
+                fraction = 0.5f
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                OnBackInvokedHandler { openBottomSheetChange = false }
+            } else {
+                BackHandler { openBottomSheetChange = false }
+            }
+        }
 
         if (openBottomSheetComments) {
             MyBottomSheet(
@@ -158,13 +185,13 @@ fun ListSelectedGeneralMovies(
                             endPadding = 15.dp,
                             onClickButton = {
                                 if (userData != null) {
-                                    firebaseViewModel.addComment(
+                                    fireBaseMovieViewModel.addComment(
                                         NODE_LIST_MOVIES,
                                         selectedMovie!!.id.toDouble(),
                                         userData!!.nikName,
                                         comment
                                     )
-                                    firebaseViewModel.savingChangeRecord(
+                                    fireBaseMovieViewModel.savingChangeRecord(
                                         context,
                                         userData!!.nikName,
                                         R.string.record_added_comment_to_movie,
@@ -215,7 +242,15 @@ fun ListSelectedGeneralMovies(
             DetailsCardSelectedMovie(
                 movie = selectedMovie!!,
                 content = {
-                    ShowCommentGeneralList(selectedMovie!!.id)
+                    ShowCommentList(
+                        NODE_LIST_MOVIES,
+                        selectedMovie!!.id,
+                        fireBaseMovieViewModel,
+                        onClick = {
+                            comment -> selectedComment = comment
+                            openBottomSheetChange = true
+                        }
+                    )
                 },
                 openDescription = {
                     ExpandedCard(
@@ -240,13 +275,13 @@ fun ListSelectedGeneralMovies(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            firebaseViewModel.sendingToNewDirectory(
+                            fireBaseMovieViewModel.sendingToNewDirectory(
                                 NODE_LIST_MOVIES,
                                 NODE_LIST_WATCHED_MOVIES,
                                 selectedMovie!!.id.toDouble()
                             )
                             showToast(context, R.string.movie_has_been_moved_to_viewed)
-                            firebaseViewModel.savingChangeRecord(
+                            fireBaseMovieViewModel.savingChangeRecord(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_movie_has_been_moved_to_viewed,
@@ -265,13 +300,13 @@ fun ListSelectedGeneralMovies(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            firebaseViewModel.sendingToNewDirectory(
+                            fireBaseMovieViewModel.sendingToNewDirectory(
                                 NODE_LIST_MOVIES,
                                 NODE_LIST_SERIALS,
                                 selectedMovie!!.id.toDouble()
                             )
                             showToast(context, R.string.series_has_been_moved)
-                            firebaseViewModel.savingChangeRecord(
+                            fireBaseMovieViewModel.savingChangeRecord(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_series_has_been_moved_to_series_list,
@@ -320,8 +355,8 @@ fun ListSelectedGeneralMovies(
 
                                 LaunchedEffect(isVisible) {
                                     if (!isVisible) {
-                                        firebaseViewModel.removeMovie(NODE_LIST_MOVIES, movie.id)
-                                        firebaseViewModel.savingChangeRecord(
+                                        fireBaseMovieViewModel.removeMovie(NODE_LIST_MOVIES, movie.id)
+                                        fireBaseMovieViewModel.savingChangeRecord(
                                             context,
                                             userData!!.nikName,
                                             R.string.record_deleted_the_movie,
@@ -412,87 +447,3 @@ fun ListSelectedGeneralMovies(
         // endregion
     }
 }
-
-@Composable
-fun ShowCommentGeneralList(
-    movieId: Int,
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
-) {
-    val stateComments by firebaseViewModel.commentsDownloadStatus.collectAsState()
-    val listComments by firebaseViewModel.comments.collectAsState()
-
-    LaunchedEffect(movieId) {
-        firebaseViewModel.getComments(NODE_LIST_MOVIES, movieId)
-        firebaseViewModel.observeComments(NODE_LIST_MOVIES, movieId)
-    }
-
-    when (stateComments) {
-        is State.Loading -> {
-            CustomLottieAnimation(
-                nameFile = "loading_animation.lottie",
-                modifier = Modifier.scale(0.5f)
-            )
-        }
-        is State.Success -> {
-            LazyColumn {
-                items(listComments) { comment ->
-                    Card(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth()
-                            .padding(vertical = 7.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        )
-                    ) {
-                        Column(modifier = Modifier.padding(8.dp)) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = comment.username,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-
-                            Text(
-                                text = comment.commentText,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text =
-                                    SimpleDateFormat(
-                                        "dd.MM.yyyy HH:mm",
-                                        Locale.getDefault()
-                                    ).format(
-                                        Date(comment.timestamp)
-                                    ),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        is State.Error -> {
-            // TODO: Добавить логику работы при ошибке.
-        }
-    }
-}
-

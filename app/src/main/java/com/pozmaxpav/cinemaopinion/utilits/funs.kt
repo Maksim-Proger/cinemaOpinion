@@ -3,17 +3,24 @@ package com.pozmaxpav.cinemaopinion.utilits
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,26 +28,44 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Country
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.utilits.state.State
+import java.text.SimpleDateFormat
 import java.time.DateTimeException
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
 
@@ -247,6 +272,156 @@ fun WorkerWithImageSelectedMovie(
     )
 }
 
+@Composable
+fun ChangeComment(
+    dataSource: String,
+    userName: String,
+    selectedMovieId: Int,
+    selectedComment: DomainCommentModel,
+    viewModel: FireBaseMovieViewModel,
+    onClick: () -> Unit
+) {
+    val (comment, setComment) = remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(Unit) {
+        setComment(selectedComment.commentText)
+    }
+
+    CustomTextField(
+        value = comment,
+        onValueChange = setComment,
+        label = {
+            Text(
+                text = stringResource(R.string.text_for_field_change_comment),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            }
+        ),
+        keyboardType = KeyboardType.Text,
+        imeAction = ImeAction.Done,
+        singleLine = false
+    )
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        CustomTextButton(
+            textButton = stringResource(R.string.button_save),
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary,
+            endPadding = 15.dp,
+            onClickButton = {
+                viewModel.updateComment(
+                    dataSource,
+                    userName,
+                    selectedMovieId,
+                    selectedComment.commentId,
+                    comment
+                )
+                onClick()
+            }
+        )
+    }
+}
+
+@Composable
+fun ShowCommentList(
+    dataSource: String,
+    movieId: Int,
+    viewModel: ViewModel,
+    onClick: (DomainCommentModel) -> Unit,
+) {
+    when (viewModel) {
+        is FireBaseMovieViewModel -> {
+            val stateComments by viewModel.commentsDownloadStatus.collectAsState()
+            val listComments by viewModel.comments.collectAsState()
+
+            LaunchedEffect(movieId) {
+                viewModel.getComments(dataSource, movieId)
+                viewModel.observeComments(dataSource, movieId)
+            }
+
+            when (stateComments) {
+                is State.Loading -> {
+                    CustomLottieAnimation(
+                        nameFile = "loading_animation.lottie",
+                        modifier = Modifier.scale(0.5f)
+                    )
+                }
+                is State.Success -> {
+                    LazyColumn {
+                        items(listComments) { comment ->
+                            Card(
+                                modifier = Modifier
+                                    .wrapContentHeight()
+                                    .fillMaxWidth()
+                                    .padding(vertical = 7.dp)
+                                    .clickable { onClick(comment) },
+                                shape = RoundedCornerShape(16.dp),
+                                elevation = CardDefaults.cardElevation(16.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                    contentColor = MaterialTheme.colorScheme.onSecondary
+                                )
+                            ) {
+                                Column(modifier = Modifier.padding(8.dp)) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(10.dp),
+                                        horizontalArrangement = Arrangement.End,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = comment.username,
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    }
+
+                                    Text(
+                                        text = comment.commentText,
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(10.dp),
+                                        horizontalArrangement = Arrangement.End,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text =
+                                                SimpleDateFormat(
+                                                    "dd.MM.yyyy HH:mm",
+                                                    Locale.getDefault()
+                                                ).format(
+                                                    Date(comment.timestamp)
+                                                ),
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                is State.Error -> {
+                    // TODO: Добавить логику работы при ошибке.
+                }
+            }
+        }
+    }
+}
+
 fun formatGenres(genres: List<Genre>): String {
     return genres.joinToString(separator = ", ") {
         it.genre
@@ -351,3 +526,4 @@ fun parsYearsToString(range: ClosedFloatingPointRange<Float>): List<String> {
     )
     return yearsList
 }
+

@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,10 +47,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
@@ -63,6 +67,7 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUser
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_PERSONAL_MOVIES
@@ -91,7 +96,9 @@ fun ListSelectedMovies(
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
+    var openBottomSheetChange by remember { mutableStateOf(false) }
     val (comment, setComment) = remember { mutableStateOf("") }
 
     val context = LocalContext.current
@@ -116,6 +123,30 @@ fun ListSelectedMovies(
             .background(MaterialTheme.colorScheme.background)
             .padding(top = 35.dp, bottom = 50.dp)
     ) {
+
+        if (openBottomSheetChange) {
+            MyBottomSheet(
+                onClose = { openBottomSheetChange = false },
+                content = {
+                    userData?.let {
+                        ChangeComment(
+                            userId,
+                            it.nikName,
+                            selectedMovie!!.id,
+                            selectedComment!!
+                        ) {
+                            openBottomSheetChange = false
+                        }
+                    }
+                },
+                fraction = 0.5f
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                OnBackInvokedHandler { openBottomSheetChange = false }
+            } else {
+                BackHandler { openBottomSheetChange = false }
+            }
+        }
 
         if (openBottomSheetComments) {
             MyBottomSheet(
@@ -206,7 +237,11 @@ fun ListSelectedMovies(
                 content = {
                     ShowListComments(
                         userId,
-                        selectedMovie!!.id
+                        selectedMovie!!.id,
+                        onClick = {
+                            comment -> selectedComment = comment
+                            openBottomSheetChange = true
+                        }
                     )
                 },
                 openDescription = {
@@ -378,7 +413,8 @@ fun ListSelectedMovies(
 private fun ShowListComments(
     userId: String,
     selectedMovieId: Int,
-    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel()
+    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
+    onClick: (DomainCommentModel) -> Unit,
 ) {
 
     val listComments by personalMovieViewModel.listComments.collectAsState()
@@ -394,7 +430,8 @@ private fun ShowListComments(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(vertical = 7.dp),
+                    .padding(vertical = 7.dp)
+                    .clickable { onClick(comment) },
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(16.dp),
                 colors = CardDefaults.cardColors(
@@ -439,5 +476,65 @@ private fun ShowListComments(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ChangeComment(
+    userId: String,
+    userName: String,
+    selectedMovieId: Int,
+    selectedComment: DomainCommentModel,
+    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
+    onClick: () -> Unit
+) {
+    val (comment, setComment) = remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(Unit) {
+        setComment(selectedComment.commentText)
+    }
+
+    CustomTextField(
+        value = comment,
+        onValueChange = setComment,
+        label = {
+            Text(
+                text = "Измените комментарий",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            }
+        ),
+        keyboardType = KeyboardType.Text,
+        imeAction = ImeAction.Done
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        CustomTextButton(
+            textButton = stringResource(R.string.button_save),
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary,
+            endPadding = 15.dp,
+            onClickButton = {
+                personalMovieViewModel.updateComment(
+                    userId,
+                    userName,
+                    selectedMovieId,
+                    selectedComment.commentId,
+                    comment
+                )
+                onClick()
+            }
+        )
     }
 }

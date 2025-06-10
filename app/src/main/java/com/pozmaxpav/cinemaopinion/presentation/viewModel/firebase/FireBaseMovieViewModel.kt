@@ -15,6 +15,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.ObserveListMov
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SaveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SendingToNewDirectoryUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.UpdateCommentUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.RemoveRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeRecordUseCase
@@ -37,6 +38,7 @@ class FireBaseMovieViewModel @Inject constructor(
     private val addCommentUseCase: AddCommentUseCase,
     private val getCommentsForMovieUseCase: GetCommentsForMovieUseCase,
     private val observeCommentsForMovieUseCase: ObserveCommentsForMovieUseCase,
+    private val updateCommentUseCase: UpdateCommentUseCase,
     private val savingChangeRecordUseCase: SavingChangeRecordUseCase,
     private val getRecordsOfChangesUseCase: GetRecordsOfChangesUseCase,
     private val removeRecordsOfChangesUseCase: RemoveRecordsOfChangesUseCase,
@@ -206,6 +208,22 @@ class FireBaseMovieViewModel @Inject constructor(
         viewModelScope.launch {
             observeCommentsForMovieUseCase(dataSource, movieId) { updatedComments ->
                 _comments.value = updatedComments
+            }
+        }
+    }
+    fun updateComment(dataSource: String, userName: String, selectedMovieId: Int, commentId: String, newCommentText: String) {
+        viewModelScope.launch {
+            try {
+                val selectedComment = DomainCommentModel(
+                    commentId,
+                    userName,
+                    newCommentText,
+                    System.currentTimeMillis()
+                )
+
+                updateCommentUseCase(dataSource, selectedMovieId, commentId, selectedComment)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
