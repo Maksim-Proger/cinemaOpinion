@@ -305,7 +305,55 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             })
     }
 
-    // TODO: Переписать два метода
+    override suspend fun updateComment(
+        userId: String,
+        selectedMovieId: Int,
+        commentId: String,
+        selectedComment: DomainCommentModel
+    ) {
+        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
+
+        val userKey = databaseReference
+            .child(NODE_LIST_USERS)
+            .orderByChild("id")
+            .equalTo(userId)
+            .get()
+            .await()
+            .children.firstOrNull()?.key
+            ?: throw IllegalArgumentException("User with ID $userId not found.")
+
+        val movieKey = databaseReference
+            .child(NODE_LIST_USERS)
+            .child(userKey)
+            .child(NODE_LIST_PERSONAL_MOVIES)
+            .orderByChild("id")
+            .equalTo(selectedMovieId.toDouble())
+            .get()
+            .await()
+            .children.firstOrNull()?.key
+            ?: throw IllegalArgumentException("Movie with ID $selectedMovieId not found")
+
+        val commentSnapshot = databaseReference
+            .child(NODE_LIST_USERS)
+            .child(userKey)
+            .child(NODE_LIST_PERSONAL_MOVIES)
+            .child(movieKey)
+            .child(NODE_PERSONAL_COMMENTS)
+            .orderByChild("commentId")
+            .equalTo(commentId)
+            .get()
+            .await()
+            ?: throw IllegalArgumentException("Comment with ID $commentId not found")
+
+        for (comment in commentSnapshot.children) {
+            if (comment.child("commentId").getValue(String::class.java) == commentId) {
+                comment.ref.setValue(selectedComment).await()
+                break
+            }
+        }
+
+    }
+
     override suspend fun sendingToNewDirectory(
         userId: String,
         dataSource: String,
@@ -379,8 +427,6 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             }
         }
     }
-
-    // Конец
 
     override fun removeSelectedMoviesListener() {
         listenerHolder.removeListener(MOVIES_KEY_LISTENER)

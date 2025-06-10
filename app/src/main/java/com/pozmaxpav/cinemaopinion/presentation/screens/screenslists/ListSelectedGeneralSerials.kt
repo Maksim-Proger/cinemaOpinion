@@ -42,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -51,8 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
@@ -63,21 +62,15 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WAITING_CONTINUATION_SERIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
-import com.pozmaxpav.cinemaopinion.utilits.state.State
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun ListSelectedGeneralSerials(
@@ -90,6 +83,7 @@ fun ListSelectedGeneralSerials(
 
     val listSerials by fireBaseMovieViewModel.movies.collectAsState()
     var selectedSerial by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
@@ -97,6 +91,7 @@ fun ListSelectedGeneralSerials(
     val context = LocalContext.current
     val listState = rememberLazyListState()
     var openBottomSheetComments by remember { mutableStateOf(false) }
+    var openBottomSheetChange by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
@@ -119,6 +114,30 @@ fun ListSelectedGeneralSerials(
             .background(MaterialTheme.colorScheme.background)
             .padding(top = 35.dp, bottom = 50.dp)
     ) {
+        if (openBottomSheetChange) {
+            MyBottomSheet(
+                onClose = { openBottomSheetChange = false },
+                content = {
+                    userData?.let {
+                        ChangeComment(
+                            NODE_LIST_SERIALS,
+                            it.nikName,
+                            selectedSerial!!.id,
+                            selectedComment!!,
+                            fireBaseMovieViewModel
+                        ) {
+                            openBottomSheetChange = false
+                        }
+                    }
+                },
+                fraction = 0.5f
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                OnBackInvokedHandler { openBottomSheetChange = false }
+            } else {
+                BackHandler { openBottomSheetChange = false }
+            }
+        }
 
         if (openBottomSheetComments) {
             MyBottomSheet(
@@ -149,9 +168,9 @@ fun ListSelectedGeneralSerials(
                             }
                         )
                     )
+
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
                         CustomTextButton(
@@ -218,7 +237,15 @@ fun ListSelectedGeneralSerials(
             DetailsCardSelectedMovie(
                 movie = selectedSerial!!,
                 content = {
-                    ShowCommentGeneralListSerials(selectedSerial!!.id)
+                    ShowCommentList(
+                        NODE_LIST_SERIALS,
+                        selectedSerial!!.id,
+                        fireBaseMovieViewModel,
+                        onClick = {
+                            comment -> selectedComment = comment
+                            openBottomSheetChange = true
+                        }
+                    )
                 },
                 openDescription = {
                     ExpandedCard(
@@ -425,88 +452,5 @@ fun ListSelectedGeneralSerials(
             }
         }
         // endregion
-    }
-}
-
-@Composable
-fun ShowCommentGeneralListSerials(
-    movieId: Int,
-    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
-) {
-    val stateComments by fireBaseMovieViewModel.commentsDownloadStatus.collectAsState()
-    val listComments by fireBaseMovieViewModel.comments.collectAsState()
-
-    LaunchedEffect(movieId) {
-        fireBaseMovieViewModel.getComments(NODE_LIST_SERIALS, movieId)
-        fireBaseMovieViewModel.observeComments(NODE_LIST_SERIALS, movieId)
-    }
-
-    when (stateComments) {
-        is State.Loading -> {
-            CustomLottieAnimation(
-                nameFile = "loading_animation.lottie",
-                modifier = Modifier.scale(0.5f)
-            )
-        }
-        is State.Success -> {
-            LazyColumn {
-                items(listComments) { comment ->
-                    Card(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth()
-                            .padding(vertical = 7.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        )
-                    ) {
-                        Column(modifier = Modifier.padding(8.dp)) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = comment.username,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-
-                            Text(
-                                text = comment.commentText,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text =
-                                    SimpleDateFormat(
-                                        "dd.MM.yyyy HH:mm",
-                                        Locale.getDefault()
-                                    ).format(
-                                        Date(comment.timestamp)
-                                    ),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        is State.Error -> {
-            // TODO: Добавить логику работы при ошибке.
-        }
     }
 }

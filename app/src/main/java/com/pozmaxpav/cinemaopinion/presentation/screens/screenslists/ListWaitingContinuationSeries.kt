@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -53,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
@@ -66,51 +66,56 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WAITING_CONTINUATION_SERIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.state.State
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListWaitingContinuationSeries(
     navController: NavHostController,
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
+    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
 ) {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val listMovies by firebaseViewModel.movies.collectAsState()
+
+    val listMovies by fireBaseMovieViewModel.movies.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
-    val stateMovies by firebaseViewModel.movieDownloadStatus.collectAsState()
+    val stateMovies by fireBaseMovieViewModel.movieDownloadStatus.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
+
     var openBottomSheetComments by remember { mutableStateOf(false) }
-    var selectedNote by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    var openBottomSheetChange by remember { mutableStateOf(false) }
+    var selectedSerial by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
+
     var showTopBar by remember { mutableStateOf(false) }
     val (comment, setComment) = remember { mutableStateOf("") }
+
     val listState = rememberLazyListState()
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
-        firebaseViewModel.getMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
-        firebaseViewModel.observeListMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
+        fireBaseMovieViewModel.getMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
+        fireBaseMovieViewModel.observeListMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
     }
     LaunchedEffect(userId) {
         auxiliaryUserViewModel.getUserData(userId)
     }
-    LaunchedEffect(selectedNote) {
-        selectedNote?.let { movie ->
+    LaunchedEffect(selectedSerial) {
+        selectedSerial?.let { movie ->
             apiViewModel.getInformationMovie(movie.id)
         }
     }
@@ -130,13 +135,40 @@ fun ListWaitingContinuationSeries(
             }
         }
     ) { innerPadding ->
-        if (selectedNote != null) {
+
+
+        if (selectedSerial != null) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(vertical = 45.dp)
             ) {
+
+                if (openBottomSheetChange) {
+                    MyBottomSheet(
+                        onClose = { openBottomSheetChange = false },
+                        content = {
+                            userData?.let {
+                                ChangeComment(
+                                    NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                    it.nikName,
+                                    selectedSerial!!.id,
+                                    selectedComment!!,
+                                    fireBaseMovieViewModel
+                                ) {
+                                    openBottomSheetChange = false
+                                }
+                            }
+                        },
+                        fraction = 0.5f
+                    )
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        OnBackInvokedHandler { openBottomSheetChange = false }
+                    } else {
+                        BackHandler { openBottomSheetChange = false }
+                    }
+                }
 
                 if (openBottomSheetComments) {
                     MyBottomSheet(
@@ -168,8 +200,7 @@ fun ListWaitingContinuationSeries(
                                 )
                             )
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.End
                             ) {
                                 CustomTextButton(
@@ -179,19 +210,19 @@ fun ListWaitingContinuationSeries(
                                     endPadding = 15.dp,
                                     onClickButton = {
                                         if (userData != null) {
-                                            firebaseViewModel.addComment(
+                                            fireBaseMovieViewModel.addComment(
                                                 NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                                selectedNote!!.id.toDouble(),
+                                                selectedSerial!!.id.toDouble(),
                                                 userData!!.nikName,
                                                 comment
                                             )
-                                            firebaseViewModel.savingChangeRecord(
+                                            fireBaseMovieViewModel.savingChangeRecord(
                                                 context,
                                                 userData!!.nikName,
                                                 R.string.record_added_comment_to_series,
-                                                selectedNote!!.nameFilm,
+                                                selectedSerial!!.nameFilm,
                                                 NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                                selectedNote!!.id
+                                                selectedSerial!!.id
                                             )
                                             showToast(context, R.string.comment_added)
                                             setComment("")
@@ -211,9 +242,17 @@ fun ListWaitingContinuationSeries(
                 }
 
                 DetailsCardSelectedMovie(
-                    movie = selectedNote!!,
+                    movie = selectedSerial!!,
                     content = {
-                        ShowCommentWaitingContinuationSeriesList(selectedNote!!.id)
+                        ShowCommentList(
+                            NODE_LIST_WAITING_CONTINUATION_SERIES,
+                            selectedSerial!!.id,
+                            fireBaseMovieViewModel,
+                            onClick = {
+                                comment -> selectedComment = comment
+                                openBottomSheetChange = true
+                            }
+                        )
                     },
                     openDescription = {
                         ExpandedCard(
@@ -240,37 +279,37 @@ fun ListWaitingContinuationSeries(
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             onClickButton = {
                                 if (userData != null) {
-                                    firebaseViewModel.sendingToNewDirectory(
+                                    fireBaseMovieViewModel.sendingToNewDirectory(
                                         NODE_LIST_WAITING_CONTINUATION_SERIES,
                                         NODE_LIST_WATCHED_MOVIES,
-                                        selectedNote!!.id.toDouble()
+                                        selectedSerial!!.id.toDouble()
                                     )
                                     showToast(context, R.string.series_has_been_moved_to_viewed)
-                                    firebaseViewModel.savingChangeRecord(
+                                    fireBaseMovieViewModel.savingChangeRecord(
                                         context,
                                         userData!!.nikName,
                                         R.string.record_series_has_been_moved_to_viewed,
-                                        selectedNote!!.nameFilm,
+                                        selectedSerial!!.nameFilm,
                                         NODE_LIST_WATCHED_MOVIES,
-                                        selectedNote!!.id
+                                        selectedSerial!!.id
                                     )
                                 }
                             }
                         )
                     },
                     onClick = {
-                        selectedNote = null
+                        selectedSerial = null
                         showTopBar = !showTopBar
                     }
                 )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     OnBackInvokedHandler {
-                        selectedNote = null
+                        selectedSerial = null
                         showTopBar = !showTopBar
                     }
                 } else {
                     BackHandler {
-                        selectedNote = null
+                        selectedSerial = null
                         showTopBar = !showTopBar
                     }
                 }
@@ -303,11 +342,11 @@ fun ListWaitingContinuationSeries(
                             var isVisible by remember { mutableStateOf(true) }
                             LaunchedEffect(isVisible) {
                                 if (!isVisible) {
-                                    firebaseViewModel.removeMovie(
+                                    fireBaseMovieViewModel.removeMovie(
                                         NODE_LIST_WAITING_CONTINUATION_SERIES,
                                         movie.id
                                     )
-                                    firebaseViewModel.savingChangeRecord(
+                                    fireBaseMovieViewModel.savingChangeRecord(
                                         context,
                                         userData!!.nikName,
                                         R.string.record_deleted_the_movie,
@@ -342,7 +381,7 @@ fun ListWaitingContinuationSeries(
                                         Row(modifier = Modifier.weight(1f)) {
                                             SelectedMovieItem(
                                                 movie = movie,
-                                                onClick = { selectedNote = movie },
+                                                onClick = { selectedSerial = movie },
                                                 showTopBar = { showTopBar = !showTopBar }
                                             )
                                         }
@@ -367,89 +406,6 @@ fun ListWaitingContinuationSeries(
                     // TODO: Добавить логику работы при ошибке.
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ShowCommentWaitingContinuationSeriesList(
-    movieId: Int,
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
-) {
-    val stateComments by firebaseViewModel.commentsDownloadStatus.collectAsState()
-    val listComments by firebaseViewModel.comments.collectAsState()
-
-    LaunchedEffect(movieId) {
-        firebaseViewModel.getComments(NODE_LIST_WAITING_CONTINUATION_SERIES, movieId)
-        firebaseViewModel.observeComments(NODE_LIST_WAITING_CONTINUATION_SERIES, movieId)
-    }
-
-    when (stateComments) {
-        is State.Loading -> {
-            CustomLottieAnimation(
-                nameFile = "loading_animation.lottie",
-                modifier = Modifier.scale(0.5f)
-            )
-        }
-        is State.Success -> {
-            LazyColumn {
-                items(listComments) { comment ->
-                    Card(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth()
-                            .padding(vertical = 7.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        )
-                    ) {
-                        Column(modifier = Modifier.padding(8.dp)) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = comment.username,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-
-                            Text(
-                                text = comment.commentText,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text =
-                                    SimpleDateFormat(
-                                        "dd.MM.yyyy HH:mm",
-                                        Locale.getDefault()
-                                    ).format(
-                                        Date(comment.timestamp)
-                                    ),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        is State.Error -> {
-            // TODO: Добавить логику работы при ошибке.
         }
     }
 }

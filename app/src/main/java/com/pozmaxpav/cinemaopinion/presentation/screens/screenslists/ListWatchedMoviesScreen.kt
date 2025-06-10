@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -47,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
@@ -58,40 +58,46 @@ import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.state.State
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListWatchedMovies(
     navController: NavHostController,
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
+    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val listMovies by firebaseViewModel.movies.collectAsState()
-    var selectedNote by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
-    var showTopBar by remember { mutableStateOf(false) }
-    val listState = rememberLazyListState()
-    val stateMovies by firebaseViewModel.movieDownloadStatus.collectAsState()
-    var openBottomSheetComments by remember { mutableStateOf(false) }
-    val (comment, setComment) = remember { mutableStateOf("") }
+
+    val listMovies by fireBaseMovieViewModel.movies.collectAsState()
+    val stateMovies by fireBaseMovieViewModel.movieDownloadStatus.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
+
+    var showTopBar by remember { mutableStateOf(false) }
+    var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
+    var openBottomSheetComments by remember { mutableStateOf(false) }
+    var openBottomSheetChange by remember { mutableStateOf(false) }
+
+    val (comment, setComment) = remember { mutableStateOf("") }
+
+    val listState = rememberLazyListState()
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
-        firebaseViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
+        fireBaseMovieViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
     }
     LaunchedEffect(userId) {
         auxiliaryUserViewModel.getUserData(userId)
@@ -112,6 +118,31 @@ fun ListWatchedMovies(
             }
         }
     ) { innerPadding ->
+
+        if (openBottomSheetChange) {
+            MyBottomSheet(
+                onClose = { openBottomSheetChange = false },
+                content = {
+                    userData?.let {
+                        ChangeComment(
+                            NODE_LIST_WATCHED_MOVIES,
+                            it.nikName,
+                            selectedMovie!!.id,
+                            selectedComment!!,
+                            fireBaseMovieViewModel
+                        ) {
+                            openBottomSheetChange = false
+                        }
+                    }
+                },
+                fraction = 0.5f
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                OnBackInvokedHandler { openBottomSheetChange = false }
+            } else {
+                BackHandler { openBottomSheetChange = false }
+            }
+        }
 
         if (openBottomSheetComments) {
             MyBottomSheet(
@@ -153,19 +184,19 @@ fun ListWatchedMovies(
                             endPadding = 15.dp,
                             onClickButton = {
                                 if (userData != null) {
-                                    firebaseViewModel.addComment(
+                                    fireBaseMovieViewModel.addComment(
                                         NODE_LIST_WATCHED_MOVIES,
-                                        selectedNote!!.id.toDouble(),
+                                        selectedMovie!!.id.toDouble(),
                                         userData!!.nikName,
                                         comment
                                     )
-                                    firebaseViewModel.savingChangeRecord(
+                                    fireBaseMovieViewModel.savingChangeRecord(
                                         context,
                                         userData!!.nikName,
                                         R.string.record_added_comment_to_movie_in_the_viewed,
-                                        selectedNote!!.nameFilm,
+                                        selectedMovie!!.nameFilm,
                                         NODE_LIST_WATCHED_MOVIES,
-                                        selectedNote!!.id
+                                        selectedMovie!!.id
                                     )
                                     showToast(context, R.string.comment_added)
                                     setComment("")
@@ -184,7 +215,7 @@ fun ListWatchedMovies(
             }
         }
 
-        if (selectedNote != null) {
+        if (selectedMovie != null) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -192,9 +223,17 @@ fun ListWatchedMovies(
                     .padding(vertical = 45.dp)
             ) {
                 DetailsCardSelectedMovie(
-                    movie = selectedNote!!,
+                    movie = selectedMovie!!,
                     content = {
-                        ShowCommentWatchedMoviesList(movieId = selectedNote!!.id)
+                        ShowCommentList(
+                            NODE_LIST_WATCHED_MOVIES,
+                            selectedMovie!!.id,
+                            fireBaseMovieViewModel,
+                            onClick = {
+                                comment -> selectedComment = comment
+                                openBottomSheetChange = true
+                            }
+                        )
                     },
                     commentButton = {
                         CustomTextButton(
@@ -207,18 +246,18 @@ fun ListWatchedMovies(
                         )
                     },
                     onClick = {
-                        selectedNote = null
+                        selectedMovie = null
                         showTopBar = !showTopBar
                     }
                 )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     OnBackInvokedHandler {
-                        selectedNote = null
+                        selectedMovie = null
                         showTopBar = !showTopBar
                     }
                 } else {
                     BackHandler {
-                        selectedNote = null
+                        selectedMovie = null
                         showTopBar = !showTopBar
                     }
                 }
@@ -264,7 +303,7 @@ fun ListWatchedMovies(
                                 ) {
                                     SelectedMovieItem(
                                         movie = movie,
-                                        onClick = { selectedNote = movie },
+                                        onClick = { selectedMovie = movie },
                                         showTopBar = { showTopBar = !showTopBar }
                                     )
                                 }
@@ -277,89 +316,6 @@ fun ListWatchedMovies(
                     // TODO: Добавить логику работы при ошибке.
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ShowCommentWatchedMoviesList(
-    movieId: Int,
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
-) {
-    val stateComments by firebaseViewModel.commentsDownloadStatus.collectAsState()
-    val listComments by firebaseViewModel.comments.collectAsState()
-
-    LaunchedEffect(movieId) {
-        firebaseViewModel.getComments(NODE_LIST_WATCHED_MOVIES, movieId)
-        firebaseViewModel.observeComments(NODE_LIST_WATCHED_MOVIES, movieId)
-    }
-
-    when (stateComments) {
-        is State.Loading -> {
-            CustomLottieAnimation(
-                nameFile = "loading_animation.lottie",
-                modifier = Modifier.scale(0.5f)
-            )
-        }
-        is State.Success -> {
-            LazyColumn {
-                items(listComments) { comment ->
-                    Card(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth()
-                            .padding(vertical = 7.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        )
-                    ) {
-                        Column(modifier = Modifier.padding(8.dp)) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = comment.username,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-
-                            Text(
-                                text = comment.commentText,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text =
-                                    SimpleDateFormat(
-                                        "dd.MM.yyyy HH:mm",
-                                        Locale.getDefault()
-                                    ).format(
-                                        Date(comment.timestamp)
-                                    ),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        is State.Error -> {
-            // TODO: Добавить логику работы при ошибке.
         }
     }
 }

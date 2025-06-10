@@ -16,6 +16,7 @@ interface MovieRepository {
     suspend fun addCommentToMovie(dataSource: String, movieId: Double, comment: DomainCommentModel)
     suspend fun getCommentsForMovie(dataSource: String, movieId: Int): List<DomainCommentModel>
     suspend fun observeCommentsForMovie(dataSource:String, movieId: Int, onCommentsUpdated: (List<DomainCommentModel>) -> Unit)
+    suspend fun updateComment(dataSource: String, selectedMovieId: Int, commentId: String, selectedComment: DomainCommentModel)
 
     suspend fun sendingToNewDirectory(dataSource: String, directionDataSource: String, movieId: Double)
 }

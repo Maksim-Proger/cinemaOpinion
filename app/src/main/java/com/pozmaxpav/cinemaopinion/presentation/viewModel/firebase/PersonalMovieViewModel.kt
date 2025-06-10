@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
@@ -12,6 +13,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.GetList
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.ObserveCommentsFromPersonalListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.ObserveListSelectedMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.SendingToNewDirectoryUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.UpdateCommentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +30,8 @@ class PersonalMovieViewModel @Inject constructor(
     private val addCommentToPersonalListUseCase: AddCommentToPersonalListUseCase,
     private val getCommentsFromPersonalListUseCase: GetCommentsFromPersonalListUseCase,
     private val observeCommentsForMovieFromPersonalListUseCase: ObserveCommentsFromPersonalListUseCase,
-    private val sendingToNewDirectoryUseCase: SendingToNewDirectoryUseCase
+    private val sendingToNewDirectoryUseCase: SendingToNewDirectoryUseCase,
+    private val updateCommentUseCase: UpdateCommentUseCase
     ) : ViewModel() {
 
     private val _selectedMovies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
@@ -107,6 +110,22 @@ class PersonalMovieViewModel @Inject constructor(
                 observeListSelectedMoviesUseCase(userId) { onSelectedMoviesUpdated ->
                     _selectedMovies.value = onSelectedMoviesUpdated
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun updateComment(userId: String, userName: String, selectedMovieId: Int, commentId: String, newCommentText: String) {
+        viewModelScope.launch {
+            try {
+                val selectedComment = DomainCommentModel(
+                    commentId,
+                    userName,
+                    newCommentText,
+                    System.currentTimeMillis()
+                )
+                updateCommentUseCase(userId, selectedMovieId, commentId, selectedComment)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
