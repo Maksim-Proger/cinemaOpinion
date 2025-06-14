@@ -112,21 +112,26 @@ fun ListSelectedGeneralSerials(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(top = 35.dp, bottom = 50.dp)
+            .padding(vertical = 50.dp)
     ) {
+
         if (openBottomSheetChange) {
             MyBottomSheet(
                 onClose = { openBottomSheetChange = false },
                 content = {
-                    userData?.let {
-                        ChangeComment(
-                            NODE_LIST_SERIALS,
-                            it.nikName,
-                            selectedSerial!!.id,
-                            selectedComment!!,
-                            fireBaseMovieViewModel
-                        ) {
-                            openBottomSheetChange = false
+                    userData?.let { user ->
+                        selectedSerial?.let { serial ->
+                            selectedComment?.let { comment ->
+                                ChangeComment(
+                                    dataSource = NODE_LIST_SERIALS,
+                                    userName = user.nikName,
+                                    selectedMovieId = serial.id,
+                                    selectedComment = comment,
+                                    viewModel = fireBaseMovieViewModel
+                                ) {
+                                    openBottomSheetChange = false
+                                }
+                            }
                         }
                     }
                 },
@@ -238,9 +243,9 @@ fun ListSelectedGeneralSerials(
                 movie = selectedSerial!!,
                 content = {
                     ShowCommentList(
-                        NODE_LIST_SERIALS,
-                        selectedSerial!!.id,
-                        fireBaseMovieViewModel,
+                        dataSource = NODE_LIST_SERIALS,
+                        selectedMovieId = selectedSerial!!.id,
+                        viewModel = fireBaseMovieViewModel,
                         onClick = {
                             comment -> selectedComment = comment
                             openBottomSheetChange = true
@@ -347,7 +352,7 @@ fun ListSelectedGeneralSerials(
                                     userData!!.nikName,
                                     R.string.record_deleted_the_series,
                                     movie.nameFilm,
-                                    "Фильм удален, страницы нет",
+                                    context.getString(R.string.movie_was_deleted)
                                 )
                             }
                         }

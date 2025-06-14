@@ -123,15 +123,19 @@ fun ListWatchedMovies(
             MyBottomSheet(
                 onClose = { openBottomSheetChange = false },
                 content = {
-                    userData?.let {
-                        ChangeComment(
-                            NODE_LIST_WATCHED_MOVIES,
-                            it.nikName,
-                            selectedMovie!!.id,
-                            selectedComment!!,
-                            fireBaseMovieViewModel
-                        ) {
-                            openBottomSheetChange = false
+                    userData?.let { user ->
+                        selectedMovie?.let { movie ->
+                            selectedComment?.let { comment ->
+                                ChangeComment(
+                                    dataSource = NODE_LIST_WATCHED_MOVIES,
+                                    userName = user.nikName,
+                                    selectedMovieId = movie.id,
+                                    selectedComment = comment,
+                                    viewModel = fireBaseMovieViewModel
+                                ) {
+                                    openBottomSheetChange = false
+                                }
+                            }
                         }
                     }
                 },
@@ -226,9 +230,9 @@ fun ListWatchedMovies(
                     movie = selectedMovie!!,
                     content = {
                         ShowCommentList(
-                            NODE_LIST_WATCHED_MOVIES,
-                            selectedMovie!!.id,
-                            fireBaseMovieViewModel,
+                            dataSource = NODE_LIST_WATCHED_MOVIES,
+                            selectedMovieId = selectedMovie!!.id,
+                            viewModel = fireBaseMovieViewModel,
                             onClick = {
                                 comment -> selectedComment = comment
                                 openBottomSheetChange = true

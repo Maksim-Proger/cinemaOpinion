@@ -149,15 +149,19 @@ fun ListWaitingContinuationSeries(
                     MyBottomSheet(
                         onClose = { openBottomSheetChange = false },
                         content = {
-                            userData?.let {
-                                ChangeComment(
-                                    NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                    it.nikName,
-                                    selectedSerial!!.id,
-                                    selectedComment!!,
-                                    fireBaseMovieViewModel
-                                ) {
-                                    openBottomSheetChange = false
+                            userData?.let { user ->
+                                selectedSerial?.let { serial ->
+                                    selectedComment?.let { comment ->
+                                        ChangeComment(
+                                            dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                            userName = user.nikName,
+                                            selectedMovieId = serial.id,
+                                            selectedComment = comment,
+                                            viewModel = fireBaseMovieViewModel
+                                        ) {
+                                            openBottomSheetChange = false
+                                        }
+                                    }
                                 }
                             }
                         },
@@ -245,9 +249,9 @@ fun ListWaitingContinuationSeries(
                     movie = selectedSerial!!,
                     content = {
                         ShowCommentList(
-                            NODE_LIST_WAITING_CONTINUATION_SERIES,
-                            selectedSerial!!.id,
-                            fireBaseMovieViewModel,
+                            dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                            selectedMovieId = selectedSerial!!.id,
+                            viewModel = fireBaseMovieViewModel,
                             onClick = {
                                 comment -> selectedComment = comment
                                 openBottomSheetChange = true
@@ -302,6 +306,7 @@ fun ListWaitingContinuationSeries(
                         showTopBar = !showTopBar
                     }
                 )
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     OnBackInvokedHandler {
                         selectedSerial = null
@@ -313,6 +318,7 @@ fun ListWaitingContinuationSeries(
                         showTopBar = !showTopBar
                     }
                 }
+
             }
         } else {
             when (stateMovies) {

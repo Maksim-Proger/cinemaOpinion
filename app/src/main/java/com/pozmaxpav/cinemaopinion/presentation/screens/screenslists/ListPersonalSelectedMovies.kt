@@ -67,12 +67,14 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUser
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_PERSONAL_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.state.State
@@ -121,21 +123,26 @@ fun ListSelectedMovies(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(top = 35.dp, bottom = 50.dp)
+            .padding(vertical = 50.dp)
     ) {
 
         if (openBottomSheetChange) {
             MyBottomSheet(
                 onClose = { openBottomSheetChange = false },
                 content = {
-                    userData?.let {
-                        ChangeComment(
-                            userId,
-                            it.nikName,
-                            selectedMovie!!.id,
-                            selectedComment!!
-                        ) {
-                            openBottomSheetChange = false
+                    userData?.let { user ->
+                        selectedMovie?.let { movie->
+                            selectedComment?.let { comment ->
+                                ChangeComment(
+                                    userId = userId,
+                                    userName = user.nikName,
+                                    selectedMovieId = movie.id,
+                                    selectedComment = comment,
+                                    viewModel = personalMovieViewModel
+                                ) {
+                                    openBottomSheetChange = false
+                                }
+                            }
                         }
                     }
                 },
@@ -235,9 +242,10 @@ fun ListSelectedMovies(
             DetailsCardSelectedMovie(
                 movie = selectedMovie!!,
                 content = {
-                    ShowListComments(
-                        userId,
-                        selectedMovie!!.id,
+                    ShowCommentList(
+                        userId = userId,
+                        selectedMovieId = selectedMovie!!.id,
+                        viewModel = personalMovieViewModel,
                         onClick = {
                             comment -> selectedComment = comment
                             openBottomSheetChange = true
@@ -409,132 +417,3 @@ fun ListSelectedMovies(
     }
 }
 
-@Composable
-private fun ShowListComments(
-    userId: String,
-    selectedMovieId: Int,
-    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    onClick: (DomainCommentModel) -> Unit,
-) {
-
-    val listComments by personalMovieViewModel.listComments.collectAsState()
-
-    LaunchedEffect(userId) {
-        personalMovieViewModel.getCommentsFromPersonalList(userId, selectedMovieId)
-        personalMovieViewModel.observeCommentsForMovieFromPersonalList(userId, selectedMovieId)
-    }
-
-    LazyColumn {
-        items(listComments) { comment ->
-            Card(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .padding(vertical = 7.dp)
-                    .clickable { onClick(comment) },
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
-                )
-            ) {
-                Column(modifier = Modifier.padding(8.dp)) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = comment.username,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                    Text(
-                        text = comment.commentText,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = SimpleDateFormat(
-                                "dd.MM.yyyy HH:mm",
-                                Locale.getDefault()
-                            ).format(
-                                Date(comment.timestamp)
-                            ),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ChangeComment(
-    userId: String,
-    userName: String,
-    selectedMovieId: Int,
-    selectedComment: DomainCommentModel,
-    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    onClick: () -> Unit
-) {
-    val (comment, setComment) = remember { mutableStateOf("") }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    LaunchedEffect(Unit) {
-        setComment(selectedComment.commentText)
-    }
-
-    CustomTextField(
-        value = comment,
-        onValueChange = setComment,
-        label = {
-            Text(
-                text = "Измените комментарий",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-        ),
-        keyboardType = KeyboardType.Text,
-        imeAction = ImeAction.Done
-    )
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        CustomTextButton(
-            textButton = stringResource(R.string.button_save),
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            endPadding = 15.dp,
-            onClickButton = {
-                personalMovieViewModel.updateComment(
-                    userId,
-                    userName,
-                    selectedMovieId,
-                    selectedComment.commentId,
-                    comment
-                )
-                onClick()
-            }
-        )
-    }
-}

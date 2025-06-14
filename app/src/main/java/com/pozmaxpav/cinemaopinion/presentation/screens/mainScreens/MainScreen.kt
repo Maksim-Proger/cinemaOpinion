@@ -160,10 +160,10 @@ fun MainScreen(
 
     // endregion
 
-    // region Launchers
+    // region LaunchedEffect
     LaunchedEffect(Unit) {
         if (!isInitialized) {
-            apiViewModel.fetchPremiersMovies(2025, "April")
+            apiViewModel.fetchPremiersMovies(2025, "June")
             apiViewModel.fetchTopListMovies(currentPage)
         }
     }
@@ -556,7 +556,7 @@ fun MainScreen(
             onDismiss = {
                 onAccountButtonClick = false
             },
-            paddingVerticalSecondBox = 50.dp,
+            paddingVerticalSecondBox = 70.dp,
             paddingHorizontalSecondBox = 16.dp,
             content = {
                 AccountScreen(
