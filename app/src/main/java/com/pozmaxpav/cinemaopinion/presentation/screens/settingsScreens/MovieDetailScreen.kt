@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,9 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,18 +26,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
+import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
+import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -47,6 +60,7 @@ fun MovieDetailScreen(
     navController: NavHostController,
     newDataSource: String,
     movieId: Int,
+    userName: String,
     fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel()
 ) {
 
@@ -54,16 +68,23 @@ fun MovieDetailScreen(
 
     LaunchedEffect(movieId) {
         if (newDataSource.isNotEmpty() && movieId != 0) {
-            Log.d("@@@", "$newDataSource, $movieId")
             fireBaseMovieViewModel.getMovieById(newDataSource, movieId)
         }
     }
 
     Scaffold { innerPadding ->
-        if (newDataSource == "Фильм удален, страницы нет") {
+        if (newDataSource == stringResource(R.string.movie_was_deleted)) {
             TheMovieWasDeleted(innerPadding, navController)
         } else {
-            OtherActions(innerPadding, movie, newDataSource, movieId, navController)
+            OtherActions(
+                innerPadding,
+                movie,
+                newDataSource,
+                movieId,
+                navController,
+                fireBaseMovieViewModel,
+                userName
+            )
         }
     }
 }
@@ -74,19 +95,106 @@ private fun OtherActions(
     movie: DomainSelectedMovieModel?,
     newDataSource: String,
     movieId: Int,
-    navController: NavHostController
+    navController: NavHostController,
+    fireBaseMovieViewModel: FireBaseMovieViewModel,
+    userName: String
 ) {
+
+    val (comment, setComment) = remember { mutableStateOf("") }
+    var openBottomSheetComments by remember { mutableStateOf(false) }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
     ) {
-        movie?.let {
+
+        if (openBottomSheetComments) {
+            MyBottomSheet(
+                onClose = {
+                    openBottomSheetComments = !openBottomSheetComments
+                },
+                content = {
+                    CustomTextFieldForComments(
+                        value = comment,
+                        onValueChange = setComment,
+                        placeholder = {
+                            Text(
+                                text = stringResource(R.string.placeholder_for_comment_field),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.outline
+                            )
+                        },
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            }
+                        )
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        CustomTextButton(
+                            textButton = "Добавить",
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            endPadding = 15.dp,
+                            onClickButton = {
+                                movie?.let { movie ->
+                                    fireBaseMovieViewModel.addComment(
+                                        newDataSource,
+                                        movieId.toDouble(),
+                                        userName,
+                                        comment
+                                    )
+                                    fireBaseMovieViewModel.savingChangeRecord(
+                                        context,
+                                        userName,
+                                        R.string.record_added_comment_to_movie,
+                                        movie.nameFilm,
+                                        newDataSource,
+                                        movieId
+                                    )
+                                    showToast(context, R.string.comment_added)
+                                    setComment("")
+                                    openBottomSheetComments = !openBottomSheetComments
+                                }
+                            }
+                        )
+                    }
+                },
+                fraction = 0.7f
+            )
+        }
+
+        movie?.let { movie ->
             DetailsCardSelectedMovie(
                 titleForMovieDetailScreen = elementDirectory(newDataSource),
-                movie = it,
+                movie = movie,
                 content = {
-                    ShowComment(newDataSource, movieId)
+                    ShowComment(newDataSource, movieId, fireBaseMovieViewModel)
+                },
+                commentButton = {
+                    CustomTextButton(
+                        textButton = context.getString(R.string.placeholder_for_comment_field),
+                        bottomPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+                    )
                 },
                 onClick = {
                     navController.navigate(Route.ListOfChangesScreen.route) {
@@ -135,7 +243,7 @@ private fun TheMovieWasDeleted(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Фильм удален, страницы нет",
+                text = stringResource(R.string.movie_was_deleted),
                 style = MaterialTheme.typography.bodyLarge
             )
         }
@@ -156,15 +264,15 @@ private fun elementDirectory(newDataSource: String): String {
 fun ShowComment(
     newDataSource: String,
     movieId: Int,
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
+    fireBaseMovieViewModel: FireBaseMovieViewModel,
 ) {
 
-    val stateComments by firebaseViewModel.commentsDownloadStatus.collectAsState()
-    val listComments by firebaseViewModel.comments.collectAsState()
+    val stateComments by fireBaseMovieViewModel.commentsDownloadStatus.collectAsState()
+    val listComments by fireBaseMovieViewModel.comments.collectAsState()
 
     LaunchedEffect(movieId) {
-        firebaseViewModel.getComments(newDataSource, movieId)
-        firebaseViewModel.observeComments(newDataSource, movieId)
+        fireBaseMovieViewModel.getComments(newDataSource, movieId)
+        fireBaseMovieViewModel.observeComments(newDataSource, movieId)
     }
 
     when (stateComments) {

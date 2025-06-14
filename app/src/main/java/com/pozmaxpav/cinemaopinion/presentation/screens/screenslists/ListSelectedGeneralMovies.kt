@@ -116,22 +116,26 @@ fun ListSelectedGeneralMovies(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(top = 35.dp, bottom = 50.dp)
+            .padding(vertical = 50.dp)
     ) {
 
         if (openBottomSheetChange) {
             MyBottomSheet(
                 onClose = { openBottomSheetChange = false },
                 content = {
-                    userData?.let {
-                        ChangeComment(
-                            NODE_LIST_MOVIES,
-                            it.nikName,
-                            selectedMovie!!.id,
-                            selectedComment!!,
-                            fireBaseMovieViewModel
-                        ) {
-                            openBottomSheetChange = false
+                    userData?.let { user ->
+                        selectedMovie?.let { movie ->
+                            selectedComment?.let { comment ->
+                                ChangeComment(
+                                    dataSource = NODE_LIST_MOVIES,
+                                    userName = user.nikName,
+                                    selectedMovieId = movie.id,
+                                    selectedComment = comment,
+                                    viewModel = fireBaseMovieViewModel
+                                ) {
+                                    openBottomSheetChange = false
+                                }
+                            }
                         }
                     }
                 },
@@ -173,9 +177,9 @@ fun ListSelectedGeneralMovies(
                             }
                         )
                     )
+
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
                         CustomTextButton(
@@ -184,24 +188,26 @@ fun ListSelectedGeneralMovies(
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             endPadding = 15.dp,
                             onClickButton = {
-                                if (userData != null) {
-                                    fireBaseMovieViewModel.addComment(
-                                        NODE_LIST_MOVIES,
-                                        selectedMovie!!.id.toDouble(),
-                                        userData!!.nikName,
-                                        comment
-                                    )
-                                    fireBaseMovieViewModel.savingChangeRecord(
-                                        context,
-                                        userData!!.nikName,
-                                        R.string.record_added_comment_to_movie,
-                                        selectedMovie!!.nameFilm,
-                                        NODE_LIST_MOVIES,
-                                        selectedMovie!!.id
-                                    )
-                                    showToast(context, R.string.comment_added)
-                                    setComment("")
-                                    openBottomSheetComments = !openBottomSheetComments
+                                userData?.let { user ->
+                                    selectedMovie?.let { movie ->
+                                        fireBaseMovieViewModel.addComment(
+                                            NODE_LIST_MOVIES,
+                                            movie.id.toDouble(),
+                                            user.nikName,
+                                            comment
+                                        )
+                                        fireBaseMovieViewModel.savingChangeRecord(
+                                            context,
+                                            user.nikName,
+                                            R.string.record_added_comment_to_movie,
+                                            movie.nameFilm,
+                                            NODE_LIST_MOVIES,
+                                            movie.id
+                                        )
+                                        showToast(context, R.string.comment_added)
+                                        setComment("")
+                                        openBottomSheetComments = !openBottomSheetComments
+                                    }
                                 }
                             }
                         )
@@ -243,9 +249,9 @@ fun ListSelectedGeneralMovies(
                 movie = selectedMovie!!,
                 content = {
                     ShowCommentList(
-                        NODE_LIST_MOVIES,
-                        selectedMovie!!.id,
-                        fireBaseMovieViewModel,
+                        dataSource = NODE_LIST_MOVIES,
+                        selectedMovieId = selectedMovie!!.id,
+                        viewModel = fireBaseMovieViewModel,
                         onClick = {
                             comment -> selectedComment = comment
                             openBottomSheetChange = true
@@ -351,6 +357,7 @@ fun ListSelectedGeneralMovies(
                             contentPadding = PaddingValues(10.dp)
                         ) {
                             items(listMovies, key = { it.id }) { movie ->
+
                                 var isVisible by remember { mutableStateOf(true) }
 
                                 LaunchedEffect(isVisible) {
@@ -361,7 +368,7 @@ fun ListSelectedGeneralMovies(
                                             userData!!.nikName,
                                             R.string.record_deleted_the_movie,
                                             movie.nameFilm,
-                                            "Фильм удален, страницы нет",
+                                            context.getString(R.string.movie_was_deleted)
                                         )
                                     }
                                 }

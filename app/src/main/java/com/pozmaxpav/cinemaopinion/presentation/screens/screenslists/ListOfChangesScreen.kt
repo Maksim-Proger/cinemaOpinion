@@ -48,7 +48,9 @@ import com.pozmaxpav.cinemaopinion.presentation.theme.DeveloperCommentColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.FilmAddedColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.FilmDeleteColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.MovingElement
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -58,14 +60,22 @@ import java.util.Locale
 @Composable
 fun ListOfChangesScreen(
     navController: NavHostController,
+    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
     viewModel: FireBaseMovieViewModel = hiltViewModel()
 ) {
     val list by viewModel.listOfChanges.collectAsState()
+    val userData by auxiliaryUserViewModel.userData.collectAsState()
+    val userId by mainViewModel.userId.collectAsState()
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.getRecordsOfChanges()
+    }
+    LaunchedEffect(userId) {
+        auxiliaryUserViewModel.getUserData(userId)
     }
 
     Scaffold(
@@ -100,7 +110,8 @@ fun ListOfChangesScreen(
                         navController.navigate(
                             Route.MovieDetailScreen.createRoute(
                                 newDataSource = item.newDataSource,
-                                movieId = item.entityId
+                                movieId = item.entityId,
+                                userData!!.nikName
                             )
                         )
                     }

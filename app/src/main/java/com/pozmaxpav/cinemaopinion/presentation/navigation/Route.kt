@@ -19,9 +19,9 @@ sealed class Route(
     data object LoginScreen : Route(route = "login_screen")
 
     // Экран с параметрами newDataSource (String) и movieId (Int)
-    data object MovieDetailScreen : Route(route = "movie_details/{newDataSource}/{movieId}") {
+    data object MovieDetailScreen : Route(route = "movie_details/{newDataSource}/{movieId}/{userName}") {
         // Функция для удобного создания пути с параметром
-        fun createRoute(newDataSource: String, movieId: Int) = "movie_details/$newDataSource/$movieId"
+        fun createRoute(newDataSource: String, movieId: Int, userName: String) = "movie_details/$newDataSource/$movieId/$userName"
     }
 }
 

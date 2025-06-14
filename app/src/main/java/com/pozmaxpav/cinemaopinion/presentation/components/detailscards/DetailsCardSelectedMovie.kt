@@ -57,7 +57,9 @@ fun DetailsCardSelectedMovie(
         apiViewModel.getSearchMovieById(movie.id)
     }
 
-    Column(modifier = Modifier.wrapContentSize()) {
+    Column(
+        modifier = Modifier.wrapContentSize().padding(top = 10.dp)
+    ) {
         Card(
             modifier = Modifier
                 .wrapContentHeight()
@@ -84,7 +86,8 @@ fun DetailsCardSelectedMovie(
                 Spacer(Modifier.padding(start = 16.dp))
                 Text(
                     text = titleForMovieDetailScreen,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
 
