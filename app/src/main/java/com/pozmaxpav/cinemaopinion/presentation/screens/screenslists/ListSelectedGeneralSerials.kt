@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
+import android.content.Context
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -42,9 +43,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,6 +55,7 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
@@ -87,13 +91,11 @@ fun ListSelectedGeneralSerials(
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
-    val (comment, setComment) = remember { mutableStateOf("") }
     val context = LocalContext.current
     val listState = rememberLazyListState()
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
+
 
     LaunchedEffect(Unit) {
         fireBaseMovieViewModel.getMovies(NODE_LIST_SERIALS)
@@ -150,62 +152,15 @@ fun ListSelectedGeneralSerials(
                     openBottomSheetComments = !openBottomSheetComments
                 },
                 content = {
-                    CustomTextFieldForComments(
-                        value = comment,
-                        onValueChange = setComment,
-                        placeholder = {
-                            Text(
-                                text = stringResource(R.string.placeholder_for_comment_field),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.outline
-                            )
-                        },
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                keyboardController?.hide()
-                                focusManager.clearFocus()
-                            }
-                        )
+                    AddComment(
+                        userData,
+                        fireBaseMovieViewModel,
+                        selectedSerial,
+                        context,
+                        onClick = {
+                            openBottomSheetComments = false
+                        }
                     )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        CustomTextButton(
-                            textButton = "Добавить",
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            endPadding = 15.dp,
-                            onClickButton = {
-                                if (userData != null) {
-                                    fireBaseMovieViewModel.addComment(
-                                        NODE_LIST_SERIALS,
-                                        selectedSerial!!.id.toDouble(),
-                                        userData!!.nikName,
-                                        comment
-                                    )
-                                    fireBaseMovieViewModel.savingChangeRecord(
-                                        context,
-                                        userData!!.nikName,
-                                        R.string.record_added_comment_to_series,
-                                        selectedSerial!!.nameFilm,
-                                        NODE_LIST_SERIALS,
-                                        selectedSerial!!.id
-                                    )
-                                    showToast(context, R.string.comment_added)
-                                    setComment("")
-                                    openBottomSheetComments = !openBottomSheetComments
-                                }
-                            }
-                        )
-                    }
                 },
                 fraction = 0.7f
             )
@@ -457,5 +412,77 @@ fun ListSelectedGeneralSerials(
             }
         }
         // endregion
+    }
+}
+
+@Composable
+private fun AddComment(
+    userData: User?,
+    fireBaseMovieViewModel: FireBaseMovieViewModel,
+    selectedSerial: DomainSelectedMovieModel?,
+    context: Context,
+    onClick: () -> Unit
+) {
+    val (comment, setComment) = remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    CustomTextFieldForComments(
+        value = comment,
+        onValueChange = setComment,
+        placeholder = {
+            Text(
+                text = stringResource(R.string.placeholder_for_comment_field),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.outline
+            )
+        },
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            }
+        )
+    )
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        CustomTextButton(
+            textButton = stringResource(R.string.button_add),
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary,
+            endPadding = 15.dp,
+            onClickButton = {
+                userData?.let { user ->
+                    selectedSerial?.let { serial ->
+                        fireBaseMovieViewModel.addComment(
+                            NODE_LIST_SERIALS,
+                            serial.id.toDouble(),
+                            user.nikName,
+                            comment
+                        )
+                        fireBaseMovieViewModel.savingChangeRecord(
+                            context,
+                            user.nikName,
+                            R.string.record_added_comment_to_series,
+                            serial.nameFilm,
+                            NODE_LIST_SERIALS,
+                            serial.id
+                        )
+                        showToast(context, R.string.comment_added)
+                        setComment("")
+                        onClick()
+                    }
+                }
+            }
+        )
     }
 }
