@@ -346,8 +346,7 @@ private fun ChangeItem(
     )
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
         CustomTextButton(

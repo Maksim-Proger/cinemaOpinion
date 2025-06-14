@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,9 +33,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,6 +68,7 @@ fun MovieDetailScreen(
 ) {
 
     val movie by fireBaseMovieViewModel.movie.collectAsState()
+    val context = LocalContext.current
 
     LaunchedEffect(movieId) {
         if (newDataSource.isNotEmpty() && movieId != 0) {
@@ -83,7 +87,8 @@ fun MovieDetailScreen(
                 movieId,
                 navController,
                 fireBaseMovieViewModel,
-                userName
+                userName,
+                context
             )
         }
     }
@@ -97,15 +102,11 @@ private fun OtherActions(
     movieId: Int,
     navController: NavHostController,
     fireBaseMovieViewModel: FireBaseMovieViewModel,
-    userName: String
+    userName: String,
+    context: Context,
 ) {
 
-    val (comment, setComment) = remember { mutableStateOf("") }
     var openBottomSheetComments by remember { mutableStateOf(false) }
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -119,62 +120,17 @@ private fun OtherActions(
                     openBottomSheetComments = !openBottomSheetComments
                 },
                 content = {
-                    CustomTextFieldForComments(
-                        value = comment,
-                        onValueChange = setComment,
-                        placeholder = {
-                            Text(
-                                text = stringResource(R.string.placeholder_for_comment_field),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.outline
-                            )
-                        },
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                keyboardController?.hide()
-                                focusManager.clearFocus()
-                            }
-                        )
+                    AddComment(
+                        movie,
+                        fireBaseMovieViewModel,
+                        newDataSource,
+                        movieId,
+                        userName,
+                        context,
+                        onClick = {
+                            openBottomSheetComments = false
+                        }
                     )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        CustomTextButton(
-                            textButton = "Добавить",
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            endPadding = 15.dp,
-                            onClickButton = {
-                                movie?.let { movie ->
-                                    fireBaseMovieViewModel.addComment(
-                                        newDataSource,
-                                        movieId.toDouble(),
-                                        userName,
-                                        comment
-                                    )
-                                    fireBaseMovieViewModel.savingChangeRecord(
-                                        context,
-                                        userName,
-                                        R.string.record_added_comment_to_movie,
-                                        movie.nameFilm,
-                                        newDataSource,
-                                        movieId
-                                    )
-                                    showToast(context, R.string.comment_added)
-                                    setComment("")
-                                    openBottomSheetComments = !openBottomSheetComments
-                                }
-                            }
-                        )
-                    }
                 },
                 fraction = 0.7f
             )
@@ -204,6 +160,79 @@ private fun OtherActions(
                 }
             )
         }
+    }
+}
+
+@Composable
+private fun AddComment(
+    movie: DomainSelectedMovieModel?,
+    fireBaseMovieViewModel: FireBaseMovieViewModel,
+    newDataSource: String,
+    movieId: Int,
+    userName: String,
+    context: Context,
+    onClick: () -> Unit
+) {
+
+    val (comment, setComment) = remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    CustomTextFieldForComments(
+        value = comment,
+        onValueChange = setComment,
+        placeholder = {
+            Text(
+                text = stringResource(R.string.placeholder_for_comment_field),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.outline
+            )
+        },
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            }
+        )
+    )
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        CustomTextButton(
+            textButton = "Добавить",
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary,
+            endPadding = 15.dp,
+            onClickButton = {
+                movie?.let { movie ->
+                    fireBaseMovieViewModel.addComment(
+                        newDataSource,
+                        movieId.toDouble(),
+                        userName,
+                        comment
+                    )
+                    fireBaseMovieViewModel.savingChangeRecord(
+                        context,
+                        userName,
+                        R.string.record_added_comment_to_movie,
+                        movie.nameFilm,
+                        newDataSource,
+                        movieId
+                    )
+                    showToast(context, R.string.comment_added)
+                    setComment("")
+                }
+                onClick()
+            }
+        )
     }
 }
 
