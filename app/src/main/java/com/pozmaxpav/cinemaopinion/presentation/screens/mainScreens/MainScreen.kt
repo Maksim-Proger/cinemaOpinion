@@ -163,7 +163,7 @@ fun MainScreen(
     // region LaunchedEffect
     LaunchedEffect(Unit) {
         if (!isInitialized) {
-            apiViewModel.fetchPremiersMovies(2025, "June")
+            apiViewModel.fetchPremiersMovies(2025, "July")
             apiViewModel.fetchTopListMovies(currentPage)
         }
     }
