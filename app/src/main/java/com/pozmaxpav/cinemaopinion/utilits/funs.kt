@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
@@ -27,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -96,61 +100,6 @@ fun AccountListItem(
 }
 
 @Composable
-fun CustomTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: @Composable (() -> Unit)? = null,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    imeAction: ImeAction = ImeAction.Default,
-    singleLine: Boolean = true
-) {
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 15.dp),
-        value = value,
-        shape = RoundedCornerShape(16.dp),
-        onValueChange = onValueChange,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.onPrimary,
-            focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-            focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-            cursorColor = MaterialTheme.colorScheme.onPrimary
-        ),
-        label = label,
-        placeholder = placeholder,
-        leadingIcon = leadingIcon,
-        trailingIcon = if (value.isNotEmpty()) {
-            {
-                IconButton(onClick = { onValueChange("") }) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(id = R.string.description_clear_text),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
-        } else null,
-        supportingText = supportingText,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType,
-            imeAction = imeAction
-        ),
-        keyboardActions = keyboardActions,
-        singleLine = singleLine,
-    )
-}
-
-@Composable
 fun SelectedMovieItem(
     movie: DomainSelectedMovieModel,
     onClick: () -> Unit,
@@ -191,6 +140,72 @@ fun capitalizeSentences(text: String): String {
 }
 
 @Composable
+fun CustomTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: @Composable (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    imeAction: ImeAction = ImeAction.Default,
+    singleLine: Boolean = true
+) {
+
+    // Определяем цвета для ползунка и выделения
+    val customSelectionColors = TextSelectionColors(
+        handleColor = MaterialTheme.colorScheme.onPrimary, // цвет ползунка
+        backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f) // фон выделенного текста
+    )
+
+    CompositionLocalProvider(LocalTextSelectionColors provides customSelectionColors) {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 15.dp),
+            value = value,
+            shape = RoundedCornerShape(16.dp),
+            onValueChange = onValueChange,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+                unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+                focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+                unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+                cursorColor = MaterialTheme.colorScheme.onPrimary
+            ),
+            label = label,
+            placeholder = placeholder,
+            leadingIcon = leadingIcon,
+            trailingIcon = if (value.isNotEmpty()) {
+                {
+                    IconButton(onClick = { onValueChange("") }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(id = R.string.description_clear_text),
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+            } else null,
+            supportingText = supportingText,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType,
+                imeAction = imeAction
+            ),
+            keyboardActions = keyboardActions,
+            singleLine = singleLine,
+        )
+    }
+
+
+}
+
+@Composable
 fun CustomTextFieldForComments(
     value: String,
     onValueChange: (String) -> Unit,
@@ -198,51 +213,60 @@ fun CustomTextFieldForComments(
     leadingIcon: @Composable (() -> Unit)? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 15.dp),
-        value = value,
-        shape = RoundedCornerShape(16.dp),
-        onValueChange = { newText ->
-            if (newText.endsWith('.') || newText.endsWith('!') || newText.endsWith('?')) {
-                onValueChange(capitalizeSentences(newText))
-            } else {
-                onValueChange(newText)
-            }
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.onPrimary,
-            focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-            focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-            focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-            unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-            focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-            unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-            cursorColor = MaterialTheme.colorScheme.onPrimary
-        ),
-        placeholder = placeholder,
-        leadingIcon = leadingIcon,
-        trailingIcon = if (value.isNotEmpty()) {
-            {
-                IconButton(onClick = { onValueChange("") }) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(id = R.string.description_clear_text),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
-        } else null,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = keyboardActions,
-        maxLines = 7
+    // Определяем цвета для ползунка и выделения
+    val customSelectionColors = TextSelectionColors(
+        handleColor = Color.Black, // цвет ползунка
+        backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f) // фон выделенного текста
     )
+
+    CompositionLocalProvider(LocalTextSelectionColors provides customSelectionColors) {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 15.dp),
+            value = value,
+            shape = RoundedCornerShape(16.dp),
+            onValueChange = { newText ->
+                if (newText.endsWith('.') || newText.endsWith('!') || newText.endsWith('?')) {
+                    onValueChange(capitalizeSentences(newText))
+                } else {
+                    onValueChange(newText)
+                }
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+                unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+                focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+                unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+                cursorColor = MaterialTheme.colorScheme.onPrimary
+            ),
+            placeholder = placeholder,
+            leadingIcon = leadingIcon,
+            trailingIcon = if (value.isNotEmpty()) {
+                {
+                    IconButton(onClick = { onValueChange("") }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(id = R.string.description_clear_text),
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+            } else null,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = keyboardActions,
+            maxLines = 7
+        )
+    }
 }
+
 
 @Composable
 fun WorkerWithImage(

@@ -282,37 +282,52 @@ fun ListWatchedMovies(
                     }
                 }
                 is State.Success -> {
-                    LazyColumn(
-                        state = listState,
+                    Column(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        contentPadding = PaddingValues(10.dp)
+                            .fillMaxWidth()
+                            .padding(innerPadding)
                     ) {
-                        items(listMovies, key = { it.id }) { movie ->
-                            Row(
-                                modifier = Modifier
-                                    .animateItem()
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Card(
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp)
+                                .padding(bottom = 5.dp)
+                        ) {
+                            Text(
+                                text = "${stringResource(R.string.watched_movies_sup_text)} ${listMovies.size}",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(10.dp)
+                        ) {
+                            items(listMovies, key = { it.id }) { movie ->
+                                Row(
                                     modifier = Modifier
-                                        .wrapContentHeight()
+                                        .animateItem()
                                         .fillMaxWidth(),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                        contentColor = MaterialTheme.colorScheme.onSecondary
-                                    )
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    SelectedMovieItem(
-                                        movie = movie,
-                                        onClick = { selectedMovie = movie },
-                                        showTopBar = { showTopBar = !showTopBar }
-                                    )
+                                    Card(
+                                        modifier = Modifier
+                                            .wrapContentHeight()
+                                            .fillMaxWidth(),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.secondary,
+                                            contentColor = MaterialTheme.colorScheme.onSecondary
+                                        )
+                                    ) {
+                                        SelectedMovieItem(
+                                            movie = movie,
+                                            onClick = { selectedMovie = movie },
+                                            showTopBar = { showTopBar = !showTopBar }
+                                        )
+                                    }
                                 }
+                                Spacer(Modifier.padding(5.dp))
                             }
-                            Spacer(Modifier.padding(5.dp))
                         }
                     }
                 }
