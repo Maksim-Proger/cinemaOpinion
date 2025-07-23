@@ -52,6 +52,7 @@
     <string name="record_added_series">добавил(а) сериал: </string>
 
     <!--   Text for Drop-Down Menu   -->
+    <string name="drop_down_menu_create_shared_list">Создать совместный список</string>
     <string name="drop_down_menu_item_edit">Изменить данные пользователя</string>
     <string name="drop_down_menu_item_settings">Настройки</string>
     <string name="drop_down_menu_item_exit">Сменить пользователя</string>
@@ -76,6 +77,8 @@
     <string name="text_for_expandedCard_field">Описание</string>
     <string name="enter_the_name_of_the_movie_series">Введите название фильма/сериала</string>
     <string name="text_for_field_change_comment">Измените комментарий</string>
+    <string name="text_for_field_create_shared_list">Название таблицы</string>
+    <string name="text_for_field_create_shared_list_invited_user_address">Email приглашаемого</string>
 
     <!--  Text Button  -->
     <string name="button_leave_comment">Оставить комментарий</string>
@@ -91,6 +94,7 @@
     <string name="text_buttons_film_card_to_general_list_serials">В общий список с сериалами</string>
     <string name="button_viewed_screen">Просмотренные</string>
     <string name="button_to_begin">Погнали</string>
+    <string name="button_create_shared_list">Создать таблицу</string>
     <string name="button_move_to_series">Переместить в сериалы</string>
     <string name="button_move_to_waiting_list">Переместить в лист ожидания</string>
     <string name="fab_button_with_menu_main_screen">Настройки</string>
@@ -118,6 +122,7 @@
     <string name="my_list_movies">Личный список</string>
     <string name="joint_list_films">Общий список с фильмами</string>
     <string name="joint_list_serials">Общий список с сериалами</string>
+    <string name="series_control">Контроль серий</string>
     <string name="floating_action_button_save">Сохранить</string>
     <string name="floating_action_button_settings">Фильтр</string>
     <string name="list_selected_movies_button_close">Закрыть</string>
@@ -131,10 +136,12 @@
     <string name="description_icon_search">Иконка поиска</string>
     <string name="description_icon_advanced_search">Иконка расширенного поиска</string>
     <string name="description_icon_edit">Icon Edit</string>
+    <string name="description_icon_create_shared_list">Icon Create Shared List</string>
     <string name="description_icon_settings">Icon Settings</string>
     <string name="description_icon_exit">Icon Exit</string>
     <string name="description_icon_movie_list">Icon Movie List</string>
     <string name="description_icon_serials_list">Icon Serials List</string>
+    <string name="description_icon_series_control">Icon Series Control</string>
     <string name="description_icon_edit_change_name">Icon Edit Change Name</string>
     <string name="description_icon_add_lastName_name">Icon Add Lastname</string>
     <string name="description_icon_add_name">Icon Add Name</string>
