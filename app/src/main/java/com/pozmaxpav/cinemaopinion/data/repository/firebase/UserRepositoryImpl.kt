@@ -31,8 +31,8 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun addUser(user: User) {
         val userId = user.id
-        if (userId.isNotEmpty()) databaseReference.child(NODE_LIST_USERS).child(userId)
-            .setValue(user).await()
+        if (userId.isNotEmpty())
+            databaseReference.child(NODE_LIST_USERS).child(userId).setValue(user).await()
         else throw Exception("User ID is missing")
     }
 

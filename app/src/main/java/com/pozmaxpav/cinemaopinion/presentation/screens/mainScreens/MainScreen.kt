@@ -553,9 +553,7 @@ fun MainScreen(
 
     if (onAccountButtonClick) {
         CustomBoxShowOverlay(
-            onDismiss = {
-                onAccountButtonClick = false
-            },
+            onDismiss = { onAccountButtonClick = false },
             paddingVerticalSecondBox = 70.dp,
             paddingHorizontalSecondBox = 16.dp,
             content = {

@@ -156,7 +156,6 @@ class AuxiliaryUserViewModel @Inject constructor(
 
                     // Проверяем, есть ли уже такая награда в списке
                     if (currentAwards.contains(newAward)) {
-                        Log.w("updateAwardsList", "Award already exists: $newAward")
                         return@launch
                     }
 

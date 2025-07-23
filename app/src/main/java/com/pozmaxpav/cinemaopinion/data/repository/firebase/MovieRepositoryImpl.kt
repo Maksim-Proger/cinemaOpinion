@@ -144,6 +144,7 @@ class MovieRepositoryImpl @Inject constructor(
             throw IllegalArgumentException("Movie with ID $movieId not found.")
         }
     }
+
     override suspend fun getCommentsForMovie(dataSource: String, movieId: Int): List<DomainCommentModel> {
         val movieSnapshot = databaseReference
             .child(dataSource)
@@ -158,6 +159,7 @@ class MovieRepositoryImpl @Inject constructor(
             .child(NODE_COMMENTS)
             .children.mapNotNull { it.getValue(DataComment::class.java)?.commentToDomain() }
     }
+
     override suspend fun observeCommentsForMovie(dataSource: String, movieId: Int, onCommentsUpdated: (List<DomainCommentModel>) -> Unit) {
         databaseReference
             .child(dataSource)
@@ -195,6 +197,7 @@ class MovieRepositoryImpl @Inject constructor(
                 }
             })
     }
+
     override suspend fun updateComment(dataSource: String, selectedMovieId: Int, commentId: String, selectedComment: DomainCommentModel) {
         val movieKey = databaseReference
             .child(dataSource)
@@ -262,6 +265,7 @@ class MovieRepositoryImpl @Inject constructor(
             e.printStackTrace()
         }
     }
+
     private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
         val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
         snapshot.children.forEach { childSnapshot ->

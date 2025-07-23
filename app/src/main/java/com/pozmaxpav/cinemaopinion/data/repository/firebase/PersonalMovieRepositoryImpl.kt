@@ -29,7 +29,10 @@ class PersonalMovieRepositoryImpl @Inject constructor(
     private val listenerHolder: FirebaseListenerHolder
 ) : PersonalMovieRepository {
 
-    override suspend fun addMovieToPersonalList(userId: String, selectedMovie: DomainSelectedMovieModel) {
+    override suspend fun addMovieToPersonalList(
+        userId: String,
+        selectedMovie: DomainSelectedMovieModel
+    ) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
         val userSnapshot = databaseReference
@@ -41,7 +44,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             .children.firstOrNull()?.key
             ?: throw IllegalArgumentException("User with ID $userId not found.")
 
-        val newSelectedMovieId = databaseReference
+        val newSelectedMovieId = databaseReference // TODO: неправильно название переменной
             .child(NODE_LIST_USERS)
             .child(userSnapshot)
             .child(NODE_LIST_PERSONAL_MOVIES)
@@ -431,7 +434,6 @@ class PersonalMovieRepositoryImpl @Inject constructor(
     override fun removeSelectedMoviesListener() {
         listenerHolder.removeListener(MOVIES_KEY_LISTENER)
     }
-
     override fun removeCommentsSelectedMoviesListener() {
         listenerHolder.removeListener(COMMENTS_KEY_LISTENER)
     }

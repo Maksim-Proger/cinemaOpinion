@@ -19,6 +19,7 @@ import com.pozmaxpav.cinemaopinion.data.repository.firebase.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.RecordsOfChangesRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.PersonalMovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SeriesControlRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.SharedListsRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.system.SharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiRepository
@@ -27,6 +28,7 @@ import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.RecordsOfChangesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SharedListsRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemSharedPreferencesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.system.ThemeRepository
@@ -188,6 +190,12 @@ object AppModule {
     @Singleton
     fun provideRecordsOfChangesRepository(databaseReference: DatabaseReference): RecordsOfChangesRepository {
         return RecordsOfChangesRepositoryImpl(databaseReference)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSharedListsRepository(databaseReference: DatabaseReference) : SharedListsRepository {
+        return SharedListsRepositoryImpl(databaseReference)
     }
 
     // endregion

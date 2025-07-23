@@ -3,6 +3,8 @@ package com.pozmaxpav.cinemaopinion.utilits
 const val NODE_LIST_MOVIES = "list_movies"
 const val NODE_LIST_SERIALS = "list_serials"
 const val NODE_NEW_YEAR_LIST = "new_year_list"
+const val NODE_SHARED_LIST = "shared_lists"
+const val NODE_SHARED_LIST_PROFILE = "my_shared_list"
 const val NODE_COMMENTS = "comments"
 const val NODE_SERIES_CONTROL = "series_control"
 const val NODE_LIST_PERSONAL_MOVIES = "list_personal_movies"
