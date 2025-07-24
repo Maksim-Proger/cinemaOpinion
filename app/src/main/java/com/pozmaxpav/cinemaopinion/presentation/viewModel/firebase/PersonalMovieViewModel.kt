@@ -3,6 +3,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.AddCommentToPersonalListUseCase
@@ -14,9 +15,13 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.Observe
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.ObserveListSelectedMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.SendingToNewDirectoryUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.UpdateCommentUseCase
+import com.pozmaxpav.cinemaopinion.utilits.state.StateDuplicate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,14 +39,18 @@ class PersonalMovieViewModel @Inject constructor(
     private val updateCommentUseCase: UpdateCommentUseCase
     ) : ViewModel() {
 
-    private val _selectedMovies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
-    val selectedMovies: StateFlow<List<DomainSelectedMovieModel>> = _selectedMovies
+    private val _listSelectedMovies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
+    val listSelectedMovies: StateFlow<List<DomainSelectedMovieModel>> = _listSelectedMovies
 
     private val _listComments = MutableStateFlow<List<DomainCommentModel>>(emptyList())
     val listComments = _listComments.asStateFlow()
 
-    private val _status = MutableStateFlow("")
-    val status: StateFlow<String> = _status.asStateFlow()
+    private val _toastMessage = MutableSharedFlow<Int>(
+        replay = 1,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val toastMessage = _toastMessage.asSharedFlow()
 
     fun addCommentToPersonalList(userId: String, selectedMovieId: Int, username: String, textComment: String) {
         viewModelScope.launch {
@@ -86,7 +95,7 @@ class PersonalMovieViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val movies = getListPersonalMoviesUseCase(userId)
-                _selectedMovies.value = movies
+                _listSelectedMovies.value = movies
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -97,8 +106,16 @@ class PersonalMovieViewModel @Inject constructor(
     fun addMovieToPersonalList(userId: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
-                addMovieToPersonalListUseCase(userId, selectedMovie)
+                val movies = getListPersonalMoviesUseCase(userId)
+
+                if (movies.any { it.id == selectedMovie.id }) {
+                    _toastMessage.emit(R.string.movie_has_already_been_added)
+                } else {
+                    addMovieToPersonalListUseCase(userId, selectedMovie)
+                    _toastMessage.emit(R.string.movie_has_been_added)
+                }
             } catch (e: Exception) {
+                _toastMessage.emit(R.string.movie_has_been_added)
                 e.printStackTrace()
             }
         }
@@ -108,7 +125,7 @@ class PersonalMovieViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 observeListSelectedMoviesUseCase(userId) { onSelectedMoviesUpdated ->
-                    _selectedMovies.value = onSelectedMoviesUpdated
+                    _listSelectedMovies.value = onSelectedMoviesUpdated
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

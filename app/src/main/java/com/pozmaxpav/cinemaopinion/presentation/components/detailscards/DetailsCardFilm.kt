@@ -25,6 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -54,20 +57,39 @@ fun DetailsCardFilm(
     movie: MovieData?,
     onClick: () -> Unit,
     padding: PaddingValues,
-    selectedMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
+    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
+    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
     auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
 ) {
-    val statusExist by selectedMovieViewModel.status.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     val detailedInformationAboutFilm by apiViewModel.detailedInformationAboutFilm.collectAsState()
+
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
+    var triggerOnClickPersonalMovie by remember { mutableStateOf(false) }
+    var triggerOnClickGeneralMovie by remember { mutableStateOf(false) }
+
+    LaunchedEffect(triggerOnClickPersonalMovie) {
+        if (triggerOnClickPersonalMovie) {
+            personalMovieViewModel.toastMessage.collect { resId ->
+                showToast(context, resId)
+                onClick()
+            }
+        }
+    }
+    LaunchedEffect(triggerOnClickGeneralMovie) {
+        if (triggerOnClickGeneralMovie) {
+            fireBaseMovieViewModel.toastMessage.collect { resId ->
+                showToast(context, resId)
+                onClick()
+            }
+        }
+    }
     LaunchedEffect(movie?.id) {
         movie?.let { apiViewModel.getSearchMovieById(it.id) }
     }
@@ -260,19 +282,11 @@ fun DetailsCardFilm(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            // Преобразуем MovieData в SelectedMovie
-                            val selectedMovie = movie?.toSelectedMovie()
-                            selectedMovie?.let {
-                                selectedMovieViewModel.addMovieToPersonalList(
-                                    userId, it
-                                )
+                            movie?.toSelectedMovie()?.let { // Преобразуем MovieData в SelectedMovie
+                                personalMovieViewModel.addMovieToPersonalList(userId, it)
                             }
-                            if (statusExist == "error") {
-                                showToast(context, R.string.movie_has_already_been_added)
-                            } else showToast(context, R.string.movie_has_been_added)
-
-                            onClick()
-                        } // TODO: Добавить проверку
+                            triggerOnClickPersonalMovie = true
+                        }
                     )
                     CustomTextButton(
                         textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
@@ -281,25 +295,26 @@ fun DetailsCardFilm(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            userData?.let {
-                                firebaseViewModel.savingChangeRecord(
-                                    context,
-                                    it.nikName,
-                                    R.string.record_added_movie,
-                                    movie?.nameRu ?: context.getString(R.string.untitled_movie),
-                                    NODE_LIST_MOVIES,
-                                    movie!!.id
-                                )
-                            }
                             movie?.let {
-                                firebaseViewModel.saveMovie(
+                                fireBaseMovieViewModel.saveMovie(
                                     NODE_LIST_MOVIES,
                                     it.toSelectedMovie()
                                 )
                             }
-                            showToast(context, R.string.movie_has_been_added_to_general_list)
-                            onClick()
-                        } // TODO: Добавить проверку
+
+//                            userData?.let {
+//                                fireBaseMovieViewModel.savingChangeRecord(
+//                                    context,
+//                                    it.nikName,
+//                                    R.string.record_added_movie,
+//                                    movie?.nameRu ?: context.getString(R.string.untitled_movie),
+//                                    NODE_LIST_MOVIES,
+//                                    movie!!.id
+//                                )
+//                            }
+
+                            triggerOnClickGeneralMovie = true
+                        } // TODO: Доработать проверку для savingChangeRecord
                     )
                     CustomTextButton(
                         textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
@@ -307,25 +322,26 @@ fun DetailsCardFilm(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            userData?.let {
-                                firebaseViewModel.savingChangeRecord(
-                                    context,
-                                    it.nikName,
-                                    R.string.record_added_series,
-                                    movie?.nameRu.toString(),
-                                    NODE_LIST_SERIALS,
-                                    movie!!.id
-                                )
-                            }
                             movie?.let {
-                                firebaseViewModel.saveMovie(
+                                fireBaseMovieViewModel.saveMovie(
                                     NODE_LIST_SERIALS,
                                     it.toSelectedMovie()
                                 )
                             }
-                            showToast(context, R.string.movie_has_been_added_to_general_list)
-                            onClick()
-                        } // TODO: Добавить проверку
+
+//                            userData?.let {
+//                                fireBaseMovieViewModel.savingChangeRecord(
+//                                    context,
+//                                    it.nikName,
+//                                    R.string.record_added_series,
+//                                    movie?.nameRu.toString(),
+//                                    NODE_LIST_SERIALS,
+//                                    movie!!.id
+//                                )
+//                            }
+
+                            triggerOnClickGeneralMovie = true
+                        } // TODO: Доработать проверку для savingChangeRecord
                     )
 //                    CustomTextButton(
 //                        textButton = context.getString(R.string.button_add_to_new_year_list),

@@ -57,7 +57,6 @@ class AuxiliaryUserViewModel @Inject constructor(
             }
         }
     }
-
     fun addUser(nikName: String, email: String, password: String) {
         viewModelScope.launch {
             try {
@@ -89,7 +88,6 @@ class AuxiliaryUserViewModel @Inject constructor(
     fun clearFlag() {
         _loginVerificationResult.value = null
     }
-
     fun resetToastState() {
         _showToast.value = false
     }
@@ -104,7 +102,6 @@ class AuxiliaryUserViewModel @Inject constructor(
             }
         }
     }
-
     fun updatingUserData(userId: String, nikName: String, email: String, password: String) {
         viewModelScope.launch {
             try {
@@ -120,33 +117,26 @@ class AuxiliaryUserViewModel @Inject constructor(
             }
         }
     }
-
     fun getSeasonalEventPoints(userId: String) {
         viewModelScope.launch {
             try {
                 val userData = getUserDataUseCase(userId)
-                userData?.let {
-                    _seasonalEventPoints.value = it.seasonalEventPoints
-                }
+                userData?.let { _seasonalEventPoints.value = it.seasonalEventPoints }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-
     fun getAwardsList(userId: String) {
         viewModelScope.launch {
             try {
                 val userData = getUserDataUseCase(userId)
-                userData?.let {
-                    _listAwards.value = it.awards
-                }
+                userData?.let { _listAwards.value = it.awards }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-
     private fun updateAwardsList(userId: String, newAward: String) {
         viewModelScope.launch {
             try {
@@ -169,7 +159,6 @@ class AuxiliaryUserViewModel @Inject constructor(
             }
         }
     }
-
     fun updatingEventData(userId: String) {
         viewModelScope.launch {
             var points = _seasonalEventPoints.value

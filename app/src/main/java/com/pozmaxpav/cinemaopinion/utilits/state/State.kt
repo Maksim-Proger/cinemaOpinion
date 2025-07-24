@@ -6,3 +6,8 @@ sealed class State {
     data object Error : State()
 }
 
+sealed class StateDuplicate {
+    data object Success : StateDuplicate()
+    data object Error : StateDuplicate()
+}
+
