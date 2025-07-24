@@ -60,7 +60,7 @@ fun DetailsCard(
     val info by apiViewModel.informationMovie.collectAsState()
     var showRatingBar by remember { mutableStateOf(false) }
     val quantitySeasonalEventPoints by auxiliaryUserViewModel.seasonalEventPoints.collectAsState()
-    val statusExist by selectedMovieViewModel.status.collectAsState()
+//    val statusExist by selectedMovieViewModel.status.collectAsState()
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
@@ -177,22 +177,22 @@ fun DetailsCard(
                         // endregion
 
                         // region кнопка "Добавить к себе"
-                        Button(
-                            onClick = {
-                                selectedMovieViewModel.addMovieToPersonalList(userId, newYearMovie)
-                                if (statusExist == "error") showToast(context, R.string.movie_has_already_been_added)
-                                else showToast(context, R.string.movie_has_been_added)
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary
-                            ),
-                        ) {
-                            Text(
-                                text = stringResource(R.string.button_add_to_yourself),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
+//                        Button(
+//                            onClick = {
+//                                selectedMovieViewModel.addMovieToPersonalList(userId, newYearMovie)
+//                                if (statusExist == "error") showToast(context, R.string.movie_has_already_been_added)
+//                                else showToast(context, R.string.movie_has_been_added)
+//                            },
+//                            colors = ButtonDefaults.buttonColors(
+//                                containerColor = MaterialTheme.colorScheme.secondary,
+//                                contentColor = MaterialTheme.colorScheme.onSecondary
+//                            ),
+//                        ) {
+//                            Text(
+//                                text = stringResource(R.string.button_add_to_yourself),
+//                                style = MaterialTheme.typography.bodyMedium
+//                            )
+//                        }
                         // endregion
 
                     }

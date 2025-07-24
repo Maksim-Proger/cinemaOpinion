@@ -3,6 +3,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
@@ -22,8 +23,11 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeR
 import com.pozmaxpav.cinemaopinion.utilits.deletingOldRecords
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -63,11 +67,25 @@ class FireBaseMovieViewModel @Inject constructor(
     private val _movie = MutableStateFlow<DomainSelectedMovieModel?>(null)
     val movie = _movie.asStateFlow()
 
+    private val _toastMessage = MutableSharedFlow<Int>(
+        replay = 1,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val toastMessage = _toastMessage.asSharedFlow()
+
     fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
-                saveMovieUseCase(dataSource, selectedMovie)
+                val movies = getMovieUseCase(dataSource)
+                if (movies.any { it.id == selectedMovie.id }) {
+                    _toastMessage.emit(R.string.movie_has_already_been_added)
+                } else {
+                    saveMovieUseCase(dataSource, selectedMovie)
+                    _toastMessage.emit(R.string.movie_has_been_added_to_general_list)
+                }
             } catch (e: Exception) {
+                _toastMessage.emit(R.string.movie_has_already_been_added)
                 e.printStackTrace()
             }
         }
@@ -131,18 +149,19 @@ class FireBaseMovieViewModel @Inject constructor(
         newDataSource: String,
         entityId: Int = 0
     ) {
-        val stringResource = context.getString(stringResourceId)
-        val noteText = "$stringResource $title"
-        val note = DomainChangelogModel(
-            noteId = "", // Оставляем пустым, так как key будет сгенерирован позже
-            entityId = entityId,
-            newDataSource = newDataSource,
-            username = username,
-            noteText = noteText,
-            timestamp = System.currentTimeMillis()
-        )
         viewModelScope.launch {
             try {
+                val stringResource = context.getString(stringResourceId)
+                val noteText = "$stringResource $title"
+                val note = DomainChangelogModel(
+                    noteId = "", // Оставляем пустым, так как key будет сгенерирован позже
+                    entityId = entityId,
+                    newDataSource = newDataSource,
+                    username = username,
+                    noteText = noteText,
+                    timestamp = System.currentTimeMillis()
+                )
+
                 savingChangeRecordUseCase(note)
             } catch (e: Exception) {
                 e.printStackTrace()
