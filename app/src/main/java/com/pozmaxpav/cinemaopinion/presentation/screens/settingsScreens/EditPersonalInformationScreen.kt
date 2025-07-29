@@ -31,7 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
-import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
+import com.pozmaxpav.cinemaopinion.presentation.components.fab.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel

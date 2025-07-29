@@ -44,12 +44,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -64,6 +62,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
@@ -74,7 +73,6 @@ import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WAITING_CONTINUATION_SERIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
-import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast

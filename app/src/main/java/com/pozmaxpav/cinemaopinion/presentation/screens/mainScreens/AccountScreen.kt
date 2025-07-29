@@ -1,9 +1,10 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,6 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Close
@@ -46,14 +50,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
+import com.pozmaxpav.cinemaopinion.presentation.components.ShowSharedLists
+import com.pozmaxpav.cinemaopinion.presentation.components.items.AccountItem
+import com.pozmaxpav.cinemaopinion.presentation.components.items.SharedListItem
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
-import com.pozmaxpav.cinemaopinion.utilits.AccountListItem
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunctionClearAllScreens
@@ -71,6 +78,7 @@ fun AccountScreen(
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val listAwards by auxiliaryUserViewModel.listAwards.collectAsState()
     var locationShowDialogEvents by remember { mutableStateOf(false) }
+    var openSharedLists by remember { mutableStateOf(false) }
 
     LaunchedEffect(userId) {
         if (userId != "Unknown") {
@@ -155,7 +163,7 @@ fun AccountScreen(
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
 
-                AccountListItem(
+                AccountItem(
                     icon = painterResource(id = R.drawable.ic_movie_list),
                     contentDescription = stringResource(id = R.string.description_icon_movie_list),
                     title = stringResource(id = R.string.my_list_movies)
@@ -163,7 +171,7 @@ fun AccountScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                AccountListItem(
+                AccountItem(
                     icon = painterResource(id = R.drawable.ic_movie_list),
                     contentDescription = stringResource(id = R.string.description_icon_movie_list),
                     title = stringResource(id = R.string.joint_list_films)
@@ -171,7 +179,7 @@ fun AccountScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                AccountListItem(
+                AccountItem(
                     icon = painterResource(id = R.drawable.ic_movie_list),
                     contentDescription = stringResource(id = R.string.description_icon_serials_list),
                     title = stringResource(id = R.string.joint_list_serials)
@@ -179,11 +187,19 @@ fun AccountScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                AccountListItem(
+                AccountItem(
                     icon = painterResource(id = R.drawable.ic_movie_list),
                     contentDescription = stringResource(R.string.description_icon_series_control),
                     title = stringResource(R.string.series_control)
                 ) { navigateFunction(navController, Route.SeriesControlScreen.route) }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                AccountItem(
+                    icon = painterResource(id = R.drawable.ic_movie_list),
+                    contentDescription = stringResource(R.string.description_icon_shared_lists),
+                    title = stringResource(R.string.shared_lists)
+                ) { openSharedLists = true }
 
                 // region Awards
                 Column(
@@ -250,7 +266,21 @@ fun AccountScreen(
         }
     }
 
-    if (locationShowDialogEvents) { // TODO: Подумать надо ли оборачивать в кастомный бокс
+    if (openSharedLists) {
+        CustomBoxShowOverlay(
+            onDismiss = { openSharedLists = false },
+            paddingVerticalSecondBox = 150.dp,
+            paddingHorizontalSecondBox = 36.dp,
+            content = {
+                ShowSharedLists(
+                    navController = navController,
+                    userId = userId
+                )
+            }
+        )
+    }
+
+    if (locationShowDialogEvents) {
         SharedListAlertDialog(
             userId = userId,
             onDismiss = { locationShowDialogEvents = false }
@@ -258,7 +288,6 @@ fun AccountScreen(
     }
 
 }
-
 
 @Composable
 private fun AccountSettingMenu(
@@ -283,7 +312,7 @@ private fun AccountSettingMenu(
                 )
             }
         )
-
+        HorizontalDivider()
         MyDropdownMenuItem(
             onAction = {
                 navigateFunction(navController, Route.EditPersonalInformationScreen.route)
@@ -298,7 +327,7 @@ private fun AccountSettingMenu(
                 )
             }
         )
-
+        HorizontalDivider()
         MyDropdownMenuItem(
             onAction = {
                 navigateFunction(navController, Route.SettingsScreen.route)
@@ -313,7 +342,7 @@ private fun AccountSettingMenu(
                 )
             }
         )
-
+        HorizontalDivider()
         MyDropdownMenuItem(
             onAction = {
                 coroutineScope.launch {

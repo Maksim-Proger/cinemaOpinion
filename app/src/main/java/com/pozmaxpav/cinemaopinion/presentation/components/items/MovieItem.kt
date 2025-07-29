@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.components
+package com.pozmaxpav.cinemaopinion.presentation.components.items
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,9 +39,7 @@ fun MovieItem(
         Row(
             modifier = Modifier
                 .padding(16.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surface
-                )
+                .background(color = MaterialTheme.colorScheme.surface)
         ) {
 
             WorkerWithImage(movie, 150.dp)

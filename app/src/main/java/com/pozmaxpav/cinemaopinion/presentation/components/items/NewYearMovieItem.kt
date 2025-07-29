@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.components
+package com.pozmaxpav.cinemaopinion.presentation.components.items
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row

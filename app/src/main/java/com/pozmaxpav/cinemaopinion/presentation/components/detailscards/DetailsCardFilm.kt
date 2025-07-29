@@ -35,10 +35,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
+import com.pozmaxpav.cinemaopinion.presentation.components.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
@@ -57,6 +60,7 @@ fun DetailsCardFilm(
     movie: MovieData?,
     onClick: () -> Unit,
     padding: PaddingValues,
+    navController: NavHostController,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
@@ -67,6 +71,7 @@ fun DetailsCardFilm(
     val userData by auxiliaryUserViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     val detailedInformationAboutFilm by apiViewModel.detailedInformationAboutFilm.collectAsState()
+    var openSharedLists by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -277,8 +282,16 @@ fun DetailsCardFilm(
 
                 Column(modifier = Modifier.fillMaxWidth()) {
                     CustomTextButton(
+                        textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
+                        topPadding = 7.dp,
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        onClickButton = { openSharedLists = true }
+                    )
+                    CustomTextButton(
                         textButton = context.getString(R.string.text_buttons_film_card_to_my_list),
                         topPadding = 7.dp,
+                        bottomPadding = 7.dp,
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
@@ -290,7 +303,6 @@ fun DetailsCardFilm(
                     )
                     CustomTextButton(
                         textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
-                        topPadding = 7.dp,
                         bottomPadding = 7.dp,
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
@@ -343,6 +355,7 @@ fun DetailsCardFilm(
                             triggerOnClickGeneralMovie = true
                         } // TODO: Доработать проверку для savingChangeRecord
                     )
+                    // region Seasonal Event
 //                    CustomTextButton(
 //                        textButton = context.getString(R.string.button_add_to_new_year_list),
 //                        containerColor = MaterialTheme.colorScheme.secondary,
@@ -366,9 +379,26 @@ fun DetailsCardFilm(
 //                            onClick()
 //                        } // TODO: Добавить проверку
 //                    )
+                    // endregion
                 }
             }
         }
+    }
+
+    if (openSharedLists) {
+        CustomBoxShowOverlay(
+            onDismiss = { openSharedLists = false },
+            paddingVerticalSecondBox = 150.dp,
+            paddingHorizontalSecondBox = 36.dp,
+            content = {
+                ShowSharedLists(
+                    navController = navController,
+                    userId = userId,
+                    addButton = true,
+                    selectedMovie = movie?.toSelectedMovie()
+                )
+            }
+        )
     }
 }
 

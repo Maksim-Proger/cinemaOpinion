@@ -64,10 +64,10 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
-import com.pozmaxpav.cinemaopinion.presentation.components.FabButtonWithMenu
-import com.pozmaxpav.cinemaopinion.presentation.components.MovieItem
-import com.pozmaxpav.cinemaopinion.presentation.components.MyCustomDropdownMenuItem
-import com.pozmaxpav.cinemaopinion.presentation.components.NewYearMovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.fab.FabButtonWithMenu
+import com.pozmaxpav.cinemaopinion.presentation.components.items.MovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.fab.MyCustomDropdownMenuItem
+import com.pozmaxpav.cinemaopinion.presentation.components.items.NewYearMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
 import com.pozmaxpav.cinemaopinion.presentation.components.PreviewAlertDialog
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCard
@@ -306,6 +306,7 @@ fun MainScreen(
                         movie = selectedMovie!!,
                         onClick = { selectedMovie = null },
                         padding = padding,
+                        navController = navController
                     )
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         OnBackInvokedHandler { selectedMovie = null }

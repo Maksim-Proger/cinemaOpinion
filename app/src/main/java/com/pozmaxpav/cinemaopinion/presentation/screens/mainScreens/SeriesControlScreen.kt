@@ -5,9 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,7 +36,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,8 +53,9 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.presentation.components.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
+import com.pozmaxpav.cinemaopinion.presentation.components.fab.FabButton
+import com.pozmaxpav.cinemaopinion.presentation.components.items.SeriesControlItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SeriesControlViewModel
@@ -192,7 +190,7 @@ fun SeriesControlScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Row(modifier = Modifier.weight(1f)) {
-                                Item(entry) {
+                                SeriesControlItem(entry) {
                                     selectedEntry = entry
                                     openBottomSheetChange = true
                                 }
@@ -215,39 +213,6 @@ fun SeriesControlScreen(
                 Spacer(modifier = Modifier.padding(vertical = 5.dp))
             }
             item { Spacer(Modifier.padding(45.dp)) }
-        }
-    }
-}
-
-@Composable
-private fun Item(
-    movie: DomainSeriesControlModel,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(10.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = movie.title,
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-        Spacer(Modifier.padding(vertical = 3.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "${movie.season} сезон ${movie.series} серия",
-                style = MaterialTheme.typography.bodyLarge
-            )
         }
     }
 }

@@ -53,6 +53,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
@@ -61,7 +62,6 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
-import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast

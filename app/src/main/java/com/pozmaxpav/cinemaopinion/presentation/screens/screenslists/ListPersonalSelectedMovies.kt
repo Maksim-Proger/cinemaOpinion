@@ -58,6 +58,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
+import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
@@ -70,7 +71,6 @@ import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_PERSONAL_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
-import com.pozmaxpav.cinemaopinion.utilits.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
@@ -117,93 +117,16 @@ fun ListSelectedMovies(
             .padding(vertical = 50.dp)
     ) {
 
-        if (openBottomSheetChange) {
-            MyBottomSheet(
-                onClose = { openBottomSheetChange = false },
-                content = {
-                    userData?.let { user ->
-                        selectedMovie?.let { movie->
-                            selectedComment?.let { comment ->
-                                ChangeComment(
-                                    userId = userId,
-                                    userName = user.nikName,
-                                    selectedMovieId = movie.id,
-                                    selectedComment = comment,
-                                    viewModel = personalMovieViewModel
-                                ) {
-                                    openBottomSheetChange = false
-                                }
-                            }
-                        }
-                    }
-                },
-                fraction = 0.5f
-            )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetChange = false }
-            } else {
-                BackHandler { openBottomSheetChange = false }
-            }
-        }
-
-        if (openBottomSheetComments) {
-            MyBottomSheet(
-                onClose = {
-                    openBottomSheetComments = false
-                },
-                content = {
-                    AddComment(
-                        personalMovieViewModel,
-                        userId,
-                        selectedMovie,
-                        userData,
-                        context,
-                        onClick = {
-                            openBottomSheetComments = false
-                        }
-                    )
-                },
-                fraction = 0.7f
-            )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetComments = false }
-            } else {
-                BackHandler { openBottomSheetComments = false }
-            }
-        }
-
-        if (selectedMovie == null) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 7.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
-                    Icon(
-                        Icons.Default.ArrowBackIosNew,
-                        contentDescription = stringResource(R.string.description_icon_back_button),
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                Text(
-                    text = "Личный список",
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        }
-
-        if (selectedMovie != null) {
+        selectedMovie?.let { movie ->
             DetailsCardSelectedMovie(
-                movie = selectedMovie!!,
+                movie = movie,
                 content = {
                     ShowCommentList(
                         userId = userId,
                         selectedMovieId = selectedMovie!!.id,
                         viewModel = personalMovieViewModel,
                         onClick = {
-                            comment -> selectedComment = comment
+                                comment -> selectedComment = comment
                             openBottomSheetChange = true
                         }
                     )
@@ -273,9 +196,7 @@ fun ListSelectedMovies(
                         onClickButton = { openBottomSheetComments = !openBottomSheetComments }
                     )
                 },
-                onClick = {
-                    selectedMovie = null
-                }
+                onClick = { selectedMovie = null }
             )
             // TODO: Разобраться почему не работает новая анимация
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -283,7 +204,9 @@ fun ListSelectedMovies(
             } else {
                 BackHandler { selectedMovie = null }
             }
-        } else {
+        }
+
+        if (selectedMovie == null) {
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -370,6 +293,84 @@ fun ListSelectedMovies(
                 }
             }
         }
+
+        if (openBottomSheetChange) {
+            MyBottomSheet(
+                onClose = { openBottomSheetChange = false },
+                content = {
+                    userData?.let { user ->
+                        selectedMovie?.let { movie->
+                            selectedComment?.let { comment ->
+                                ChangeComment(
+                                    userId = userId,
+                                    userName = user.nikName,
+                                    selectedMovieId = movie.id,
+                                    selectedComment = comment,
+                                    viewModel = personalMovieViewModel
+                                ) {
+                                    openBottomSheetChange = false
+                                }
+                            }
+                        }
+                    }
+                },
+                fraction = 0.5f
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                OnBackInvokedHandler { openBottomSheetChange = false }
+            } else {
+                BackHandler { openBottomSheetChange = false }
+            }
+        }
+
+        if (openBottomSheetComments) {
+            MyBottomSheet(
+                onClose = {
+                    openBottomSheetComments = false
+                },
+                content = {
+                    AddComment(
+                        personalMovieViewModel,
+                        userId,
+                        selectedMovie,
+                        userData,
+                        context,
+                        onClick = {
+                            openBottomSheetComments = false
+                        }
+                    )
+                },
+                fraction = 0.7f
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                OnBackInvokedHandler { openBottomSheetComments = false }
+            } else {
+                BackHandler { openBottomSheetComments = false }
+            }
+        }
+
+        if (selectedMovie == null) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 7.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
+                    Icon(
+                        Icons.Default.ArrowBackIosNew,
+                        contentDescription = stringResource(R.string.description_icon_back_button),
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                Text(
+                    text = "Личный список",
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        }
+
     }
 }
 
