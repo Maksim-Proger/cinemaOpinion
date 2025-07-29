@@ -111,7 +111,7 @@ fun ListOfChangesScreen(
                             Route.MovieDetailScreen.createRoute(
                                 newDataSource = item.newDataSource,
                                 movieId = item.entityId,
-                                userData!!.nikName
+                                userName = userData!!.nikName
                             )
                         )
                     }

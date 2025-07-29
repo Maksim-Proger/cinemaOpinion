@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.R
@@ -15,7 +14,6 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.Observe
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.ObserveListSelectedMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.SendingToNewDirectoryUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.UpdateCommentUseCase
-import com.pozmaxpav.cinemaopinion.utilits.state.StateDuplicate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow

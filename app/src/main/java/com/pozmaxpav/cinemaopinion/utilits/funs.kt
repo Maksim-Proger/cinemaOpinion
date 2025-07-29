@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -70,74 +69,6 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
-
-@Composable
-fun AccountListItem(
-    icon: Painter,
-    contentDescription: String,
-    title: String,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp)
-            .clickable {
-                onClick()
-            },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            modifier = Modifier.padding(end = 15.dp),
-            painter = icon,
-            contentDescription = contentDescription
-        )
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium
-        )
-    }
-}
-
-@Composable
-fun SelectedMovieItem(
-    movie: DomainSelectedMovieModel,
-    onClick: () -> Unit,
-    showTopBar: () -> Unit = {}
-) {
-    Row(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-                showTopBar()
-            }
-    ) {
-        WorkerWithImageSelectedMovie(
-            movie = movie,
-            height = 90.dp
-        )
-        Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-        Text(
-            text = movie.nameFilm,
-            style = MaterialTheme.typography.bodyLarge
-        )
-    }
-}
-
-fun capitalizeSentences(text: String): String {
-    if (text.isEmpty()) return text
-    val sentences = text.split("(?<=[.!?]\\s)|(?<=[.!?]\$)".toRegex())
-    return sentences.joinToString("") { sentence ->
-        if (sentence.isBlank()) sentence
-        else {
-            sentence.trimStart().replaceFirstChar { firstChar ->
-                if (firstChar.isLowerCase()) firstChar.titlecase() else firstChar.toString()
-            }
-        }
-    }
-}
 
 @Composable
 fun CustomTextField(
@@ -268,7 +199,6 @@ fun CustomTextFieldForComments(
     }
 }
 
-
 @Composable
 fun WorkerWithImage(
     movie: MovieData,
@@ -295,116 +225,144 @@ fun WorkerWithImageSelectedMovie(
     )
 }
 
-@Composable
-fun ChangeComment(
-    userId: String = "",
-    dataSource: String = "",
-    userName: String,
-    selectedMovieId: Int,
-    selectedComment: DomainCommentModel,
-    viewModel: ViewModel,
-    onClick: () -> Unit
-) {
-    when (viewModel) {
-        is FireBaseMovieViewModel -> {
-            val (comment, setComment) = remember { mutableStateOf("") }
-            val keyboardController = LocalSoftwareKeyboardController.current
-            val focusManager = LocalFocusManager.current
+fun formatGenres(genres: List<Genre>): String {
+    return genres.joinToString(separator = ", ") {
+        it.genre
+    }
+}
 
-            LaunchedEffect(Unit) {
-                setComment(selectedComment.commentText)
+fun formatCountries(country: List<Country>): String {
+    return country.joinToString(separator = ", ") {
+        it.country
+    }
+}
+
+fun formatMonth(month: String): String {
+    return try {
+        Month.of(month.toInt())
+            .name
+            .replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
             }
+    } catch (e: DateTimeException) {
+        "Invalid month"
+    } catch (e: NumberFormatException) {
+        "Invalid month"
+    }
+}
 
-            CustomTextField(
-                value = comment,
-                onValueChange = setComment,
-                label = {
-                    Text(
-                        text = stringResource(R.string.text_for_field_change_comment),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                },
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    }
-                ),
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done,
-                singleLine = false
-            )
+fun formatDate(date: String): String {
+    val formatterInput = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+    val formatterOutput = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
+    val dateTime = LocalDateTime.parse(date, formatterInput)
+    return dateTime.format(formatterOutput)
+}
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                CustomTextButton(
-                    textButton = stringResource(R.string.button_save),
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                    endPadding = 15.dp,
-                    onClickButton = {
-                        viewModel.updateComment(
-                            dataSource,
-                            userName,
-                            selectedMovieId,
-                            selectedComment.commentId,
-                            comment
-                        )
-                        onClick()
-                    }
-                )
-            }
-        }
-        is PersonalMovieViewModel -> {
-            val (comment, setComment) = remember { mutableStateOf("") }
-            val keyboardController = LocalSoftwareKeyboardController.current
-            val focusManager = LocalFocusManager.current
+fun deletingOldRecords(timestamp: Long): Boolean {
+    val currentTimeMillis = System.currentTimeMillis() // Получаем текущую дату
+    val differenceInMillis =
+        abs(currentTimeMillis - timestamp) // Рассчитываем разницу между текущим временем и входящей датой
+    val daysDifference = differenceInMillis / (1000 * 60 * 60 * 24) // Конвертируем разницу в дни
+    return daysDifference > 7
+}
 
-            LaunchedEffect(Unit) {
-                setComment(selectedComment.commentText)
-            }
+// Кастуем объект MovieData в SelectedMovie
+fun MovieData.toSelectedMovie(): DomainSelectedMovieModel {
+    return when (this) {
+        is MovieData.Movie -> DomainSelectedMovieModel(
+            id = this.kinopoiskId,
+            nameFilm = this.nameRu,
+            posterUrl = this.posterUrl
+        )
 
-            CustomTextField(
-                value = comment,
-                onValueChange = setComment,
-                label = {
-                    Text(
-                        text = "Измените комментарий",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                },
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    }
-                ),
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            )
+        is MovieData.MovieTop -> DomainSelectedMovieModel(
+            id = this.filmId,
+            nameFilm = this.nameRu,
+            posterUrl = this.posterUrl
+        )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                CustomTextButton(
-                    textButton = stringResource(R.string.button_save),
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                    endPadding = 15.dp,
-                    onClickButton = {
-                        viewModel.updateComment(
-                            userId,
-                            userName,
-                            selectedMovieId,
-                            selectedComment.commentId,
-                            comment
-                        )
-                        onClick()
-                    }
-                )
+        is MovieData.MovieSearch -> DomainSelectedMovieModel(
+            id = this.kinopoiskId,
+            nameFilm = this.nameRu ?: "Нет названия",
+            posterUrl = this.posterUrl
+        )
+
+        is MovieData.MovieSearch2 -> DomainSelectedMovieModel(
+            id = this.filmId,
+            nameFilm = this.nameRu ?: "Нет названия",
+            posterUrl = this.posterUrl
+        )
+    }
+}
+
+fun showToast(context: Context, messageId: Int) {
+    val message = context.getString(messageId)
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
+
+fun navigateFunction(navController: NavHostController, route: String) {
+
+//    navController.navigate(route) {
+//        popUpTo(navController.graph.startDestinationId) { saveState = true }
+//        launchSingleTop = true
+//        restoreState = true
+//    }
+
+    navController.navigate(route) {
+        // Открывает новый экран поверх текущего (стандартное поведение)
+        launchSingleTop = true  // предотвращает дубликаты, если экран уже наверху
+    }
+
+}
+
+fun navigateFunctionClearAllScreens(navController: NavHostController, route: String) {
+    navController.navigate(route) {
+        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+        launchSingleTop = true
+    }
+}
+
+fun parsYearsToString(range: ClosedFloatingPointRange<Float>): List<String> {
+    val yearsList = listOf(
+        range.start.toInt().toString(),
+        range.endInclusive.toInt().toString()
+    )
+    return yearsList
+}
+
+fun formatTextWithUnderscores(text: String): String {
+    return text
+        .replace("[\\s\\p{P}]".toRegex(), "_")
+        .replace("_+".toRegex(), "_")
+        .removePrefix("_")
+        .removeSuffix("_")
+        .lowercase()
+}
+
+fun simpleTransliterate(text: String): String {
+    val simpleMap = mapOf(
+        'а' to "a", 'б' to "b", 'в' to "v", 'г' to "g", 'д' to "d",
+        'е' to "e", 'ё' to "e", 'ж' to "j", 'з' to "z", 'и' to "i",
+        'й' to "y", 'к' to "k", 'л' to "l", 'м' to "m", 'н' to "n",
+        'о' to "o", 'п' to "p", 'р' to "r", 'с' to "s", 'т' to "t",
+        'у' to "u", 'ф' to "f", 'х' to "h", 'ц' to "c", 'ч' to "ch",
+        'ш' to "sh", 'щ' to "sh", 'ъ' to "", 'ы' to "y", 'ь' to "",
+        'э' to "e", 'ю' to "ju", 'я' to "ja"
+    )
+
+    return text.lowercase().map { char ->
+        simpleMap[char] ?: char.toString()
+    }.joinToString("")
+}
+
+fun capitalizeSentences(text: String): String {
+    if (text.isEmpty()) return text
+    val sentences = text.split("(?<=[.!?]\\s)|(?<=[.!?]\$)".toRegex())
+    return sentences.joinToString("") { sentence ->
+        if (sentence.isBlank()) sentence
+        else {
+            sentence.trimStart().replaceFirstChar { firstChar ->
+                if (firstChar.isLowerCase()) firstChar.titlecase() else firstChar.toString()
             }
         }
     }
@@ -565,132 +523,118 @@ fun ShowCommentList(
     }
 }
 
-fun formatGenres(genres: List<Genre>): String {
-    return genres.joinToString(separator = ", ") {
-        it.genre
-    }
-}
+@Composable
+fun ChangeComment(
+    userId: String = "",
+    dataSource: String = "",
+    userName: String,
+    selectedMovieId: Int,
+    selectedComment: DomainCommentModel,
+    viewModel: ViewModel,
+    onClick: () -> Unit
+) {
+    when (viewModel) {
+        is FireBaseMovieViewModel -> {
+            val (comment, setComment) = remember { mutableStateOf("") }
+            val keyboardController = LocalSoftwareKeyboardController.current
+            val focusManager = LocalFocusManager.current
 
-fun formatCountries(country: List<Country>): String {
-    return country.joinToString(separator = ", ") {
-        it.country
-    }
-}
-
-fun formatMonth(month: String): String {
-    return try {
-        Month.of(month.toInt())
-            .name
-            .replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+            LaunchedEffect(Unit) {
+                setComment(selectedComment.commentText)
             }
-    } catch (e: DateTimeException) {
-        "Invalid month"
-    } catch (e: NumberFormatException) {
-        "Invalid month"
+
+            CustomTextField(
+                value = comment,
+                onValueChange = setComment,
+                label = {
+                    Text(
+                        text = stringResource(R.string.text_for_field_change_comment),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                ),
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done,
+                singleLine = false
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                CustomTextButton(
+                    textButton = stringResource(R.string.button_save),
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    endPadding = 15.dp,
+                    onClickButton = {
+                        viewModel.updateComment(
+                            dataSource,
+                            userName,
+                            selectedMovieId,
+                            selectedComment.commentId,
+                            comment
+                        )
+                        onClick()
+                    }
+                )
+            }
+        }
+        is PersonalMovieViewModel -> {
+            val (comment, setComment) = remember { mutableStateOf("") }
+            val keyboardController = LocalSoftwareKeyboardController.current
+            val focusManager = LocalFocusManager.current
+
+            LaunchedEffect(Unit) {
+                setComment(selectedComment.commentText)
+            }
+
+            CustomTextField(
+                value = comment,
+                onValueChange = setComment,
+                label = {
+                    Text(
+                        text = "Измените комментарий",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                ),
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                CustomTextButton(
+                    textButton = stringResource(R.string.button_save),
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    endPadding = 15.dp,
+                    onClickButton = {
+                        viewModel.updateComment(
+                            userId,
+                            userName,
+                            selectedMovieId,
+                            selectedComment.commentId,
+                            comment
+                        )
+                        onClick()
+                    }
+                )
+            }
+        }
     }
-}
-
-fun formatDate(date: String): String {
-    val formatterInput = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-    val formatterOutput = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
-    val dateTime = LocalDateTime.parse(date, formatterInput)
-    return dateTime.format(formatterOutput)
-}
-
-fun deletingOldRecords(timestamp: Long): Boolean {
-    val currentTimeMillis = System.currentTimeMillis() // Получаем текущую дату
-    val differenceInMillis =
-        abs(currentTimeMillis - timestamp) // Рассчитываем разницу между текущим временем и входящей датой
-    val daysDifference = differenceInMillis / (1000 * 60 * 60 * 24) // Конвертируем разницу в дни
-    return daysDifference > 7
-}
-
-// Кастуем объект MovieData в SelectedMovie
-fun MovieData.toSelectedMovie(): DomainSelectedMovieModel {
-    return when (this) {
-        is MovieData.Movie -> DomainSelectedMovieModel(
-            id = this.kinopoiskId,
-            nameFilm = this.nameRu,
-            posterUrl = this.posterUrl
-        )
-
-        is MovieData.MovieTop -> DomainSelectedMovieModel(
-            id = this.filmId,
-            nameFilm = this.nameRu,
-            posterUrl = this.posterUrl
-        )
-
-        is MovieData.MovieSearch -> DomainSelectedMovieModel(
-            id = this.kinopoiskId,
-            nameFilm = this.nameRu ?: "Нет названия",
-            posterUrl = this.posterUrl
-        )
-
-        is MovieData.MovieSearch2 -> DomainSelectedMovieModel(
-            id = this.filmId,
-            nameFilm = this.nameRu ?: "Нет названия",
-            posterUrl = this.posterUrl
-        )
-    }
-}
-
-fun showToast(context: Context, messageId: Int) {
-    val message = context.getString(messageId)
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-}
-
-fun navigateFunction(navController: NavHostController, route: String) {
-
-//    navController.navigate(route) {
-//        popUpTo(navController.graph.startDestinationId) { saveState = true }
-//        launchSingleTop = true
-//        restoreState = true
-//    }
-
-    navController.navigate(route) {
-        // Открывает новый экран поверх текущего (стандартное поведение)
-        launchSingleTop = true  // предотвращает дубликаты, если экран уже наверху
-    }
-
-}
-
-fun navigateFunctionClearAllScreens(navController: NavHostController, route: String) {
-    navController.navigate(route) {
-        popUpTo(navController.graph.startDestinationId) { inclusive = true }
-        launchSingleTop = true
-    }
-}
-
-fun parsYearsToString(range: ClosedFloatingPointRange<Float>): List<String> {
-    val yearsList = listOf(
-        range.start.toInt().toString(),
-        range.endInclusive.toInt().toString()
-    )
-    return yearsList
-}
-
-fun formatTextWithUnderscores(text: String): String {
-    return text
-        .replace("[\\s\\p{P}]".toRegex(), "_")
-        .replace("_+".toRegex(), "_")
-        .removePrefix("_")
-        .removeSuffix("_")
-        .lowercase()
-}
-fun simpleTransliterate(text: String): String {
-    val simpleMap = mapOf(
-        'а' to "a", 'б' to "b", 'в' to "v", 'г' to "g", 'д' to "d",
-        'е' to "e", 'ё' to "e", 'ж' to "j", 'з' to "z", 'и' to "i",
-        'й' to "y", 'к' to "k", 'л' to "l", 'м' to "m", 'н' to "n",
-        'о' to "o", 'п' to "p", 'р' to "r", 'с' to "s", 'т' to "t",
-        'у' to "u", 'ф' to "f", 'х' to "h", 'ц' to "c", 'ч' to "ch",
-        'ш' to "sh", 'щ' to "sh", 'ъ' to "", 'ы' to "y", 'ь' to "",
-        'э' to "e", 'ю' to "ju", 'я' to "ja"
-    )
-
-    return text.lowercase().map { char ->
-        simpleMap[char] ?: char.toString()
-    }.joinToString("")
 }
 

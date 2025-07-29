@@ -19,7 +19,8 @@ import com.pozmaxpav.cinemaopinion.R
 @Composable
 fun ClassicTopAppBar(
     context: Context,
-    titleId: Int,
+    titleId: Int = 0,
+    titleString: String = "",
     scrollBehavior: TopAppBarScrollBehavior,
     onShowTransitionAction: Boolean = true,
     onTransitionAction: () -> Unit = {}
@@ -27,11 +28,19 @@ fun ClassicTopAppBar(
     TopAppBar(
         scrollBehavior = scrollBehavior,
         title = {
-            Text(
-                text = context.getString(titleId),
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
+            if (titleString.isNotEmpty()) {
+                Text(
+                    text = titleString,
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            } else {
+                Text(
+                    text = context.getString(titleId),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         },
         actions = {
             if (onShowTransitionAction) {

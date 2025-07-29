@@ -17,6 +17,7 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListOfChang
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralSerials
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedMovies
+import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSharedScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWaitingContinuationSeries
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWatchedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.EditPersonalInformationScreen
@@ -64,6 +65,21 @@ fun NavGraph(
         composable(Route.ListSelectedMovies.route) { ListSelectedMovies(navController) }
         composable(Route.ListWaitingContinuationSeries.route) { ListWaitingContinuationSeries(navController) }
         composable(Route.LoginScreen.route) { LoginScreen(navController) }
+        composable(
+            Route.ListSharedScreen.route,
+            arguments = listOf(
+                navArgument("listId") { type = NavType.StringType },
+                navArgument("title") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val listId = backStackEntry.arguments?.getString("listId") ?: ""
+            val title = backStackEntry.arguments?.getString("title") ?: ""
+            ListSharedScreen(
+                navController = navController,
+                listId = listId,
+                title = title
+            )
+        }
 
         composable( // TODO: В Route это заносить не нужно?
             "webView/{url}", // Шаблон маршрута с аргументом "url"
