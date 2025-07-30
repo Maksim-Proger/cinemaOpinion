@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.R
@@ -19,7 +18,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class AuxiliaryUserViewModel @Inject constructor(
+class UserViewModel @Inject constructor(
     private val updatingUserDataUseCase: UpdatingUserDataUseCase,
     private val updateSpecificFieldUseCase: UpdateSpecificFieldUseCase,
     private val addUserUseCase: AddUserUseCase,

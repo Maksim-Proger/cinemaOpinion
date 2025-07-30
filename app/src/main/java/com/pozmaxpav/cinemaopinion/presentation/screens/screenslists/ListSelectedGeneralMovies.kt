@@ -64,8 +64,8 @@ import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieIt
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
@@ -80,30 +80,30 @@ import com.pozmaxpav.cinemaopinion.utilits.state.State
 @Composable
 fun ListSelectedGeneralMovies(
     navController: NavHostController,
-    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    movieViewModel: MovieViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
 ) {
-    val listMovies by fireBaseMovieViewModel.movies.collectAsState()
+    val listMovies by movieViewModel.movies.collectAsState()
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
     val userId by mainViewModel.userId.collectAsState()
-    val userData by auxiliaryUserViewModel.userData.collectAsState()
-    val stateMovie by fireBaseMovieViewModel.movieDownloadStatus.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
+    val stateMovie by movieViewModel.movieDownloadStatus.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
 
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
-        fireBaseMovieViewModel.getMovies(NODE_LIST_MOVIES)
-        fireBaseMovieViewModel.observeListMovies(NODE_LIST_MOVIES)
+        movieViewModel.getMovies(NODE_LIST_MOVIES)
+        movieViewModel.observeListMovies(NODE_LIST_MOVIES)
     }
     LaunchedEffect(userId) {
-        auxiliaryUserViewModel.getUserData(userId)
+        userViewModel.getUserData(userId)
     }
     LaunchedEffect(selectedMovie) {
         selectedMovie?.let { movie ->
@@ -130,7 +130,7 @@ fun ListSelectedGeneralMovies(
                                     userName = user.nikName,
                                     selectedMovieId = movie.id,
                                     selectedComment = comment,
-                                    viewModel = fireBaseMovieViewModel
+                                    viewModel = movieViewModel
                                 ) {
                                     openBottomSheetChange = false
                                 }
@@ -156,7 +156,7 @@ fun ListSelectedGeneralMovies(
                     AddComment(
                         userData,
                         selectedMovie,
-                        fireBaseMovieViewModel,
+                        movieViewModel,
                         context,
                         onClick = {
                             openBottomSheetComments = false
@@ -201,7 +201,7 @@ fun ListSelectedGeneralMovies(
                     ShowCommentList(
                         dataSource = NODE_LIST_MOVIES,
                         selectedMovieId = selectedMovie!!.id,
-                        viewModel = fireBaseMovieViewModel,
+                        viewModel = movieViewModel,
                         onClick = {
                             comment -> selectedComment = comment
                             openBottomSheetChange = true
@@ -231,13 +231,13 @@ fun ListSelectedGeneralMovies(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            fireBaseMovieViewModel.sendingToNewDirectory(
+                            movieViewModel.sendingToNewDirectory(
                                 NODE_LIST_MOVIES,
                                 NODE_LIST_WATCHED_MOVIES,
                                 selectedMovie!!.id.toDouble()
                             )
                             showToast(context, R.string.movie_has_been_moved_to_viewed)
-                            fireBaseMovieViewModel.savingChangeRecord(
+                            movieViewModel.savingChangeRecord(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_movie_has_been_moved_to_viewed,
@@ -256,13 +256,13 @@ fun ListSelectedGeneralMovies(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            fireBaseMovieViewModel.sendingToNewDirectory(
+                            movieViewModel.sendingToNewDirectory(
                                 NODE_LIST_MOVIES,
                                 NODE_LIST_SERIALS,
                                 selectedMovie!!.id.toDouble()
                             )
                             showToast(context, R.string.series_has_been_moved)
-                            fireBaseMovieViewModel.savingChangeRecord(
+                            movieViewModel.savingChangeRecord(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_series_has_been_moved_to_series_list,
@@ -312,8 +312,8 @@ fun ListSelectedGeneralMovies(
 
                                 LaunchedEffect(isVisible) {
                                     if (!isVisible) {
-                                        fireBaseMovieViewModel.removeMovie(NODE_LIST_MOVIES, movie.id)
-                                        fireBaseMovieViewModel.savingChangeRecord(
+                                        movieViewModel.removeMovie(NODE_LIST_MOVIES, movie.id)
+                                        movieViewModel.savingChangeRecord(
                                             context,
                                             userData!!.nikName,
                                             R.string.record_deleted_the_movie,
@@ -409,7 +409,7 @@ fun ListSelectedGeneralMovies(
 private fun AddComment(
     userData: User?,
     selectedMovie: DomainSelectedMovieModel?,
-    fireBaseMovieViewModel: FireBaseMovieViewModel,
+    movieViewModel: MovieViewModel,
     context: Context,
     onClick: () -> Unit
 ) {
@@ -453,13 +453,13 @@ private fun AddComment(
             onClickButton = {
                 userData?.let { user ->
                     selectedMovie?.let { movie ->
-                        fireBaseMovieViewModel.addComment(
+                        movieViewModel.addComment(
                             NODE_LIST_MOVIES,
                             movie.id.toDouble(),
                             user.nikName,
                             comment
                         )
-                        fireBaseMovieViewModel.savingChangeRecord(
+                        movieViewModel.savingChangeRecord(
                             context,
                             user.nikName,
                             R.string.record_added_comment_to_movie,

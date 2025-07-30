@@ -2,6 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel.system
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pozmaxpav.cinemaopinion.presentation.funs.LogoutManager
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.ClearUserDataUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetAppVersionUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetRegistrationFlagUseCase
@@ -27,7 +28,8 @@ class MainViewModel @Inject constructor(
     private val getRegistrationFlagUseCase: GetRegistrationFlagUseCase,
     private val saveUserIdUseCase: SaveUserIdUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
-    private val clearUserDataUseCase: ClearUserDataUseCase
+    private val clearUserDataUseCase: ClearUserDataUseCase,
+    private val logoutManager: LogoutManager
 ) : ViewModel() {
 
     private val _versionApp = MutableStateFlow("Unknown")
@@ -87,15 +89,20 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-    fun clearUserData() {
-        viewModelScope.launch {
-            try {
-                clearUserDataUseCase()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+    suspend fun logout(clearFlag: () -> Unit) {
+        logoutManager.logout(clearFlag)
     }
+
+//    fun clearUserData() {
+//        viewModelScope.launch {
+//            try {
+//                clearUserDataUseCase()
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
+
 
     fun resetResultChecking() {
         _resultChecking.value = true

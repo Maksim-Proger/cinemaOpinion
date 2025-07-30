@@ -43,8 +43,8 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
@@ -62,13 +62,13 @@ fun DetailsCardFilm(
     padding: PaddingValues,
     navController: NavHostController,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
+    movieViewModel: MovieViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
     val userId by mainViewModel.userId.collectAsState()
-    val userData by auxiliaryUserViewModel.userData.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     val detailedInformationAboutFilm by apiViewModel.detailedInformationAboutFilm.collectAsState()
     var openSharedLists by remember { mutableStateOf(false) }
@@ -89,7 +89,7 @@ fun DetailsCardFilm(
     }
     LaunchedEffect(triggerOnClickGeneralMovie) {
         if (triggerOnClickGeneralMovie) {
-            fireBaseMovieViewModel.toastMessage.collect { resId ->
+            movieViewModel.toastMessage.collect { resId ->
                 showToast(context, resId)
                 onClick()
             }
@@ -99,7 +99,7 @@ fun DetailsCardFilm(
         movie?.let { apiViewModel.getSearchMovieById(it.id) }
     }
     LaunchedEffect(userId) {
-        auxiliaryUserViewModel.getUserData(userId)
+        userViewModel.getUserData(userId)
     }
     LaunchedEffect(movie?.id) {
         movie?.let { apiViewModel.getInformationMovie(it.id) }
@@ -308,7 +308,7 @@ fun DetailsCardFilm(
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
                             movie?.let {
-                                fireBaseMovieViewModel.saveMovie(
+                                movieViewModel.saveMovie(
                                     NODE_LIST_MOVIES,
                                     it.toSelectedMovie()
                                 )
@@ -335,7 +335,7 @@ fun DetailsCardFilm(
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
                             movie?.let {
-                                fireBaseMovieViewModel.saveMovie(
+                                movieViewModel.saveMovie(
                                     NODE_LIST_SERIALS,
                                     it.toSelectedMovie()
                                 )

@@ -17,7 +17,10 @@ class SharedListsRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference
 ) : SharedListsRepository {
 
-    override suspend fun addMovieToSpecificSharedList(listId: String, selectedMovie: DomainSelectedMovieModel) {
+    override suspend fun addMovieToSpecificSharedList(
+        listId: String,
+        selectedMovie: DomainSelectedMovieModel
+    ) {
         if (listId.isEmpty()) throw IllegalArgumentException("List ID cannot be empty")
 
         val sharedListKey = databaseReference
@@ -89,33 +92,39 @@ class SharedListsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSharedLists(userId: String): List<DomainSharedListModel> {
-        // TODO: Добавить проверку для вывода только подходящих списков
-        val listSnapshot = databaseReference
+
+        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
+
+        val userKey = databaseReference
+            .child(NODE_LIST_USERS)
+            .orderByChild("id")
+            .equalTo(userId)
+            .get()
+            .await()
+            .children.firstOrNull()
+            ?.key
+            ?: throw IllegalArgumentException("User with ID $userId not found.")
+
+        val sharedListIds = databaseReference
+            .child(NODE_LIST_USERS)
+            .child(userKey)
+            .child("my_shared_list")
+            .get()
+            .await()
+            .children
+            .mapNotNull { it.child("listId").getValue(String::class.java) }
+            .toSet()
+
+        if (sharedListIds.isEmpty()) return emptyList()
+
+        val sharedLists = databaseReference
             .child(NODE_SHARED_LIST)
             .get()
             .await()
-        return listSnapshot.children.mapNotNull { childSnapshot ->
-            childSnapshot.getValue(DomainSharedListModel::class.java)
-        }
+            .children
+            .mapNotNull { it.getValue(DomainSharedListModel::class.java) }
 
-
-//        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
-//        val userKey = databaseReference
-//            .child(NODE_LIST_USERS)
-//            .orderByChild("id")
-//            .equalTo(userId)
-//            .get()
-//            .await()
-//            .children.firstOrNull()?.key
-//            ?: throw IllegalArgumentException("User with ID $userId not found.")
-//
-//        return databaseReference
-//            .child(NODE_LIST_USERS)
-//            .child(userKey)
-//            .child(NODE_SHARED_LIST_PROFILE)
-//            .get()
-//            .await()
-//            .children.mapNotNull { it.getValue(DomainSharedListModel::class.java) }
+        return sharedLists.filter { it.listId in sharedListIds }
     }
 
     private suspend fun updateUserData(

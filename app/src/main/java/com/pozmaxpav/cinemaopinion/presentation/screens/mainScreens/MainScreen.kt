@@ -76,7 +76,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBa
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
@@ -89,7 +89,7 @@ fun MainScreen(
     navController: NavHostController,
     mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
-    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel()
+    movieViewModel: MovieViewModel = hiltViewModel()
 ) {
 
     // region Переменные
@@ -132,7 +132,7 @@ fun MainScreen(
     val topListMovies = apiViewModel.topListMovies.collectAsState()
     val searchMovies = apiViewModel.searchMovies.collectAsState()
     val searchMovies2 = apiViewModel.searchMovies2.collectAsState()
-    val newYearMoviesList by fireBaseMovieViewModel.movies.collectAsState()
+    val newYearMoviesList by movieViewModel.movies.collectAsState()
     val state by apiViewModel.state.collectAsState()
     val showDialogEvents by mainViewModel.resultChecking.collectAsState()
     // endregion
@@ -168,7 +168,7 @@ fun MainScreen(
         }
     }
     LaunchedEffect(onAccountButtonClick) {
-        fireBaseMovieViewModel.getMovies(NODE_NEW_YEAR_LIST)
+        movieViewModel.getMovies(NODE_NEW_YEAR_LIST)
     }
     LaunchedEffect(scrollToTop) {
         if (scrollToTop) {
@@ -556,7 +556,7 @@ fun MainScreen(
         CustomBoxShowOverlay(
             onDismiss = { onAccountButtonClick = false },
             paddingVerticalSecondBox = 70.dp,
-            paddingHorizontalSecondBox = 16.dp,
+            paddingHorizontalSecondBox = 14.dp,
             content = {
                 AccountScreen(
                     navController,

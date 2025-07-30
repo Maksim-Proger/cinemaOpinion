@@ -39,11 +39,10 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarScaffold
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
-import com.pozmaxpav.cinemaopinion.utilits.showToast
 
 @Composable
 fun DetailsCard(
@@ -51,7 +50,7 @@ fun DetailsCard(
     onCloseButton: () -> Unit,
     padding: PaddingValues,
     mainViewModel: MainViewModel = hiltViewModel(),
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
     selectedMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel()
 ) {
@@ -59,14 +58,14 @@ fun DetailsCard(
     val userId by mainViewModel.userId.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     var showRatingBar by remember { mutableStateOf(false) }
-    val quantitySeasonalEventPoints by auxiliaryUserViewModel.seasonalEventPoints.collectAsState()
+    val quantitySeasonalEventPoints by userViewModel.seasonalEventPoints.collectAsState()
 //    val statusExist by selectedMovieViewModel.status.collectAsState()
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
     LaunchedEffect(userId) {
-        auxiliaryUserViewModel.getUserData(userId)
-        auxiliaryUserViewModel.getSeasonalEventPoints(userId)
+        userViewModel.getUserData(userId)
+        userViewModel.getSeasonalEventPoints(userId)
     }
     LaunchedEffect(newYearMovie.id) {
         apiViewModel.getInformationMovie(newYearMovie.id)
@@ -161,7 +160,7 @@ fun DetailsCard(
                         // region кнопка "Посмотрел"
                         Button(
                             onClick = {
-                                auxiliaryUserViewModel.updatingEventData(userId)
+                                userViewModel.updatingEventData(userId)
                                 showRatingBar = !showRatingBar
                             },
                             colors = ButtonDefaults.buttonColors(

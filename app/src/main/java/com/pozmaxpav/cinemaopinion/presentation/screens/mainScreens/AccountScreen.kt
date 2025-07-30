@@ -2,9 +2,10 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -13,8 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -41,6 +40,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,15 +50,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.components.items.AccountItem
-import com.pozmaxpav.cinemaopinion.presentation.components.items.SharedListItem
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
@@ -71,19 +69,19 @@ fun AccountScreen(
     navController: NavHostController,
     onClick: () -> Unit,
     mainViewModel: MainViewModel = hiltViewModel(),
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
 
     val userId by mainViewModel.userId.collectAsState()
-    val userData by auxiliaryUserViewModel.userData.collectAsState()
-    val listAwards by auxiliaryUserViewModel.listAwards.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
+    val listAwards by userViewModel.listAwards.collectAsState()
     var locationShowDialogEvents by remember { mutableStateOf(false) }
     var openSharedLists by remember { mutableStateOf(false) }
 
     LaunchedEffect(userId) {
         if (userId != "Unknown") {
-            auxiliaryUserViewModel.getUserData(userId)
-            auxiliaryUserViewModel.getAwardsList(userId)
+            userViewModel.getUserData(userId)
+            userViewModel.getAwardsList(userId)
         }
     }
 
@@ -266,18 +264,51 @@ fun AccountScreen(
         }
     }
 
+    // TODO: Разобраться в отличиях контейнеров
+//    if (openSharedLists) {
+//        Column(
+//            modifier = Modifier
+//                .fillMaxHeight(0.9f)
+//                .background(
+//                    Color.Black.copy(alpha = 0.5f),
+//                    shape = RoundedCornerShape(12.dp)
+//                )
+//                .clickable {
+//                    openSharedLists = false
+//                },
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//            Column(modifier = Modifier.padding(12.dp)) {
+//                ShowSharedLists(
+//                    navController = navController,
+//                    userId = userId
+//                )
+//            }
+//        }
+//    }
     if (openSharedLists) {
-        CustomBoxShowOverlay(
-            onDismiss = { openSharedLists = false },
-            paddingVerticalSecondBox = 150.dp,
-            paddingHorizontalSecondBox = 36.dp,
-            content = {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight(0.9f)
+                .background(
+                    Color.Black.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .clickable { openSharedLists = false }
+
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(12.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 ShowSharedLists(
                     navController = navController,
                     userId = userId
                 )
             }
-        )
+        }
     }
 
     if (locationShowDialogEvents) {
@@ -293,16 +324,23 @@ fun AccountScreen(
 private fun AccountSettingMenu(
     navController: NavHostController,
     mainViewModel: MainViewModel,
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
     openDialog: () -> Unit = {}
 ) {
 
+    val modifier = Modifier.background(MaterialTheme.colorScheme.tertiary).height(3.dp)
+    var triggerOnClickCloseMenu by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     SettingsMenu { closeMenu ->
 
+        LaunchedEffect(triggerOnClickCloseMenu) { if (triggerOnClickCloseMenu) { closeMenu() } }
+
         MyDropdownMenuItem(
-            onAction = openDialog,
+            onAction = {
+                openDialog()
+                triggerOnClickCloseMenu = true
+            },
             title = stringResource(R.string.drop_down_menu_create_shared_list),
             leadingIcon = {
                 Icon(
@@ -312,11 +350,11 @@ private fun AccountSettingMenu(
                 )
             }
         )
-        HorizontalDivider()
+        HorizontalDivider(modifier = modifier)
         MyDropdownMenuItem(
             onAction = {
                 navigateFunction(navController, Route.EditPersonalInformationScreen.route)
-                closeMenu() // Закрываем меню после навигации
+                triggerOnClickCloseMenu = true
             },
             title = stringResource(id = R.string.drop_down_menu_item_edit),
             leadingIcon = {
@@ -327,11 +365,11 @@ private fun AccountSettingMenu(
                 )
             }
         )
-        HorizontalDivider()
+        HorizontalDivider(modifier = modifier)
         MyDropdownMenuItem(
             onAction = {
                 navigateFunction(navController, Route.SettingsScreen.route)
-                closeMenu()
+                triggerOnClickCloseMenu = true
             },
             title = stringResource(id = R.string.drop_down_menu_item_settings),
             leadingIcon = {
@@ -342,14 +380,13 @@ private fun AccountSettingMenu(
                 )
             }
         )
-        HorizontalDivider()
+        HorizontalDivider(modifier = modifier)
         MyDropdownMenuItem(
             onAction = {
                 coroutineScope.launch {
-                    mainViewModel.clearUserData()
-                    auxiliaryUserViewModel.clearFlag()
+                    mainViewModel.logout { userViewModel.clearFlag() }
                     navigateFunctionClearAllScreens(navController, Route.LoginScreen.route)
-                    closeMenu()
+                    triggerOnClickCloseMenu = true
                 }
             },
             title = stringResource(R.string.drop_down_menu_item_exit),
