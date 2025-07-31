@@ -87,7 +87,7 @@ fun EditPersonalInformationScreen(
                 contentDescription = stringResource(id = R.string.description_floating_action_button_save),
                 textFloatingButton = stringResource(id = R.string.floating_action_button_save),
                 onButtonClick = {
-                    userViewModel.updatingUserData(userData?.id!!, nikName, email, password)
+                    userViewModel.updatingUserData(userId, nikName, email, password)
                     navigateFunction(navController, Route.MainScreen.route)
                     showToast(context, R.string.edit_personal_information)
                 },

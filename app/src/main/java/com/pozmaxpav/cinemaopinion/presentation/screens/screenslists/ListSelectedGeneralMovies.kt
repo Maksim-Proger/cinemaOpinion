@@ -142,34 +142,26 @@ fun ListSelectedGeneralMovies(
             )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 OnBackInvokedHandler { openBottomSheetChange = false }
-            } else {
-                BackHandler { openBottomSheetChange = false }
-            }
+            } else { BackHandler { openBottomSheetChange = false } }
         }
 
         if (openBottomSheetComments) {
             MyBottomSheet(
-                onClose = {
-                    openBottomSheetComments = !openBottomSheetComments
-                },
+                onClose = { openBottomSheetComments = !openBottomSheetComments },
                 content = {
                     AddComment(
-                        userData,
-                        selectedMovie,
-                        movieViewModel,
-                        context,
-                        onClick = {
-                            openBottomSheetComments = false
-                        }
+                        userData = userData,
+                        selectedMovie = selectedMovie,
+                        movieViewModel = movieViewModel,
+                        context = context,
+                        onClick = { openBottomSheetComments = false }
                     )
                 },
                 fraction = 0.7f
             )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 OnBackInvokedHandler { openBottomSheetComments = false }
-            } else {
-                BackHandler { openBottomSheetComments = false }
-            }
+            } else { BackHandler { openBottomSheetComments = false } }
         }
 
         if (selectedMovie == null) {
@@ -181,107 +173,108 @@ fun ListSelectedGeneralMovies(
             ) {
                 IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
                     Icon(
-                        Icons.Default.ArrowBackIosNew,
+                        imageVector = Icons.Default.ArrowBackIosNew,
                         contentDescription = stringResource(R.string.description_icon_back_button),
                         tint = MaterialTheme.colorScheme.secondary
                     )
                 }
                 Text(
-                    text = "Список с фильмами",
+                    text = stringResource(R.string.title_page_movie_list),
                     style = MaterialTheme.typography.displayLarge,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
 
-        if (selectedMovie != null) {
-            DetailsCardSelectedMovie(
-                movie = selectedMovie!!,
-                content = {
-                    ShowCommentList(
-                        dataSource = NODE_LIST_MOVIES,
-                        selectedMovieId = selectedMovie!!.id,
-                        viewModel = movieViewModel,
-                        onClick = {
-                            comment -> selectedComment = comment
-                            openBottomSheetChange = true
-                        }
-                    )
-                },
-                openDescription = {
-                    ExpandedCard(
-                        title = stringResource(R.string.text_for_expandedCard_field),
-                        description = info?.description ?: stringResource(R.string.limit_is_over),
-                        bottomPadding = 7.dp
-                    )
-                },
-                commentButton = {
-                    CustomTextButton(
-                        textButton = context.getString(R.string.button_leave_comment),
-                        bottomPadding = 7.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        onClickButton = { openBottomSheetComments = !openBottomSheetComments }
-                    )
-                },
-                movieTransferButtonToWatchedMoviesList = {
-                    CustomTextButton(
-                        textButton = context.getString(R.string.button_viewed),
-                        topPadding = 7.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        onClickButton = {
-                            movieViewModel.sendingToNewDirectory(
-                                NODE_LIST_MOVIES,
-                                NODE_LIST_WATCHED_MOVIES,
-                                selectedMovie!!.id.toDouble()
-                            )
-                            showToast(context, R.string.movie_has_been_moved_to_viewed)
-                            movieViewModel.savingChangeRecord(
-                                context,
-                                userData!!.nikName,
-                                R.string.record_movie_has_been_moved_to_viewed,
-                                selectedMovie!!.nameFilm,
-                                NODE_LIST_WATCHED_MOVIES,
-                                selectedMovie!!.id
-                            )
-                        }
-                    )
-                },
-                movieTransferButtonToSerialsList = {
-                    CustomTextButton(
-                        textButton = context.getString(R.string.button_move_to_series),
-                        topPadding = 7.dp,
-                        bottomPadding = 7.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        onClickButton = {
-                            movieViewModel.sendingToNewDirectory(
-                                NODE_LIST_MOVIES,
-                                NODE_LIST_SERIALS,
-                                selectedMovie!!.id.toDouble()
-                            )
-                            showToast(context, R.string.series_has_been_moved)
-                            movieViewModel.savingChangeRecord(
-                                context,
-                                userData!!.nikName,
-                                R.string.record_series_has_been_moved_to_series_list,
-                                selectedMovie!!.nameFilm,
-                                NODE_LIST_SERIALS,
-                                selectedMovie!!.id
-                            )
-                        }
-                    )
-                },
-                onClick = { selectedMovie = null }
-            )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { selectedMovie = null }
-            } else {
-                BackHandler { selectedMovie = null }
+        selectedMovie?.let { movie ->
+            userData?.let { user ->
+                DetailsCardSelectedMovie(
+                    movie = movie,
+                    content = {
+                        ShowCommentList(
+                            dataSource = NODE_LIST_MOVIES,
+                            selectedMovieId = movie.id,
+                            viewModel = movieViewModel,
+                            onClick = { comment ->
+                                selectedComment = comment
+                                openBottomSheetChange = true
+                            }
+                        )
+                    },
+                    openDescription = {
+                        ExpandedCard(
+                            title = stringResource(R.string.text_for_expandedCard_field),
+                            description = info?.description ?: stringResource(R.string.limit_is_over),
+                            bottomPadding = 7.dp
+                        )
+                    },
+                    commentButton = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_leave_comment),
+                            bottomPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+                        )
+                    },
+                    movieTransferButtonToWatchedMoviesList = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_viewed),
+                            topPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = {
+                                movieViewModel.sendingToNewDirectory(
+                                    dataSource = NODE_LIST_MOVIES,
+                                    directionDataSource = NODE_LIST_WATCHED_MOVIES,
+                                    movieId = movie.id.toDouble()
+                                )
+                                showToast(context, R.string.movie_has_been_moved_to_viewed)
+                                movieViewModel.savingChangeRecord(
+                                    context = context,
+                                    username = user.nikName,
+                                    stringResourceId = R.string.record_movie_has_been_moved_to_viewed,
+                                    title = movie.nameFilm,
+                                    newDataSource = NODE_LIST_WATCHED_MOVIES,
+                                    entityId = movie.id
+                                )
+                            }
+                        )
+                    },
+                    movieTransferButtonToSerialsList = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_move_to_series),
+                            topPadding = 7.dp,
+                            bottomPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = {
+                                movieViewModel.sendingToNewDirectory(
+                                    dataSource = NODE_LIST_MOVIES,
+                                    directionDataSource = NODE_LIST_SERIALS,
+                                    movieId = movie.id.toDouble()
+                                )
+                                showToast(context, R.string.series_has_been_moved)
+                                movieViewModel.savingChangeRecord(
+                                    context = context,
+                                    username = user.nikName,
+                                    stringResourceId = R.string.record_series_has_been_moved_to_series_list,
+                                    title = movie.nameFilm,
+                                    newDataSource = NODE_LIST_SERIALS,
+                                    entityId = movie.id
+                                )
+                            }
+                        )
+                    },
+                    onClick = { selectedMovie = null }
+                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    OnBackInvokedHandler { selectedMovie = null }
+                } else { BackHandler { selectedMovie = null } }
             }
+        }
 
-        } else {
+        if (selectedMovie == null) {
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -454,18 +447,18 @@ private fun AddComment(
                 userData?.let { user ->
                     selectedMovie?.let { movie ->
                         movieViewModel.addComment(
-                            NODE_LIST_MOVIES,
-                            movie.id.toDouble(),
-                            user.nikName,
-                            comment
+                            dataSource = NODE_LIST_MOVIES,
+                            movieId = movie.id.toDouble(),
+                            username = user.nikName,
+                            commentUser = comment
                         )
                         movieViewModel.savingChangeRecord(
-                            context,
-                            user.nikName,
-                            R.string.record_added_comment_to_movie,
-                            movie.nameFilm,
-                            NODE_LIST_MOVIES,
-                            movie.id
+                            context = context,
+                            username = user.nikName,
+                            stringResourceId = R.string.record_added_comment_to_movie,
+                            title = movie.nameFilm,
+                            newDataSource = NODE_LIST_MOVIES,
+                            entityId = movie.id
                         )
                         showToast(context, R.string.comment_added)
                         setComment("")

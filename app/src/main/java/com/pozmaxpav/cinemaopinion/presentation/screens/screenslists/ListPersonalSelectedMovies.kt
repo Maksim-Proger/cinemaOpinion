@@ -126,105 +126,160 @@ fun ListSelectedMovies(
             ) {
                 IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
                     Icon(
-                        Icons.Default.ArrowBackIosNew,
+                        imageVector = Icons.Default.ArrowBackIosNew,
                         contentDescription = stringResource(R.string.description_icon_back_button),
                         tint = MaterialTheme.colorScheme.secondary
                     )
                 }
                 Text(
-                    text = "Личный список",
+                    text = stringResource(R.string.title_page_personal_list),
                     style = MaterialTheme.typography.displayLarge,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
 
-        selectedMovie?.let { movie ->
-            DetailsCardSelectedMovie(
-                movie = movie,
+        if (openBottomSheetChange) {
+            MyBottomSheet(
+                onClose = { openBottomSheetChange = false },
                 content = {
-                    ShowCommentList(
-                        userId = userId,
-                        selectedMovieId = selectedMovie!!.id,
-                        viewModel = personalMovieViewModel,
-                        onClick = {
-                                comment -> selectedComment = comment
-                            openBottomSheetChange = true
+                    userData?.let { user ->
+                        selectedMovie?.let { movie->
+                            selectedComment?.let { comment ->
+                                ChangeComment(
+                                    userId = userId,
+                                    userName = user.nikName,
+                                    selectedMovieId = movie.id,
+                                    selectedComment = comment,
+                                    viewModel = personalMovieViewModel
+                                ) {
+                                    openBottomSheetChange = false
+                                }
+                            }
                         }
-                    )
+                    }
                 },
-                openDescription = {
-                    ExpandedCard(
-                        title = stringResource(R.string.text_for_expandedCard_field),
-                        description = info?.description ?: stringResource(R.string.limit_is_over),
-                    )
-                },
-                movieTransferButtonToMoviesList = {
-                    CustomTextButton(
-                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
-                        topPadding = 7.dp,
-                        bottomPadding = 7.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        onClickButton = {
-                            personalMovieViewModel.sendingToNewDirectory(
-                                userId,
-                                NODE_LIST_PERSONAL_MOVIES,
-                                NODE_LIST_MOVIES,
-                                selectedMovie!!.id
-                            )
-                            showToast(context, R.string.movie_has_been_moved)
-                            firebaseViewModel.savingChangeRecord(
-                                context,
-                                userData!!.nikName,
-                                R.string.record_added_movie,
-                                selectedMovie!!.nameFilm,
-                                NODE_LIST_MOVIES,
-                                selectedMovie!!.id
-                            )
-                        }
-                    )
-                },
-                movieTransferButtonToSerialsList = {
-                    CustomTextButton(
-                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
-                        bottomPadding = 7.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        onClickButton = {
-                            firebaseViewModel.sendingToNewDirectory(
-                                NODE_LIST_PERSONAL_MOVIES,
-                                NODE_LIST_SERIALS,
-                                selectedMovie!!.id.toDouble()
-                            )
-                            showToast(context, R.string.series_has_been_moved)
-                            firebaseViewModel.savingChangeRecord(
-                                context,
-                                userData!!.nikName,
-                                R.string.record_added_series,
-                                selectedMovie!!.nameFilm,
-                                NODE_LIST_SERIALS,
-                                selectedMovie!!.id
-                            )
-                        }
-                    )
-                },
-                commentButton = {
-                    CustomTextButton(
-                        textButton = context.getString(R.string.placeholder_for_comment_field),
-                        bottomPadding = 7.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        onClickButton = { openBottomSheetComments = !openBottomSheetComments }
-                    )
-                },
-                onClick = { selectedMovie = null }
+                fraction = 0.5f
             )
-            // TODO: Разобраться почему не работает новая анимация
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { selectedMovie = null }
+                OnBackInvokedHandler { openBottomSheetChange = false }
             } else {
-                BackHandler { selectedMovie = null }
+                BackHandler { openBottomSheetChange = false }
+            }
+        }
+
+        if (openBottomSheetComments) {
+            MyBottomSheet(
+                onClose = {
+                    openBottomSheetComments = false
+                },
+                content = {
+                    AddComment(
+                        personalMovieViewModel,
+                        userId,
+                        selectedMovie,
+                        userData,
+                        context,
+                        onClick = {
+                            openBottomSheetComments = false
+                        }
+                    )
+                },
+                fraction = 0.7f
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                OnBackInvokedHandler { openBottomSheetComments = false }
+            } else {
+                BackHandler { openBottomSheetComments = false }
+            }
+        }
+
+        selectedMovie?.let { movie ->
+            userData?.let { user ->
+                DetailsCardSelectedMovie(
+                    movie = movie,
+                    content = {
+                        ShowCommentList(
+                            userId = userId,
+                            selectedMovieId = movie.id,
+                            viewModel = personalMovieViewModel,
+                            onClick = { comment ->
+                                selectedComment = comment
+                                openBottomSheetChange = true
+                            }
+                        )
+                    },
+                    openDescription = {
+                        ExpandedCard(
+                            title = stringResource(R.string.text_for_expandedCard_field),
+                            description = info?.description ?: stringResource(R.string.limit_is_over),
+                        )
+                    },
+                    movieTransferButtonToMoviesList = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
+                            topPadding = 7.dp,
+                            bottomPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = {
+                                personalMovieViewModel.sendingToNewDirectory(
+                                    userId = userId,
+                                    dataSource = NODE_LIST_PERSONAL_MOVIES,
+                                    directionDataSource = NODE_LIST_MOVIES,
+                                    selectedMovieId = movie.id
+                                )
+                                showToast(context, R.string.movie_has_been_moved)
+                                firebaseViewModel.savingChangeRecord(
+                                    context,
+                                    username = user.nikName,
+                                    stringResourceId = R.string.record_added_movie,
+                                    title = movie.nameFilm,
+                                    newDataSource = NODE_LIST_MOVIES,
+                                    entityId = movie.id
+                                )
+                            }
+                        )
+                    },
+                    movieTransferButtonToSerialsList = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
+                            bottomPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = {
+                                firebaseViewModel.sendingToNewDirectory(
+                                    dataSource = NODE_LIST_PERSONAL_MOVIES,
+                                    directionDataSource = NODE_LIST_SERIALS,
+                                    movieId = movie.id.toDouble()
+                                )
+                                showToast(context, R.string.series_has_been_moved)
+                                firebaseViewModel.savingChangeRecord(
+                                    context = context,
+                                    username = user.nikName,
+                                    stringResourceId = R.string.record_added_series,
+                                    title = movie.nameFilm,
+                                    newDataSource = NODE_LIST_SERIALS,
+                                    entityId = movie.id
+                                )
+                            }
+                        )
+                    },
+                    commentButton = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.placeholder_for_comment_field),
+                            bottomPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+                        )
+                    },
+                    onClick = { selectedMovie = null }
+                )
+                // TODO: Разобраться почему не работает новая анимация
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    OnBackInvokedHandler { selectedMovie = null }
+                } else { BackHandler { selectedMovie = null } }
             }
         }
 
@@ -316,61 +371,6 @@ fun ListSelectedMovies(
             }
         }
 
-        if (openBottomSheetChange) {
-            MyBottomSheet(
-                onClose = { openBottomSheetChange = false },
-                content = {
-                    userData?.let { user ->
-                        selectedMovie?.let { movie->
-                            selectedComment?.let { comment ->
-                                ChangeComment(
-                                    userId = userId,
-                                    userName = user.nikName,
-                                    selectedMovieId = movie.id,
-                                    selectedComment = comment,
-                                    viewModel = personalMovieViewModel
-                                ) {
-                                    openBottomSheetChange = false
-                                }
-                            }
-                        }
-                    }
-                },
-                fraction = 0.5f
-            )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetChange = false }
-            } else {
-                BackHandler { openBottomSheetChange = false }
-            }
-        }
-
-        if (openBottomSheetComments) {
-            MyBottomSheet(
-                onClose = {
-                    openBottomSheetComments = false
-                },
-                content = {
-                    AddComment(
-                        personalMovieViewModel,
-                        userId,
-                        selectedMovie,
-                        userData,
-                        context,
-                        onClick = {
-                            openBottomSheetComments = false
-                        }
-                    )
-                },
-                fraction = 0.7f
-            )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetComments = false }
-            } else {
-                BackHandler { openBottomSheetComments = false }
-            }
-        }
-
     }
 }
 
@@ -410,25 +410,30 @@ private fun AddComment(
             }
         )
     )
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
         CustomTextButton(
-            textButton = "Добавить",
+            textButton = stringResource(R.string.button_add),
             containerColor = MaterialTheme.colorScheme.secondary,
             contentColor = MaterialTheme.colorScheme.onSecondary,
             endPadding = 15.dp,
             onClickButton = {
-                personalMovieViewModel.addCommentToPersonalList(
-                    userId,
-                    selectedMovie!!.id,
-                    userData!!.nikName,
-                    comment
-                )
-                showToast(context, R.string.comment_added)
-                setComment("")
-                onClick()
+                selectedMovie?.let { movie ->
+                    userData?.let { user ->
+                        personalMovieViewModel.addCommentToPersonalList(
+                            userId = userId,
+                            selectedMovieId = movie.id,
+                            username = user.nikName,
+                            textComment = comment
+                        )
+                        showToast(context, R.string.comment_added)
+                        setComment("")
+                        onClick()
+                    }
+                }
             }
         )
     }

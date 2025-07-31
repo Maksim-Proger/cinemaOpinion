@@ -135,144 +135,145 @@ fun ListWaitingContinuationSeries(
         }
     ) { innerPadding ->
 
-        if (selectedSerial != null) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(vertical = 45.dp)
-            ) {
-
-                if (openBottomSheetChange) {
-                    MyBottomSheet(
-                        onClose = { openBottomSheetChange = false },
-                        content = {
-                            userData?.let { user ->
-                                selectedSerial?.let { serial ->
-                                    selectedComment?.let { comment ->
-                                        ChangeComment(
-                                            dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                            userName = user.nikName,
-                                            selectedMovieId = serial.id,
-                                            selectedComment = comment,
-                                            viewModel = movieViewModel
-                                        ) {
-                                            openBottomSheetChange = false
-                                        }
-                                    }
+        if (openBottomSheetChange) {
+            MyBottomSheet(
+                onClose = { openBottomSheetChange = false },
+                content = {
+                    userData?.let { user ->
+                        selectedSerial?.let { serial ->
+                            selectedComment?.let { comment ->
+                                ChangeComment(
+                                    dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                    userName = user.nikName,
+                                    selectedMovieId = serial.id,
+                                    selectedComment = comment,
+                                    viewModel = movieViewModel
+                                ) {
+                                    openBottomSheetChange = false
                                 }
                             }
-                        },
-                        fraction = 0.5f
-                    )
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        OnBackInvokedHandler { openBottomSheetChange = false }
-                    } else {
-                        BackHandler { openBottomSheetChange = false }
+                        }
                     }
-                }
+                },
+                fraction = 0.5f
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                OnBackInvokedHandler { openBottomSheetChange = false }
+            } else {
+                BackHandler { openBottomSheetChange = false }
+            }
+        }
 
-                if (openBottomSheetComments) {
-                    MyBottomSheet(
-                        onClose = {
-                            openBottomSheetComments = !openBottomSheetComments
-                        },
+        if (openBottomSheetComments) {
+            MyBottomSheet(
+                onClose = {
+                    openBottomSheetComments = !openBottomSheetComments
+                },
+                content = {
+                    AddComment(
+                        userData,
+                        movieViewModel,
+                        selectedSerial,
+                        context,
+                        onClick = {
+                            openBottomSheetComments = false
+                        }
+                    )
+                },
+                fraction = 0.7f
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                OnBackInvokedHandler { openBottomSheetComments = false }
+            } else {
+                BackHandler { openBottomSheetComments = false }
+            }
+        }
+
+        selectedSerial?.let { serial ->
+            userData?.let { user ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(vertical = 45.dp)
+                ) {
+                    DetailsCardSelectedMovie(
+                        movie = serial,
                         content = {
-                            AddComment(
-                                userData,
-                                movieViewModel,
-                                selectedSerial,
-                                context,
-                                onClick = {
-                                    openBottomSheetComments = false
+                            ShowCommentList(
+                                dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                selectedMovieId = serial.id,
+                                viewModel = movieViewModel,
+                                onClick = { comment ->
+                                    selectedComment = comment
+                                    openBottomSheetChange = true
                                 }
                             )
                         },
-                        fraction = 0.7f
-                    )
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        OnBackInvokedHandler { openBottomSheetComments = false }
-                    } else {
-                        BackHandler { openBottomSheetComments = false }
-                    }
-                }
-
-                DetailsCardSelectedMovie(
-                    movie = selectedSerial!!,
-                    content = {
-                        ShowCommentList(
-                            dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
-                            selectedMovieId = selectedSerial!!.id,
-                            viewModel = movieViewModel,
-                            onClick = {
-                                comment -> selectedComment = comment
-                                openBottomSheetChange = true
-                            }
-                        )
-                    },
-                    openDescription = {
-                        ExpandedCard(
-                            title = stringResource(R.string.text_for_expandedCard_field),
-                            description = info?.description ?: stringResource(R.string.limit_is_over),
-                            bottomPadding = 7.dp
-                        )
-                    },
-                    commentButton = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_leave_comment),
-                            topPadding = 7.dp,
-                            bottomPadding = 7.dp,
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openBottomSheetComments = !openBottomSheetComments }
-                        )
-                    },
-                    movieTransferButtonToWatchedMoviesList = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_viewed),
-                            topPadding = 7.dp,
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = {
-                                if (userData != null) {
+                        openDescription = {
+                            ExpandedCard(
+                                title = stringResource(R.string.text_for_expandedCard_field),
+                                description = info?.description ?: stringResource(R.string.limit_is_over),
+                                bottomPadding = 7.dp
+                            )
+                        },
+                        commentButton = {
+                            CustomTextButton(
+                                textButton = context.getString(R.string.button_leave_comment),
+                                topPadding = 7.dp,
+                                bottomPadding = 7.dp,
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary,
+                                onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+                            )
+                        },
+                        movieTransferButtonToWatchedMoviesList = {
+                            CustomTextButton(
+                                textButton = context.getString(R.string.button_viewed),
+                                topPadding = 7.dp,
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary,
+                                onClickButton = {
                                     movieViewModel.sendingToNewDirectory(
-                                        NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                        NODE_LIST_WATCHED_MOVIES,
-                                        selectedSerial!!.id.toDouble()
+                                        dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                        directionDataSource = NODE_LIST_WATCHED_MOVIES,
+                                        movieId = serial.id.toDouble()
                                     )
                                     showToast(context, R.string.series_has_been_moved_to_viewed)
                                     movieViewModel.savingChangeRecord(
-                                        context,
-                                        userData!!.nikName,
-                                        R.string.record_series_has_been_moved_to_viewed,
-                                        selectedSerial!!.nameFilm,
-                                        NODE_LIST_WATCHED_MOVIES,
-                                        selectedSerial!!.id
+                                        context = context,
+                                        username = user.nikName,
+                                        stringResourceId = R.string.record_series_has_been_moved_to_viewed,
+                                        title = serial.nameFilm,
+                                        newDataSource = NODE_LIST_WATCHED_MOVIES,
+                                        entityId = serial.id
                                     )
                                 }
-                            }
-                        )
-                    },
-                    onClick = {
-                        selectedSerial = null
-                        showTopBar = !showTopBar
-                    }
-                )
+                            )
+                        },
+                        onClick = {
+                            selectedSerial = null
+                            showTopBar = !showTopBar
+                        }
+                    )
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    OnBackInvokedHandler {
-                        selectedSerial = null
-                        showTopBar = !showTopBar
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        OnBackInvokedHandler {
+                            selectedSerial = null
+                            showTopBar = !showTopBar
+                        }
+                    } else {
+                        BackHandler {
+                            selectedSerial = null
+                            showTopBar = !showTopBar
+                        }
                     }
-                } else {
-                    BackHandler {
-                        selectedSerial = null
-                        showTopBar = !showTopBar
-                    }
+
                 }
-
             }
-        } else {
+        }
+
+        if (selectedSerial == null) {
             when (stateMovies) {
                 is State.Loading -> {
                     Box(
@@ -416,18 +417,18 @@ private fun AddComment(
                 userData?.let { user ->
                     selectedSerial?.let { serial ->
                         movieViewModel.addComment(
-                            NODE_LIST_WAITING_CONTINUATION_SERIES,
-                            serial.id.toDouble(),
-                            user.nikName,
-                            comment
+                            dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                            movieId = serial.id.toDouble(),
+                            username = user.nikName,
+                            commentUser = comment
                         )
                         movieViewModel.savingChangeRecord(
-                            context,
-                            user.nikName,
-                            R.string.record_added_comment_to_series,
-                            serial.nameFilm,
-                            NODE_LIST_WAITING_CONTINUATION_SERIES,
-                            serial.id
+                            context = context,
+                            username = user.nikName,
+                            stringResourceId = R.string.record_added_comment_to_series,
+                            title = serial.nameFilm,
+                            newDataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                            entityId = serial.id
                         )
                         showToast(context, R.string.comment_added)
                         setComment("")

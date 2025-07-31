@@ -37,6 +37,8 @@
     <string name="title_login_screen">Вход / Регистрация</string>
     <string name="title_listWatched_movies">Просмотренные</string>
     <string name="title_page_description">Что нового:</string>
+    <string name="title_page_personal_list">Личный список</string>
+    <string name="title_page_movie_list">Список с фильмами</string>
 
     <!--  Text for Changes Records Screen  -->
     <string name="record_added_comment_to_movie">добавил(а) комментарий к фильму: </string>

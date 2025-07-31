@@ -143,16 +143,12 @@ fun ListWatchedMovies(
             )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 OnBackInvokedHandler { openBottomSheetChange = false }
-            } else {
-                BackHandler { openBottomSheetChange = false }
-            }
+            } else { BackHandler { openBottomSheetChange = false } }
         }
 
         if (openBottomSheetComments) {
             MyBottomSheet(
-                onClose = {
-                    openBottomSheetComments = !openBottomSheetComments
-                },
+                onClose = { openBottomSheetComments = false },
                 content = {
                     CustomTextFieldForComments(
                         value = comment,
@@ -177,34 +173,37 @@ fun ListWatchedMovies(
                             }
                         )
                     )
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
                         CustomTextButton(
-                            textButton = "Добавить",
+                            textButton = stringResource(R.string.button_add),
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             endPadding = 15.dp,
                             onClickButton = {
-                                if (userData != null) {
-                                    movieViewModel.addComment(
-                                        NODE_LIST_WATCHED_MOVIES,
-                                        selectedMovie!!.id.toDouble(),
-                                        userData!!.nikName,
-                                        comment
-                                    )
-                                    movieViewModel.savingChangeRecord(
-                                        context,
-                                        userData!!.nikName,
-                                        R.string.record_added_comment_to_movie_in_the_viewed,
-                                        selectedMovie!!.nameFilm,
-                                        NODE_LIST_WATCHED_MOVIES,
-                                        selectedMovie!!.id
-                                    )
-                                    showToast(context, R.string.comment_added)
-                                    setComment("")
-                                    openBottomSheetComments = !openBottomSheetComments
+                                selectedMovie?.let { movie ->
+                                    userData?.let { user ->
+                                        movieViewModel.addComment(
+                                            dataSource = NODE_LIST_WATCHED_MOVIES,
+                                            movieId = movie.id.toDouble(),
+                                            username = user.nikName,
+                                            commentUser = comment
+                                        )
+                                        movieViewModel.savingChangeRecord(
+                                            context = context,
+                                            username = user.nikName,
+                                            stringResourceId = R.string.record_added_comment_to_movie_in_the_viewed,
+                                            title = movie.nameFilm,
+                                            newDataSource = NODE_LIST_WATCHED_MOVIES,
+                                            entityId = movie.id
+                                        )
+                                        showToast(context, R.string.comment_added)
+                                        setComment("")
+                                        openBottomSheetComments = !openBottomSheetComments
+                                    }
                                 }
                             }
                         )
@@ -214,12 +213,10 @@ fun ListWatchedMovies(
             )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 OnBackInvokedHandler { openBottomSheetComments = false }
-            } else {
-                BackHandler { openBottomSheetComments = false }
-            }
+            } else { BackHandler { openBottomSheetComments = false } }
         }
 
-        if (selectedMovie != null) {
+        selectedMovie?.let { movie ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -227,14 +224,14 @@ fun ListWatchedMovies(
                     .padding(vertical = 45.dp)
             ) {
                 DetailsCardSelectedMovie(
-                    movie = selectedMovie!!,
+                    movie = movie,
                     content = {
                         ShowCommentList(
                             dataSource = NODE_LIST_WATCHED_MOVIES,
-                            selectedMovieId = selectedMovie!!.id,
+                            selectedMovieId = movie.id,
                             viewModel = movieViewModel,
-                            onClick = {
-                                comment -> selectedComment = comment
+                            onClick = { comment ->
+                                selectedComment = comment
                                 openBottomSheetChange = true
                             }
                         )
@@ -266,7 +263,9 @@ fun ListWatchedMovies(
                     }
                 }
             }
-        } else {
+        }
+
+        if (selectedMovie == null) {
             when (stateMovies) {
                 is State.Loading -> {
                     Box(
