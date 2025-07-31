@@ -48,8 +48,8 @@ import com.pozmaxpav.cinemaopinion.presentation.theme.DeveloperCommentColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.FilmAddedColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.FilmDeleteColor
 import com.pozmaxpav.cinemaopinion.presentation.theme.MovingElement
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import java.text.SimpleDateFormat
@@ -60,12 +60,12 @@ import java.util.Locale
 @Composable
 fun ListOfChangesScreen(
     navController: NavHostController,
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
-    viewModel: FireBaseMovieViewModel = hiltViewModel()
+    viewModel: MovieViewModel = hiltViewModel()
 ) {
     val list by viewModel.listOfChanges.collectAsState()
-    val userData by auxiliaryUserViewModel.userData.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -75,7 +75,7 @@ fun ListOfChangesScreen(
         viewModel.getRecordsOfChanges()
     }
     LaunchedEffect(userId) {
-        auxiliaryUserViewModel.getUserData(userId)
+        userViewModel.getUserData(userId)
     }
 
     Scaffold(

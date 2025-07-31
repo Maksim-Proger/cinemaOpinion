@@ -62,8 +62,8 @@ import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieIt
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
@@ -77,17 +77,17 @@ import com.pozmaxpav.cinemaopinion.utilits.showToast
 @Composable
 fun ListSelectedGeneralSerials(
     navController: NavHostController,
-    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    movieViewModel: MovieViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
 ) {
 
-    val listSerials by fireBaseMovieViewModel.movies.collectAsState()
+    val listSerials by movieViewModel.movies.collectAsState()
     var selectedSerial by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
     val userId by mainViewModel.userId.collectAsState()
-    val userData by auxiliaryUserViewModel.userData.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -96,11 +96,11 @@ fun ListSelectedGeneralSerials(
 
 
     LaunchedEffect(Unit) {
-        fireBaseMovieViewModel.getMovies(NODE_LIST_SERIALS)
-        fireBaseMovieViewModel.observeListMovies(NODE_LIST_SERIALS)
+        movieViewModel.getMovies(NODE_LIST_SERIALS)
+        movieViewModel.observeListMovies(NODE_LIST_SERIALS)
     }
     LaunchedEffect(userId) {
-        auxiliaryUserViewModel.getUserData(userId)
+        userViewModel.getUserData(userId)
     }
     LaunchedEffect(selectedSerial) {
         selectedSerial?.let { movie ->
@@ -127,7 +127,7 @@ fun ListSelectedGeneralSerials(
                                     userName = user.nikName,
                                     selectedMovieId = serial.id,
                                     selectedComment = comment,
-                                    viewModel = fireBaseMovieViewModel
+                                    viewModel = movieViewModel
                                 ) {
                                     openBottomSheetChange = false
                                 }
@@ -152,7 +152,7 @@ fun ListSelectedGeneralSerials(
                 content = {
                     AddComment(
                         userData,
-                        fireBaseMovieViewModel,
+                        movieViewModel,
                         selectedSerial,
                         context,
                         onClick = {
@@ -198,7 +198,7 @@ fun ListSelectedGeneralSerials(
                     ShowCommentList(
                         dataSource = NODE_LIST_SERIALS,
                         selectedMovieId = selectedSerial!!.id,
-                        viewModel = fireBaseMovieViewModel,
+                        viewModel = movieViewModel,
                         onClick = {
                             comment -> selectedComment = comment
                             openBottomSheetChange = true
@@ -229,13 +229,13 @@ fun ListSelectedGeneralSerials(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            fireBaseMovieViewModel.sendingToNewDirectory(
+                            movieViewModel.sendingToNewDirectory(
                                 NODE_LIST_SERIALS,
                                 NODE_LIST_WAITING_CONTINUATION_SERIES,
                                 selectedSerial!!.id.toDouble()
                             )
                             showToast(context, R.string.series_has_been_moved_to_waiting_list)
-                            fireBaseMovieViewModel.savingChangeRecord(
+                            movieViewModel.savingChangeRecord(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_series_has_been_moved_to_waiting_list,
@@ -253,13 +253,13 @@ fun ListSelectedGeneralSerials(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            fireBaseMovieViewModel.sendingToNewDirectory(
+                            movieViewModel.sendingToNewDirectory(
                                 NODE_LIST_SERIALS,
                                 NODE_LIST_WATCHED_MOVIES,
                                 selectedSerial!!.id.toDouble()
                             )
                             showToast(context, R.string.series_has_been_moved)
-                            fireBaseMovieViewModel.savingChangeRecord(
+                            movieViewModel.savingChangeRecord(
                                 context,
                                 userData!!.nikName,
                                 R.string.record_series_has_been_moved_to_viewed,
@@ -296,11 +296,11 @@ fun ListSelectedGeneralSerials(
 
                         LaunchedEffect(isVisible) {
                             if (!isVisible) {
-                                fireBaseMovieViewModel.removeMovie(
+                                movieViewModel.removeMovie(
                                     NODE_LIST_SERIALS,
                                     movie.id
                                 )
-                                fireBaseMovieViewModel.savingChangeRecord(
+                                movieViewModel.savingChangeRecord(
                                     context,
                                     userData!!.nikName,
                                     R.string.record_deleted_the_series,
@@ -416,7 +416,7 @@ fun ListSelectedGeneralSerials(
 @Composable
 private fun AddComment(
     userData: User?,
-    fireBaseMovieViewModel: FireBaseMovieViewModel,
+    movieViewModel: MovieViewModel,
     selectedSerial: DomainSelectedMovieModel?,
     context: Context,
     onClick: () -> Unit
@@ -461,13 +461,13 @@ private fun AddComment(
             onClickButton = {
                 userData?.let { user ->
                     selectedSerial?.let { serial ->
-                        fireBaseMovieViewModel.addComment(
+                        movieViewModel.addComment(
                             NODE_LIST_SERIALS,
                             serial.id.toDouble(),
                             user.nikName,
                             comment
                         )
-                        fireBaseMovieViewModel.savingChangeRecord(
+                        movieViewModel.savingChangeRecord(
                             context,
                             user.nikName,
                             R.string.record_added_comment_to_series,

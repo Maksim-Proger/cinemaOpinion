@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -58,7 +57,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import java.text.SimpleDateFormat
@@ -377,7 +376,7 @@ fun ShowCommentList(
     onClick: (DomainCommentModel) -> Unit,
 ) {
     when (viewModel) {
-        is FireBaseMovieViewModel -> {
+        is MovieViewModel -> {
             val stateComments by viewModel.commentsDownloadStatus.collectAsState()
             val listComments by viewModel.comments.collectAsState()
 
@@ -534,7 +533,7 @@ fun ChangeComment(
     onClick: () -> Unit
 ) {
     when (viewModel) {
-        is FireBaseMovieViewModel -> {
+        is MovieViewModel -> {
             val (comment, setComment) = remember { mutableStateOf("") }
             val keyboardController = LocalSoftwareKeyboardController.current
             val focusManager = LocalFocusManager.current

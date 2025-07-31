@@ -5,8 +5,8 @@ interface SystemSharedPreferencesRepository {
     fun getAppVersion(): String?
     fun saveResultChecking(resultChecking: Boolean)
     fun getResultChecking(): Boolean
-    fun clearUserData()
 
+    fun clearUserData()
     fun saveRegistrationFlag(registrationFlag: Boolean)
     fun getRegistrationFlag(): Boolean
     fun saveUserId(userId: String)

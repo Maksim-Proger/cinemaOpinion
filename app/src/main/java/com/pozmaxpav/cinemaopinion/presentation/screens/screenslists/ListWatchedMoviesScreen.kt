@@ -56,8 +56,8 @@ import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsC
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
@@ -71,17 +71,17 @@ import com.pozmaxpav.cinemaopinion.utilits.state.State
 @Composable
 fun ListWatchedMovies(
     navController: NavHostController,
-    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel(),
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    movieViewModel: MovieViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    val listMovies by fireBaseMovieViewModel.movies.collectAsState()
-    val stateMovies by fireBaseMovieViewModel.movieDownloadStatus.collectAsState()
+    val listMovies by movieViewModel.movies.collectAsState()
+    val stateMovies by movieViewModel.movieDownloadStatus.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
-    val userData by auxiliaryUserViewModel.userData.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
 
     var showTopBar by remember { mutableStateOf(false) }
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
@@ -97,10 +97,10 @@ fun ListWatchedMovies(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
-        fireBaseMovieViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
+        movieViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
     }
     LaunchedEffect(userId) {
-        auxiliaryUserViewModel.getUserData(userId)
+        userViewModel.getUserData(userId)
     }
 
     Scaffold(
@@ -131,7 +131,7 @@ fun ListWatchedMovies(
                                     userName = user.nikName,
                                     selectedMovieId = movie.id,
                                     selectedComment = comment,
-                                    viewModel = fireBaseMovieViewModel
+                                    viewModel = movieViewModel
                                 ) {
                                     openBottomSheetChange = false
                                 }
@@ -188,13 +188,13 @@ fun ListWatchedMovies(
                             endPadding = 15.dp,
                             onClickButton = {
                                 if (userData != null) {
-                                    fireBaseMovieViewModel.addComment(
+                                    movieViewModel.addComment(
                                         NODE_LIST_WATCHED_MOVIES,
                                         selectedMovie!!.id.toDouble(),
                                         userData!!.nikName,
                                         comment
                                     )
-                                    fireBaseMovieViewModel.savingChangeRecord(
+                                    movieViewModel.savingChangeRecord(
                                         context,
                                         userData!!.nikName,
                                         R.string.record_added_comment_to_movie_in_the_viewed,
@@ -232,7 +232,7 @@ fun ListWatchedMovies(
                         ShowCommentList(
                             dataSource = NODE_LIST_WATCHED_MOVIES,
                             selectedMovieId = selectedMovie!!.id,
-                            viewModel = fireBaseMovieViewModel,
+                            viewModel = movieViewModel,
                             onClick = {
                                 comment -> selectedComment = comment
                                 openBottomSheetChange = true

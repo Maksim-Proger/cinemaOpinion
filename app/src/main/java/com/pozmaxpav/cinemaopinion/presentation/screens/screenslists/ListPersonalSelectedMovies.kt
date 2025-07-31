@@ -62,8 +62,8 @@ import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieIt
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
@@ -80,16 +80,16 @@ import com.pozmaxpav.cinemaopinion.utilits.state.State
 fun ListSelectedMovies(
     navController: NavHostController,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    firebaseViewModel: FireBaseMovieViewModel = hiltViewModel(),
+    firebaseViewModel: MovieViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
 
     val stateMovie by firebaseViewModel.movieDownloadStatus.collectAsState()
     val listSelectedMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
     val userId by mainViewModel.userId.collectAsState()
-    val userData by auxiliaryUserViewModel.userData.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
@@ -102,7 +102,7 @@ fun ListSelectedMovies(
     LaunchedEffect(userId) {
         personalMovieViewModel.getListPersonalMovies(userId)
         personalMovieViewModel.observeListSelectedMovies(userId)
-        auxiliaryUserViewModel.getUserData(userId)
+        userViewModel.getUserData(userId)
     }
     LaunchedEffect(selectedMovie) {
         selectedMovie?.let { movie ->
@@ -116,6 +116,28 @@ fun ListSelectedMovies(
             .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 50.dp)
     ) {
+
+        if (selectedMovie == null) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 7.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
+                    Icon(
+                        Icons.Default.ArrowBackIosNew,
+                        contentDescription = stringResource(R.string.description_icon_back_button),
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                Text(
+                    text = "Личный список",
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        }
 
         selectedMovie?.let { movie ->
             DetailsCardSelectedMovie(
@@ -346,28 +368,6 @@ fun ListSelectedMovies(
                 OnBackInvokedHandler { openBottomSheetComments = false }
             } else {
                 BackHandler { openBottomSheetComments = false }
-            }
-        }
-
-        if (selectedMovie == null) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 7.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = { navigateFunction(navController, Route.MainScreen.route) }) {
-                    Icon(
-                        Icons.Default.ArrowBackIosNew,
-                        contentDescription = stringResource(R.string.description_icon_back_button),
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                Text(
-                    text = "Личный список",
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
             }
         }
 

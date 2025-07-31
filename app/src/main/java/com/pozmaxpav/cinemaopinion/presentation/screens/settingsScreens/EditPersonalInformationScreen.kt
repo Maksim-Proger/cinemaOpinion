@@ -33,7 +33,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.fab.FabButton
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -43,16 +43,16 @@ import com.pozmaxpav.cinemaopinion.utilits.showToast
 @Composable
 fun EditPersonalInformationScreen(
     navController: NavHostController,
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val userId by mainViewModel.userId.collectAsState()
-    val userData by auxiliaryUserViewModel.userData.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
 
     LaunchedEffect(userId) {
-        auxiliaryUserViewModel.getUserData(userId)
+        userViewModel.getUserData(userId)
     }
 
     val (nikName, setNikName) = remember { mutableStateOf("") }
@@ -87,7 +87,7 @@ fun EditPersonalInformationScreen(
                 contentDescription = stringResource(id = R.string.description_floating_action_button_save),
                 textFloatingButton = stringResource(id = R.string.floating_action_button_save),
                 onButtonClick = {
-                    auxiliaryUserViewModel.updatingUserData(userData?.id!!, nikName, email, password)
+                    userViewModel.updatingUserData(userData?.id!!, nikName, email, password)
                     navigateFunction(navController, Route.MainScreen.route)
                     showToast(context, R.string.edit_personal_information)
                 },

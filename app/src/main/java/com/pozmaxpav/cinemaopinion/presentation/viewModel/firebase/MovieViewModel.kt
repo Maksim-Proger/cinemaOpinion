@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FireBaseMovieViewModel @Inject constructor(
+class MovieViewModel @Inject constructor(
     private val saveMovieUseCase: SaveMovieUseCase,
     private val removeMovieUseCase: RemoveMovieUseCase,
     private val getMovieUseCase: GetMovieUseCase,

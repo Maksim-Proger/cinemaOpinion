@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,7 +44,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.AuxiliaryUserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -53,7 +54,7 @@ import com.pozmaxpav.cinemaopinion.utilits.showToast
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    auxiliaryUserViewModel: AuxiliaryUserViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
@@ -61,19 +62,20 @@ fun LoginScreen(
     val (login, setLogin) = remember { mutableStateOf("") }
     val (password, setPassword) = remember { mutableStateOf("") }
     var openBottomSheet by remember { mutableStateOf(false) }
-    val loginVerificationResult by auxiliaryUserViewModel.loginVerificationResult.collectAsState()
-    val showToast by auxiliaryUserViewModel.showToast.collectAsState()
+    val loginVerificationResult by userViewModel.loginVerificationResult.collectAsState()
+    val showToast by userViewModel.showToast.collectAsState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
     LaunchedEffect(loginVerificationResult) {
+        Log.d("@@@", loginVerificationResult.toString())
         if (loginVerificationResult != null) {
             mainViewModel.saveRegistrationFlag(true)
-            mainViewModel.saveUserId(loginVerificationResult!!.id)
-            showToast(context, R.string.login_completed)
+            loginVerificationResult?.let { mainViewModel.saveUserId(it.id) }
             navigateFunction(navController, Route.MainScreen.route)
+            showToast(context, R.string.login_completed)
         }
     }
 
@@ -94,7 +96,7 @@ fun LoginScreen(
                 onClose = { openBottomSheet = false },
                 content = {
                     RegistrationWindow(
-                        auxiliaryUserViewModel,
+                        userViewModel,
                         keyboardController,
                         focusManager,
                         onClose = {
@@ -109,7 +111,7 @@ fun LoginScreen(
 
         if (showToast) {
             showToast(context, R.string.login_error)
-            auxiliaryUserViewModel.resetToastState()
+            userViewModel.resetToastState()
         }
 
         Column(
@@ -180,7 +182,7 @@ fun LoginScreen(
 
             Spacer(Modifier.padding(26.dp))
 
-            // region Buttons
+            // region Button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -197,7 +199,7 @@ fun LoginScreen(
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = MaterialTheme.colorScheme.onSecondary,
                     onClickButton = {
-                        auxiliaryUserViewModel.checkLoginAndPassword(login, password)
+                        userViewModel.checkLoginAndPassword(login, password)
                     }
                 )
             }
@@ -208,7 +210,7 @@ fun LoginScreen(
 
 @Composable
 fun RegistrationWindow(
-    auxiliaryUserViewModel: AuxiliaryUserViewModel,
+    userViewModel: UserViewModel,
     keyboardController: SoftwareKeyboardController?,
     focusManager: FocusManager,
     onClose: () -> Unit
@@ -308,7 +310,7 @@ fun RegistrationWindow(
                 textButton = stringResource(R.string.button_save),
                 endPadding = 15.dp,
                 onClickButton = {
-                    auxiliaryUserViewModel.addUser(nikName, email, password)
+                    userViewModel.addUser(nikName, email, password)
                     onClose()
                 }
             )

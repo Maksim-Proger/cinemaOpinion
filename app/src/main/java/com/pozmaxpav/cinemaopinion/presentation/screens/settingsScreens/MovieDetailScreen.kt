@@ -33,24 +33,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.FireBaseMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.state.State
@@ -64,15 +61,15 @@ fun MovieDetailScreen(
     newDataSource: String,
     movieId: Int,
     userName: String,
-    fireBaseMovieViewModel: FireBaseMovieViewModel = hiltViewModel()
+    movieViewModel: MovieViewModel = hiltViewModel()
 ) {
 
-    val movie by fireBaseMovieViewModel.movie.collectAsState()
+    val movie by movieViewModel.movie.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(movieId) {
         if (newDataSource.isNotEmpty() && movieId != 0) {
-            fireBaseMovieViewModel.getMovieById(newDataSource, movieId)
+            movieViewModel.getMovieById(newDataSource, movieId)
         }
     }
 
@@ -86,7 +83,7 @@ fun MovieDetailScreen(
                 newDataSource,
                 movieId,
                 navController,
-                fireBaseMovieViewModel,
+                movieViewModel,
                 userName,
                 context
             )
@@ -101,7 +98,7 @@ private fun OtherActions(
     newDataSource: String,
     movieId: Int,
     navController: NavHostController,
-    fireBaseMovieViewModel: FireBaseMovieViewModel,
+    movieViewModel: MovieViewModel,
     userName: String,
     context: Context,
 ) {
@@ -122,7 +119,7 @@ private fun OtherActions(
                 content = {
                     AddComment(
                         movie,
-                        fireBaseMovieViewModel,
+                        movieViewModel,
                         newDataSource,
                         movieId,
                         userName,
@@ -141,7 +138,7 @@ private fun OtherActions(
                 titleForMovieDetailScreen = elementDirectory(newDataSource),
                 movie = movie,
                 content = {
-                    ShowComment(newDataSource, movieId, fireBaseMovieViewModel)
+                    ShowComment(newDataSource, movieId, movieViewModel)
                 },
                 commentButton = {
                     CustomTextButton(
@@ -166,7 +163,7 @@ private fun OtherActions(
 @Composable
 private fun AddComment(
     movie: DomainSelectedMovieModel?,
-    fireBaseMovieViewModel: FireBaseMovieViewModel,
+    movieViewModel: MovieViewModel,
     newDataSource: String,
     movieId: Int,
     userName: String,
@@ -213,13 +210,13 @@ private fun AddComment(
             endPadding = 15.dp,
             onClickButton = {
                 movie?.let { movie ->
-                    fireBaseMovieViewModel.addComment(
+                    movieViewModel.addComment(
                         newDataSource,
                         movieId.toDouble(),
                         userName,
                         comment
                     )
-                    fireBaseMovieViewModel.savingChangeRecord(
+                    movieViewModel.savingChangeRecord(
                         context,
                         userName,
                         R.string.record_added_comment_to_movie,
@@ -293,15 +290,15 @@ private fun elementDirectory(newDataSource: String): String {
 fun ShowComment(
     newDataSource: String,
     movieId: Int,
-    fireBaseMovieViewModel: FireBaseMovieViewModel,
+    movieViewModel: MovieViewModel,
 ) {
 
-    val stateComments by fireBaseMovieViewModel.commentsDownloadStatus.collectAsState()
-    val listComments by fireBaseMovieViewModel.comments.collectAsState()
+    val stateComments by movieViewModel.commentsDownloadStatus.collectAsState()
+    val listComments by movieViewModel.comments.collectAsState()
 
     LaunchedEffect(movieId) {
-        fireBaseMovieViewModel.getComments(newDataSource, movieId)
-        fireBaseMovieViewModel.observeComments(newDataSource, movieId)
+        movieViewModel.getComments(newDataSource, movieId)
+        movieViewModel.observeComments(newDataSource, movieId)
     }
 
     when (stateComments) {
