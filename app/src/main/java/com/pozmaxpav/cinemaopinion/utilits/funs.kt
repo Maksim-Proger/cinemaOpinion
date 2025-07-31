@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -132,14 +133,13 @@ fun CustomTextField(
             singleLine = singleLine,
         )
     }
-
-
 }
 
 @Composable
 fun CustomTextFieldForComments(
     value: String,
     onValueChange: (String) -> Unit,
+    label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default
@@ -175,6 +175,7 @@ fun CustomTextFieldForComments(
                 unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
                 cursorColor = MaterialTheme.colorScheme.onPrimary
             ),
+            label = label,
             placeholder = placeholder,
             leadingIcon = leadingIcon,
             trailingIcon = if (value.isNotEmpty()) {
@@ -193,7 +194,7 @@ fun CustomTextFieldForComments(
                 imeAction = ImeAction.Done
             ),
             keyboardActions = keyboardActions,
-            maxLines = 7
+            maxLines = 10
         )
     }
 }
@@ -542,7 +543,7 @@ fun ChangeComment(
                 setComment(selectedComment.commentText)
             }
 
-            CustomTextField(
+            CustomTextFieldForComments(
                 value = comment,
                 onValueChange = setComment,
                 label = {
@@ -551,15 +552,25 @@ fun ChangeComment(
                         style = MaterialTheme.typography.bodyMedium
                     )
                 },
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.placeholder_for_comment_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.outline
+                    )
+                },
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
                         focusManager.clearFocus()
                     }
-                ),
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done,
-                singleLine = false
+                )
             )
 
             Row(
@@ -573,11 +584,11 @@ fun ChangeComment(
                     endPadding = 15.dp,
                     onClickButton = {
                         viewModel.updateComment(
-                            dataSource,
-                            userName,
-                            selectedMovieId,
-                            selectedComment.commentId,
-                            comment
+                            dataSource = dataSource,
+                            userName = userName,
+                            selectedMovieId = selectedMovieId,
+                            commentId = selectedComment.commentId,
+                            newCommentText = comment
                         )
                         onClick()
                     }
@@ -593,13 +604,26 @@ fun ChangeComment(
                 setComment(selectedComment.commentText)
             }
 
-            CustomTextField(
+            CustomTextFieldForComments(
                 value = comment,
                 onValueChange = setComment,
                 label = {
                     Text(
-                        text = "Измените комментарий",
+                        text = stringResource(R.string.text_for_field_change_comment),
                         style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.placeholder_for_comment_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.outline
                     )
                 },
                 keyboardActions = KeyboardActions(
@@ -607,9 +631,7 @@ fun ChangeComment(
                         keyboardController?.hide()
                         focusManager.clearFocus()
                     }
-                ),
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
+                )
             )
 
             Row(
@@ -623,11 +645,11 @@ fun ChangeComment(
                     endPadding = 15.dp,
                     onClickButton = {
                         viewModel.updateComment(
-                            userId,
-                            userName,
-                            selectedMovieId,
-                            selectedComment.commentId,
-                            comment
+                            userId = userId,
+                            userName = userName,
+                            selectedMovieId = selectedMovieId,
+                            commentId = selectedComment.commentId,
+                            newCommentText = comment
                         )
                         onClick()
                     }
