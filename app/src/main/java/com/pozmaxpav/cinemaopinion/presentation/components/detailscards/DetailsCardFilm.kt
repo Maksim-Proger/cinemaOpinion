@@ -43,9 +43,9 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.components.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
@@ -79,22 +79,42 @@ fun DetailsCardFilm(
     var triggerOnClickPersonalMovie by remember { mutableStateOf(false) }
     var triggerOnClickGeneralMovie by remember { mutableStateOf(false) }
 
-    LaunchedEffect(triggerOnClickPersonalMovie) {
-        if (triggerOnClickPersonalMovie) {
-            personalMovieViewModel.toastMessage.collect { resId ->
-                showToast(context, resId)
-                onClick()
-            }
-        }
-    }
     LaunchedEffect(triggerOnClickGeneralMovie) {
         if (triggerOnClickGeneralMovie) {
             movieViewModel.toastMessage.collect { resId ->
-                showToast(context, resId)
+                showToast(context = context, messageId = resId)
                 onClick()
             }
         }
     }
+    LaunchedEffect(triggerOnClickPersonalMovie) {
+        if (triggerOnClickPersonalMovie) {
+            personalMovieViewModel.toastMessage.collect { resId ->
+                showToast(context = context, messageId = resId)
+                onClick()
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        movieViewModel.successfulResult.collect { (dataSource, movie) ->
+            userData?.let { user ->
+                movieViewModel.savingChangeRecord(
+                    context = context,
+                    username = user.nikName,
+                    stringResourceId = when (dataSource) {
+                        NODE_LIST_MOVIES -> { R.string.record_added_movie }
+                        NODE_LIST_SERIALS -> { R.string.record_added_series }
+                        else -> { R.string.record_added_movie /* <- Заменить это */ }
+                    },
+                    title = movie.nameFilm,
+                    newDataSource = dataSource,
+                    entityId = movie.id
+                )
+            }
+        }
+    }
+
     LaunchedEffect(movie?.id) {
         movie?.let { apiViewModel.getSearchMovieById(it.id) }
     }
@@ -307,26 +327,14 @@ fun DetailsCardFilm(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
-                            movie?.let {
+                            movie?.let { movie ->
                                 movieViewModel.saveMovie(
-                                    NODE_LIST_MOVIES,
-                                    it.toSelectedMovie()
+                                    dataSource = NODE_LIST_MOVIES,
+                                    selectedMovie = movie.toSelectedMovie()
                                 )
                             }
-
-//                            userData?.let {
-//                                fireBaseMovieViewModel.savingChangeRecord(
-//                                    context,
-//                                    it.nikName,
-//                                    R.string.record_added_movie,
-//                                    movie?.nameRu ?: context.getString(R.string.untitled_movie),
-//                                    NODE_LIST_MOVIES,
-//                                    movie!!.id
-//                                )
-//                            }
-
                             triggerOnClickGeneralMovie = true
-                        } // TODO: Доработать проверку для savingChangeRecord
+                        }
                     )
                     CustomTextButton(
                         textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
@@ -340,20 +348,8 @@ fun DetailsCardFilm(
                                     it.toSelectedMovie()
                                 )
                             }
-
-//                            userData?.let {
-//                                fireBaseMovieViewModel.savingChangeRecord(
-//                                    context,
-//                                    it.nikName,
-//                                    R.string.record_added_series,
-//                                    movie?.nameRu.toString(),
-//                                    NODE_LIST_SERIALS,
-//                                    movie!!.id
-//                                )
-//                            }
-
                             triggerOnClickGeneralMovie = true
-                        } // TODO: Доработать проверку для savingChangeRecord
+                        }
                     )
                     // region Seasonal Event
 //                    CustomTextButton(

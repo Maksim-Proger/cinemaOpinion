@@ -302,18 +302,19 @@ fun MainScreen(
 
             if (!searchBarActive) {
                 if (selectedMovie != null) {
-                    DetailsCardFilm(
-                        movie = selectedMovie!!,
-                        onClick = { selectedMovie = null },
-                        padding = padding,
-                        navController = navController
-                    )
+                    selectedMovie?.let {
+                        DetailsCardFilm(
+                            movie = it,
+                            onClick = { selectedMovie = null },
+                            padding = padding,
+                            navController = navController
+                        )
+                    }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         OnBackInvokedHandler { selectedMovie = null }
                     } else {
                         BackHandler { selectedMovie = null }
                     }
-
                 } else if (selectedNewYearMovie != null) {
                     DetailsCard(
                         selectedNewYearMovie!!,

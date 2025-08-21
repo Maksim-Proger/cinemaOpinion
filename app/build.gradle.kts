@@ -47,19 +47,15 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+
+    kotlin {
+        jvmToolchain(17)
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+
     buildFeatures {
         compose = true
     }
-//    composeOptions {
-//        kotlinCompilerExtensionVersion = "1.5.15"
-//    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -69,18 +65,18 @@ android {
 
 dependencies {
 
-    // LottieAnimation
-    implementation("com.airbnb.android:lottie-compose:6.6.7")
-
-    // WebView
-    implementation("androidx.webkit:webkit:1.14.0")
-
     // Module
     implementation(project(":introductoryscreens"))
 
+    // LottieAnimation
+    implementation(libs.lottie.compose)
+
+    // WebView
+    implementation(libs.webkit)
+
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
-    implementation("com.google.firebase:firebase-database:22.0.0")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.database)
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.57")
@@ -95,23 +91,23 @@ dependencies {
     implementation(libs.converter.gson)
 
     // Okhttp3
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.1.0")
 
     // Coil
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
 
     //Accompanist
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.4-beta")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.36.0")
 
     // Расширяем библиотеку с иконками
     implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
 
     // Room
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.7.2")
+    kapt("androidx.room:room-compiler:2.7.2")
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.1.4")
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

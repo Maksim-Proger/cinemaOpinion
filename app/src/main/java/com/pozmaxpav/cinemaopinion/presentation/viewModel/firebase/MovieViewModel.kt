@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.R
@@ -68,11 +69,18 @@ class MovieViewModel @Inject constructor(
     val movie = _movie.asStateFlow()
 
     private val _toastMessage = MutableSharedFlow<Int>(
-        replay = 1,
+        replay = 0,
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val toastMessage = _toastMessage.asSharedFlow()
+
+    private val _successfulResult = MutableSharedFlow<Pair<String, DomainSelectedMovieModel>>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val successfulResult = _successfulResult.asSharedFlow()
 
     fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
@@ -83,9 +91,9 @@ class MovieViewModel @Inject constructor(
                 } else {
                     saveMovieUseCase(dataSource, selectedMovie)
                     _toastMessage.emit(R.string.movie_has_been_added_to_general_list)
+                    _successfulResult.emit(dataSource to selectedMovie)
                 }
             } catch (e: Exception) {
-                _toastMessage.emit(R.string.movie_has_already_been_added)
                 e.printStackTrace()
             }
         }

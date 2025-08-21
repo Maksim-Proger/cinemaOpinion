@@ -30,14 +30,8 @@ class MovieRepositoryImpl @Inject constructor(
 ) : MovieRepository {
 
     override suspend fun saveMovie(dataSource: String, selectedMovie: DomainSelectedMovieModel) {
-        val key = databaseReference.child(dataSource).push().key
-        key?.let {
-            databaseReference
-                .child(dataSource)
-                .child(it)
-                .setValue(selectedMovie)
-                .await()
-        } ?: throw Exception("Failed to generate key")
+        val ref = databaseReference.child(dataSource).push()
+        ref.setValue(selectedMovie).await()
     }
     override suspend fun removeMovie(dataSource: String, movieId: Int) {
         try {
