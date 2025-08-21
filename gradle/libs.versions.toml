@@ -1,6 +1,6 @@
 [versions]
 agp = "8.12.1"
-kotlin = "2.2.0"
+kotlin = "2.2.10"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -10,10 +10,19 @@ activityCompose = "1.10.1"
 composeBom = "2025.08.00"
 versionRetrofit = "3.0.0"
 versionConverterGson = "3.0.0"
+versionLottieCompose = "6.6.7"
+versionWebView = "1.14.0"
+versionFirebaseBom = "34.1.0"
+versionFirebaseDatabase = "22.0.0"
 
 [libraries]
-retrofit = {group = "com.squareup.retrofit2", name = "retrofit", version.ref = "versionRetrofit"}
-converter-gson = {group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "versionConverterGson"}
+firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "versionFirebaseDatabase" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "versionFirebaseBom" }
+webkit = { group = "androidx.webkit", name = "webkit", version.ref = "versionWebView" }
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "versionLottieCompose" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "versionRetrofit"}
+converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "versionConverterGson"}
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -33,4 +42,4 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }

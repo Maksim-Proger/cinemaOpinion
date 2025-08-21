@@ -105,7 +105,6 @@ class PersonalMovieViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val movies = getListPersonalMoviesUseCase(userId)
-
                 if (movies.any { it.id == selectedMovie.id }) {
                     _toastMessage.emit(R.string.movie_has_already_been_added)
                 } else {
@@ -113,7 +112,6 @@ class PersonalMovieViewModel @Inject constructor(
                     _toastMessage.emit(R.string.movie_has_been_added)
                 }
             } catch (e: Exception) {
-                _toastMessage.emit(R.string.movie_has_been_added)
                 e.printStackTrace()
             }
         }

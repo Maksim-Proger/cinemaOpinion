@@ -2,7 +2,6 @@ package com.pozmaxpav.cinemaopinion.di
 
 import android.app.Application
 import android.content.Context
-import androidx.room.Room
 import com.example.introductoryscreens.domain.LocalUserManager
 import com.example.introductoryscreens.domain.usecases.AppEntryUseCases
 import com.example.introductoryscreens.domain.usecases.ReadAppEntry
@@ -16,8 +15,8 @@ import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
 import com.pozmaxpav.cinemaopinion.data.repository.api.GetMovieInformationApiRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.api.MovieRepositoryApiImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.MovieRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.firebase.RecordsOfChangesRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.PersonalMovieRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.RecordsOfChangesRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SharedListsRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepositoryImpl
@@ -25,8 +24,8 @@ import com.pozmaxpav.cinemaopinion.data.repository.system.SharedPreferencesRepos
 import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.firebase.RecordsOfChangesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.RecordsOfChangesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SharedListsRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepository
