@@ -43,6 +43,7 @@ fun DetailsCardSelectedMovie(
     content: @Composable () -> Unit = {},
     openDescription: @Composable () -> Unit = {},
     commentButton: @Composable () -> Unit = {},
+    movieTransferButtonToSharedList: @Composable () -> Unit = {},
     movieTransferButtonToWatchedMoviesList: @Composable () -> Unit = {},
     movieTransferButtonToSerialsList: @Composable () -> Unit = {},
     movieTransferButtonToMoviesList: @Composable () -> Unit = {},
@@ -53,9 +54,7 @@ fun DetailsCardSelectedMovie(
     val detailedInformationAboutFilm by apiViewModel.detailedInformationAboutFilm.collectAsState()
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(movie.id) {
-        apiViewModel.getSearchMovieById(movie.id)
-    }
+    LaunchedEffect(movie.id) { apiViewModel.getSearchMovieById(movie.id) }
 
     Column(
         modifier = Modifier.wrapContentSize().padding(top = 10.dp)
@@ -141,6 +140,7 @@ fun DetailsCardSelectedMovie(
 
                 Spacer(modifier = Modifier.padding(7.dp))
                 Column(modifier = Modifier.fillMaxWidth()) {
+                    movieTransferButtonToSharedList()
                     movieTransferButtonToWatchedMoviesList()
                     movieTransferButtonToWaitingList()
                     movieTransferButtonToMoviesList()

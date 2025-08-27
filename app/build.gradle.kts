@@ -79,35 +79,35 @@ dependencies {
     implementation(libs.firebase.database)
 
     // Dagger Hilt
-    implementation("com.google.dagger:hilt-android:2.57")
-    kapt("com.google.dagger:hilt-compiler:2.57")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
 
-    //Compose Navigation
-    implementation("androidx.navigation:navigation-compose:2.9.3")
+    // Compose Navigation
+    implementation(libs.navigation.compose)
 
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
     // Okhttp3
-    implementation("com.squareup.okhttp3:logging-interceptor:5.1.0")
+    implementation(libs.logging.interceptor)
 
     // Coil
-    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation(libs.coil.compose)
 
     //Accompanist
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.36.0")
+    implementation(libs.accompanist.systemuicontroller)
 
     // Расширяем библиотеку с иконками
-    implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
+    implementation(libs.material.icons.extended)
 
     // Room
-    implementation("androidx.room:room-ktx:2.7.2")
-    kapt("androidx.room:room-compiler:2.7.2")
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.1.7")
+    implementation(libs.datastore.preferences)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

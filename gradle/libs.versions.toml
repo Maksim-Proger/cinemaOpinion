@@ -14,14 +14,37 @@ versionLottieCompose = "6.6.7"
 versionWebView = "1.14.0"
 versionFirebaseBom = "34.1.0"
 versionFirebaseDatabase = "22.0.0"
+versionHilt = "2.57"
+versionHiltNavigation = "1.2.0"
+versionNavigationCompose = "2.9.3"
+versionSquareupOkhttp3 = "5.1.0"
+versionCoilCompose = "2.7.0"
+versionAccompanistSystemuicontroller = "0.36.0"
+versionMaterialIcons = "1.7.8"
+versionRoom = "2.7.2"
+versionDatastore = "1.1.7"
 
 [libraries]
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "versionFirebaseDatabase" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "versionFirebaseBom" }
+
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "versionHilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "versionHilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "versionHiltNavigation" }
+
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "versionNavigationCompose" }
+logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "versionSquareupOkhttp3" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "versionCoilCompose" }
+accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "versionAccompanistSystemuicontroller" }
 webkit = { group = "androidx.webkit", name = "webkit", version.ref = "versionWebView" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "versionLottieCompose" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "versionRetrofit"}
 converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "versionConverterGson"}
+material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended-android", version.ref = "versionMaterialIcons"}
+
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "versionRoom" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "versionRoom" }
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "versionDatastore" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

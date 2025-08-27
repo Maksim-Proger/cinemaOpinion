@@ -80,7 +80,7 @@
     <string name="enter_the_name_of_the_movie_series">Введите название фильма/сериала</string>
     <string name="text_for_field_change_comment">Измените комментарий</string>
     <string name="text_for_field_create_shared_list">Название таблицы</string>
-    <string name="text_for_field_create_shared_list_invited_user_address">Email приглашаемого</string>
+    <string name="text_for_field_create_shared_list_invited_user_address">Приглашение</string>
 
     <!--  Text Button  -->
     <string name="button_leave_comment">Оставить комментарий</string>

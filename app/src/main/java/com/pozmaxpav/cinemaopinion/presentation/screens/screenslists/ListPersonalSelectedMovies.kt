@@ -53,6 +53,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
+import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
@@ -60,11 +61,13 @@ import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
+import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
@@ -75,6 +78,7 @@ import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.state.State
+import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 
 @Composable
 fun ListSelectedMovies(
@@ -83,7 +87,8 @@ fun ListSelectedMovies(
     firebaseViewModel: MovieViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel(),
+    sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
 ) {
 
     val stateMovie by firebaseViewModel.movieDownloadStatus.collectAsState()
@@ -95,6 +100,8 @@ fun ListSelectedMovies(
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
+    var openSharedLists by remember { mutableStateOf(false) }
+    var triggerOnClickSharedMovie by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -107,6 +114,13 @@ fun ListSelectedMovies(
     LaunchedEffect(selectedMovie) {
         selectedMovie?.let { movie ->
             apiViewModel.getInformationMovie(movie.id)
+        }
+    }
+    LaunchedEffect(triggerOnClickSharedMovie) {
+        if (triggerOnClickSharedMovie) {
+            sharedListsViewModel.toastMessage.collect { resId ->
+                showToast(context = context, messageId = resId)
+            }
         }
     }
 
@@ -170,9 +184,7 @@ fun ListSelectedMovies(
 
         if (openBottomSheetComments) {
             MyBottomSheet(
-                onClose = {
-                    openBottomSheetComments = false
-                },
+                onClose = { openBottomSheetComments = false },
                 content = {
                     AddComment(
                         personalMovieViewModel,
@@ -213,6 +225,15 @@ fun ListSelectedMovies(
                         ExpandedCard(
                             title = stringResource(R.string.text_for_expandedCard_field),
                             description = info?.description ?: stringResource(R.string.limit_is_over),
+                        )
+                    },
+                    movieTransferButtonToSharedList = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
+                            topPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = { openSharedLists = true }
                         )
                     },
                     movieTransferButtonToMoviesList = {
@@ -276,6 +297,7 @@ fun ListSelectedMovies(
                     },
                     onClick = { selectedMovie = null }
                 )
+
                 // TODO: Разобраться почему не работает новая анимация
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     OnBackInvokedHandler { selectedMovie = null }
@@ -371,6 +393,27 @@ fun ListSelectedMovies(
             }
         }
 
+    }
+
+    if (openSharedLists) {
+        CustomBoxShowOverlay(
+            onDismiss = { openSharedLists = false },
+            paddingVerticalSecondBox = 150.dp,
+            paddingHorizontalSecondBox = 36.dp,
+            content = {
+                ShowSharedLists(
+                    navController = navController,
+                    userId = userId,
+                    addButton = true,
+                    selectedMovie = selectedMovie,
+                    onCloseSharedLists = {
+                        triggerOnClickSharedMovie = true
+                        openSharedLists = false
+                        selectedMovie = null
+                    }
+                )
+            }
+        )
     }
 }
 

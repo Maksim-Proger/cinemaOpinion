@@ -41,7 +41,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
-import com.pozmaxpav.cinemaopinion.presentation.components.ShowSharedLists
+import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
@@ -391,7 +391,11 @@ fun DetailsCardFilm(
                     navController = navController,
                     userId = userId,
                     addButton = true,
-                    selectedMovie = movie?.toSelectedMovie()
+                    selectedMovie = movie?.toSelectedMovie(),
+                    onCloseSharedLists = {
+                        openSharedLists = false
+                        onClick()
+                    }
                 )
             }
         )
