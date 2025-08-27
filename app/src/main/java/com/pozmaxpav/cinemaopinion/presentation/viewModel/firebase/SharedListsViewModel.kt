@@ -2,6 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainMySharedListModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
@@ -12,11 +13,15 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetShared
 import com.pozmaxpav.cinemaopinion.utilits.formatTextWithUnderscores
 import com.pozmaxpav.cinemaopinion.utilits.simpleTransliterate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.collections.any
 
 @HiltViewModel
 class SharedListsViewModel @Inject constructor(
@@ -31,6 +36,13 @@ class SharedListsViewModel @Inject constructor(
 
     private val _movies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
     val movies = _movies.asStateFlow()
+
+    private val _toastMessage = MutableSharedFlow<Int>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val toastMessage = _toastMessage.asSharedFlow()
 
     fun createList(title: String, userCreatorId: String, invitedUserAddress: String) {
         val source = simpleTransliterate(formatTextWithUnderscores(title))
@@ -71,17 +83,23 @@ class SharedListsViewModel @Inject constructor(
     fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
-                addMovieToSpecificSharedListUseCase(listId, selectedMovie)
+                val  moviesForCheck = getMovieFromSpecificSharedListUseCase(listId)
+                if (moviesForCheck.any { it.id == selectedMovie.id }) {
+                    _toastMessage.emit(R.string.movie_has_already_been_added)
+                } else {
+                    addMovieToSpecificSharedListUseCase(listId, selectedMovie)
+                    _toastMessage.emit(R.string.movie_has_been_added_to_general_list)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-    fun getMoviesFroSpecialList(listId: String) {
+    fun getMoviesFromSpecialList(listId: String) {
         viewModelScope.launch {
             try {
-                val moviesResult = getMovieFromSpecificSharedListUseCase(listId)
-                _movies.value = moviesResult
+                val listMovies = getMovieFromSpecificSharedListUseCase(listId)
+                _movies.value = listMovies
             } catch (e: Exception) {
                 e.printStackTrace()
             }

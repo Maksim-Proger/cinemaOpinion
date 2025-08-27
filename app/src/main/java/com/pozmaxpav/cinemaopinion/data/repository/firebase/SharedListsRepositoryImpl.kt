@@ -32,19 +32,15 @@ class SharedListsRepositoryImpl @Inject constructor(
             .children.firstOrNull()?.key
             ?: throw IllegalArgumentException("List with ID $listId not found")
 
-        val movieKey = databaseReference
+        // генерируем новый узел для фильма
+        val movieRef = databaseReference
             .child(NODE_SHARED_LIST)
             .child(sharedListKey)
             .child(NODE_SHARED_LIST_MOVIES)
-            .push().key!!
+            .push()
 
-        databaseReference
-            .child(NODE_SHARED_LIST)
-            .child(sharedListKey)
-            .child(NODE_SHARED_LIST_MOVIES)
-            .child(movieKey)
-            .setValue(selectedMovie)
-            .await()
+        // пишем в него данные
+        movieRef.setValue(selectedMovie).await()
     }
 
     override suspend fun getMovieFromSpecificSharedList(listId: String): List<DomainSelectedMovieModel> {

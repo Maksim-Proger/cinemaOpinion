@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.components
+package com.pozmaxpav.cinemaopinion.presentation.funs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -20,7 +20,6 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SharedListItem
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
 @Composable
 fun ShowSharedLists(
@@ -28,7 +27,8 @@ fun ShowSharedLists(
     navController: NavHostController,
     sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
     addButton: Boolean = false,
-    selectedMovie: DomainSelectedMovieModel? = null
+    selectedMovie: DomainSelectedMovieModel? = null,
+    onCloseSharedLists: () -> Unit = {}
 ) {
     val lists by sharedListsViewModel.list.collectAsState()
 
@@ -50,7 +50,13 @@ fun ShowSharedLists(
                     item = item,
                     onClick = {
                         if (addButton) {
-                            selectedMovie?.let { sharedListsViewModel.addMovie(item.listId, it) }
+                            selectedMovie?.let {
+                                sharedListsViewModel.addMovie(
+                                    item.listId,
+                                    it
+                                )
+                            }
+                            onCloseSharedLists()
                         } else {
                             navController.navigate(
                                 Route.ListSharedScreen.getListId(

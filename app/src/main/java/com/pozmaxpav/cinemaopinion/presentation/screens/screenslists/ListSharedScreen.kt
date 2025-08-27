@@ -1,5 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
+import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
@@ -12,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -41,8 +42,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -58,12 +61,14 @@ fun ListSharedScreen(
 
     val movies by sharedListsViewModel.movies.collectAsState()
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    var openBottomSheetComments by remember { mutableStateOf(false) }
+    var openBottomSheetChange by remember { mutableStateOf(false) }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
-    LaunchedEffect(listId) { sharedListsViewModel.getMoviesFroSpecialList(listId) }
+    LaunchedEffect(listId) { sharedListsViewModel.getMoviesFromSpecialList(listId) }
 
     Scaffold(
         topBar = {
@@ -81,6 +86,32 @@ fun ListSharedScreen(
                 .fillMaxWidth()
                 .padding(innerPadding)
         ) {
+
+            if (openBottomSheetChange) {
+                MyBottomSheet(
+                    onClose = { openBottomSheetChange = false },
+                    content = { /* TODO: Добавить действие */ },
+                    fraction = 0.5f
+                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    OnBackInvokedHandler { openBottomSheetChange = false }
+                } else {
+                    BackHandler { openBottomSheetChange = false }
+                }
+            }
+
+            if (openBottomSheetComments) {
+                MyBottomSheet(
+                    onClose = { openBottomSheetComments = false },
+                    content = { /* TODO: Добавить действие */ },
+                    fraction = 0.7f
+                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    OnBackInvokedHandler { openBottomSheetComments = false }
+                } else {
+                    BackHandler { openBottomSheetComments = false }
+                }
+            }
 
             selectedMovie?.let { movie ->
                 DetailsCardSelectedMovie(
@@ -150,6 +181,5 @@ fun ListSharedScreen(
                 }
             }
         }
-
     }
 }
