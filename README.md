@@ -3,11 +3,11 @@
 ![Version](https://img.shields.io/badge/version-3.0-blue)
 ![Build](https://img.shields.io/badge/build-passing-brightgreen)
 ![Platform](https://img.shields.io/badge/platform-Android-lightgrey?logo=android)
-![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-purple?logo=kotlin)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.2.10-purple?logo=kotlin)
 ![Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-orange?logo=jetpackcompose)
 ![License](https://img.shields.io/badge/license-MIT-yellow)
 
-> **Версия:** 3.0 (22.08.2025)  
+> **Версия:** 3.1 (27.08.2025)  
 > Android-приложение для ведения личных и совместных списков фильмов и сериалов.  
 > Все данные хранятся в **Firebase Realtime Database** и доступны с любого устройства.
 
