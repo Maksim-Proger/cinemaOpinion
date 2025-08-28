@@ -1,6 +1,6 @@
 # 🎬 Cinema Opinion
 
-![Version](https://img.shields.io/badge/version-3.0-blue)
+![Version](https://img.shields.io/badge/version-3.1-blue)
 ![Build](https://img.shields.io/badge/build-passing-brightgreen)
 ![Platform](https://img.shields.io/badge/platform-Android-lightgrey?logo=android)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.2.10-purple?logo=kotlin)
