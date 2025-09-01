@@ -29,10 +29,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
     private val listenerHolder: FirebaseListenerHolder
 ) : PersonalMovieRepository {
 
-    override suspend fun addMovieToPersonalList(
-        userId: String,
-        selectedMovie: DomainSelectedMovieModel
-    ) {
+    override suspend fun addMovieToPersonalList(userId: String, selectedMovie: DomainSelectedMovieModel) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
         val userSnapshot = databaseReference
@@ -58,7 +55,6 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             .setValue(selectedMovie)
             .await()
     }
-
     override suspend fun getListPersonalMovies(userId: String): List<DomainSelectedMovieModel> {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
@@ -79,11 +75,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             .await()
             .children.mapNotNull { it.getValue(DomainSelectedMovieModel::class.java) }
     }
-
-    override suspend fun observeListSelectedMovies(
-        userId: String,
-        onSelectedMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit
-    ) {
+    override suspend fun observeListSelectedMovies(userId: String, onSelectedMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
         databaseReference
@@ -122,7 +114,6 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                 }
             })
     }
-
     override suspend fun deleteMovieFromPersonalList(userId: String, selectedMovieId: Int) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
         val userKey = databaseReference
@@ -149,11 +140,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addCommentToMovieInPersonalList(
-        userId: String,
-        selectedMovieId: Int,
-        comment: DomainCommentModel
-    ) {
+    override suspend fun addCommentToMovieInPersonalList(userId: String, selectedMovieId: Int, comment: DomainCommentModel) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
         val userKey = databaseReference
@@ -197,11 +184,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                 .await()
         }
     }
-
-    override suspend fun getCommentsForMovieFromPersonalList(
-        userId: String,
-        selectedMovieId: Int
-    ): List<DomainCommentModel> {
+    override suspend fun getCommentsForMovieFromPersonalList(userId: String, selectedMovieId: Int): List<DomainCommentModel> {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
         val userKey = databaseReference
@@ -237,7 +220,6 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             it.getValue(DataComment::class.java)?.commentToDomain()
         }
     }
-
     override suspend fun observeCommentsForMovieFromPersonalList(
         userId: String,
         selectedMovieId: Int,
@@ -307,7 +289,6 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                 }
             })
     }
-
     override suspend fun updateComment(
         userId: String,
         selectedMovieId: Int,
@@ -419,7 +400,6 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             e.printStackTrace()
         }
     }
-
     private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
         val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
         snapshot.children.forEach { childSnapshot ->

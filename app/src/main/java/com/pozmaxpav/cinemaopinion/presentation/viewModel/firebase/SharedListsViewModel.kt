@@ -1,11 +1,14 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainMySharedListModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.AddCommentToMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.AddMovieToSpecificSharedListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.CreatingSharedListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetMovieFromSpecificSharedListUseCase
@@ -21,15 +24,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
-import kotlin.collections.any
 
 @HiltViewModel
 class SharedListsViewModel @Inject constructor(
     private val creatingSharedListUseCase: CreatingSharedListUseCase,
     private val getSharedListsUseCase: GetSharedListsUseCase,
     private val addMovieToSpecificSharedListUseCase: AddMovieToSpecificSharedListUseCase,
-    private val getMovieFromSpecificSharedListUseCase: GetMovieFromSpecificSharedListUseCase
-): ViewModel() {
+    private val getMovieFromSpecificSharedListUseCase: GetMovieFromSpecificSharedListUseCase,
+    private val addCommentToMovieUseCase: AddCommentToMovieUseCase
+) : ViewModel() {
 
     private val _lists = MutableStateFlow<List<DomainSharedListModel>>(emptyList())
     val list = _lists.asStateFlow()
@@ -44,6 +47,25 @@ class SharedListsViewModel @Inject constructor(
     )
     val toastMessage = _toastMessage.asSharedFlow()
 
+    fun addComment(listId: String, movieId: Int, username: String, commentUser: String) {
+        viewModelScope.launch {
+            try {
+                val comment = DomainCommentModel(
+                    commentId = "",
+                    username = username,
+                    commentText = commentUser,
+                    timestamp = System.currentTimeMillis()
+                )
+                addCommentToMovieUseCase(listId, movieId, comment)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    fun getComments() {
+        // TODO: Добавить действие
+    }
+
     fun createList(title: String, userCreatorId: String, invitedUserAddress: String) {
         val source = simpleTransliterate(formatTextWithUnderscores(title))
         val sharedID = UUID.randomUUID().toString()
@@ -55,7 +77,6 @@ class SharedListsViewModel @Inject constructor(
             users = "",
             timestamp = System.currentTimeMillis()
         )
-
         val forProfile = DomainMySharedListModel(
             listId = sharedID,
             title = title,
@@ -80,10 +101,11 @@ class SharedListsViewModel @Inject constructor(
             }
         }
     }
+
     fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
-                val  moviesForCheck = getMovieFromSpecificSharedListUseCase(listId)
+                val moviesForCheck = getMovieFromSpecificSharedListUseCase(listId)
                 if (moviesForCheck.any { it.id == selectedMovie.id }) {
                     _toastMessage.emit(R.string.movie_has_already_been_added)
                 } else {

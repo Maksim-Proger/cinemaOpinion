@@ -151,8 +151,8 @@ fun ListSelectedGeneralMovies(
                 content = {
                     AddComment(
                         userData = userData,
-                        selectedMovie = selectedMovie,
                         movieViewModel = movieViewModel,
+                        selectedMovie = selectedMovie,
                         context = context,
                         onClick = { openBottomSheetComments = false }
                     )
@@ -401,8 +401,8 @@ fun ListSelectedGeneralMovies(
 @Composable
 private fun AddComment(
     userData: User?,
-    selectedMovie: DomainSelectedMovieModel?,
     movieViewModel: MovieViewModel,
+    selectedMovie: DomainSelectedMovieModel?,
     context: Context,
     onClick: () -> Unit
 ) {
