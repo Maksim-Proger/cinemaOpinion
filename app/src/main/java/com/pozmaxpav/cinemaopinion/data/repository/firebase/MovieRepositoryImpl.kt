@@ -103,7 +103,6 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addCommentToMovie(dataSource: String, movieId: Double, comment: DomainCommentModel) {
-        // Поиск фильма по его ID
         val snapshot = databaseReference
             .child(dataSource)
             .orderByChild("id")
@@ -111,34 +110,32 @@ class MovieRepositoryImpl @Inject constructor(
             .get()
             .await()
 
-        // Проверяем, существует ли фильм с данным ID
-        if (snapshot.exists()) {
-            // Получаем ключ узла фильма (movieId)
-            val movieKey = snapshot.children.firstOrNull()?.key
-
-            // Получаем уникальный ключ для комментария
-            val commentId = databaseReference
-                .child(dataSource)
-                .child(movieKey!!)
-                .child(NODE_COMMENTS)
-                .push().key!!
-
-            // Преобразуем DomainComment в DataComment
-            val dataComment = comment.commentToData().copy(commentId = commentId)
-
-            // Добавляем комментарий под конкретным фильмом
-            databaseReference
-                .child(dataSource)
-                .child(movieKey)
-                .child(NODE_COMMENTS)
-                .child(commentId)
-                .setValue(dataComment)
-                .await()
-        } else {
+        if (!snapshot.exists()) {
             throw IllegalArgumentException("Movie with ID $movieId not found.")
         }
-    }
 
+        val movieKey = snapshot.children.firstOrNull()?.key
+            ?: throw IllegalStateException("Movie key not found for ID $movieId.")
+
+        val commentId = databaseReference
+            .child(dataSource)
+            .child(movieKey)
+            .child(NODE_COMMENTS)
+            .push()
+            .key
+            ?: throw IllegalStateException("Failed to generate comment ID.")
+
+        val dataComment = comment.commentToData().copy(commentId = commentId)
+
+        databaseReference
+            .child(dataSource)
+            .child(movieKey)
+            .child(NODE_COMMENTS)
+            .child(commentId)
+            .setValue(dataComment)
+            .await()
+
+    }
     override suspend fun getCommentsForMovie(dataSource: String, movieId: Int): List<DomainCommentModel> {
         val movieSnapshot = databaseReference
             .child(dataSource)
@@ -153,7 +150,6 @@ class MovieRepositoryImpl @Inject constructor(
             .child(NODE_COMMENTS)
             .children.mapNotNull { it.getValue(DataComment::class.java)?.commentToDomain() }
     }
-
     override suspend fun observeCommentsForMovie(dataSource: String, movieId: Int, onCommentsUpdated: (List<DomainCommentModel>) -> Unit) {
         databaseReference
             .child(dataSource)
@@ -191,7 +187,6 @@ class MovieRepositoryImpl @Inject constructor(
                 }
             })
     }
-
     override suspend fun updateComment(dataSource: String, selectedMovieId: Int, commentId: String, selectedComment: DomainCommentModel) {
         val movieKey = databaseReference
             .child(dataSource)
@@ -259,7 +254,6 @@ class MovieRepositoryImpl @Inject constructor(
             e.printStackTrace()
         }
     }
-
     private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
         val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
         snapshot.children.forEach { childSnapshot ->
