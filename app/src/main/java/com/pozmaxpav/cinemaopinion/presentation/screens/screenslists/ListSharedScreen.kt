@@ -2,7 +2,6 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -64,6 +63,7 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsVi
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
+import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
@@ -90,7 +90,7 @@ fun ListSharedScreen(
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
-    LaunchedEffect(listId) { sharedListsViewModel.getMoviesFromSpecialList(listId) }
+    LaunchedEffect(listId) { sharedListsViewModel.getMovies(listId) }
     LaunchedEffect(selectedMovie) {
         selectedMovie?.let { movie ->
             apiViewModel.getInformationMovie(movie.id)
@@ -153,7 +153,15 @@ fun ListSharedScreen(
             selectedMovie?.let { movie ->
                 DetailsCardSelectedMovie(
                     movie = movie,
-                    content = { /* TODO: Добавить действие */ },
+                    content = {
+                        ShowCommentList(
+                            userId = userId,
+                            selectedMovieId = movie.id,
+                            viewModel = sharedListsViewModel,
+                            listId = listId,
+                            onClick = { }
+                        )
+                    },
                     openDescription = {
                         ExpandedCard(
                             title = stringResource(R.string.text_for_expandedCard_field),

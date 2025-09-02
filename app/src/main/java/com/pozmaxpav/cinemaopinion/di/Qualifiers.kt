@@ -8,4 +8,4 @@ annotation class ThemeRepositoryQualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class SystemSharedPreferencesRepositoryQualifier
+annotation class SystemRepositoryQualifier

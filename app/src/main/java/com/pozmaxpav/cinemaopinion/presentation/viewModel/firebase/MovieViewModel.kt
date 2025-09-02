@@ -1,7 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.R
@@ -10,9 +9,9 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.GetMovieByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.AddCommentUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.GetCommentsForMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.GetCommentsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.GetMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.ObserveCommentsForMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.ObserveListCommentsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.ObserveListMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SaveMovieUseCase
@@ -41,8 +40,8 @@ class MovieViewModel @Inject constructor(
     private val observeListMoviesUseCase: ObserveListMoviesUseCase,
     private val getMovieByIdUseCase: GetMovieByIdUseCase,
     private val addCommentUseCase: AddCommentUseCase,
-    private val getCommentsForMovieUseCase: GetCommentsForMovieUseCase,
-    private val observeCommentsForMovieUseCase: ObserveCommentsForMovieUseCase,
+    private val getCommentsUseCase: GetCommentsUseCase,
+    private val observeListCommentsUseCase: ObserveListCommentsUseCase,
     private val updateCommentUseCase: UpdateCommentUseCase,
     private val savingChangeRecordUseCase: SavingChangeRecordUseCase,
     private val getRecordsOfChangesUseCase: GetRecordsOfChangesUseCase,
@@ -222,7 +221,7 @@ class MovieViewModel @Inject constructor(
         viewModelScope.launch {
             _commentsDownloadStatus.value = State.Loading
             try {
-                val commentList = getCommentsForMovieUseCase(dataSource, movieId)
+                val commentList = getCommentsUseCase(dataSource, movieId)
                 _comments.value = commentList
                 delay(500)
                 _commentsDownloadStatus.value = State.Success
@@ -233,7 +232,7 @@ class MovieViewModel @Inject constructor(
     }
     fun observeComments(dataSource: String, movieId: Int) {
         viewModelScope.launch {
-            observeCommentsForMovieUseCase(dataSource, movieId) { updatedComments ->
+            observeListCommentsUseCase(dataSource, movieId) { updatedComments ->
                 _comments.value = updatedComments
             }
         }
@@ -267,7 +266,7 @@ class MovieViewModel @Inject constructor(
 
     public override fun onCleared() {
         observeListMoviesUseCase.removeListener()
-        observeCommentsForMovieUseCase.removeListener()
+        observeListCommentsUseCase.removeListener()
         super.onCleared()
     }
 }

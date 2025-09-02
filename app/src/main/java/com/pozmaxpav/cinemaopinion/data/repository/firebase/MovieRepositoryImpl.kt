@@ -102,7 +102,7 @@ class MovieRepositoryImpl @Inject constructor(
         listenerHolder.addListener(MOVIES_KEY_LISTENER, listener)
     }
 
-    override suspend fun addCommentToMovie(dataSource: String, movieId: Double, comment: DomainCommentModel) {
+    override suspend fun addComment(dataSource: String, movieId: Double, comment: DomainCommentModel) {
         val snapshot = databaseReference
             .child(dataSource)
             .orderByChild("id")
@@ -136,7 +136,7 @@ class MovieRepositoryImpl @Inject constructor(
             .await()
 
     }
-    override suspend fun getCommentsForMovie(dataSource: String, movieId: Int): List<DomainCommentModel> {
+    override suspend fun getComments(dataSource: String, movieId: Int): List<DomainCommentModel> {
         val movieSnapshot = databaseReference
             .child(dataSource)
             .orderByChild("id")
@@ -150,7 +150,7 @@ class MovieRepositoryImpl @Inject constructor(
             .child(NODE_COMMENTS)
             .children.mapNotNull { it.getValue(DataComment::class.java)?.commentToDomain() }
     }
-    override suspend fun observeCommentsForMovie(dataSource: String, movieId: Int, onCommentsUpdated: (List<DomainCommentModel>) -> Unit) {
+    override suspend fun observeListComments(dataSource: String, movieId: Int, onCommentsUpdated: (List<DomainCommentModel>) -> Unit) {
         databaseReference
             .child(dataSource)
             .orderByChild("id")
@@ -265,10 +265,10 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun removeSelectedMoviesListener() {
+    override fun removeMoviesListener() {
         listenerHolder.removeListener(MOVIES_KEY_LISTENER)
     }
-    override fun removeCommentsSelectedMoviesListener() {
+    override fun removeCommentsListener() {
         listenerHolder.removeListener(COMMENTS_KEY_LISTENER)
     }
 

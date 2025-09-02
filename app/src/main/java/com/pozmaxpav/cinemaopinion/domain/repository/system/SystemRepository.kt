@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.domain.repository.system
 
-interface SystemSharedPreferencesRepository {
+interface SystemRepository {
     fun saveAppVersion(version: String)
     fun getAppVersion(): String?
     fun saveResultChecking(resultChecking: Boolean)

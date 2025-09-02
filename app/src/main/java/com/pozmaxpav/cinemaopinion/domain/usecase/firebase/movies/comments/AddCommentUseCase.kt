@@ -8,6 +8,6 @@ class AddCommentUseCase @Inject constructor(
     private val firebaseRepository: MovieRepository
 ) {
     suspend operator fun invoke(dataSource: String, movieId: Double, comment: DomainCommentModel) {
-        firebaseRepository.addCommentToMovie(dataSource, movieId, comment)
+        firebaseRepository.addComment(dataSource, movieId, comment)
     }
 }

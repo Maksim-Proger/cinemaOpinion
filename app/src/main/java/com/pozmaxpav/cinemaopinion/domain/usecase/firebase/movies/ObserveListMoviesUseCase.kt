@@ -12,6 +12,6 @@ class ObserveListMoviesUseCase @Inject constructor(
     }
 
     fun removeListener() {
-        repository.removeSelectedMoviesListener()
+        repository.removeMoviesListener()
     }
 }

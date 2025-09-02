@@ -1,8 +1,9 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
-import android.util.Log
 import com.google.firebase.database.DatabaseReference
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
+import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
+import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainMySharedListModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
@@ -21,7 +22,7 @@ class SharedListsRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference
 ) : SharedListsRepository {
 
-    override suspend fun addMovieToSpecificSharedList(listId: String, selectedMovie: DomainSelectedMovieModel) {
+    override suspend fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel) {
         if (listId.isEmpty()) throw IllegalArgumentException("List ID cannot be empty")
 
         val sharedListKey = databaseReference
@@ -43,7 +44,7 @@ class SharedListsRepositoryImpl @Inject constructor(
         // пишем в него данные
         movieRef.setValue(selectedMovie).await()
     }
-    override suspend fun getMovieFromSpecificSharedList(listId: String): List<DomainSelectedMovieModel> {
+    override suspend fun getMovies(listId: String): List<DomainSelectedMovieModel> {
         if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
 
         val sharedListKey = databaseReference
@@ -64,7 +65,7 @@ class SharedListsRepositoryImpl @Inject constructor(
             .children.mapNotNull { it.getValue(DomainSelectedMovieModel::class.java) }
     }
 
-    override suspend fun addCommentToMovie(listId: String, movieId: Int, comment: DomainCommentModel) {
+    override suspend fun addComment(listId: String, movieId: Int, comment: DomainCommentModel) {
         if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
 
         val sharedListKey = databaseReference
@@ -107,8 +108,38 @@ class SharedListsRepositoryImpl @Inject constructor(
             .await()
 
     }
-    override suspend fun getCommentsForMovie(listId: String, movieId: Int): List<DomainCommentModel> {
-        TODO("Not yet implemented")
+    override suspend fun getComments(listId: String, movieId: Int): List<DomainCommentModel> {
+        if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
+
+        val sharedListKey = databaseReference
+            .child(NODE_SHARED_LIST)
+            .orderByChild("listId")
+            .equalTo(listId)
+            .get().await()
+            .children.firstOrNull()?.key
+            ?: throw java.lang.IllegalArgumentException("List with ID $listId not found")
+
+        val movieKey = databaseReference
+            .child(NODE_SHARED_LIST)
+            .child(sharedListKey)
+            .child(NODE_SHARED_LIST_MOVIES)
+            .orderByChild("id")
+            .equalTo(movieId.toDouble())
+            .get().await()
+            .children.firstOrNull()?.key
+            ?: throw java.lang.IllegalArgumentException("Movie with ID $movieId not found")
+
+        val commentSnapshot = databaseReference
+            .child(NODE_SHARED_LIST)
+            .child(sharedListKey)
+            .child(NODE_SHARED_LIST_MOVIES)
+            .child(movieKey)
+            .child(NODE_COMMENTS)
+            .get().await()
+
+        return commentSnapshot.children.mapNotNull {
+            it.getValue(DataComment::class.java)?.commentToDomain()
+        }
     }
 
     override suspend fun createSharedList(
