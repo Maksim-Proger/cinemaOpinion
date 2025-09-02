@@ -2,13 +2,13 @@ package com.pozmaxpav.cinemaopinion.data.repository.system
 
 import android.content.Context
 import com.pozmaxpav.cinemaopinion.data.db.sharedpreferences.SharedPreferences
-import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemSharedPreferencesRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.system.ThemeRepository
 import javax.inject.Inject
 
-class SharedPreferencesRepository @Inject constructor(
+class SharedPreferencesRepositoryImpl @Inject constructor(
     private val context: Context
-) : ThemeRepository, SystemSharedPreferencesRepository {
+) : ThemeRepository, SystemRepository {
 
     override fun saveModeApplicationTheme(isModeTheme: Boolean) {
         SharedPreferences.saveModeApplicationTheme(context, isModeTheme)

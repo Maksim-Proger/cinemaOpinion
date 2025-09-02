@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
 
-interface GetMovieInformationApi {
+interface MovieInformationApi {
 
     @Headers("X-API-KEY: $API_KEY_DEV")
     @GET("/v1.4/movie/{id}")

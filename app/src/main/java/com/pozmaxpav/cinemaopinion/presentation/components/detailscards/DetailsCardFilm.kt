@@ -316,7 +316,7 @@ fun DetailsCardFilm(
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = {
                             movie?.toSelectedMovie()?.let { // Преобразуем MovieData в SelectedMovie
-                                personalMovieViewModel.addMovieToPersonalList(userId, it)
+                                personalMovieViewModel.addMovie(userId, it)
                             }
                             triggerOnClickPersonalMovie = true
                         }

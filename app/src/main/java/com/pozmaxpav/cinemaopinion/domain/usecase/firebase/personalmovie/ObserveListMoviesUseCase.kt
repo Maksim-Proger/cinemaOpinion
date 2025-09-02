@@ -4,14 +4,14 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepository
 import javax.inject.Inject
 
-class ObserveListSelectedMoviesUseCase @Inject constructor(
+class ObserveListMoviesUseCase @Inject constructor(
     private val repository: PersonalMovieRepository
 ) {
     suspend operator fun invoke(userId: String, onSelectedMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit) {
-        repository.observeListSelectedMovies(userId, onSelectedMoviesUpdated)
+        repository.observeListMovies(userId, onSelectedMoviesUpdated)
     }
 
     fun removeListener() {
-        repository.removeSelectedMoviesListener()
+        repository.removeMoviesListener()
     }
 }

@@ -60,6 +60,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.utilits.state.State
 import java.text.SimpleDateFormat
 import java.time.DateTimeException
@@ -374,6 +375,7 @@ fun ShowCommentList(
     dataSource: String = "",
     selectedMovieId: Int,
     viewModel: ViewModel,
+    listId: String = "",
     onClick: (DomainCommentModel) -> Unit,
 ) {
     when (viewModel) {
@@ -461,8 +463,8 @@ fun ShowCommentList(
 
             LaunchedEffect(userId) {
                 if (userId.isNotEmpty()) {
-                    viewModel.getCommentsFromPersonalList(userId, selectedMovieId)
-                    viewModel.observeCommentsForMovieFromPersonalList(userId, selectedMovieId)
+                    viewModel.getComments(userId, selectedMovieId)
+                    viewModel.observeComments(userId, selectedMovieId)
                 }
             }
 
@@ -474,6 +476,67 @@ fun ShowCommentList(
                             .fillMaxWidth()
                             .padding(vertical = 7.dp)
                             .clickable { onClick(comment) },
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
+                    ) {
+                        Column(modifier = Modifier.padding(8.dp)) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = comment.username,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                            Text(
+                                text = comment.commentText,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = SimpleDateFormat(
+                                        "dd.MM.yyyy HH:mm",
+                                        Locale.getDefault()
+                                    ).format(
+                                        Date(comment.timestamp)
+                                    ),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        is SharedListsViewModel -> {
+            val comments by viewModel.comments.collectAsState()
+            LaunchedEffect(userId) {
+                if (userId.isNotEmpty()) {
+                    viewModel.getComments(listId, selectedMovieId)
+                }
+            }
+            LazyColumn {
+                items(comments, key = { it.commentId }) { comment ->
+                    Card(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .fillMaxWidth()
+                            .padding(vertical = 7.dp),
+//                            .clickable { onClick(comment) },
                         shape = RoundedCornerShape(16.dp),
                         elevation = CardDefaults.cardElevation(16.dp),
                         colors = CardDefaults.cardColors(

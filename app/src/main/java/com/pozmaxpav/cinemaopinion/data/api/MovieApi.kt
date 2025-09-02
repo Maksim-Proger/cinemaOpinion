@@ -12,7 +12,7 @@ import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface MovieListApi {
+interface MovieApi {
 
     @Headers("X-API-KEY: $API_KEY")
     @GET("/api/v2.2/films/premieres")

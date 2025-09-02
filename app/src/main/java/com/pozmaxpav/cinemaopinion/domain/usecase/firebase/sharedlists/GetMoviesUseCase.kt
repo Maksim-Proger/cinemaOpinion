@@ -4,10 +4,10 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SharedListsRepository
 import javax.inject.Inject
 
-class GetMovieFromSpecificSharedListUseCase @Inject constructor(
+class GetMoviesUseCase @Inject constructor(
     private val repository: SharedListsRepository
 ) {
     suspend operator fun invoke(listId: String) : List<DomainSelectedMovieModel> {
-        return repository.getMovieFromSpecificSharedList(listId)
+        return repository.getMovies(listId)
     }
 }

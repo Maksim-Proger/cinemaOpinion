@@ -78,7 +78,6 @@ import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import com.pozmaxpav.cinemaopinion.utilits.state.State
-import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 
 @Composable
 fun ListSelectedMovies(
@@ -107,8 +106,8 @@ fun ListSelectedMovies(
     val listState = rememberLazyListState()
 
     LaunchedEffect(userId) {
-        personalMovieViewModel.getListPersonalMovies(userId)
-        personalMovieViewModel.observeListSelectedMovies(userId)
+        personalMovieViewModel.getMovies(userId)
+        personalMovieViewModel.observeMovies(userId)
         userViewModel.getUserData(userId)
     }
     LaunchedEffect(selectedMovie) {
@@ -337,7 +336,7 @@ fun ListSelectedMovies(
 
                                 LaunchedEffect(isVisible) {
                                     if (!isVisible) {
-                                        personalMovieViewModel.deleteSelectedMovie(userId, movie.id)
+                                        personalMovieViewModel.deleteMovie(userId, movie.id)
                                     }
                                 }
 
@@ -466,7 +465,7 @@ private fun AddComment(
             onClickButton = {
                 selectedMovie?.let { movie ->
                     userData?.let { user ->
-                        personalMovieViewModel.addCommentToPersonalList(
+                        personalMovieViewModel.addComment(
                             userId = userId,
                             selectedMovieId = movie.id,
                             username = user.nikName,

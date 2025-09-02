@@ -8,8 +8,8 @@ import com.example.introductoryscreens.domain.usecases.ReadAppEntry
 import com.example.introductoryscreens.domain.usecases.SaveAppEntry
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.pozmaxpav.cinemaopinion.data.api.GetMovieInformationApi
-import com.pozmaxpav.cinemaopinion.data.api.MovieListApi
+import com.pozmaxpav.cinemaopinion.data.api.MovieInformationApi
+import com.pozmaxpav.cinemaopinion.data.api.MovieApi
 import com.pozmaxpav.cinemaopinion.data.db.datastore.LocalUserManagerImpl
 import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
 import com.pozmaxpav.cinemaopinion.data.repository.api.GetMovieInformationApiRepositoryImpl
@@ -20,7 +20,7 @@ import com.pozmaxpav.cinemaopinion.data.repository.firebase.RecordsOfChangesRepo
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SharedListsRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.system.SharedPreferencesRepository
+import com.pozmaxpav.cinemaopinion.data.repository.system.SharedPreferencesRepositoryImpl
 import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
@@ -29,7 +29,7 @@ import com.pozmaxpav.cinemaopinion.domain.repository.firebase.RecordsOfChangesRe
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SharedListsRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemSharedPreferencesRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.system.ThemeRepository
 import dagger.Module
 import dagger.Provides
@@ -51,7 +51,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGetMovieListApi() : MovieListApi {
+    fun provideGetMovieListApi() : MovieApi {
         return Retrofit
             .Builder()
             .client(
@@ -64,18 +64,18 @@ object AppModule {
             .baseUrl("https://kinopoiskapiunofficial.tech")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create<MovieListApi>()
+            .create<MovieApi>()
     }
 
     @Provides
     @Singleton
-    fun provideMovieRepositoryApi(api: MovieListApi): MovieRepositoryApi {
+    fun provideMovieRepositoryApi(api: MovieApi): MovieRepositoryApi {
         return MovieRepositoryApiImpl(api)
     }
 
     @Provides
     @Singleton
-    fun provideGetMovieInformationApi(): GetMovieInformationApi {
+    fun provideGetMovieInformationApi(): MovieInformationApi {
         return Retrofit
             .Builder()
             .client(
@@ -88,13 +88,12 @@ object AppModule {
             .baseUrl("https://api.kinopoisk.dev")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create<GetMovieInformationApi>()
+            .create<MovieInformationApi>()
     }
 
     @Provides
     @Singleton
-    fun provideGetMovieInformationApiRepository(api: GetMovieInformationApi):
-            GetMovieInformationApiRepository {
+    fun provideGetMovieInformationApiRepository(api: MovieInformationApi): GetMovieInformationApiRepository {
         return GetMovieInformationApiRepositoryImpl(api)
     }
 
@@ -106,14 +105,14 @@ object AppModule {
     @Singleton
     @ThemeRepositoryQualifier
     fun provideThemeRepository(@ApplicationContext context: Context): ThemeRepository {
-        return SharedPreferencesRepository(context)
+        return SharedPreferencesRepositoryImpl(context)
     }
 
     @Provides
     @Singleton
-    @SystemSharedPreferencesRepositoryQualifier
-    fun provideSystemSharedPreferencesRepository(@ApplicationContext context: Context): SystemSharedPreferencesRepository {
-        return SharedPreferencesRepository(context)
+    @SystemRepositoryQualifier
+    fun provideSystemRepository(@ApplicationContext context: Context): SystemRepository {
+        return SharedPreferencesRepositoryImpl(context)
     }
 
     // endregion

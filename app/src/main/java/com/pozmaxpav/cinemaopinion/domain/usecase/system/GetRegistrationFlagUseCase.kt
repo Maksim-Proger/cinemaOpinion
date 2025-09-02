@@ -1,11 +1,11 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.system
 
-import com.pozmaxpav.cinemaopinion.di.SystemSharedPreferencesRepositoryQualifier
-import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemSharedPreferencesRepository
+import com.pozmaxpav.cinemaopinion.di.SystemRepositoryQualifier
+import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemRepository
 import javax.inject.Inject
 
 class GetRegistrationFlagUseCase @Inject constructor(
-    @SystemSharedPreferencesRepositoryQualifier private val repository: SystemSharedPreferencesRepository
+    @SystemRepositoryQualifier private val repository: SystemRepository
 ) {
     suspend operator fun invoke(): Boolean {
         return repository.getRegistrationFlag()

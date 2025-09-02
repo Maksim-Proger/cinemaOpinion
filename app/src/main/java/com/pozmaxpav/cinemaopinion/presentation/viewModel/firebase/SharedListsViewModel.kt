@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.R
@@ -8,10 +7,11 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainMySharedListModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.AddCommentToMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.AddMovieToSpecificSharedListUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.AddCommentUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.AddMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.CreatingSharedListUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetMovieFromSpecificSharedListUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetCommentsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetSharedListsUseCase
 import com.pozmaxpav.cinemaopinion.utilits.formatTextWithUnderscores
 import com.pozmaxpav.cinemaopinion.utilits.simpleTransliterate
@@ -29,9 +29,10 @@ import javax.inject.Inject
 class SharedListsViewModel @Inject constructor(
     private val creatingSharedListUseCase: CreatingSharedListUseCase,
     private val getSharedListsUseCase: GetSharedListsUseCase,
-    private val addMovieToSpecificSharedListUseCase: AddMovieToSpecificSharedListUseCase,
-    private val getMovieFromSpecificSharedListUseCase: GetMovieFromSpecificSharedListUseCase,
-    private val addCommentToMovieUseCase: AddCommentToMovieUseCase
+    private val addMovieUseCase: AddMovieUseCase,
+    private val getMoviesUseCase: GetMoviesUseCase,
+    private val addCommentUseCase: AddCommentUseCase,
+    private val getCommentsUseCase: GetCommentsUseCase
 ) : ViewModel() {
 
     private val _lists = MutableStateFlow<List<DomainSharedListModel>>(emptyList())
@@ -39,6 +40,9 @@ class SharedListsViewModel @Inject constructor(
 
     private val _movies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
     val movies = _movies.asStateFlow()
+
+    private val _comments = MutableStateFlow<List<DomainCommentModel>>(emptyList())
+    val comments = _comments.asStateFlow()
 
     private val _toastMessage = MutableSharedFlow<Int>(
         replay = 0,
@@ -56,14 +60,20 @@ class SharedListsViewModel @Inject constructor(
                     commentText = commentUser,
                     timestamp = System.currentTimeMillis()
                 )
-                addCommentToMovieUseCase(listId, movieId, comment)
+                addCommentUseCase(listId, movieId, comment)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-    fun getComments() {
-        // TODO: Добавить действие
+    fun getComments(listId: String, movieId: Int) {
+        viewModelScope.launch {
+            try {
+                _comments.value = getCommentsUseCase(listId, movieId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     fun createList(title: String, userCreatorId: String, invitedUserAddress: String) {
@@ -105,11 +115,11 @@ class SharedListsViewModel @Inject constructor(
     fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
-                val moviesForCheck = getMovieFromSpecificSharedListUseCase(listId)
+                val moviesForCheck = getMoviesUseCase(listId)
                 if (moviesForCheck.any { it.id == selectedMovie.id }) {
                     _toastMessage.emit(R.string.movie_has_already_been_added)
                 } else {
-                    addMovieToSpecificSharedListUseCase(listId, selectedMovie)
+                    addMovieUseCase(listId, selectedMovie)
                     _toastMessage.emit(R.string.movie_has_been_added_to_general_list)
                 }
             } catch (e: Exception) {
@@ -117,10 +127,10 @@ class SharedListsViewModel @Inject constructor(
             }
         }
     }
-    fun getMoviesFromSpecialList(listId: String) {
+    fun getMovies(listId: String) {
         viewModelScope.launch {
             try {
-                val listMovies = getMovieFromSpecificSharedListUseCase(listId)
+                val listMovies = getMoviesUseCase(listId)
                 _movies.value = listMovies
             } catch (e: Exception) {
                 e.printStackTrace()
