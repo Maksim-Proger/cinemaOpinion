@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -44,6 +45,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -103,7 +105,7 @@ fun MainScreen(
     var query by remember { mutableStateOf("") }
     var searchBarActive by remember { mutableStateOf(false) }
     var searchCompleted by remember { mutableStateOf(false) } // Флаг для отображения списка фильмов после поиска
-    val searchHistory = remember { mutableStateListOf<String>() } // TODO: Не работает
+    val searchHistory = remember { mutableStateListOf<String>() }
     // endregion
 
     // region Расширенный поиск
@@ -123,7 +125,7 @@ fun MainScreen(
     var onFilterButtonClick by remember { mutableStateOf(false) }
     var onAccountButtonClick by remember { mutableStateOf(false) }
     var onAdvancedSearchButtonClick by remember { mutableStateOf(false) }
-    var locationShowDialogEvents by remember { mutableStateOf(false) }
+    var locationShowDialogEvents by rememberSaveable { mutableStateOf(false) }
     var locationShowPageAppDescription by remember { mutableStateOf(false) }
     // endregion
 
@@ -163,7 +165,7 @@ fun MainScreen(
     // region LaunchedEffect
     LaunchedEffect(Unit) {
         if (!isInitialized) {
-            apiViewModel.fetchPremiersMovies(2025, "August")
+            apiViewModel.fetchPremiersMovies(2025, "September")
             apiViewModel.fetchTopListMovies(currentPage)
         }
     }
@@ -179,8 +181,7 @@ fun MainScreen(
     LaunchedEffect(Unit) {
         snapshotFlow { listState.layoutInfo } // Создаем поток, который будет отслеживать изменения в состоянии layoutInfo списка
             .collect { layoutInfo -> // Подписываемся на изменения в этом потоке
-                val totalItems =
-                    layoutInfo.totalItemsCount // Получаем общее количество элементов в списке
+                val totalItems = layoutInfo.totalItemsCount // Получаем общее количество элементов в списке
 
                 // Получаем индекс последнего видимого элемента; если нет видимых элементов, устанавливаем 0
                 val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0

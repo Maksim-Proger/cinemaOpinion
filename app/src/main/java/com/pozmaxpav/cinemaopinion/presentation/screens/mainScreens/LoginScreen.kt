@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -70,7 +69,6 @@ fun LoginScreen(
     val context = LocalContext.current
 
     LaunchedEffect(loginVerificationResult) {
-        Log.d("@@@", loginVerificationResult.toString())
         if (loginVerificationResult != null) {
             mainViewModel.saveRegistrationFlag(true)
             loginVerificationResult?.let { mainViewModel.saveUserId(it.id) }

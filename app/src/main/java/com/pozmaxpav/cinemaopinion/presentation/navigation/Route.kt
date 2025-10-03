@@ -1,8 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.navigation
 
-sealed class Route(
-    val route: String
-) {
+sealed class Route(val route: String) {
     data object MainScreen : Route(route = "main_screen")
     data object OnBoardingScreen : Route(route = "on_boarding_screen")
     data object AppStartNavigation : Route(route = "app_start_navigation")
