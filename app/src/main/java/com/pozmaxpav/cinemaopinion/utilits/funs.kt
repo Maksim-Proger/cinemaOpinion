@@ -303,16 +303,16 @@ fun showToast(context: Context, messageId: Int) {
 
 fun navigateFunction(navController: NavHostController, route: String) {
 
-//    navController.navigate(route) {
-//        popUpTo(navController.graph.startDestinationId) { saveState = true }
-//        launchSingleTop = true
-//        restoreState = true
-//    }
-
     navController.navigate(route) {
-        // Открывает новый экран поверх текущего (стандартное поведение)
-        launchSingleTop = true  // предотвращает дубликаты, если экран уже наверху
+        launchSingleTop = true
+        restoreState = true
+        popUpTo(navController.graph.startDestinationId) { saveState = true }
     }
+
+//    navController.navigate(route) {
+//        // Открывает новый экран поверх текущего (стандартное поведение)
+//        launchSingleTop = true // предотвращает дубликаты, если экран уже наверху
+//    }
 
 }
 

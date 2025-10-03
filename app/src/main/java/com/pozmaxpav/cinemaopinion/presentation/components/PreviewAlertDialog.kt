@@ -38,33 +38,6 @@ fun PreviewAlertDialog(onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun WithEventText() {
-    Column(
-        modifier = Modifier
-            .wrapContentSize()
-            .padding(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Text(
-                text = "\u2744",
-                fontSize = 65.sp
-            )
-        }
-        Spacer(modifier = Modifier.padding(16.dp))
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = GENERAL_TEXT_FOR_ALERT_DIALOG,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.secondary
-            )
-        }
-    }
-}
-
-@Composable
 private fun WithoutEventText() {
     Column(
         modifier = Modifier
@@ -93,6 +66,43 @@ private fun WithoutEventText() {
 }
 
 @Composable
+private fun WithoutEventButton(onDismiss: () -> Unit) {
+    CustomTextButton(
+        textButton = "Отлично!",
+        textStyle = MaterialTheme.typography.labelMedium,
+        containerColor = MaterialTheme.colorScheme.secondary,
+        contentColor = MaterialTheme.colorScheme.onSecondary,
+        onClickButton = onDismiss
+    )
+}
+
+@Composable
+private fun WithEventText() {
+    Column(
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text = "\u2744",
+                fontSize = 65.sp
+            )
+        }
+        Spacer(modifier = Modifier.padding(16.dp))
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = GENERAL_TEXT_FOR_ALERT_DIALOG,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+    }
+}
+@Composable
 private fun WithEventButton(onDismiss: () -> Unit) {
     CustomTextButton(
         textButton = "Ура!!!! \uD83C\uDF89",
@@ -103,13 +113,3 @@ private fun WithEventButton(onDismiss: () -> Unit) {
     )
 }
 
-@Composable
-private fun WithoutEventButton(onDismiss: () -> Unit) {
-    CustomTextButton(
-        textButton = "Отлично!",
-        textStyle = MaterialTheme.typography.labelMedium,
-        containerColor = MaterialTheme.colorScheme.secondary,
-        contentColor = MaterialTheme.colorScheme.onSecondary,
-        onClickButton = onDismiss
-    )
-}

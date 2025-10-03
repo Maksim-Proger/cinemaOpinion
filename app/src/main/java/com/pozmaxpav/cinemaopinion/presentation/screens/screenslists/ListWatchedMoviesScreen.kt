@@ -108,7 +108,7 @@ fun ListWatchedMovies(
         topBar = {
             if (!showTopBar) {
                 ClassicTopAppBar(
-                    context,
+                    context = context,
                     titleId = R.string.title_listWatched_movies,
                     scrollBehavior = scrollBehavior,
                     onTransitionAction = {

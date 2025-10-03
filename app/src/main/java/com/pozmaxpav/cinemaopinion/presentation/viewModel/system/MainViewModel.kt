@@ -134,8 +134,7 @@ class MainViewModel @Inject constructor(
     private fun getResultChecking() {
         viewModelScope.launch {
             try {
-                val result = getResultCheckingUseCase()
-                _resultChecking.value = result
+                _resultChecking.value = getResultCheckingUseCase()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
