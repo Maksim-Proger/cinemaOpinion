@@ -47,17 +47,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
-import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.components.items.AccountItem
+import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -105,6 +105,7 @@ fun AccountScreen(
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+
             Text(
                 text = stringResource(id = R.string.title_account_screen),
                 style = MaterialTheme.typography.displayLarge
@@ -115,7 +116,6 @@ fun AccountScreen(
                 mainViewModel,
                 openDialog = { locationShowDialogEvents = true }
             )
-
         }
 
         Card(
@@ -198,6 +198,8 @@ fun AccountScreen(
                     contentDescription = stringResource(R.string.description_icon_shared_lists),
                     title = stringResource(R.string.shared_lists)
                 ) { openSharedLists = true }
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
 
                 // region Awards
                 Column(
@@ -327,8 +329,6 @@ private fun AccountSettingMenu(
     userViewModel: UserViewModel = hiltViewModel(),
     openDialog: () -> Unit = {}
 ) {
-
-    val modifier = Modifier.background(MaterialTheme.colorScheme.tertiary).height(3.dp)
     var triggerOnClickCloseMenu by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -350,7 +350,7 @@ private fun AccountSettingMenu(
                 )
             }
         )
-        HorizontalDivider(modifier = modifier)
+        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         MyDropdownMenuItem(
             onAction = {
                 navigateFunction(navController, Route.EditPersonalInformationScreen.route)
@@ -365,7 +365,7 @@ private fun AccountSettingMenu(
                 )
             }
         )
-        HorizontalDivider(modifier = modifier)
+        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         MyDropdownMenuItem(
             onAction = {
                 navigateFunction(navController, Route.SettingsScreen.route)
@@ -380,7 +380,7 @@ private fun AccountSettingMenu(
                 )
             }
         )
-        HorizontalDivider(modifier = modifier)
+        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         MyDropdownMenuItem(
             onAction = {
                 coroutineScope.launch {
