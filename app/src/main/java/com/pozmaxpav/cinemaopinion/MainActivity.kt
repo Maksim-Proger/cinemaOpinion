@@ -11,8 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.view.WindowCompat
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.presentation.navigation.NavGraph
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.theme.CinemaOpinionTheme
@@ -24,12 +23,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
+        enableEdgeToEdge()
         setContent {
             val themeViewModel: ThemeViewModel = hiltViewModel()
             val mainViewModel: MainViewModel = hiltViewModel()
@@ -41,14 +37,14 @@ class MainActivity : ComponentActivity() {
 
             // Получаем "destination" из ярлыка
             val destinationFromShortcut = intent.extras?.getString("destination")
-            val destination = destinationFromShortcut ?: if (registrationFlag) startDestination else Route.LoginScreen.route
+            val destination = destinationFromShortcut
+                ?: if (registrationFlag) startDestination else Route.LoginScreen.route
 
             CinemaOpinionTheme(themeViewModel = themeViewModel) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
                     if (!isLoading) {
                         CheckAndUpdateAppVersion(context)
                         NavGraph(

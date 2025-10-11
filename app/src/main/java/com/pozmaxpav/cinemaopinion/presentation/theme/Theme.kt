@@ -1,6 +1,11 @@
 package com.pozmaxpav.cinemaopinion.presentation.theme
 
+import android.app.Activity
 import android.os.Build
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.LocalActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -12,6 +17,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.ThemeViewModel
@@ -55,26 +61,45 @@ fun CinemaOpinionTheme(
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
+    val activity = LocalActivity.current as? ComponentActivity ?: return
+
     val isDarkThemeActive by themeViewModel.isDarkThemeActive.collectAsState()
     val isSystemThemeActive by themeViewModel.isSystemThemeActive.collectAsState()
     val isSystemInDarkMode = isSystemInDarkTheme()
-    val systemController = rememberSystemUiController()
+
     val useDarkIcons = if (isSystemThemeActive) !isSystemInDarkMode else !isDarkThemeActive
 
     val colorScheme = when {
-        isSystemThemeActive -> {
-            if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
-        }
+        isSystemThemeActive -> if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             if (isDarkThemeActive) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
         isDarkThemeActive -> DarkColorScheme
         else -> LightColorScheme
     }
+
     SideEffect {
-        systemController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = useDarkIcons
+        activity.enableEdgeToEdge(
+            statusBarStyle = if (useDarkIcons) {
+                SystemBarStyle.light(
+                    darkScrim = Color.Transparent.toArgb(),
+                    scrim = Color.Transparent.toArgb(),
+                )
+            } else {
+                SystemBarStyle.dark(
+                    scrim = Color.Transparent.toArgb(),
+                )
+            },
+            navigationBarStyle = if (useDarkIcons) {
+                SystemBarStyle.light(
+                    darkScrim = Color.Transparent.toArgb(),
+                    scrim = Color.Transparent.toArgb(),
+                )
+            } else {
+                SystemBarStyle.dark(
+                    scrim = Color.Transparent.toArgb(),
+                )
+            },
         )
     }
 

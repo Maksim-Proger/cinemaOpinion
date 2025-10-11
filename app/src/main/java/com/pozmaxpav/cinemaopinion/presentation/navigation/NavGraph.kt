@@ -1,7 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,7 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.introductoryscreens.ui.onboarding.OnBoardingScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.LoginScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MainScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.main.MainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MediaNewsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.SeriesControlScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListOfChangesScreen
