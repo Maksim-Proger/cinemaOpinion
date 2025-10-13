@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -19,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.ThemeViewModel
 
 private val LightColorScheme = lightColorScheme(

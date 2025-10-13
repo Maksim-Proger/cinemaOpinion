@@ -9,10 +9,14 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,16 +25,25 @@ fun MyBottomSheet(
     content: @Composable () -> Unit,
     fraction: Float
 ) {
-    val bottomSheetState = rememberModalBottomSheetState(
+    val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
-        confirmValueChange = { false }
+        confirmValueChange = { newValue ->
+            newValue != SheetValue.Hidden
+        }
     )
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        scope.launch {
+            sheetState.show()
+        }
+    }
 
     ModalBottomSheet(
-        sheetState = bottomSheetState,
+        sheetState = sheetState,
         onDismissRequest = onClose,
         shape = RoundedCornerShape(16.dp),
-        dragHandle = { BottomSheetDefaults.DragHandle(Modifier.size(0.dp)) },
+        dragHandle = null,
         containerColor = MaterialTheme.colorScheme.background
     ) {
         Column(
