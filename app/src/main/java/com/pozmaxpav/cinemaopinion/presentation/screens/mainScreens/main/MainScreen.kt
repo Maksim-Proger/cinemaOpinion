@@ -65,9 +65,9 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
-import com.pozmaxpav.cinemaopinion.presentation.components.fab.FabButtonWithMenu
+import com.pozmaxpav.cinemaopinion.presentation.components.fab.CustomFABMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.items.MovieItem
-import com.pozmaxpav.cinemaopinion.presentation.components.fab.MyCustomDropdownMenuItem
+import com.pozmaxpav.cinemaopinion.presentation.components.fab.FABMenuItem
 import com.pozmaxpav.cinemaopinion.presentation.components.items.NewYearMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
 import com.pozmaxpav.cinemaopinion.presentation.components.PreviewAlertDialog
@@ -216,13 +216,13 @@ fun MainScreen(
                 !searchBarActive && !onAdvancedSearchButtonClick && selectedMovie == null &&
                 selectedNewYearMovie == null && !showDatePicker && !locationShowPageAppDescription
             ) {
-                FabButtonWithMenu(
+                CustomFABMenu(
                     imageIcon = if (isScrolling.value) Icons.Default.ArrowUpward else Icons.Default.Settings,
                     contentDescription = stringResource(R.string.description_icon_fab_button_with_menu),
                     textFloatingButton = stringResource(R.string.fab_button_with_menu_main_screen),
                     content = {
                         if (!isScrolling.value) {
-                            MyCustomDropdownMenuItem(
+                            FABMenuItem(
                                 onAction = {
                                     onFilterButtonClick = !onFilterButtonClick
                                     titleTopBarState = !titleTopBarState
@@ -240,7 +240,7 @@ fun MainScreen(
                             )
 
                             if (!titleTopBarState) {
-                                MyCustomDropdownMenuItem(
+                                FABMenuItem(
                                     onAction = { showDatePicker = !showDatePicker },
                                     title = stringResource(id = R.string.drop_down_menu_item_select_date),
                                     leadingIcon = {
@@ -253,7 +253,7 @@ fun MainScreen(
                                 )
                             }
 
-                            MyCustomDropdownMenuItem(
+                            FABMenuItem(
                                 onAction = {
                                     navigateFunction(navController, Route.MediaNewsScreen.route)
                                 },

@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun FabButton(
+fun CustomFAB(
     imageIcon: ImageVector,
     contentDescription: String,
     textFloatingButton: String,

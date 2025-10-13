@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun FabButtonWithMenu(
+fun CustomFABMenu(
     imageIcon: ImageVector,
     contentDescription: String,
     textFloatingButton: String,
@@ -30,7 +30,6 @@ fun FabButtonWithMenu(
     menuExpanded: Boolean = false,
     expanded: Boolean
 ) {
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -45,7 +44,7 @@ fun FabButtonWithMenu(
                 content()
             }
 
-            FabButton(
+            CustomFAB(
                 imageIcon = imageIcon,
                 contentDescription = contentDescription,
                 textFloatingButton = textFloatingButton,
@@ -57,7 +56,7 @@ fun FabButtonWithMenu(
 }
 
 @Composable
-fun MyCustomDropdownMenuItem(
+fun FABMenuItem(
     onAction: () -> Unit,
     title: String,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -72,7 +71,7 @@ fun MyCustomDropdownMenuItem(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (leadingIcon != null) { // Добавляем иконку, если она есть
+        if (leadingIcon != null) {
             leadingIcon()
             Spacer(modifier = Modifier.width(8.dp))
         }
