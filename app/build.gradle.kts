@@ -109,6 +109,9 @@ dependencies {
     // DataStore
     implementation(libs.datastore.preferences)
 
+    // MaterialExpressive
+    implementation("androidx.compose.material3:material3-android:1.4.0-alpha14") // Разобраться почему Expressive работает только с этой версией
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

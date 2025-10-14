@@ -65,14 +65,14 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
-import com.pozmaxpav.cinemaopinion.presentation.components.fab.CustomFABMenu
-import com.pozmaxpav.cinemaopinion.presentation.components.items.MovieItem
-import com.pozmaxpav.cinemaopinion.presentation.components.fab.FABMenuItem
-import com.pozmaxpav.cinemaopinion.presentation.components.items.NewYearMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
 import com.pozmaxpav.cinemaopinion.presentation.components.PreviewAlertDialog
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCard
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
+import com.pozmaxpav.cinemaopinion.presentation.components.FABMenuItemData
+import com.pozmaxpav.cinemaopinion.presentation.components.FABMenuMaterialExpressive
+import com.pozmaxpav.cinemaopinion.presentation.components.items.MovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.items.NewYearMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.AccountScreen
@@ -141,8 +141,6 @@ fun MainScreen(
 
     // region Работаем с Fab
     val listState = rememberLazyListState()
-    val lisStateRow = rememberLazyListState()
-    val isExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
     val isScrolling = remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     var scrollToTop by remember { mutableStateOf(false) }
     var menuExpanded by remember { mutableStateOf(false) }
@@ -216,66 +214,32 @@ fun MainScreen(
                 !searchBarActive && !onAdvancedSearchButtonClick && selectedMovie == null &&
                 selectedNewYearMovie == null && !showDatePicker && !locationShowPageAppDescription
             ) {
-                CustomFABMenu(
+                FABMenuMaterialExpressive(
                     imageIcon = if (isScrolling.value) Icons.Default.ArrowUpward else Icons.Default.Settings,
                     contentDescription = stringResource(R.string.description_icon_fab_button_with_menu),
-                    textFloatingButton = stringResource(R.string.fab_button_with_menu_main_screen),
-                    content = {
-                        if (!isScrolling.value) {
-                            FABMenuItem(
-                                onAction = {
-                                    onFilterButtonClick = !onFilterButtonClick
-                                    titleTopBarState = !titleTopBarState
-                                    searchCompleted = false
-                                },
-                                title = if (!titleTopBarState) stringResource(id = R.string.drop_down_menu_item_premiere_movies)
-                                        else stringResource(id = R.string.drop_down_menu_item_topList_movies),
-                                leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_movies),
-                                        contentDescription = stringResource(id = R.string.description_icon_settings),
-                                        tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                            )
-
-                            if (!titleTopBarState) {
-                                FABMenuItem(
-                                    onAction = { showDatePicker = !showDatePicker },
-                                    title = stringResource(id = R.string.drop_down_menu_item_select_date),
-                                    leadingIcon = {
-                                        Icon(
-                                            Icons.Default.DateRange,
-                                            contentDescription = stringResource(id = R.string.drop_down_menu_item_select_date),
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
-                                    }
-                                )
-                            }
-
-                            FABMenuItem(
-                                onAction = {
-                                    navigateFunction(navController, Route.MediaNewsScreen.route)
-                                },
-                                title = stringResource(R.string.drop_down_menu_item_nac_to_media_news_screen),
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Default.Newspaper,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                }
-                            )
-                        }
+                    expanded = menuExpanded,
+                    onExpandedChange = { menuExpanded = it },
+                    onButtonClick = {
+                        if (isScrolling.value) scrollToTop = true
+                        else menuExpanded = !menuExpanded
                     },
-                    onButtonClick = { menuExpanded = !menuExpanded },
-                    onButtonClickToTop = { scrollToTop = true },
-                    menuExpanded = menuExpanded,
-                    expanded = isExpanded
+                    items = fabMenuItems(
+                        isScrolling = isScrolling.value,
+                        titleTopBarState = titleTopBarState,
+                        onFilterToggle = {
+                            onFilterButtonClick = !onFilterButtonClick
+                            titleTopBarState = !titleTopBarState
+                            searchCompleted = false
+                        },
+                        onDatePickerToggle = { showDatePicker = !showDatePicker },
+                        onNavigateToNews = {
+                            navigateFunction(navController, Route.MediaNewsScreen.route)
+                        }
+                    )
                 )
             }
         }
-    ) { padding ->
+    ) { innerPadding ->
 
         Box(modifier = Modifier.fillMaxSize()) {
 
@@ -308,7 +272,7 @@ fun MainScreen(
                         DetailsCardFilm(
                             movie = it,
                             onClick = { selectedMovie = null },
-                            padding = padding,
+                            padding = innerPadding,
                             navController = navController
                         )
                     }
@@ -321,7 +285,7 @@ fun MainScreen(
                     DetailsCard(
                         selectedNewYearMovie!!,
                         onCloseButton = { selectedNewYearMovie = null },
-                        padding
+                        innerPadding
                     )
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         OnBackInvokedHandler { selectedNewYearMovie = null }
@@ -361,7 +325,7 @@ fun MainScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(padding),
+                                    .padding(innerPadding),
                                 contentAlignment = Alignment.Center
                             ) {
                                 CustomLottieAnimation(
@@ -373,7 +337,7 @@ fun MainScreen(
                         is State.Success -> {
                             Column(modifier = Modifier
                                 .fillMaxSize()
-                                .padding(padding)) {
+                                .padding(innerPadding)) {
 //                                SeasonalEventList(
 //                                    isScrolling,
 //                                    lisStateRow,
@@ -575,6 +539,67 @@ fun MainScreen(
     }
 
 }
+
+
+@Composable
+fun fabMenuItems(
+    isScrolling: Boolean,
+    titleTopBarState: Boolean,
+    onFilterToggle: () -> Unit,
+    onDatePickerToggle: () -> Unit,
+    onNavigateToNews: () -> Unit
+): List<FABMenuItemData> {
+    if (isScrolling) return emptyList()
+    val items = mutableListOf<FABMenuItemData>()
+
+    items += FABMenuItemData(
+        text = {
+            Text(
+                if (!titleTopBarState)
+                    stringResource(id = R.string.drop_down_menu_item_premiere_movies)
+                else
+                    stringResource(id = R.string.drop_down_menu_item_topList_movies)
+            )
+        },
+        icon = {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_movies),
+                contentDescription = stringResource(id = R.string.description_icon_settings),
+                tint = MaterialTheme.colorScheme.onSecondary
+            )
+        },
+        onClick = onFilterToggle
+    )
+
+    if (!titleTopBarState) {
+        items += FABMenuItemData(
+            text = { Text(stringResource(id = R.string.drop_down_menu_item_select_date)) },
+            icon = {
+                Icon(
+                    Icons.Default.DateRange,
+                    contentDescription = stringResource(id = R.string.drop_down_menu_item_select_date),
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            },
+            onClick = onDatePickerToggle
+        )
+    }
+
+    items += FABMenuItemData(
+        text = { Text(stringResource(R.string.drop_down_menu_item_nac_to_media_news_screen)) },
+        icon = {
+            Icon(
+                Icons.Default.Newspaper,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSecondary
+            )
+        },
+        onClick = onNavigateToNews
+    )
+
+    return items
+}
+
 
 @Composable
 private fun SeasonalEventList( // Пока только для нового года

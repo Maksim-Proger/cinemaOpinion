@@ -31,7 +31,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
-import com.pozmaxpav.cinemaopinion.presentation.components.fab.CustomFAB
+import com.pozmaxpav.cinemaopinion.presentation.components.FABMenuMaterialExpressive
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
@@ -51,15 +51,16 @@ fun EditPersonalInformationScreen(
     val userId by mainViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
 
-    LaunchedEffect(userId) {
-        userViewModel.getUserData(userId)
-    }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
 
     val (nikName, setNikName) = remember { mutableStateOf("") }
     val (email, setEmail) = remember { mutableStateOf("") }
     val (password, setPassword) = remember { mutableStateOf("") }
 
-    // Запускаем LaunchedEffect только для обновления значений, если userData не null.
+    LaunchedEffect(userId) {
+        userViewModel.getUserData(userId)
+    }
     LaunchedEffect(userData) {
         userData?.let { user ->
             setNikName(user.nikName)
@@ -67,9 +68,6 @@ fun EditPersonalInformationScreen(
             setPassword(user.password)
         }
     }
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val context = LocalContext.current
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -82,24 +80,23 @@ fun EditPersonalInformationScreen(
             )
         },
         floatingActionButton = {
-            CustomFAB(
+            FABMenuMaterialExpressive(
                 imageIcon = Icons.Default.Add,
                 contentDescription = stringResource(id = R.string.description_floating_action_button_save),
-                textFloatingButton = stringResource(id = R.string.floating_action_button_save),
                 onButtonClick = {
                     userViewModel.updatingUserData(userId, nikName, email, password)
                     navigateFunction(navController, Route.MainScreen.route)
                     showToast(context, R.string.edit_personal_information)
                 },
-                expanded = true
+                expanded = false
             )
         },
         floatingActionButtonPosition = FabPosition.End
-    ) { padding ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -172,3 +169,4 @@ fun EditPersonalInformationScreen(
         }
     }
 }
+

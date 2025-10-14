@@ -54,7 +54,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlMod
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
-import com.pozmaxpav.cinemaopinion.presentation.components.fab.CustomFAB
+import com.pozmaxpav.cinemaopinion.presentation.components.FABMenuMaterialExpressive
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SeriesControlItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -141,12 +141,11 @@ fun SeriesControlScreen(
             )
         },
         floatingActionButton = {
-            CustomFAB(
+            FABMenuMaterialExpressive(
                 imageIcon = Icons.Default.Add,
                 contentDescription = stringResource(R.string.content_description_for_button_add),
-                textFloatingButton = stringResource(R.string.button_add),
                 onButtonClick = { openBottomSheetAdd = true },
-                expanded = true
+                expanded = false
             )
         },
         floatingActionButtonPosition = FabPosition.End
