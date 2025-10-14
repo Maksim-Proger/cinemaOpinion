@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import java.util.Locale
 
 @Composable
@@ -60,8 +59,7 @@ fun DatePickerFunction(
         ) {
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -75,7 +73,6 @@ fun DatePickerFunction(
                         textAlign = TextAlign.Center
                     )
                     LazyColumn(
-
                         contentPadding = PaddingValues(10.dp),
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -92,7 +89,8 @@ fun DatePickerFunction(
                                         selectedMonth = month + 1
                                     }
                                     .background(
-                                        if (selectedMonth == month + 1) MaterialTheme.colorScheme.tertiaryContainer else Color.Transparent
+                                        color = if (selectedMonth == month + 1) MaterialTheme.colorScheme.tertiaryContainer
+                                        else Color.Transparent
                                     ),
                                 color = if (selectedMonth == month + 1) MaterialTheme.colorScheme.onSurfaceVariant else Color.Black,
                                 textAlign = TextAlign.Center,
@@ -125,7 +123,8 @@ fun DatePickerFunction(
                                         selectedYear = year
                                     }
                                     .background(
-                                        if (selectedYear == year) MaterialTheme.colorScheme.tertiaryContainer else Color.Transparent
+                                        color = if (selectedYear == year) MaterialTheme.colorScheme.tertiaryContainer
+                                        else Color.Transparent
                                     ),
                                 color = if (selectedYear == year) MaterialTheme.colorScheme.onSurfaceVariant else Color.Black,
                                 textAlign = TextAlign.Center,

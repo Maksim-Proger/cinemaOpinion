@@ -19,7 +19,7 @@ import com.pozmaxpav.cinemaopinion.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopAppBar(
+fun TopAppBarMainScreen(
     title: String,
     onSearchButtonClick: () -> Unit,
     onAdvancedSearchButtonClick: () -> Unit,
@@ -66,7 +66,7 @@ fun CustomTopAppBar(
                 )
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             scrolledContainerColor = MaterialTheme.colorScheme.primary
         )

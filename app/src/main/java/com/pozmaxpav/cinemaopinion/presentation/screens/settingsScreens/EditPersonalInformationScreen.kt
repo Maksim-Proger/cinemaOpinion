@@ -31,7 +31,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
-import com.pozmaxpav.cinemaopinion.presentation.components.FABMenuMaterialExpressive
+import com.pozmaxpav.cinemaopinion.presentation.components.FABMenu
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
@@ -80,7 +80,7 @@ fun EditPersonalInformationScreen(
             )
         },
         floatingActionButton = {
-            FABMenuMaterialExpressive(
+            FABMenu(
                 imageIcon = Icons.Default.Add,
                 contentDescription = stringResource(id = R.string.description_floating_action_button_save),
                 onButtonClick = {
