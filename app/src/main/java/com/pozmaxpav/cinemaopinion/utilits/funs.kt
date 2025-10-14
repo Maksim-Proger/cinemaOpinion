@@ -75,6 +75,7 @@ import kotlin.math.abs
 fun CustomTextField(
     value: String,
     verticalPadding: Dp = 15.dp,
+    horizontalPadding: Dp = 15.dp,
     onValueChange: (String) -> Unit,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
@@ -96,19 +97,25 @@ fun CustomTextField(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = verticalPadding),
+                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
             value = value,
             shape = RoundedCornerShape(16.dp),
             onValueChange = onValueChange,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+
                 focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+
                 focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+
                 focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
                 unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
+
                 focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
                 unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
+
                 cursorColor = MaterialTheme.colorScheme.onPrimary
             ),
             label = label,

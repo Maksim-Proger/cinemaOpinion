@@ -1,5 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
 
+import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -30,7 +30,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
@@ -38,8 +37,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,19 +46,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.system.CompositeRequest
 import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
+import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
 import com.pozmaxpav.cinemaopinion.utilits.parsYearsToString
 import kotlin.math.ceil
 
@@ -94,7 +88,7 @@ fun SearchFilterScreen(
     var sliderPosition by remember { mutableFloatStateOf(0f) }
     // endregion
 
-    Scaffold (
+    Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             ClassicTopAppBar(
@@ -106,7 +100,11 @@ fun SearchFilterScreen(
         }
     ) { innerPadding ->
 
-        Column(Modifier.padding(innerPadding).fillMaxSize()) {
+        Column(
+            Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
 
             SelectType(
                 onSelectedType = { type ->
@@ -267,6 +265,11 @@ fun SearchFilterScreen(
                 }
             }
         )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            OnBackInvokedHandler { showGenresList = false }
+        } else {
+            BackHandler { showGenresList = false }
+        }
     }
 
     if (showCountriesList) {
@@ -281,6 +284,11 @@ fun SearchFilterScreen(
                 }
             }
         )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            OnBackInvokedHandler { showCountriesList = false }
+        } else {
+            BackHandler { showCountriesList = false }
+        }
     }
 
 }
@@ -289,13 +297,13 @@ fun SearchFilterScreen(
 fun SelectType(
     onSelectedType: (String) -> Unit
 ) {
-    val fixWidth = 150.dp
+    val fixWidth = 170.dp
     val colors = FilterChipDefaults.filterChipColors(
         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
         selectedContainerColor = MaterialTheme.colorScheme.secondary,
+        labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
         selectedLabelColor = MaterialTheme.colorScheme.onSecondary,
-        selectedLeadingIconColor = Color.Green
+        selectedLeadingIconColor = MaterialTheme.colorScheme.onSecondary
     )
     var selected1 by remember { mutableStateOf(false) }
     var selected2 by remember { mutableStateOf(false) }
@@ -456,61 +464,30 @@ fun SearchKeyword(
 ) {
     val (searchWord, setSearchWord) = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .shadow(
-                shape = RoundedCornerShape(16.dp),
-                elevation = 8.dp,
+
+    CustomTextField(
+        value = searchWord,
+        onValueChange = setSearchWord,
+        label = {
+            Text(
+                text = "Введите название фильма",
+                style = MaterialTheme.typography.bodyLarge
             )
-    ) {
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth(),
-            value = searchWord,
-            onValueChange = setSearchWord,
-            label = {
-                Text(
-                    text = "Введите название фильма",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-            },
-            trailingIcon = if (searchWord.isNotEmpty()) {
-                {
-                    IconButton(onClick = { setSearchWord("") }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(id = R.string.description_clear_text),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-            } else null,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    searchWordResult(searchWord)
-                    keyboardController?.hide()
-                }
-            ),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary
             )
+        },
+        keyboardActions = KeyboardActions(
+            onDone = {
+                searchWordResult(searchWord)
+                keyboardController?.hide()
+            }
         )
-    }
+    )
 }
 
 @Composable
@@ -526,8 +503,8 @@ fun ShowListCountries(onCountrySelected: (Pair<Int, String>) -> Unit) {
     Column(
         modifier = Modifier
             .background(
-                MaterialTheme.colorScheme.surface,
-                RoundedCornerShape(16.dp)
+                color = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(16.dp)
             )
     ) {
         LazyColumn(
@@ -541,7 +518,9 @@ fun ShowListCountries(onCountrySelected: (Pair<Int, String>) -> Unit) {
                     },
                     headlineContent = {
                         Text(
-                            text = country.second
+                            text = country.second,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 )
@@ -577,7 +556,13 @@ fun ShowListGenres(onGenreSelected: (Pair<Int, String>) -> Unit) {
                     modifier = Modifier.clickable {
                         onGenreSelected(genre) // Возвращаем выбранную страну
                     },
-                    headlineContent = { Text(text = genre.second) }
+                    headlineContent = {
+                        Text(
+                            text = genre.second,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                 )
             }
         }
@@ -613,7 +598,9 @@ fun RangeSliderToSelectDate(
             steps = 0,
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.secondary,
-                activeTickColor = MaterialTheme.colorScheme.tertiaryContainer
+                activeTickColor = MaterialTheme.colorScheme.tertiaryContainer,
+                activeTrackColor = MaterialTheme.colorScheme.tertiaryContainer,
+                inactiveTrackColor = MaterialTheme.colorScheme.secondary
             )
         )
     }
@@ -624,24 +611,23 @@ fun SliderRatingFrom(
     sliderPosition: Float,
     sliderPositionResult: (Float) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-    ) {
+    Column(modifier = Modifier.padding(16.dp)) {
         Text(
-            text = "Укажите минимальный рейтинг: ${ceil(sliderPosition)}", // TODO: Прочитать про метод ceil
+            text = "Укажите рейтинг: ${ceil(sliderPosition)}", // TODO: Прочитать про метод ceil
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Slider(
             modifier = Modifier.padding(horizontal = 10.dp),
-            valueRange = 0f .. 10f,
+            valueRange = 0f..10f,
             value = sliderPosition,
             onValueChange = sliderPositionResult,
             steps = 9,
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.secondary,
-                activeTickColor = MaterialTheme.colorScheme.tertiaryContainer
+                activeTickColor = MaterialTheme.colorScheme.tertiaryContainer,
+                activeTrackColor = MaterialTheme.colorScheme.secondary,
+                inactiveTrackColor = MaterialTheme.colorScheme.tertiaryContainer
             )
         )
     }
