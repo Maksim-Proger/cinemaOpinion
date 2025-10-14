@@ -64,6 +64,8 @@ fun CustomSearchBar(
                     }
                 },
                 colors = TextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                     focusedTextColor = MaterialTheme.colorScheme.onPrimary,
                     unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
                     focusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
@@ -74,9 +76,12 @@ fun CustomSearchBar(
         },
         expanded = active,
         onExpandedChange = onActiveChange,
-        modifier = Modifier.fillMaxWidth().padding(7.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(7.dp),
         colors = SearchBarDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface,
+            dividerColor = MaterialTheme.colorScheme.secondary
         )
     ) {
         searchHistory.takeLast(5).forEach { item ->
