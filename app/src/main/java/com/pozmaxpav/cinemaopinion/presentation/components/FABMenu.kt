@@ -6,7 +6,11 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ToggleButtonColors
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.ToggleFloatingActionButton
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,7 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun FABMenuMaterialExpressive(
+fun FABMenu(
     imageIcon: ImageVector,
     contentDescription: String,
     expanded: Boolean,
@@ -32,9 +36,17 @@ fun FABMenuMaterialExpressive(
             button = {
                 ToggleFloatingActionButton(
                     checked = expanded,
-                    onCheckedChange = { onButtonClick() }
+                    onCheckedChange = { onButtonClick() },
+                    containerColor = ToggleFloatingActionButtonDefaults.containerColor(
+                        initialColor = MaterialTheme.colorScheme.secondary,
+                        finalColor = MaterialTheme.colorScheme.secondary
+                    )
                 ) {
-                    Icon(imageIcon, contentDescription = contentDescription)
+                    Icon(
+                        imageVector = imageIcon,
+                        contentDescription = contentDescription,
+                        tint = MaterialTheme.colorScheme.onSecondary
+                    )
                 }
             }
         ) {
@@ -42,6 +54,8 @@ fun FABMenuMaterialExpressive(
                 FloatingActionButtonMenuItem(
                     text = itemData.text,
                     icon = itemData.icon,
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
                     onClick = {
                         itemData.onClick()
                         onExpandedChange(false)

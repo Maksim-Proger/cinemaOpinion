@@ -63,14 +63,14 @@ import com.pozmaxpav.cinemaopinion.domain.models.system.CompositeRequest
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarMainScreen
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
 import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
 import com.pozmaxpav.cinemaopinion.presentation.components.PreviewAlertDialog
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCard
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.FABMenuItemData
-import com.pozmaxpav.cinemaopinion.presentation.components.FABMenuMaterialExpressive
+import com.pozmaxpav.cinemaopinion.presentation.components.FABMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.items.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.items.NewYearMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
@@ -93,7 +93,6 @@ fun MainScreen(
     apiViewModel: ApiViewModel = hiltViewModel(),
     movieViewModel: MovieViewModel = hiltViewModel()
 ) {
-
     // region Переменные
 
     // region DatePicker
@@ -196,7 +195,7 @@ fun MainScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             if (!searchBarActive) {
-                CustomTopAppBar(
+                TopAppBarMainScreen(
                     title = if (!titleTopBarState) stringResource(id = R.string.top_app_bar_header_name_all_movies)
                             else stringResource(id = R.string.top_app_bar_header_name_top_list_movies),
                     onSearchButtonClick = { searchBarActive = !searchBarActive },
@@ -214,7 +213,7 @@ fun MainScreen(
                 !searchBarActive && !onAdvancedSearchButtonClick && selectedMovie == null &&
                 selectedNewYearMovie == null && !showDatePicker && !locationShowPageAppDescription
             ) {
-                FABMenuMaterialExpressive(
+                FABMenu(
                     imageIcon = if (isScrolling.value) Icons.Default.ArrowUpward else Icons.Default.Settings,
                     contentDescription = stringResource(R.string.description_icon_fab_button_with_menu),
                     expanded = menuExpanded,
@@ -240,9 +239,7 @@ fun MainScreen(
             }
         }
     ) { innerPadding ->
-
         Box(modifier = Modifier.fillMaxSize()) {
-
             if (dateSelectionComplete) {
                 selectedDate?.let {
                     apiViewModel.fetchPremiersMovies(it.first, formatMonth(it.second))
@@ -443,7 +440,6 @@ fun MainScreen(
                     BackHandler { showDatePicker = !showDatePicker }
                 }
             }
-
         }
     }
 
@@ -540,7 +536,6 @@ fun MainScreen(
 
 }
 
-
 @Composable
 fun fabMenuItems(
     isScrolling: Boolean,
@@ -599,7 +594,6 @@ fun fabMenuItems(
 
     return items
 }
-
 
 @Composable
 private fun SeasonalEventList( // Пока только для нового года

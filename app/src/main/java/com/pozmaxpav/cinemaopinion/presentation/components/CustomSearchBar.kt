@@ -14,7 +14,6 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -52,11 +51,8 @@ fun CustomSearchBar(
                     if (active) {
                         IconButton(
                             onClick = {
-                                if (query.isNotEmpty()) {
-                                    onQueryChange("")
-                                } else {
-                                    onActiveChange(false)
-                                }
+                                if (query.isNotEmpty()) onQueryChange("")
+                                else onActiveChange(false)
                             }
                         ) {
                             Icon(
