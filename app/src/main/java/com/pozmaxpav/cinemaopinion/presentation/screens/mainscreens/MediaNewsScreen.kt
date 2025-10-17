@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
+package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens
 
 import android.net.Uri
 import androidx.compose.foundation.clickable
@@ -43,7 +43,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsModel
-import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.theme.UrlLinkColor
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
@@ -109,7 +109,7 @@ fun MediaNewsScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            ClassicTopAppBar(
+            TopAppBarAllScreens(
                 context = context,
                 titleId = R.string.title_media_news_screen,
                 scrollBehavior = scrollBehavior,

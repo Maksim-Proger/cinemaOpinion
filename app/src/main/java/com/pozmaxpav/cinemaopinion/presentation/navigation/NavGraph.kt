@@ -9,10 +9,10 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.introductoryscreens.ui.onboarding.OnBoardingScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.LoginScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.main.MainScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.MediaNewsScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.SeriesControlScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.LoginScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.MainScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.MediaNewsScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.SeriesControlScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListOfChangesScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralSerials
@@ -20,10 +20,10 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelecte
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSharedScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWaitingContinuationSeries
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWatchedMovies
-import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.EditPersonalInformationScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.MovieDetailScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SettingsScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.WebViewScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.EditPersonalInformationScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.MovieDetailScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SettingsScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.WebViewScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.introduction.OnBoardingViewModel
 

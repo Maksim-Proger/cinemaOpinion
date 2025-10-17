@@ -1,39 +1,24 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.main
+package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
-import android.os.Build
-import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,23 +52,22 @@ import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarMainScreen
 import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
 import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
 import com.pozmaxpav.cinemaopinion.presentation.components.PreviewAlertDialog
-import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCard
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
-import com.pozmaxpav.cinemaopinion.presentation.components.FABMenuItemData
 import com.pozmaxpav.cinemaopinion.presentation.components.FABMenu
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSeasonalEvent
 import com.pozmaxpav.cinemaopinion.presentation.components.items.MovieItem
-import com.pozmaxpav.cinemaopinion.presentation.components.items.NewYearMovieItem
-import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
+import com.pozmaxpav.cinemaopinion.presentation.components.items.fabMenuItems
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens.AccountScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens.SearchFilterScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.AccountScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.seasonal.SeasonalEvents
+import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
-import com.pozmaxpav.cinemaopinion.utilits.NODE_NEW_YEAR_LIST
 import com.pozmaxpav.cinemaopinion.utilits.formatMonth
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
-import com.pozmaxpav.cinemaopinion.utilits.state.State
+import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,8 +117,7 @@ fun MainScreen(
     val topListMovies = apiViewModel.topListMovies.collectAsState()
     val searchMovies = apiViewModel.searchMovies.collectAsState()
     val searchMovies2 = apiViewModel.searchMovies2.collectAsState()
-    val newYearMoviesList by movieViewModel.movies.collectAsState()
-    val state by apiViewModel.state.collectAsState()
+    val state by apiViewModel.loadingState.collectAsState()
     val showDialogEvents by mainViewModel.resultChecking.collectAsState()
     // endregion
 
@@ -148,8 +131,9 @@ fun MainScreen(
     var titleTopBarState by remember { mutableStateOf(false) } // Заголовок для AppBar
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val isInitialized = apiViewModel.isInitialized // Флаг для отправки запроса к Api
+
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
-    var selectedNewYearMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    var selectedSeasonalMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
 
     // region Логика переключения страницы
     var currentPage by remember { mutableIntStateOf(1) }
@@ -162,12 +146,9 @@ fun MainScreen(
     // region LaunchedEffect
     LaunchedEffect(Unit) {
         if (!isInitialized) {
-            apiViewModel.fetchPremiersMovies(2025, "September")
+            apiViewModel.fetchPremiersMovies(2025, "October")
             apiViewModel.fetchTopListMovies(currentPage)
         }
-    }
-    LaunchedEffect(onAccountButtonClick) {
-        movieViewModel.getMovies(NODE_NEW_YEAR_LIST)
     }
     
     LaunchedEffect(scrollToTop) {
@@ -202,16 +183,14 @@ fun MainScreen(
                     onAdvancedSearchButtonClick = { onAdvancedSearchButtonClick = !onAdvancedSearchButtonClick },
                     onAccountButtonClick = { onAccountButtonClick = !onAccountButtonClick },
                     scrollBehavior = scrollBehavior,
-                    onTransitionAction = {
-                        navigateFunction(navController, Route.ListOfChangesScreen.route)
-                    }
+                    onTransitionAction = { navigateFunction(navController, Route.ListOfChangesScreen.route) }
                 )
             }
         },
         floatingActionButton = {
             if (
                 !searchBarActive && !onAdvancedSearchButtonClick && selectedMovie == null &&
-                selectedNewYearMovie == null && !showDatePicker && !locationShowPageAppDescription
+                !showDatePicker && !locationShowPageAppDescription
             ) {
                 FABMenu(
                     imageIcon = if (isScrolling.value) Icons.Default.ArrowUpward else Icons.Default.Settings,
@@ -268,34 +247,30 @@ fun MainScreen(
                     selectedMovie?.let {
                         DetailsCardFilm(
                             movie = it,
-                            onClick = { selectedMovie = null },
+                            onCloseButton = { selectedMovie = null},
                             padding = innerPadding,
                             navController = navController
                         )
                     }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        OnBackInvokedHandler { selectedMovie = null }
-                    } else {
-                        BackHandler { selectedMovie = null }
+                    AdaptiveBackHandler { selectedMovie = null }
+
+                } else if (selectedSeasonalMovie != null) {
+                    selectedSeasonalMovie?.let {
+                        DetailsCardSeasonalEvent(
+                            movie = it,
+                            onCloseButton = { selectedSeasonalMovie = null},
+                            padding = innerPadding,
+                        )
                     }
-                } else if (selectedNewYearMovie != null) {
-                    DetailsCard(
-                        selectedNewYearMovie!!,
-                        onCloseButton = { selectedNewYearMovie = null },
-                        innerPadding
-                    )
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        OnBackInvokedHandler { selectedNewYearMovie = null }
-                    } else {
-                        BackHandler { selectedNewYearMovie = null }
-                    }
+                    AdaptiveBackHandler { selectedSeasonalMovie = null }
+
                 } else {
                     val moviesToDisplay: List<MovieData> = when {
                         searchCompleted -> {
-                            val mainMovies = searchMovies.value
-                            val fallbackMovies = searchMovies2.value
-                            if (mainMovies != null && mainMovies.items.isNotEmpty()) mainMovies.items
-                            else fallbackMovies?.films ?: emptyList()
+                            val firstMovieDatabase = searchMovies.value
+                            val secondMovieDatabase = searchMovies2.value
+                            if (firstMovieDatabase != null && firstMovieDatabase.items.isNotEmpty()) firstMovieDatabase.items
+                            else secondMovieDatabase?.films ?: emptyList()
                         }
 
                         onFilterButtonClick -> topListMovies.value?.films ?: emptyList()
@@ -318,7 +293,7 @@ fun MainScreen(
                     val canGoForward = currentPage < countPages
 
                     when (state) {
-                        is State.Loading -> {
+                        is LoadingState.Loading -> {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -331,16 +306,21 @@ fun MainScreen(
                                 )
                             }
                         }
-                        is State.Success -> {
-                            Column(modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding)) {
-//                                SeasonalEventList(
-//                                    isScrolling,
-//                                    lisStateRow,
-//                                    newYearMoviesList,
-//                                    selectedNewYearMovie
-//                                )
+                        is LoadingState.Success -> {
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(innerPadding)
+                            ) {
+
+                                SeasonalEvents(
+                                    isScrolling = isScrolling.value,
+                                    viewModel = movieViewModel,
+                                    selectedMovie = { movie ->
+                                        selectedSeasonalMovie = movie
+                                    }
+                                )
 
                                 LazyColumn(
                                     state = listState,
@@ -419,7 +399,9 @@ fun MainScreen(
                                 }
                             }
                         }
-                        is State.Error -> {}
+                        is LoadingState.Error -> {
+                            // TODO: Дописать реализацию поведения во время ошибки
+                        }
                     }
                 }
             }
@@ -434,11 +416,7 @@ fun MainScreen(
                         selectedDate = date
                     },
                 )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    OnBackInvokedHandler { showDatePicker = !showDatePicker }
-                } else {
-                    BackHandler { showDatePicker = !showDatePicker }
-                }
+                AdaptiveBackHandler { showDatePicker = !showDatePicker }
             }
         }
     }
@@ -506,11 +484,7 @@ fun MainScreen(
                         searchCompleted = true
                     }
                 )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    OnBackInvokedHandler { onAdvancedSearchButtonClick = false }
-                } else {
-                    BackHandler { onAdvancedSearchButtonClick = false }
-                }
+                AdaptiveBackHandler { onAdvancedSearchButtonClick = false }
             }
         )
     }
@@ -525,126 +499,10 @@ fun MainScreen(
                     navController,
                     onClick = { onAccountButtonClick = false }
                 )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    OnBackInvokedHandler { onAccountButtonClick = false }
-                } else {
-                    BackHandler { onAccountButtonClick = false }
-                }
+                AdaptiveBackHandler { onAccountButtonClick = false }
             }
         )
     }
 
 }
-
-@Composable
-fun fabMenuItems(
-    isScrolling: Boolean,
-    titleTopBarState: Boolean,
-    onFilterToggle: () -> Unit,
-    onDatePickerToggle: () -> Unit,
-    onNavigateToNews: () -> Unit
-): List<FABMenuItemData> {
-    if (isScrolling) return emptyList()
-    val items = mutableListOf<FABMenuItemData>()
-
-    items += FABMenuItemData(
-        text = {
-            Text(
-                if (!titleTopBarState)
-                    stringResource(id = R.string.drop_down_menu_item_premiere_movies)
-                else
-                    stringResource(id = R.string.drop_down_menu_item_topList_movies)
-            )
-        },
-        icon = {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_movies),
-                contentDescription = stringResource(id = R.string.description_icon_settings),
-                tint = MaterialTheme.colorScheme.onSecondary
-            )
-        },
-        onClick = onFilterToggle
-    )
-
-    if (!titleTopBarState) {
-        items += FABMenuItemData(
-            text = { Text(stringResource(id = R.string.drop_down_menu_item_select_date)) },
-            icon = {
-                Icon(
-                    Icons.Default.DateRange,
-                    contentDescription = stringResource(id = R.string.drop_down_menu_item_select_date),
-                    tint = MaterialTheme.colorScheme.onSecondary
-                )
-            },
-            onClick = onDatePickerToggle
-        )
-    }
-
-    items += FABMenuItemData(
-        text = { Text(stringResource(R.string.drop_down_menu_item_nac_to_media_news_screen)) },
-        icon = {
-            Icon(
-                Icons.Default.Newspaper,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondary
-            )
-        },
-        onClick = onNavigateToNews
-    )
-
-    return items
-}
-
-@Composable
-private fun SeasonalEventList( // Пока только для нового года
-    isScrolling: androidx.compose.runtime.State<Boolean>,
-    lisStateRow: LazyListState,
-    newYearMoviesList: List<DomainSelectedMovieModel>,
-    selectedNewYearMovie: DomainSelectedMovieModel?
-) {
-    var selectedNewYearMovie1 = selectedNewYearMovie
-    AnimatedVisibility(
-        visible = !isScrolling.value,
-        enter = slideInHorizontally(
-            initialOffsetX = { -it },
-            animationSpec = tween(durationMillis = 300)
-        ),
-        exit = slideOutHorizontally(
-            targetOffsetX = { -it },
-            animationSpec = tween(durationMillis = 300)
-        )
-    ) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.title_of_the_list_for_the_new_year),
-                    style = MaterialTheme.typography.displayMedium
-                )
-            }
-            Spacer(modifier = Modifier.padding(6.dp))
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .padding(horizontal = 16.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.surface
-                    ),
-                state = lisStateRow
-            ) {
-                items(newYearMoviesList, key = { it.id }) { newYearMovie ->
-                    NewYearMovieItem(newYearMovie = newYearMovie) {
-                        selectedNewYearMovie1 = newYearMovie
-                    }
-                }
-            }
-        }
-    }
-}
-
 

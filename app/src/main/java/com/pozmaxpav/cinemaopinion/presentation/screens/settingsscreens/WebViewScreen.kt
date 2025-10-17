@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
+package com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens
 
 import android.annotation.SuppressLint
 import android.webkit.WebView

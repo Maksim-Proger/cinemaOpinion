@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
+package com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
 import com.pozmaxpav.cinemaopinion.presentation.components.FABMenu
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
@@ -72,7 +72,7 @@ fun EditPersonalInformationScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            ClassicTopAppBar(
+            TopAppBarAllScreens(
                 context = context,
                 titleId = R.string.top_app_bar_header_name_user_information,
                 scrollBehavior = scrollBehavior,

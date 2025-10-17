@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
+package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,7 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Close
@@ -77,6 +82,8 @@ fun AccountScreen(
     val listAwards by userViewModel.listAwards.collectAsState()
     var locationShowDialogEvents by remember { mutableStateOf(false) }
     var openSharedLists by remember { mutableStateOf(false) }
+
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(userId) {
         if (userId != "Unknown") {
@@ -161,71 +168,63 @@ fun AccountScreen(
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
 
-                AccountItem(
-                    icon = painterResource(id = R.drawable.ic_movie_list),
-                    contentDescription = stringResource(id = R.string.description_icon_movie_list),
-                    title = stringResource(id = R.string.my_list_movies)
-                ) { navigateFunction(navController, Route.ListSelectedMovies.route) }
+                Column(
+                    modifier = Modifier
+                        .weight(0.7f)
+                        .verticalScroll(scrollState)
+                ) {
+                    AccountItem(
+                        icon = painterResource(id = R.drawable.ic_movie_list),
+                        contentDescription = stringResource(id = R.string.description_icon_movie_list),
+                        title = stringResource(id = R.string.my_list_movies)
+                    ) { navigateFunction(navController, Route.ListSelectedMovies.route) }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                AccountItem(
-                    icon = painterResource(id = R.drawable.ic_movie_list),
-                    contentDescription = stringResource(id = R.string.description_icon_movie_list),
-                    title = stringResource(id = R.string.joint_list_films)
-                ) { navigateFunction(navController, Route.ListSelectedGeneralMovies.route) }
+                    AccountItem(
+                        icon = painterResource(id = R.drawable.ic_movie_list),
+                        contentDescription = stringResource(id = R.string.description_icon_movie_list),
+                        title = stringResource(id = R.string.joint_list_films)
+                    ) { navigateFunction(navController, Route.ListSelectedGeneralMovies.route) }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                AccountItem(
-                    icon = painterResource(id = R.drawable.ic_movie_list),
-                    contentDescription = stringResource(id = R.string.description_icon_serials_list),
-                    title = stringResource(id = R.string.joint_list_serials)
-                ) { navigateFunction(navController, Route.ListSelectedGeneralSerials.route) }
+                    AccountItem(
+                        icon = painterResource(id = R.drawable.ic_movie_list),
+                        contentDescription = stringResource(id = R.string.description_icon_serials_list),
+                        title = stringResource(id = R.string.joint_list_serials)
+                    ) { navigateFunction(navController, Route.ListSelectedGeneralSerials.route) }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                AccountItem(
-                    icon = painterResource(id = R.drawable.ic_movie_list),
-                    contentDescription = stringResource(R.string.description_icon_series_control),
-                    title = stringResource(R.string.series_control)
-                ) { navigateFunction(navController, Route.SeriesControlScreen.route) }
+                    AccountItem(
+                        icon = painterResource(id = R.drawable.ic_movie_list),
+                        contentDescription = stringResource(R.string.description_icon_series_control),
+                        title = stringResource(R.string.series_control)
+                    ) { navigateFunction(navController, Route.SeriesControlScreen.route) }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                AccountItem(
-                    icon = painterResource(id = R.drawable.ic_movie_list),
-                    contentDescription = stringResource(R.string.description_icon_shared_lists),
-                    title = stringResource(R.string.shared_lists)
-                ) { openSharedLists = true }
+                    AccountItem(
+                        icon = painterResource(id = R.drawable.ic_movie_list),
+                        contentDescription = stringResource(R.string.description_icon_shared_lists),
+                        title = stringResource(R.string.shared_lists)
+                    ) { openSharedLists = true }
+                }
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
 
-                // region Awards
                 Column(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .weight(1f),
+                    modifier = Modifier.padding(10.dp),
                     verticalArrangement = Arrangement.Bottom
                 ) {
-                    if (listAwards.isNotEmpty()) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Зал славы",
-                                style = MaterialTheme.typography.displayMedium,
-                                modifier = Modifier.padding(bottom = 16.dp)
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                    TextAwardsFields(listAwards)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (listAwards.isNotEmpty()) {
                             val newListAwards = listAwards.split(",")
                             for (i in newListAwards) {
                                 Image(
@@ -235,60 +234,12 @@ fun AccountScreen(
                                 )
                             }
                         }
-                    } else {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Column {
-                                Text(
-                                    text = "Зал славы",
-                                    style = MaterialTheme.typography.displayMedium,
-                                    modifier = Modifier
-                                        .padding(bottom = 16.dp)
-                                        .align(alignment = Alignment.CenterHorizontally)
-                                )
-                                Text(
-                                    text = "Наград пока нет",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier
-                                        .padding(bottom = 16.dp)
-                                        .align(alignment = Alignment.CenterHorizontally)
-                                )
-                            }
-                        }
-
                     }
                 }
-                // endregion
             }
         }
     }
 
-    // TODO: Разобраться в отличиях контейнеров
-//    if (openSharedLists) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxHeight(0.9f)
-//                .background(
-//                    Color.Black.copy(alpha = 0.5f),
-//                    shape = RoundedCornerShape(12.dp)
-//                )
-//                .clickable {
-//                    openSharedLists = false
-//                },
-//            verticalArrangement = Arrangement.Center,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            Column(modifier = Modifier.padding(12.dp)) {
-//                ShowSharedLists(
-//                    navController = navController,
-//                    userId = userId
-//                )
-//            }
-//        }
-//    }
     if (openSharedLists) {
         Box(
             modifier = Modifier
@@ -301,7 +252,9 @@ fun AccountScreen(
 
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(12.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -320,6 +273,34 @@ fun AccountScreen(
         )
     }
 
+}
+
+@Composable
+private fun TextAwardsFields(listAwards: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Column {
+            Text(
+                text = stringResource(R.string.title_awards_field),
+                style = MaterialTheme.typography.displayMedium,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .align(alignment = Alignment.CenterHorizontally)
+            )
+            if (listAwards.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.list_awards_empty),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .align(alignment = Alignment.CenterHorizontally)
+                )
+            }
+        }
+    }
 }
 
 @Composable

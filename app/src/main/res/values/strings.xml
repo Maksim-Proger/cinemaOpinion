@@ -13,6 +13,8 @@
 
     <!--  General Strings  -->
     <string name="app_name">Cinema Opinion</string>
+    <string name="title_awards_field">Зал славы</string>
+    <string name="list_awards_empty">Наград пока нет</string>
     <string name="top_app_bar_header_name_all_movies">Фильмы</string>
     <string name="top_app_bar_header_name_top_list_movies">Топ фильмов</string>
     <string name="top_app_bar_header_name_user_information">Данные пользователя</string>
