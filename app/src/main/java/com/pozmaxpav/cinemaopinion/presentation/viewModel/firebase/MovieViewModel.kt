@@ -21,7 +21,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfC
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.RemoveRecordsOfChangesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeRecordUseCase
 import com.pozmaxpav.cinemaopinion.utilits.deletingOldRecords
-import com.pozmaxpav.cinemaopinion.utilits.state.State
+import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
@@ -49,10 +49,10 @@ class MovieViewModel @Inject constructor(
     private val sendingToNewDirectoryUseCase: SendingToNewDirectoryUseCase
 ) : ViewModel() {
 
-    private val _movieDownloadStatus = MutableStateFlow<State>(State.Success)
+    private val _movieDownloadStatus = MutableStateFlow<LoadingState>(LoadingState.Success)
     val movieDownloadStatus = _movieDownloadStatus.asStateFlow()
 
-    private val _commentsDownloadStatus = MutableStateFlow<State>(State.Success)
+    private val _commentsDownloadStatus = MutableStateFlow<LoadingState>(LoadingState.Success)
     val commentsDownloadStatus = _commentsDownloadStatus.asStateFlow()
 
     private val _movies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
@@ -99,12 +99,12 @@ class MovieViewModel @Inject constructor(
     }
     fun getMovies(dataSource: String) {
         viewModelScope.launch {
-            _movieDownloadStatus.value = State.Loading
+            _movieDownloadStatus.value = LoadingState.Loading
             try {
                 val moviesList = getMovieUseCase(dataSource)
                 _movies.value = moviesList
                 delay(500)
-                _movieDownloadStatus.value = State.Success
+                _movieDownloadStatus.value = LoadingState.Success
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -219,12 +219,12 @@ class MovieViewModel @Inject constructor(
     }
     fun getComments(dataSource: String, movieId: Int) {
         viewModelScope.launch {
-            _commentsDownloadStatus.value = State.Loading
+            _commentsDownloadStatus.value = LoadingState.Loading
             try {
                 val commentList = getCommentsUseCase(dataSource, movieId)
                 _comments.value = commentList
                 delay(500)
-                _commentsDownloadStatus.value = State.Success
+                _commentsDownloadStatus.value = LoadingState.Success
             } catch (e: Exception) {
                 e.printStackTrace()
             }

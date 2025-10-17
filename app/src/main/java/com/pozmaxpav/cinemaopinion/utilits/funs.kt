@@ -61,7 +61,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
-import com.pozmaxpav.cinemaopinion.utilits.state.State
+import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 import java.text.SimpleDateFormat
 import java.time.DateTimeException
 import java.time.LocalDateTime
@@ -396,13 +396,13 @@ fun ShowCommentList(
             }
 
             when (stateComments) {
-                is State.Loading -> {
+                is LoadingState.Loading -> {
                     CustomLottieAnimation(
                         nameFile = "loading_animation.lottie",
                         modifier = Modifier.scale(0.5f)
                     )
                 }
-                is State.Success -> {
+                is LoadingState.Success -> {
                     LazyColumn {
                         items(listComments) { comment ->
                             Card(
@@ -460,7 +460,7 @@ fun ShowCommentList(
                         }
                     }
                 }
-                is State.Error -> {
+                is LoadingState.Error -> {
                     // TODO: Добавить логику работы при ошибке.
                 }
             }

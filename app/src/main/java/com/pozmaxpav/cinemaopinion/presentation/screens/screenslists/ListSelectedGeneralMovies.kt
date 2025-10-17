@@ -75,7 +75,7 @@ import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
-import com.pozmaxpav.cinemaopinion.utilits.state.State
+import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 
 @Composable
 fun ListSelectedGeneralMovies(
@@ -281,7 +281,7 @@ fun ListSelectedGeneralMovies(
                     .background(MaterialTheme.colorScheme.background)
             ) {
                 when (stateMovie) {
-                    is State.Loading -> {
+                    is LoadingState.Loading -> {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize(),
@@ -293,7 +293,7 @@ fun ListSelectedGeneralMovies(
                             )
                         }
                     }
-                    is State.Success -> {
+                    is LoadingState.Success -> {
                         LazyColumn(
                             state = listState,
                             modifier = Modifier.fillMaxSize(),
@@ -361,7 +361,7 @@ fun ListSelectedGeneralMovies(
                             }
                         }
                     }
-                    is State.Error -> {
+                    is LoadingState.Error -> {
                         // TODO: Добавить логику работы при ошибке.
                     }
                 }

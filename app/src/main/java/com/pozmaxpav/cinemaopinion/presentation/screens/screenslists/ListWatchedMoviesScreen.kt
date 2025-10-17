@@ -48,7 +48,7 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
@@ -65,7 +65,7 @@ import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
-import com.pozmaxpav.cinemaopinion.utilits.state.State
+import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,7 +107,7 @@ fun ListWatchedMovies(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             if (!showTopBar) {
-                ClassicTopAppBar(
+                TopAppBarAllScreens(
                     context = context,
                     titleId = R.string.title_listWatched_movies,
                     scrollBehavior = scrollBehavior,
@@ -267,7 +267,7 @@ fun ListWatchedMovies(
 
         if (selectedMovie == null) {
             when (stateMovies) {
-                is State.Loading -> {
+                is LoadingState.Loading -> {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -280,7 +280,7 @@ fun ListWatchedMovies(
                         )
                     }
                 }
-                is State.Success -> {
+                is LoadingState.Success -> {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -330,7 +330,7 @@ fun ListWatchedMovies(
                         }
                     }
                 }
-                is State.Error -> {
+                is LoadingState.Error -> {
                     // TODO: Добавить логику работы при ошибке.
                 }
             }

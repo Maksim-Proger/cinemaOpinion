@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Build
 import android.window.OnBackInvokedCallback
 import android.window.OnBackInvokedDispatcher
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +33,15 @@ fun OnBackInvokedHandler(enabled: Boolean = true, onBackInvoked: () -> Unit) {
         onDispose {
             dispatcher?.unregisterOnBackInvokedCallback(callback)
         }
+    }
+}
+
+@Composable
+fun AdaptiveBackHandler(action: () -> Unit) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        OnBackInvokedHandler { action() }
+    } else {
+        BackHandler { action() }
     }
 }
 

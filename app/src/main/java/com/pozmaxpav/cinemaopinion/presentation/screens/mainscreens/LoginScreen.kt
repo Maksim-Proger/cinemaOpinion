@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
+package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -80,7 +80,7 @@ fun LoginScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            ClassicTopAppBar(
+            TopAppBarAllScreens(
                 context,
                 titleId = R.string.title_login_screen,
                 scrollBehavior = scrollBehavior,

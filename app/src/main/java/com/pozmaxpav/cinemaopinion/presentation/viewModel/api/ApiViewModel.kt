@@ -17,7 +17,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchMovies2Use
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetTopMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.news.GetMediaNewsUseCase
-import com.pozmaxpav.cinemaopinion.utilits.state.State
+import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,8 +38,8 @@ class ApiViewModel @Inject constructor(
     private val getSearchMovieByIdUseCase: GetSearchMovieByIdUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<State>(State.Success)
-    val state: StateFlow<State> = _state.asStateFlow()
+    private val _Loading_state = MutableStateFlow<LoadingState>(LoadingState.Success)
+    val loadingState: StateFlow<LoadingState> = _Loading_state.asStateFlow()
 
     private val _premiereMovies = MutableStateFlow<MovieList?>(null)
     val premiersMovies: StateFlow<MovieList?> get() = _premiereMovies.asStateFlow()
@@ -95,12 +95,12 @@ class ApiViewModel @Inject constructor(
     }
     fun fetchPremiersMovies(year: Int, month: String) {
         viewModelScope.launch {
-            _state.value = State.Loading
+            _Loading_state.value = LoadingState.Loading
             try {
                 val movies = getPremiereMoviesUseCase(year, month)
                 _premiereMovies.value = movies
                 delay(500)
-                _state.value = State.Success
+                _Loading_state.value = LoadingState.Success
                 isInitialized = true
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -120,12 +120,12 @@ class ApiViewModel @Inject constructor(
     fun fetchSearchMovies(keyword: String, page: Int) {
         viewModelScope.launch {
             try {
-                val movies = getSearchMoviesUseCase(keyword, page)
-                _searchMovies.value = movies
+                val firstMovieDatabase = getSearchMoviesUseCase(keyword, page)
+                _searchMovies.value = firstMovieDatabase
 
-                if (movies.items.isEmpty()) {
-                    val fallbackMovies  = getSearchMovies2UseCase(keyword, page)
-                    _searchMovies2.value = fallbackMovies
+                if (firstMovieDatabase.items.isEmpty()) {
+                    val secondMovieDatabase  = getSearchMovies2UseCase(keyword, page)
+                    _searchMovies2.value = secondMovieDatabase
                 }
 
             } catch (e: Exception) {

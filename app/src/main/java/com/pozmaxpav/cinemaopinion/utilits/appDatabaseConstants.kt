@@ -1,8 +1,13 @@
 package com.pozmaxpav.cinemaopinion.utilits
 
+const val NODE_NEW_YEAR_LIST = "new_year_list"
+const val NODE_HALLOWEEN_LIST = "halloween"
+const val NODE_VALENTINE_LIST = "valentine"
+const val NODE_MARCH_8_LIST = "march_8"
+const val NODE_DEFAULT_LIST = "default"
+
 const val NODE_LIST_MOVIES = "list_movies"
 const val NODE_LIST_SERIALS = "list_serials"
-const val NODE_NEW_YEAR_LIST = "new_year_list"
 const val NODE_LIST_PERSONAL_MOVIES = "list_personal_movies"
 const val NODE_LIST_CHANGES = "list_of_changes"
 const val NODE_LIST_WATCHED_MOVIES = "list_watched_movies"

@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
+package com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
@@ -52,7 +52,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.system.CompositeRequest
-import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
@@ -91,7 +91,7 @@ fun SearchFilterScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            ClassicTopAppBar(
+            TopAppBarAllScreens(
                 context = context,
                 titleId = R.string.title_for_advanced_search_screen,
                 scrollBehavior = scrollBehavior,

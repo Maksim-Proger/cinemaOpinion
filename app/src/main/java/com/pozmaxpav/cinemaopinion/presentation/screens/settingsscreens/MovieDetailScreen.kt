@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.settingsScreens
+package com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens
 
 import android.content.Context
 import androidx.compose.foundation.clickable
@@ -50,7 +50,7 @@ import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.utilits.showToast
-import com.pozmaxpav.cinemaopinion.utilits.state.State
+import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -302,13 +302,13 @@ fun ShowComment(
     }
 
     when (stateComments) {
-        is State.Loading -> {
+        is LoadingState.Loading -> {
             CustomLottieAnimation(
                 nameFile = "loading_animation.lottie",
                 modifier = Modifier.scale(0.5f)
             )
         }
-        is State.Success -> {
+        is LoadingState.Success -> {
             LazyColumn {
                 items(listComments) { comment ->
                     Card(
@@ -365,7 +365,7 @@ fun ShowComment(
                 }
             }
         }
-        is State.Error -> {
+        is LoadingState.Error -> {
             // TODO: Добавить логику работы при ошибке.
         }
     }

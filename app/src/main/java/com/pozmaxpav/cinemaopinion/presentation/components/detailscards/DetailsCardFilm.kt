@@ -34,7 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
@@ -58,7 +58,7 @@ import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 @Composable
 fun DetailsCardFilm(
     movie: MovieData?,
-    onClick: () -> Unit,
+    onCloseButton: () -> Unit,
     padding: PaddingValues,
     navController: NavHostController,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
@@ -83,7 +83,7 @@ fun DetailsCardFilm(
         if (triggerOnClickGeneralMovie) {
             movieViewModel.toastMessage.collect { resId ->
                 showToast(context = context, messageId = resId)
-                onClick()
+                onCloseButton()
             }
         }
     }
@@ -91,7 +91,7 @@ fun DetailsCardFilm(
         if (triggerOnClickPersonalMovie) {
             personalMovieViewModel.toastMessage.collect { resId ->
                 showToast(context = context, messageId = resId)
-                onClick()
+                onCloseButton()
             }
         }
     }
@@ -144,7 +144,7 @@ fun DetailsCardFilm(
             Row(
                 modifier = Modifier
                     .padding(10.dp)
-                    .clickable { onClick() },
+                    .clickable { onCloseButton() },
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -394,7 +394,7 @@ fun DetailsCardFilm(
                     selectedMovie = movie?.toSelectedMovie(),
                     onCloseSharedLists = {
                         openSharedLists = false
-                        onClick()
+                        onCloseButton()
                     }
                 )
             }

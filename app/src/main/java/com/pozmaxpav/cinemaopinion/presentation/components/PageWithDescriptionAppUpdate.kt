@@ -42,7 +42,7 @@ fun PageDescription(onDismiss: () -> Unit) {
 
     Scaffold(
         topBar = {
-            ClassicTopAppBar(
+            TopAppBarAllScreens(
                 context = context,
                 titleId = R.string.title_page_description,
                 scrollBehavior = scrollBehavior

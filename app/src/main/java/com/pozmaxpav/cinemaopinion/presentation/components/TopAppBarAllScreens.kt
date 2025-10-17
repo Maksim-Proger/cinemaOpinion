@@ -17,7 +17,7 @@ import com.pozmaxpav.cinemaopinion.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClassicTopAppBar(
+fun TopAppBarAllScreens(
     context: Context,
     titleId: Int = 0,
     titleString: String = "",

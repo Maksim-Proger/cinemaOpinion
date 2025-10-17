@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.mainScreens
+package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
@@ -51,7 +51,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
-import com.pozmaxpav.cinemaopinion.presentation.components.ClassicTopAppBar
+import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.FABMenu
@@ -131,7 +131,7 @@ fun SeriesControlScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            ClassicTopAppBar(
+            TopAppBarAllScreens(
                 context = context,
                 titleId = R.string.title_series_control_screen,
                 scrollBehavior = scrollBehavior,

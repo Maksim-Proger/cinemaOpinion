@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
@@ -45,8 +45,8 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovie
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 
 @Composable
-fun DetailsCard(
-    newYearMovie: DomainSelectedMovieModel,
+fun DetailsCardSeasonalEvent(
+    movie: DomainSelectedMovieModel,
     onCloseButton: () -> Unit,
     padding: PaddingValues,
     mainViewModel: MainViewModel = hiltViewModel(),
@@ -67,8 +67,8 @@ fun DetailsCard(
         userViewModel.getUserData(userId)
         userViewModel.getSeasonalEventPoints(userId)
     }
-    LaunchedEffect(newYearMovie.id) {
-        apiViewModel.getInformationMovie(newYearMovie.id)
+    LaunchedEffect(movie.id) {
+        apiViewModel.getInformationMovie(movie.id)
     }
 
     Column(
@@ -127,7 +127,7 @@ fun DetailsCard(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     WorkerWithImageSelectedMovie(
-                        movie = newYearMovie,
+                        movie = movie,
                         height = 200.dp
                     )
                 }
@@ -138,7 +138,7 @@ fun DetailsCard(
                         .padding(vertical = 7.dp),
                 ) {
                     Text(
-                        text = "Название фильма: ${newYearMovie.nameFilm}",
+                        text = "Название фильма: ${movie.nameFilm}",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.secondary
                     )

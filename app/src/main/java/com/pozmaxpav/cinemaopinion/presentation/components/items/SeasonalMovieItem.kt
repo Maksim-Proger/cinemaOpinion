@@ -13,19 +13,20 @@ import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 
 @Composable
-fun NewYearMovieItem(
-    newYearMovie: DomainSelectedMovieModel,
+fun SeasonalMovieItem(
+    modifier: Modifier = Modifier,
+    movie: DomainSelectedMovieModel,
     onClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 7.dp)
             .clickable { onClick() }
     ) {
         Row {
             AsyncImage(
-                model = newYearMovie.posterUrl,
+                model = movie.posterUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Fit
             )
