@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.components
+package com.pozmaxpav.cinemaopinion.presentation.components.lottie
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
