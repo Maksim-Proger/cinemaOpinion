@@ -56,8 +56,10 @@ import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomLottieAnimation
+import com.pozmaxpav.cinemaopinion.presentation.components.lottie.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.MainScreenState
+import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
@@ -725,6 +727,41 @@ fun ChangeComment(
                     }
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SendRequestAdvancedSearch(
+    state: MainScreenState,
+    apiViewModel: ApiViewModel
+) {
+    if (state.sendRequestCompleted.value) {
+        state.requestBody.value.let { compositeRequest ->
+            apiViewModel.searchFilmsByFilters(
+                compositeRequest.type,
+                compositeRequest.keyword,
+                compositeRequest.countries,
+                compositeRequest.genres,
+                compositeRequest.ratingFrom,
+                compositeRequest.yearFrom,
+                compositeRequest.yearTo,
+                state.currentPage.intValue
+            )
+            state.sendRequestCompleted.value = false
+        }
+    }
+}
+
+@Composable
+fun SendSelectedDate(
+    state: MainScreenState,
+    apiViewModel: ApiViewModel
+) {
+    if (state.dateSelectionComplete.value) {
+        state.selectedDate.value?.let {
+            apiViewModel.fetchPremiersMovies(it.first, formatMonth(it.second))
+            state.dateSelectionComplete.value = false
         }
     }
 }

@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.components.lottie.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.utilits.Constants.DEVELOPER_COMMENT
 import com.pozmaxpav.cinemaopinion.utilits.Constants.NEW_YEAR_TEXT
 
