@@ -10,7 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.introductoryscreens.ui.onboarding.OnBoardingScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.LoginScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.MainScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.ScaffoldMainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.MediaNewsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.SeriesControlScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListOfChangesScreen
@@ -53,7 +53,7 @@ fun NavGraph(
                 )
             }
         }
-        composable(Route.MainScreen.route) { MainScreen(navController) }
+        composable(Route.MainScreen.route) { ScaffoldMainScreen(navController) }
         composable(Route.MediaNewsScreen.route) { MediaNewsScreen(navController) }
         composable(Route.ListOfChangesScreen.route) { ListOfChangesScreen(navController) }
         composable(Route.EditPersonalInformationScreen.route) { EditPersonalInformationScreen(navController) }
