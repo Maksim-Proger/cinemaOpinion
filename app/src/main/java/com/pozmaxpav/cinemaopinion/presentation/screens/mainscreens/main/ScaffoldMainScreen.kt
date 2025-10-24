@@ -2,6 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -19,38 +20,42 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.utils.state.LoadingState
+import com.example.ui.presentation.components.TopAppBarMainScreen
+import com.example.ui.presentation.components.fab.FABMenu
+import com.example.ui.presentation.components.lottie.AnimationImplementation
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.components.FABMenu
-import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarMainScreen
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSeasonalEvent
 import com.pozmaxpav.cinemaopinion.presentation.components.items.fabMenuItems
-import com.pozmaxpav.cinemaopinion.presentation.components.lottie.AnimationImplementation
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.seasonal.FetchSeasonalMovies
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.SendRequestAdvancedSearch
 import com.pozmaxpav.cinemaopinion.utilits.SendSelectedDate
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
-import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldMainScreen(
     navController: NavHostController,
-    mainViewModel: MainViewModel = hiltViewModel(),
+    systemViewModel: SystemViewModel,
     apiViewModel: ApiViewModel = hiltViewModel(),
     movieViewModel: MovieViewModel = hiltViewModel()
 ) {
     val state = rememberMainScreenState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    val userId by systemViewModel.userId.collectAsState()
     val loadingState by apiViewModel.loadingState.collectAsState()
-    val showDialogEvents by mainViewModel.resultChecking.collectAsState()
+    val showDialogEvents by systemViewModel.resultChecking.collectAsState()
 
+    LaunchedEffect(Unit) {
+        systemViewModel.getUserId()
+    }
     LaunchedEffect(state.scrollToTop.value) {
         if (state.scrollToTop.value) {
             state.listState.animateScrollToItem(0)
@@ -118,6 +123,8 @@ fun ScaffoldMainScreen(
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
 
+            Spacer(Modifier.padding(innerPadding))
+
             SendSelectedDate(state, apiViewModel)
             SendRequestAdvancedSearch(state, apiViewModel)
 
@@ -126,6 +133,7 @@ fun ScaffoldMainScreen(
                     state.selectedMovie.value?.let {
                         DetailsCardFilm(
                             movie = it,
+                            userId = userId,
                             onCloseButton = { state.selectedMovie.value = null },
                             padding = innerPadding,
                             navController = navController
@@ -138,6 +146,7 @@ fun ScaffoldMainScreen(
                     state.selectedSeasonalMovie.value?.let {
                         DetailsCardSeasonalEvent(
                             movie = it,
+                            userId = userId,
                             onCloseButton = { state.selectedSeasonalMovie.value = null },
                             padding = innerPadding,
                         )
@@ -185,9 +194,9 @@ fun ScaffoldMainScreen(
 
     SearchBarOverlay(state, apiViewModel)
     PreviewOverlay(state, showDialogEvents)
-    PageDescriptionOverlay(state, mainViewModel)
+    PageDescriptionOverlay(state, systemViewModel)
     SearchFilterScreenOverlay(state)
-    AccountScreenOverlay(state, navController)
+    AccountScreenOverlay(userId, state, navController)
 
 }
 

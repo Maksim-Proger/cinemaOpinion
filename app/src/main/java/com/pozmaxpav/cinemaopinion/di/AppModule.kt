@@ -1,17 +1,10 @@
 package com.pozmaxpav.cinemaopinion.di
 
-import android.app.Application
 import android.content.Context
-import com.example.introductoryscreens.domain.LocalUserManager
-import com.example.introductoryscreens.domain.usecases.AppEntryUseCases
-import com.example.introductoryscreens.domain.usecases.ReadAppEntry
-import com.example.introductoryscreens.domain.usecases.SaveAppEntry
+import com.example.core.utils.FirebaseListenerHolder
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.pozmaxpav.cinemaopinion.data.api.MovieInformationApi
 import com.pozmaxpav.cinemaopinion.data.api.MovieApi
-import com.pozmaxpav.cinemaopinion.data.db.datastore.LocalUserManagerImpl
-import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
+import com.pozmaxpav.cinemaopinion.data.api.MovieInformationApi
 import com.pozmaxpav.cinemaopinion.data.repository.api.GetMovieInformationApiRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.api.MovieRepositoryApiImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.MovieRepositoryImpl
@@ -19,8 +12,8 @@ import com.pozmaxpav.cinemaopinion.data.repository.firebase.PersonalMovieReposit
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.RecordsOfChangesRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SharedListsRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.system.SharedPreferencesRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepoImpl
+import com.pozmaxpav.cinemaopinion.data.repository.system.SystemRepositoryAppImpl
 import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
@@ -28,9 +21,8 @@ import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepos
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.RecordsOfChangesRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SharedListsRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.system.ThemeRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepo
+import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemRepositoryApp
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,7 +43,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGetMovieListApi() : MovieApi {
+    fun provideGetMovieListApi(): MovieApi {
         return Retrofit
             .Builder()
             .client(
@@ -99,57 +91,7 @@ object AppModule {
 
     // endregion
 
-    // region SharedPreferences
-
-    @Provides
-    @Singleton
-    @ThemeRepositoryQualifier
-    fun provideThemeRepository(@ApplicationContext context: Context): ThemeRepository {
-        return SharedPreferencesRepositoryImpl(context)
-    }
-
-    @Provides
-    @Singleton
-    @SystemRepositoryQualifier
-    fun provideSystemRepository(@ApplicationContext context: Context): SystemRepository {
-        return SharedPreferencesRepositoryImpl(context)
-    }
-
-    // endregion
-
-    // region Room
-
-//    @Provides
-//    @Singleton
-//    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
-//        return Room.databaseBuilder(
-//            context,
-//            AppDatabase::class.java,
-//            "user_database"
-//        ).build()
-//    }
-
-    // endregion
-
     // region Firebase
-
-    @Provides
-    @Singleton
-    fun provideFirebaseDataBase(): FirebaseDatabase {
-        return FirebaseDatabase.getInstance()
-    }
-
-    @Provides
-    @Singleton
-    fun provideDatabaseReference(firebaseDatabase: FirebaseDatabase): DatabaseReference {
-        return firebaseDatabase.reference // Создание DatabaseReference
-    }
-
-    @Provides
-    @Singleton
-    fun provideFirebaseListenerHolder(databaseReference: DatabaseReference): FirebaseListenerHolder {
-        return FirebaseListenerHolder(databaseReference)
-    }
 
     @Provides
     @Singleton
@@ -180,38 +122,37 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(databaseReference: DatabaseReference): UserRepository {
-        return UserRepositoryImpl(databaseReference)
-    }
-
-    @Provides
-    @Singleton
-    fun provideRecordsOfChangesRepository(databaseReference: DatabaseReference): RecordsOfChangesRepository {
+    fun provideRecordsOfChangesRepository(
+        databaseReference: DatabaseReference
+    ): RecordsOfChangesRepository {
         return RecordsOfChangesRepositoryImpl(databaseReference)
     }
 
     @Provides
     @Singleton
-    fun provideSharedListsRepository(databaseReference: DatabaseReference) : SharedListsRepository {
+    fun provideSharedListsRepository(
+        databaseReference: DatabaseReference
+    ): SharedListsRepository {
         return SharedListsRepositoryImpl(databaseReference)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepo(
+        databaseReference: DatabaseReference
+    ) : UserRepo {
+        return UserRepoImpl(databaseReference)
     }
 
     // endregion
 
-    // region IntroductionScreens
+    // region System
 
     @Provides
     @Singleton
-    fun provideLocalUserManager(application: Application): LocalUserManager =
-        LocalUserManagerImpl(application)
-
-    @Provides
-    @Singleton
-    fun provideAppEntryUseCases(localUserManager: LocalUserManager) =
-        AppEntryUseCases(
-            readAppEntry = ReadAppEntry(localUserManager),
-            saveAppEntry = SaveAppEntry(localUserManager)
-        )
+    fun provideSystemRepositoryApp(@ApplicationContext context: Context): SystemRepositoryApp {
+        return SystemRepositoryAppImpl(context)
+    }
 
     // endregion
 

@@ -52,61 +52,61 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.domain.DomainUserModel
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WAITING_CONTINUATION_SERIES
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WATCHED_MOVIES
+import com.example.core.utils.state.LoadingState
+import com.example.ui.presentation.components.CustomBottomSheet
+import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.ExpandedCard
+import com.example.ui.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.components.lottie.CustomLottieAnimation
+import com.example.ui.presentation.components.text.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
-import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
-import com.pozmaxpav.cinemaopinion.presentation.components.lottie.CustomLottieAnimation
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
-import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
+import com.pozmaxpav.cinemaopinion.utilits.AddComment
 import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
-import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WAITING_CONTINUATION_SERIES
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
-import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListWaitingContinuationSeries(
     navController: NavHostController,
+    systemViewModel: SystemViewModel,
     movieViewModel: MovieViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
 ) {
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val listState = rememberLazyListState()
+    val context = LocalContext.current
 
     val listMovies by movieViewModel.movies.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     val stateMovies by movieViewModel.movieDownloadStatus.collectAsState()
-    val userId by mainViewModel.userId.collectAsState()
+    val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
 
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
     var selectedSerial by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
-
     var showTopBar by remember { mutableStateOf(false) }
 
-    val listState = rememberLazyListState()
-    val context = LocalContext.current
-
     LaunchedEffect(Unit) {
+        systemViewModel.getUserId()
         movieViewModel.getMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
         movieViewModel.observeListMovies(NODE_LIST_WAITING_CONTINUATION_SERIES)
     }
@@ -136,7 +136,7 @@ fun ListWaitingContinuationSeries(
     ) { innerPadding ->
 
         if (openBottomSheetChange) {
-            MyBottomSheet(
+            CustomBottomSheet(
                 onClose = { openBottomSheetChange = false },
                 content = {
                     userData?.let { user ->
@@ -157,36 +157,28 @@ fun ListWaitingContinuationSeries(
                 },
                 fraction = 0.5f
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetChange = false }
-            } else {
-                BackHandler { openBottomSheetChange = false }
-            }
+            AdaptiveBackHandler { openBottomSheetChange = false }
         }
 
         if (openBottomSheetComments) {
-            MyBottomSheet(
+            CustomBottomSheet(
                 onClose = {
                     openBottomSheetComments = !openBottomSheetComments
                 },
                 content = {
                     AddComment(
-                        userData,
-                        movieViewModel,
-                        selectedSerial,
-                        context,
-                        onClick = {
-                            openBottomSheetComments = false
-                        }
+                        dataUser = userData,
+                        dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                        newDataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                        movieViewModel = movieViewModel,
+                        selectedItem = selectedSerial,
+                        context = context,
+                        onClick = { openBottomSheetComments = false }
                     )
                 },
                 fraction = 0.7f
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetComments = false }
-            } else {
-                BackHandler { openBottomSheetComments = false }
-            }
+            AdaptiveBackHandler { openBottomSheetComments = false }
         }
 
         selectedSerial?.let { serial ->
@@ -213,7 +205,8 @@ fun ListWaitingContinuationSeries(
                         openDescription = {
                             ExpandedCard(
                                 title = stringResource(R.string.text_for_expandedCard_field),
-                                description = info?.description ?: stringResource(R.string.limit_is_over),
+                                description = info?.description
+                                    ?: stringResource(R.string.limit_is_over),
                                 bottomPadding = 7.dp
                             )
                         },
@@ -224,7 +217,9 @@ fun ListWaitingContinuationSeries(
                                 bottomPadding = 7.dp,
                                 containerColor = MaterialTheme.colorScheme.secondary,
                                 contentColor = MaterialTheme.colorScheme.onSecondary,
-                                onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+                                onClickButton = {
+                                    openBottomSheetComments = !openBottomSheetComments
+                                }
                             )
                         },
                         movieTransferButtonToWatchedMoviesList = {
@@ -256,19 +251,10 @@ fun ListWaitingContinuationSeries(
                             showTopBar = !showTopBar
                         }
                     )
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        OnBackInvokedHandler {
-                            selectedSerial = null
-                            showTopBar = !showTopBar
-                        }
-                    } else {
-                        BackHandler {
-                            selectedSerial = null
-                            showTopBar = !showTopBar
-                        }
+                    AdaptiveBackHandler {
+                        selectedSerial = null
+                        showTopBar = !showTopBar
                     }
-
                 }
             }
         }
@@ -288,6 +274,7 @@ fun ListWaitingContinuationSeries(
                         )
                     }
                 }
+
                 is LoadingState.Success -> {
                     LazyColumn(
                         state = listState,
@@ -346,7 +333,9 @@ fun ListWaitingContinuationSeries(
                                         }
                                         IconButton(
                                             onClick = { isVisible = false },
-                                            modifier = Modifier.size(50.dp).padding(end = 10.dp)
+                                            modifier = Modifier
+                                                .size(50.dp)
+                                                .padding(end = 10.dp)
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Close,
@@ -361,81 +350,11 @@ fun ListWaitingContinuationSeries(
                         }
                     }
                 }
+
                 is LoadingState.Error -> {
                     // TODO: Добавить логику работы при ошибке.
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun AddComment(
-    userData: User?,
-    movieViewModel: MovieViewModel,
-    selectedSerial: DomainSelectedMovieModel?,
-    context: Context,
-    onClick: () -> Unit
-) {
-    val (comment, setComment) = remember { mutableStateOf("") }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    CustomTextFieldForComments(
-        value = comment,
-        onValueChange = setComment,
-        placeholder = {
-            Text(
-                text = stringResource(R.string.button_leave_comment),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outline
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-        )
-    )
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        CustomTextButton(
-            textButton = stringResource(R.string.button_add),
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            endPadding = 15.dp,
-            onClickButton = {
-                userData?.let { user ->
-                    selectedSerial?.let { serial ->
-                        movieViewModel.addComment(
-                            dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
-                            movieId = serial.id.toDouble(),
-                            username = user.nikName,
-                            commentUser = comment
-                        )
-                        movieViewModel.savingChangeRecord(
-                            context = context,
-                            username = user.nikName,
-                            stringResourceId = R.string.record_added_comment_to_series,
-                            title = serial.nameFilm,
-                            newDataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
-                            entityId = serial.id
-                        )
-                        showToast(context, R.string.comment_added)
-                        setComment("")
-                        onClick()
-                    }
-                }
-            }
-        )
     }
 }

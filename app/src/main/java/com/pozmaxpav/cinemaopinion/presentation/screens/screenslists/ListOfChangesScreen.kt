@@ -41,16 +41,16 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
-import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.theme.CommentAddedColor
+import com.example.ui.presentation.theme.DeveloperCommentColor
+import com.example.ui.presentation.theme.FilmAddedColor
+import com.example.ui.presentation.theme.FilmDeleteColor
+import com.example.ui.presentation.theme.MovingElement
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.theme.CommentAddedColor
-import com.pozmaxpav.cinemaopinion.presentation.theme.DeveloperCommentColor
-import com.pozmaxpav.cinemaopinion.presentation.theme.FilmAddedColor
-import com.pozmaxpav.cinemaopinion.presentation.theme.FilmDeleteColor
-import com.pozmaxpav.cinemaopinion.presentation.theme.MovingElement
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -60,19 +60,20 @@ import java.util.Locale
 @Composable
 fun ListOfChangesScreen(
     navController: NavHostController,
+    systemViewModel: SystemViewModel,
     userViewModel: UserViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel(),
-    viewModel: MovieViewModel = hiltViewModel()
+    movieViewModel: MovieViewModel = hiltViewModel()
 ) {
-    val list by viewModel.listOfChanges.collectAsState()
-    val userData by userViewModel.userData.collectAsState()
-    val userId by mainViewModel.userId.collectAsState()
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
 
+    val list by movieViewModel.listOfChanges.collectAsState()
+    val userId by systemViewModel.userId.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
+
     LaunchedEffect(Unit) {
-        viewModel.getRecordsOfChanges()
+        movieViewModel.getRecordsOfChanges()
+        systemViewModel.getUserId()
     }
     LaunchedEffect(userId) {
         userViewModel.getUserData(userId)

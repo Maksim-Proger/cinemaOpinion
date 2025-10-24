@@ -1,16 +1,16 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
 import android.util.Log
+import com.example.core.utils.CoreDatabaseConstants.ENTRIES_KEY_LISTENER
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_USERS
+import com.example.core.utils.CoreDatabaseConstants.NODE_SERIES_CONTROL
+import com.example.core.utils.FirebaseListenerHolder
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
-import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
-import com.pozmaxpav.cinemaopinion.utilits.ENTRIES_KEY_LISTENER
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
-import com.pozmaxpav.cinemaopinion.utilits.NODE_SERIES_CONTROL
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton

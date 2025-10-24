@@ -50,19 +50,18 @@ import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account.AccountSettingMenu
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account.SharedListAlertDialog
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account.TextAwardsFields
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
 @Composable
 fun AccountScreen(
     navController: NavHostController,
+    userId: String,
     onClick: () -> Unit,
-    mainViewModel: MainViewModel = hiltViewModel(),
+    systemViewModel: SystemViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel()
 ) {
-
-    val userId by mainViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
     val listAwards by userViewModel.listAwards.collectAsState()
     var locationShowDialogEvents by remember { mutableStateOf(false) }
@@ -105,7 +104,6 @@ fun AccountScreen(
 
             AccountSettingMenu(
                 navController,
-                mainViewModel,
                 openDialog = { locationShowDialogEvents = true }
             )
         }

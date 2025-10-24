@@ -14,7 +14,6 @@ sealed class Route(val route: String) {
     data object ListSelectedGeneralSerials : Route(route = "list_selected_general_serials")
     data object ListSelectedMovies : Route(route = "list_selected_movies")
     data object ListWaitingContinuationSeries : Route(route = "list_waiting_continuation_series")
-    data object LoginScreen : Route(route = "login_screen")
 
     data object ListSharedScreen : Route(route = "list_shared_screen/{listId}/{title}") {
         fun getListId(listId: String, title: String) = "list_shared_screen/$listId/$title"

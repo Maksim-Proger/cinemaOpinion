@@ -12,10 +12,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.text.CustomTextField
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
-import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
+
 
 @Composable
 fun SharedListAlertDialog(

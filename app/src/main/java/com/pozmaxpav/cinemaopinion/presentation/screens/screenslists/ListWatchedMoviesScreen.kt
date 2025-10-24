@@ -45,42 +45,46 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WATCHED_MOVIES
+import com.example.core.utils.state.LoadingState
+import com.example.ui.presentation.components.CustomBottomSheet
+import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.components.lottie.CustomLottieAnimation
+import com.example.ui.presentation.components.text.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
-import com.pozmaxpav.cinemaopinion.presentation.components.lottie.CustomLottieAnimation
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
-import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
-import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListWatchedMovies(
     navController: NavHostController,
+    systemViewModel: SystemViewModel,
     movieViewModel: MovieViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val listState = rememberLazyListState()
+    val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     val listMovies by movieViewModel.movies.collectAsState()
     val stateMovies by movieViewModel.movieDownloadStatus.collectAsState()
-    val userId by mainViewModel.userId.collectAsState()
+    val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
 
     var showTopBar by remember { mutableStateOf(false) }
@@ -91,12 +95,8 @@ fun ListWatchedMovies(
 
     val (comment, setComment) = remember { mutableStateOf("") }
 
-    val listState = rememberLazyListState()
-    val context = LocalContext.current
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
     LaunchedEffect(Unit) {
+        systemViewModel.getUserId()
         movieViewModel.getMovies(NODE_LIST_WATCHED_MOVIES)
     }
     LaunchedEffect(userId) {
@@ -120,7 +120,7 @@ fun ListWatchedMovies(
     ) { innerPadding ->
 
         if (openBottomSheetChange) {
-            MyBottomSheet(
+            CustomBottomSheet(
                 onClose = { openBottomSheetChange = false },
                 content = {
                     userData?.let { user ->
@@ -141,13 +141,11 @@ fun ListWatchedMovies(
                 },
                 fraction = 0.5f
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetChange = false }
-            } else { BackHandler { openBottomSheetChange = false } }
+            AdaptiveBackHandler { openBottomSheetChange = false }
         }
 
         if (openBottomSheetComments) {
-            MyBottomSheet(
+            CustomBottomSheet(
                 onClose = { openBottomSheetComments = false },
                 content = {
                     CustomTextFieldForComments(
@@ -211,9 +209,7 @@ fun ListWatchedMovies(
                 },
                 fraction = 0.7f
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetComments = false }
-            } else { BackHandler { openBottomSheetComments = false } }
+            AdaptiveBackHandler { openBottomSheetComments = false }
         }
 
         selectedMovie?.let { movie ->
@@ -251,16 +247,9 @@ fun ListWatchedMovies(
                         showTopBar = !showTopBar
                     }
                 )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    OnBackInvokedHandler {
-                        selectedMovie = null
-                        showTopBar = !showTopBar
-                    }
-                } else {
-                    BackHandler {
-                        selectedMovie = null
-                        showTopBar = !showTopBar
-                    }
+                AdaptiveBackHandler {
+                    selectedMovie = null
+                    showTopBar = !showTopBar
                 }
             }
         }
@@ -280,6 +269,7 @@ fun ListWatchedMovies(
                         )
                     }
                 }
+
                 is LoadingState.Success -> {
                     Column(
                         modifier = Modifier
@@ -330,6 +320,7 @@ fun ListWatchedMovies(
                         }
                     }
                 }
+
                 is LoadingState.Error -> {
                     // TODO: Добавить логику работы при ошибке.
                 }

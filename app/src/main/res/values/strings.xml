@@ -24,7 +24,6 @@
     <string name="developer_message2">Ничего не произошло</string>
     <string name="untitled_movie">Фильм без названия</string>
     <string name="movie_is_not_uploaded">Фильм не загружен</string>
-    <string name="animation_for_rotating_icon">Анимация для поворота иконки</string>
     <string name="movie_was_deleted">Фильм удален, страницы нет</string>
     <string name="watched_movies_sup_text">Просмотренных фильмов:</string>
 
@@ -36,9 +35,7 @@
     <string name="title_account_screen">Профиль</string>
     <string name="title_series_control_screen">Контроль серий</string>
     <string name="title_media_news_screen">Медиа новости</string>
-    <string name="title_login_screen">Вход / Регистрация</string>
     <string name="title_listWatched_movies">Просмотренные</string>
-    <string name="title_page_description">Что нового:</string>
     <string name="title_page_personal_list">Личный список</string>
     <string name="title_page_movie_list">Список с фильмами</string>
 
@@ -71,7 +68,7 @@
     <string name="text_for_edit_nik_name_field">Имя пользователя</string>
     <string name="placeholder_for_edit_nik_name_field">Введите новое имя пользователя</string>
     <string name="placeholder_for_add_lastName_field">Введите фамилию пользователя</string>
-    <string name="text_for_add_name_field">Имя пользователя</string>
+
     <string name="placeholder_for_add_name_field">Введите имя пользователя</string>
     <string name="text_for_edit_email_field">Email</string>
     <string name="placeholder_for_edit_email_field">Введите новый Email</string>
@@ -87,8 +84,8 @@
     <!--  Text Button  -->
     <string name="button_leave_comment">Оставить комментарий</string>
     <string name="button_viewed">Просмотрен</string>
-    <string name="button_registration">Регистрация</string>
-    <string name="button_login">Вход</string>
+
+
     <string name="button_add">Добавить</string>
     <string name="button_save">Сохранить</string>
     <string name="button_add_to_yourself">Добавить к себе</string>
@@ -98,7 +95,6 @@
     <string name="text_buttons_film_card_to_general_list_movies">В общий список с фильмами</string>
     <string name="text_buttons_film_card_to_general_list_serials">В общий список с сериалами</string>
     <string name="button_viewed_screen">Просмотренные</string>
-    <string name="button_to_begin">Погнали</string>
     <string name="button_create_shared_list">Создать таблицу</string>
     <string name="button_move_to_series">Переместить в сериалы</string>
     <string name="button_move_to_waiting_list">Переместить в лист ожидания</string>
@@ -136,11 +132,7 @@
     <!--  Description Icons  -->
     <string name="description_floating_action_button_save">Floating Button Save</string>
     <string name="description_floating_action_button_settings">Floating Button Settings</string>
-    <string name="description_icon_account">Иконка аккаунта</string>
     <string name="description_icon_filter">Иконка фильтра</string>
-    <string name="description_clear_text">Clear Text</string>
-    <string name="description_icon_search">Иконка поиска</string>
-    <string name="description_icon_advanced_search">Иконка расширенного поиска</string>
     <string name="description_icon_edit">Icon Edit</string>
     <string name="description_icon_create_shared_list">Icon Create Shared List</string>
     <string name="description_icon_settings">Icon Settings</string>
@@ -151,9 +143,7 @@
     <string name="description_icon_series_control">Icon Series Control</string>
     <string name="description_icon_edit_change_name">Icon Edit Change Name</string>
     <string name="description_icon_add_lastName_name">Icon Add Lastname</string>
-    <string name="description_icon_add_name">Icon Add Name</string>
     <string name="description_icon_edit_change_lastname">Icon Edit Change Lastname</string>
-    <string name="description_icon_home_button">Icon Home Button</string>
     <string name="description_icon_previous_page_button">Icon Previous Page Button</string>
     <string name="description_icon_next_page_button">Icon Next Page Button</string>
     <string name="description_icon_back_button">Icon Back Button</string>

@@ -1,11 +1,10 @@
 package com.pozmaxpav.cinemaopinion.domain.usecase.system
 
-import com.pozmaxpav.cinemaopinion.di.SystemRepositoryQualifier
-import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemRepositoryApp
 import javax.inject.Inject
 
 class GetAppVersionUseCase @Inject constructor(
-    @SystemRepositoryQualifier private val repository: SystemRepository
+    private val repository: SystemRepositoryApp
 ) {
     operator fun invoke() : String? {
         return repository.getAppVersion()

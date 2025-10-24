@@ -3,8 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
+    id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
 }
 
@@ -14,10 +14,10 @@ android {
 
     defaultConfig {
         applicationId = "com.pozmaxpav.cinemaopinion"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
-        versionName = "ver:3.1:02.09.2025"
+        versionName = "ver:3.2:24.10.2025"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -65,11 +65,11 @@ android {
 
 dependencies {
 
-    // Module
-    implementation(project(":introductoryscreens"))
-
-    // LottieAnimation
-    implementation(libs.lottie.compose)
+    // Modules
+    implementation(project(":auth"))
+    implementation(project(":intro"))
+    implementation(project(":ui"))
+    implementation(project(":core"))
 
     // WebView
     implementation(libs.webkit)
@@ -78,7 +78,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database)
 
-    // Dagger Hilt
+    // Navigation + Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
@@ -99,19 +99,14 @@ dependencies {
     //Accompanist
     implementation(libs.accompanist.systemuicontroller)
 
-    // Расширяем библиотеку с иконками
-    implementation(libs.material.icons.extended)
-
     // Room
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
 
-    // DataStore
-    implementation(libs.datastore.preferences)
-
     // MaterialExpressive
-    implementation("androidx.compose.material3:material3-android:1.4.0-alpha14") // Разобраться почему Expressive работает только с этой версией
+    //implementation("androidx.compose.material3:material3-android:1.4.0-alpha14") // Разобраться почему Expressive работает только с этой версией
 
+    implementation(libs.material.icons.extended)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

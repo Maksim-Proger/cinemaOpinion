@@ -8,7 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.WebViewViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.WebViewViewModel
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable

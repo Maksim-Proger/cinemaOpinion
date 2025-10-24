@@ -2,26 +2,36 @@ package com.pozmaxpav.cinemaopinion.utilits
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 
 @Composable
 fun CheckAndUpdateAppVersion(
     context: Context,
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: SystemViewModel = hiltViewModel()
 ) {
+    val packageInfo = try {
+        context.packageManager.getPackageInfo(context.packageName, 0)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 
-    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-    val currentVersionApp = packageInfo.versionName
+    val currentVersionApp = packageInfo?.versionName
     val savedVersionApp by viewModel.versionApp.collectAsState()
 
-    if (currentVersionApp != savedVersionApp) {
-        viewModel.saveAppVersion(currentVersionApp.toString()) // TODO: Почему toString()
-        viewModel.saveResultChecking(false)
-    } else {
-        viewModel.saveResultChecking(true)
+    LaunchedEffect(currentVersionApp, savedVersionApp) {
+        if (currentVersionApp == null) return@LaunchedEffect
+
+        if (currentVersionApp != savedVersionApp) {
+            viewModel.saveAppVersion(currentVersionApp)
+            viewModel.saveResultChecking(false)
+        } else {
+            viewModel.saveResultChecking(true)
+        }
     }
 
 }

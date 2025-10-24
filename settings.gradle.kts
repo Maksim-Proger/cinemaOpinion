@@ -21,7 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Cinema Opinion"
 include(":app")
-include(":introductoryscreens")
+include(":intro")
 include(":auth")
 include(":core")
 include(":ui")

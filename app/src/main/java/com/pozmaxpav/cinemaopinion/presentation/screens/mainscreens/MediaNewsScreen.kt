@@ -41,12 +41,12 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.ui.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.theme.UrlLinkColor
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsModel
-import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.theme.UrlLinkColor
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.utilits.formatDate
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import kotlinx.coroutines.flow.filterNotNull
@@ -134,9 +134,11 @@ fun MediaNewsScreen(
 
             if (showPageSwitchingButtons) {
                 item {
-                    Row(modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(vertical = 16.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .padding(vertical = 16.dp)
+                    ) {
                         if (canGoForward) {
                             IconButton(
                                 modifier = Modifier.wrapContentWidth(),

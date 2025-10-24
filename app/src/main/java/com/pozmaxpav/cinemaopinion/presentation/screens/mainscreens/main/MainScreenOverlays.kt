@@ -8,16 +8,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomSearchBar
-import com.pozmaxpav.cinemaopinion.presentation.components.DatePickerFunction
-import com.pozmaxpav.cinemaopinion.presentation.components.PageDescription
-import com.pozmaxpav.cinemaopinion.presentation.components.PreviewAlertDialog
+import com.example.intro.presentation.pages.PageDescription
+import com.example.intro.presentation.pages.PreviewAlertDialog
+import com.example.ui.presentation.components.CustomBoxShowOverlay
+import com.example.ui.presentation.components.CustomSearchBar
+import com.example.ui.presentation.components.DatePickerFunction
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.AccountScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SearchFilterScreen
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 
 @Composable
 fun SearchBarOverlay(
@@ -69,7 +69,7 @@ fun PreviewOverlay(
 @Composable
 fun PageDescriptionOverlay(
     state: MainScreenState,
-    mainViewModel: MainViewModel
+    systemViewModel: SystemViewModel
 ) {
     if (state.locationShowPageAppDescription.value) {
         var flag by remember { mutableStateOf(false) }
@@ -84,7 +84,7 @@ fun PageDescriptionOverlay(
             }
         )
         LaunchedEffect(flag) {
-            mainViewModel.resetResultChecking()
+            systemViewModel.resetResultChecking()
         }
     }
 }
@@ -110,6 +110,7 @@ fun SearchFilterScreenOverlay(state: MainScreenState) {
 
 @Composable
 fun AccountScreenOverlay(
+    userId: String,
     state: MainScreenState,
     navController: NavHostController
 ) {
@@ -121,6 +122,7 @@ fun AccountScreenOverlay(
             content = {
                 AccountScreen(
                     navController,
+                    userId,
                     onClick = { state.onAccountButtonClick.value = false }
                 )
                 AdaptiveBackHandler { state.onAccountButtonClick.value = false }

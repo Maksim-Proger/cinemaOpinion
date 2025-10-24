@@ -12,44 +12,63 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.example.auth.domain.repository.system.UserPreferences
+import com.example.auth.presentation.navigation.AuthRoute
+import com.example.intro.presentation.introscreens.viewmodel.OnBoardingViewModel
+import com.example.intro.presentation.navigation.IntroRoute
+import com.example.ui.presentation.theme.AppTheme
+import com.example.ui.presentation.viewmodels.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.navigation.NavGraph
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.theme.CinemaOpinionTheme
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.ThemeViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.introduction.IntroductionScreensViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CheckAndUpdateAppVersion
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var userPreferences: UserPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            val themeViewModel: ThemeViewModel = hiltViewModel()
-            val mainViewModel: MainViewModel = hiltViewModel()
-            val introductionScreensViewModel: IntroductionScreensViewModel = hiltViewModel()
-            val startDestination by introductionScreensViewModel.startDestination.collectAsState()
-            val isLoading by introductionScreensViewModel.isLoading.collectAsState()
-            val registrationFlag by mainViewModel.registrationFlag.collectAsState()
             val context = LocalContext.current
+
+            val registrationFlag by userPreferences.registrationFlag.collectAsState()
+
+            // TODO: Переработать, чтобы уменьшить уровень привязки
+            val onBoardingViewModel: OnBoardingViewModel = hiltViewModel()
+            val hasEntered by onBoardingViewModel.hasUserEnteredApp.collectAsState(initial = false)
+
+            val themeViewModel: ThemeViewModel = hiltViewModel()
+            val systemViewModel: SystemViewModel = hiltViewModel()
 
             // Получаем "destination" из ярлыка
             val destinationFromShortcut = intent.extras?.getString("destination")
             val destination = destinationFromShortcut
-                ?: if (registrationFlag) startDestination else Route.LoginScreen.route
+                ?: if (registrationFlag) Route.MainScreen.route else AuthRoute.LOGIN_SCREEN
 
-            CinemaOpinionTheme(themeViewModel = themeViewModel) {
+            AppTheme(themeViewModel) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (!isLoading) {
+                    if (hasEntered) {
                         CheckAndUpdateAppVersion(context)
                         NavGraph(
                             themeViewModel = themeViewModel,
+                            systemViewModel = systemViewModel,
                             startDestination = destination
+                        )
+                    } else {
+                        NavGraph(
+                            themeViewModel = themeViewModel,
+                            systemViewModel = systemViewModel,
+                            startDestination = IntroRoute.ON_BOARDING_SCREEN
                         )
                     }
                 }

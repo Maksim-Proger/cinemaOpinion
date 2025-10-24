@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--  TopAppBarTitle  -->
+    <string name="title_login_screen">Вход / Регистрация</string>
+
+    <!--  Text Button  -->
+    <string name="button_save">Сохранить</string>
+    <string name="button_login">Вход</string>
+    <string name="button_registration">Регистрация</string>
+
+    <!--   Text of the fields   -->
+    <string name="text_for_name_field">Имя пользователя</string>
+    <string name="text_for_email_field">Email</string>
+    <string name="text_for_password_field">Password</string>
+
+
+    <!--  Description Icons  -->
+    <string name="description_icon_add_name">Icon Add Name</string>
+
+</resources>
