@@ -1,0 +1,46 @@
+package com.pozmaxpav.cinemaopinion.data.repository
+
+import android.content.Context
+import androidx.core.content.edit
+
+object SharedPreferencesApp {
+    private const val SYSTEM_PREFERENCES_APP = "system_preferences_app"
+    private const val APP_VERSION = "app_version"
+    private const val RESULT_CHECKING_APP_VERSION = "result_checking"
+    private const val USER_ID = "user_id"
+
+    fun saveUserId(context: Context, userId: String) {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        sharedPreferences.edit {
+            putString(USER_ID, userId)
+        }
+    }
+
+    fun getUserId(context: Context): String? {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(USER_ID, null)
+    }
+
+    fun saveAppVersion(context: Context, version: String) {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        sharedPreferences.edit {
+            putString(APP_VERSION, version)
+        }
+    }
+    fun getAppVersion(context: Context): String? {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(APP_VERSION, null)
+
+    }
+
+    fun saveResultChecking(context: Context, resultChecking: Boolean) {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        sharedPreferences.edit {
+            putBoolean(RESULT_CHECKING_APP_VERSION, resultChecking)
+        }
+    }
+    fun getResultChecking(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(RESULT_CHECKING_APP_VERSION, false)
+    }
+}

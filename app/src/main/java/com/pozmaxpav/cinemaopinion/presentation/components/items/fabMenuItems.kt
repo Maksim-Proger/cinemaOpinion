@@ -13,7 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.components.FABMenuItemData
+import com.example.ui.presentation.components.fab.FABMenuItemData
 
 @Composable
 fun fabMenuItems(

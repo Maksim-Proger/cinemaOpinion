@@ -40,17 +40,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.utils.state.LoadingState
+import com.example.ui.presentation.components.CustomBottomSheet
+import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.lottie.CustomLottieAnimation
+import com.example.ui.presentation.components.text.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.presentation.components.lottie.CustomLottieAnimation
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
-import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.showToast
-import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -112,7 +112,7 @@ private fun OtherActions(
     ) {
 
         if (openBottomSheetComments) {
-            MyBottomSheet(
+            CustomBottomSheet(
                 onClose = {
                     openBottomSheetComments = !openBottomSheetComments
                 },

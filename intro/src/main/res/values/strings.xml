@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--  TopAppBarTitle  -->
+    <string name="title_page_description">Что нового:</string>
+
+    <!--  Text Button  -->
+    <string name="button_to_begin">Погнали</string>
+
+</resources>

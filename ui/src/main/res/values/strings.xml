@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--  General Strings  -->
+    <string name="animation_for_rotating_icon">Анимация для поворота иконки</string>
+
+    <!--  Description Icons  -->
+    <string name="description_icon_arrow_drop_down_button">Icon ArrowDropDown Button</string>
+    <string name="description_icon_dropdown_menu_button">Icon DropdownMenu Button</string>
+    <string name="description_icon_home_button">Icon Home Button</string>
+    <string name="description_icon_search_button">Icon Search Button</string>
+    <string name="description_icon_advanced_search_button">Icon Advanced Search Button</string>
+    <string name="description_icon_account_button">Icon Account Button</string>
+    <string name="description_icon_notifications_button">Icon Notifications Button</string>
+    <string name="description_icon_clear_text">Icon Clear Text</string>
+
+</resources>

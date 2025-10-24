@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
-import android.content.Context
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -23,9 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
@@ -45,60 +42,60 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_MOVIES
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_SERIALS
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WATCHED_MOVIES
+import com.example.core.utils.state.LoadingState
+import com.example.ui.presentation.components.CustomBottomSheet
+import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.ExpandedCard
+import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
-import com.pozmaxpav.cinemaopinion.presentation.components.lottie.CustomLottieAnimation
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
-import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
+import com.pozmaxpav.cinemaopinion.utilits.AddComment
 import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
-import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_WATCHED_MOVIES
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
-import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 
 @Composable
 fun ListSelectedGeneralMovies(
     navController: NavHostController,
+    systemViewModel: SystemViewModel,
     movieViewModel: MovieViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+    val listState = rememberLazyListState()
+
+    val userId by systemViewModel.userId.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
     val listMovies by movieViewModel.movies.collectAsState()
+    val stateMovie by movieViewModel.movieDownloadStatus.collectAsState()
+    val info by apiViewModel.informationMovie.collectAsState()
+
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
-    val userId by mainViewModel.userId.collectAsState()
-    val userData by userViewModel.userData.collectAsState()
-    val stateMovie by movieViewModel.movieDownloadStatus.collectAsState()
-    val info by apiViewModel.informationMovie.collectAsState()
-
-    val context = LocalContext.current
-    val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
+        systemViewModel.getUserId()
         movieViewModel.getMovies(NODE_LIST_MOVIES)
         movieViewModel.observeListMovies(NODE_LIST_MOVIES)
     }
@@ -119,7 +116,7 @@ fun ListSelectedGeneralMovies(
     ) {
 
         if (openBottomSheetChange) {
-            MyBottomSheet(
+            CustomBottomSheet(
                 onClose = { openBottomSheetChange = false },
                 content = {
                     userData?.let { user ->
@@ -140,28 +137,26 @@ fun ListSelectedGeneralMovies(
                 },
                 fraction = 0.5f
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetChange = false }
-            } else { BackHandler { openBottomSheetChange = false } }
+            AdaptiveBackHandler { openBottomSheetChange = false }
         }
 
         if (openBottomSheetComments) {
-            MyBottomSheet(
+            CustomBottomSheet(
                 onClose = { openBottomSheetComments = !openBottomSheetComments },
                 content = {
                     AddComment(
-                        userData = userData,
+                        dataUser = userData,
+                        dataSource = NODE_LIST_MOVIES,
+                        newDataSource = NODE_LIST_MOVIES,
                         movieViewModel = movieViewModel,
-                        selectedMovie = selectedMovie,
+                        selectedItem = selectedMovie,
                         context = context,
                         onClick = { openBottomSheetComments = false }
                     )
                 },
                 fraction = 0.7f
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetComments = false }
-            } else { BackHandler { openBottomSheetComments = false } }
+            AdaptiveBackHandler { openBottomSheetComments = false }
         }
 
         if (selectedMovie == null) {
@@ -268,9 +263,7 @@ fun ListSelectedGeneralMovies(
                     },
                     onClick = { selectedMovie = null }
                 )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    OnBackInvokedHandler { selectedMovie = null }
-                } else { BackHandler { selectedMovie = null } }
+                AdaptiveBackHandler { selectedMovie = null }
             }
         }
 
@@ -395,77 +388,5 @@ fun ListSelectedGeneralMovies(
             }
         }
         // endregion
-    }
-}
-
-@Composable
-private fun AddComment(
-    userData: User?,
-    movieViewModel: MovieViewModel,
-    selectedMovie: DomainSelectedMovieModel?,
-    context: Context,
-    onClick: () -> Unit
-) {
-    val (comment, setComment) = remember { mutableStateOf("") }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    CustomTextFieldForComments(
-        value = comment,
-        onValueChange = setComment,
-        placeholder = {
-            Text(
-                text = stringResource(R.string.placeholder_for_comment_field),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outline
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-        )
-    )
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        CustomTextButton(
-            textButton = "Добавить",
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            endPadding = 15.dp,
-            onClickButton = {
-                userData?.let { user ->
-                    selectedMovie?.let { movie ->
-                        movieViewModel.addComment(
-                            dataSource = NODE_LIST_MOVIES,
-                            movieId = movie.id.toDouble(),
-                            username = user.nikName,
-                            commentUser = comment
-                        )
-                        movieViewModel.savingChangeRecord(
-                            context = context,
-                            username = user.nikName,
-                            stringResourceId = R.string.record_added_comment_to_movie,
-                            title = movie.nameFilm,
-                            newDataSource = NODE_LIST_MOVIES,
-                            entityId = movie.id
-                        )
-                        showToast(context, R.string.comment_added)
-                        setComment("")
-                        onClick()
-                    }
-                }
-            }
-        )
     }
 }

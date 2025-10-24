@@ -49,52 +49,56 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.domain.DomainUserModel
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_MOVIES
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_PERSONAL_MOVIES
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_SERIALS
+import com.example.core.utils.state.LoadingState
+import com.example.ui.presentation.components.CustomBottomSheet
+import com.example.ui.presentation.components.CustomBoxShowOverlay
+import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.ExpandedCard
+import com.example.ui.presentation.components.lottie.CustomLottieAnimation
+import com.example.ui.presentation.components.text.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
-import com.pozmaxpav.cinemaopinion.presentation.components.lottie.CustomLottieAnimation
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
-import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
-import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_PERSONAL_MOVIES
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
-import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
 
 @Composable
 fun ListSelectedMovies(
     navController: NavHostController,
+    systemViewModel: SystemViewModel,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     firebaseViewModel: MovieViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
     sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+    val listState = rememberLazyListState()
 
     val stateMovie by firebaseViewModel.movieDownloadStatus.collectAsState()
     val listSelectedMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
-    val userId by mainViewModel.userId.collectAsState()
+    val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
+
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
@@ -102,9 +106,9 @@ fun ListSelectedMovies(
     var openSharedLists by remember { mutableStateOf(false) }
     var triggerOnClickSharedMovie by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
-    val listState = rememberLazyListState()
-
+    LaunchedEffect(Unit) {
+        systemViewModel.getUserId()
+    }
     LaunchedEffect(userId) {
         personalMovieViewModel.getMovies(userId)
         personalMovieViewModel.observeMovies(userId)
@@ -153,14 +157,14 @@ fun ListSelectedMovies(
         }
 
         if (openBottomSheetChange) {
-            MyBottomSheet(
+            CustomBottomSheet(
                 onClose = { openBottomSheetChange = false },
                 content = {
                     userData?.let { user ->
-                        selectedMovie?.let { movie->
+                        selectedMovie?.let { movie ->
                             selectedComment?.let { comment ->
                                 ChangeComment(
-                                    userId = userId,
+                                    userId = user.id,
                                     userName = user.nikName,
                                     selectedMovieId = movie.id,
                                     selectedComment = comment,
@@ -174,23 +178,18 @@ fun ListSelectedMovies(
                 },
                 fraction = 0.5f
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetChange = false }
-            } else {
-                BackHandler { openBottomSheetChange = false }
-            }
+            AdaptiveBackHandler { openBottomSheetChange = false }
         }
 
         if (openBottomSheetComments) {
-            MyBottomSheet(
+            CustomBottomSheet(
                 onClose = { openBottomSheetComments = false },
                 content = {
                     AddComment(
-                        personalMovieViewModel,
-                        userId,
-                        selectedMovie,
-                        userData,
-                        context,
+                        personalMovieViewModel = personalMovieViewModel,
+                        domainUserModelData = userData,
+                        selectedMovie = selectedMovie,
+                        context = context,
                         onClick = {
                             openBottomSheetComments = false
                         }
@@ -198,11 +197,7 @@ fun ListSelectedMovies(
                 },
                 fraction = 0.7f
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                OnBackInvokedHandler { openBottomSheetComments = false }
-            } else {
-                BackHandler { openBottomSheetComments = false }
-            }
+            AdaptiveBackHandler { openBottomSheetComments = false }
         }
 
         selectedMovie?.let { movie ->
@@ -223,7 +218,8 @@ fun ListSelectedMovies(
                     openDescription = {
                         ExpandedCard(
                             title = stringResource(R.string.text_for_expandedCard_field),
-                            description = info?.description ?: stringResource(R.string.limit_is_over),
+                            description = info?.description
+                                ?: stringResource(R.string.limit_is_over),
                         )
                     },
                     movieTransferButtonToSharedList = {
@@ -297,10 +293,7 @@ fun ListSelectedMovies(
                     onClick = { selectedMovie = null }
                 )
 
-                // TODO: Разобраться почему не работает новая анимация
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    OnBackInvokedHandler { selectedMovie = null }
-                } else { BackHandler { selectedMovie = null } }
+                AdaptiveBackHandler { selectedMovie = null }
             }
         }
 
@@ -323,6 +316,7 @@ fun ListSelectedMovies(
                             )
                         }
                     }
+
                     is LoadingState.Success -> {
                         LazyColumn(
                             state = listState,
@@ -336,7 +330,9 @@ fun ListSelectedMovies(
 
                                 LaunchedEffect(isVisible) {
                                     if (!isVisible) {
-                                        personalMovieViewModel.deleteMovie(userId, movie.id)
+                                        personalMovieViewModel.deleteMovie(
+                                            userId = userId, selectedMovieId = movie.id
+                                        )
                                     }
                                 }
 
@@ -370,7 +366,9 @@ fun ListSelectedMovies(
                                             }
                                             IconButton(
                                                 onClick = { isVisible = false },
-                                                modifier = Modifier.size(50.dp).padding(end = 10.dp)
+                                                modifier = Modifier
+                                                    .size(50.dp)
+                                                    .padding(end = 10.dp)
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Default.Close,
@@ -385,6 +383,7 @@ fun ListSelectedMovies(
                             }
                         }
                     }
+
                     is LoadingState.Error -> {
                         // TODO: Добавить логику работы при ошибке.
                     }
@@ -419,9 +418,8 @@ fun ListSelectedMovies(
 @Composable
 private fun AddComment(
     personalMovieViewModel: PersonalMovieViewModel,
-    userId: String,
+    domainUserModelData: DomainUserModel?,
     selectedMovie: DomainSelectedMovieModel?,
-    userData: User?,
     context: Context,
     onClick: () -> Unit
 ) {
@@ -464,9 +462,9 @@ private fun AddComment(
             endPadding = 15.dp,
             onClickButton = {
                 selectedMovie?.let { movie ->
-                    userData?.let { user ->
+                    domainUserModelData?.let { user ->
                         personalMovieViewModel.addComment(
-                            userId = userId,
+                            userId = user.id,
                             selectedMovieId = movie.id,
                             username = user.nikName,
                             textComment = comment

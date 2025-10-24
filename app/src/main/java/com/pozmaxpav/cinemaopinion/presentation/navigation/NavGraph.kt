@@ -1,18 +1,17 @@
 package com.pozmaxpav.cinemaopinion.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.introductoryscreens.ui.onboarding.OnBoardingScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.LoginScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.ScaffoldMainScreen
+import com.example.auth.presentation.navigation.authNavGraph
+import com.example.intro.presentation.navigation.introNavGraph
+import com.example.ui.presentation.viewmodels.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.MediaNewsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.SeriesControlScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.ScaffoldMainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListOfChangesScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralSerials
@@ -24,47 +23,52 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.EditPers
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.MovieDetailScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SettingsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.WebViewScreen
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.ThemeViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.introduction.OnBoardingViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
 @Composable
 fun NavGraph(
     themeViewModel: ThemeViewModel,
+    systemViewModel: SystemViewModel,
     startDestination: String
 ) {
-
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-
-        navigation(
-            route = Route.AppStartNavigation.route,
-            startDestination = Route.OnBoardingScreen.route
-        ) {
-            composable(route = Route.OnBoardingScreen.route) {
-                val viewModel: OnBoardingViewModel = hiltViewModel()
-                OnBoardingScreen(
-                    event = {
-                        viewModel.onEvent(it)
-                    }
-                )
-            }
+        composable(Route.MainScreen.route) {
+            ScaffoldMainScreen(navController, systemViewModel)
         }
-        composable(Route.MainScreen.route) { ScaffoldMainScreen(navController) }
         composable(Route.MediaNewsScreen.route) { MediaNewsScreen(navController) }
-        composable(Route.ListOfChangesScreen.route) { ListOfChangesScreen(navController) }
-        composable(Route.EditPersonalInformationScreen.route) { EditPersonalInformationScreen(navController) }
-        composable(Route.SeriesControlScreen.route) { SeriesControlScreen(navController) }
-        composable(Route.SettingsScreen.route) { SettingsScreen(themeViewModel, navController) }
-        composable(Route.ListWatchedMovies.route) { ListWatchedMovies(navController) }
-        composable(Route.ListSelectedGeneralMovies.route) { ListSelectedGeneralMovies(navController) }
-        composable(Route.ListSelectedGeneralSerials.route) { ListSelectedGeneralSerials(navController) }
-        composable(Route.ListSelectedMovies.route) { ListSelectedMovies(navController) }
-        composable(Route.ListWaitingContinuationSeries.route) { ListWaitingContinuationSeries(navController) }
-        composable(Route.LoginScreen.route) { LoginScreen(navController) }
+        composable(Route.ListOfChangesScreen.route) {
+            ListOfChangesScreen(navController, systemViewModel)
+        }
+        composable(Route.EditPersonalInformationScreen.route) {
+            EditPersonalInformationScreen(navController, systemViewModel)
+        }
+        composable(Route.SeriesControlScreen.route) {
+            SeriesControlScreen(navController, systemViewModel)
+        }
+        composable(Route.SettingsScreen.route) {
+            SettingsScreen(themeViewModel, navController)
+        }
+        composable(Route.ListWatchedMovies.route) {
+            ListWatchedMovies(navController, systemViewModel)
+        }
+        composable(Route.ListSelectedGeneralMovies.route) {
+            ListSelectedGeneralMovies(navController, systemViewModel)
+        }
+        composable(Route.ListSelectedGeneralSerials.route) {
+            ListSelectedGeneralSerials(navController, systemViewModel)
+        }
+        composable(Route.ListSelectedMovies.route) {
+            ListSelectedMovies(navController, systemViewModel)
+        }
+        composable(Route.ListWaitingContinuationSeries.route) {
+            ListWaitingContinuationSeries(navController, systemViewModel)
+        }
         composable(
             Route.ListSharedScreen.route,
             arguments = listOf(
@@ -76,6 +80,7 @@ fun NavGraph(
             val title = backStackEntry.arguments?.getString("title") ?: ""
             ListSharedScreen(
                 navController = navController,
+                systemViewModel = systemViewModel,
                 listId = listId,
                 title = title
             )
@@ -83,8 +88,12 @@ fun NavGraph(
 
         composable( // TODO: В Route это заносить не нужно?
             "webView/{url}", // Шаблон маршрута с аргументом "url"
-            arguments = listOf(navArgument("url") { type = NavType.StringType })
-        ) { WebViewScreen() }
+            arguments = listOf(
+                navArgument("url") { type = NavType.StringType }
+            )
+        ) {
+            WebViewScreen()
+        }
 
         composable(
             Route.MovieDetailScreen.route,
@@ -104,6 +113,16 @@ fun NavGraph(
                 userName = userName
             )
         }
+
+        authNavGraph(
+            onLoginSuccess = { userId ->
+                systemViewModel.saveUserId(userId)
+                navigateFunction(navController, Route.MainScreen.route)
+            }
+        )
+
+        introNavGraph()
+
     }
 }
 

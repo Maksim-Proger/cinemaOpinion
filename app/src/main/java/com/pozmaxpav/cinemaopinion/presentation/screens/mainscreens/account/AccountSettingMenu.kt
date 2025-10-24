@@ -2,7 +2,6 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
@@ -19,23 +18,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.ui.presentation.components.dropmenu.DropdownMenuItem
+import com.example.ui.presentation.components.dropmenu.SettingsMenu
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.components.MyDropdownMenuItem
-import com.pozmaxpav.cinemaopinion.presentation.components.SettingsMenu
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunctionClearAllScreens
-import kotlinx.coroutines.launch
 
 @Composable
 fun AccountSettingMenu(
     navController: NavHostController,
-    mainViewModel: MainViewModel,
-    userViewModel: UserViewModel = hiltViewModel(),
     openDialog: () -> Unit = {}
 ) {
     var triggerOnClickCloseMenu by remember { mutableStateOf(false) }
@@ -45,7 +37,7 @@ fun AccountSettingMenu(
 
         LaunchedEffect(triggerOnClickCloseMenu) { if (triggerOnClickCloseMenu) { closeMenu() } }
 
-        MyDropdownMenuItem(
+        DropdownMenuItem(
             onAction = {
                 openDialog()
                 triggerOnClickCloseMenu = true
@@ -60,7 +52,7 @@ fun AccountSettingMenu(
             }
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-        MyDropdownMenuItem(
+        DropdownMenuItem(
             onAction = {
                 navigateFunction(navController, Route.EditPersonalInformationScreen.route)
                 triggerOnClickCloseMenu = true
@@ -75,7 +67,7 @@ fun AccountSettingMenu(
             }
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-        MyDropdownMenuItem(
+        DropdownMenuItem(
             onAction = {
                 navigateFunction(navController, Route.SettingsScreen.route)
                 triggerOnClickCloseMenu = true
@@ -89,23 +81,23 @@ fun AccountSettingMenu(
                 )
             }
         )
-        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-        MyDropdownMenuItem(
-            onAction = {
-                coroutineScope.launch {
-                    mainViewModel.logout { userViewModel.clearFlag() }
-                    navigateFunctionClearAllScreens(navController, Route.LoginScreen.route)
-                    triggerOnClickCloseMenu = true
-                }
-            },
-            title = stringResource(R.string.drop_down_menu_item_exit),
-            leadingIcon = {
-                Icon(
-                    Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = stringResource(id = R.string.description_icon_exit),
-                    tint = MaterialTheme.colorScheme.onSecondary
-                )
-            }
-        )
+//        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+//        DropdownMenuItem( TODO: Это логика переехала в другой модуль, СОГЛАСОВАТЬ!
+//            onAction = {
+//                coroutineScope.launch {
+//                    systemViewModel.logout { userViewModel.clearFlag() }
+//                    navigateFunctionClearAllScreens(navController, Route.LoginScreen.route)
+//                    triggerOnClickCloseMenu = true
+//                }
+//            },
+//            title = stringResource(R.string.drop_down_menu_item_exit),
+//            leadingIcon = {
+//                Icon(
+//                    Icons.AutoMirrored.Filled.Logout,
+//                    contentDescription = stringResource(id = R.string.description_icon_exit),
+//                    tint = MaterialTheme.colorScheme.onSecondary
+//                )
+//            }
+//        )
     }
 }

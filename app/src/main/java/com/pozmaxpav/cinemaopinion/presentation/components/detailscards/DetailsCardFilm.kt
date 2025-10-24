@@ -36,19 +36,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_MOVIES
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_SERIALS
+import com.example.ui.presentation.components.CustomBoxShowOverlay
+import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomBoxShowOverlay
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 import com.pozmaxpav.cinemaopinion.utilits.formatCountries
 import com.pozmaxpav.cinemaopinion.utilits.formatGenres
@@ -58,16 +58,16 @@ import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 @Composable
 fun DetailsCardFilm(
     movie: MovieData?,
+    userId: String,
     onCloseButton: () -> Unit,
     padding: PaddingValues,
     navController: NavHostController,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     movieViewModel: MovieViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel(),
+    systemViewModel: SystemViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel()
 ) {
-    val userId by mainViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     val detailedInformationAboutFilm by apiViewModel.detailedInformationAboutFilm.collectAsState()

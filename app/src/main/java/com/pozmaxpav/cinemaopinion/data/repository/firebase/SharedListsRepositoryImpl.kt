@@ -1,5 +1,11 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
+import com.example.core.domain.DomainUserModel
+import com.example.core.utils.CoreDatabaseConstants.NODE_COMMENTS
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_USERS
+import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST
+import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_MOVIES
+import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_PROFILE
 import com.google.firebase.database.DatabaseReference
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
@@ -8,13 +14,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainMySharedListModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SharedListsRepository
-import com.pozmaxpav.cinemaopinion.utilits.NODE_COMMENTS
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
-import com.pozmaxpav.cinemaopinion.utilits.NODE_SHARED_LIST
-import com.pozmaxpav.cinemaopinion.utilits.NODE_SHARED_LIST_MOVIES
-import com.pozmaxpav.cinemaopinion.utilits.NODE_SHARED_LIST_PROFILE
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -44,6 +44,7 @@ class SharedListsRepositoryImpl @Inject constructor(
         // пишем в него данные
         movieRef.setValue(selectedMovie).await()
     }
+
     override suspend fun getMovies(listId: String): List<DomainSelectedMovieModel> {
         if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
 
@@ -108,6 +109,7 @@ class SharedListsRepositoryImpl @Inject constructor(
             .await()
 
     }
+
     override suspend fun getComments(listId: String, movieId: Int): List<DomainCommentModel> {
         if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
 
@@ -165,6 +167,7 @@ class SharedListsRepositoryImpl @Inject constructor(
             e.printStackTrace()
         }
     }
+
     override suspend fun getSharedLists(userId: String): List<DomainSharedListModel> {
 
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
@@ -260,7 +263,11 @@ class SharedListsRepositoryImpl @Inject constructor(
         // endregion
 
     }
-    private suspend fun getNikNamesUsers(userCreatorId: String, invitedUserAddress: String): String {
+
+    private suspend fun getNikNamesUsers(
+        userCreatorId: String,
+        invitedUserAddress: String
+    ): String {
 
         // Получаем ники без создания полных объектов User
         val creatorNick = databaseReference
@@ -271,7 +278,7 @@ class SharedListsRepositoryImpl @Inject constructor(
             .await()
             .children
             .firstOrNull()
-            ?.getValue(User::class.java)
+            ?.getValue(DomainUserModel::class.java)
             ?.nikName
             ?: ""  // или другое значение по умолчанию
 
@@ -283,7 +290,7 @@ class SharedListsRepositoryImpl @Inject constructor(
             .await()
             .children
             .firstOrNull()
-            ?.getValue(User::class.java)
+            ?.getValue(DomainUserModel::class.java)
             ?.nikName
             ?: ""  // или другое значение по умолчанию
 

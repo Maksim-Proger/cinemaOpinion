@@ -1,22 +1,22 @@
 package com.pozmaxpav.cinemaopinion.data.mappers
 
-import com.pozmaxpav.cinemaopinion.data.models.api.ApiCountry
-import com.pozmaxpav.cinemaopinion.data.models.api.ApiGenre
-import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovie
-import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieList
-import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieSearch
-import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieSearch2
-import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieTop
-import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieTopList
-import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieSearchList
-import com.pozmaxpav.cinemaopinion.data.models.api.ApiMovieSearchList2
+import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiCountry
+import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiGenre
+import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovie
+import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovieList
+import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovieSearch
+import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovieSearch2
+import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovieSearchList
+import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovieSearchList2
+import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovieTop
+import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Country
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieList
-import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList2
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieTopList
 
 fun ApiGenre.toDomain(): Genre {
     return Genre(

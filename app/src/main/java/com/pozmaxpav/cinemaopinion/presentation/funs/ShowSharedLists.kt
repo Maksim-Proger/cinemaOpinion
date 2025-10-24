@@ -19,7 +19,7 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SharedListItem
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 
 @Composable
 fun ShowSharedLists(

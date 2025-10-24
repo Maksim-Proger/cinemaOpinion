@@ -1,24 +1,22 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
 import android.util.Log
+import com.example.core.utils.CoreDatabaseConstants.COMMENTS_KEY_LISTENER
+import com.example.core.utils.CoreDatabaseConstants.MOVIES_KEY_LISTENER
+import com.example.core.utils.CoreDatabaseConstants.NODE_COMMENTS
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_CHANGES_RECORDS
+import com.example.core.utils.FirebaseListenerHolder
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
-import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
 import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
-import com.pozmaxpav.cinemaopinion.utilits.COMMENTS_KEY_LISTENER
-import com.pozmaxpav.cinemaopinion.utilits.MOVIES_KEY_LISTENER
-import com.pozmaxpav.cinemaopinion.utilits.NODE_COMMENTS
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_MOVIES
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_SERIALS
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -255,12 +253,12 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
     private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
-        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
+        val snapshot = databaseReference.child(NODE_LIST_CHANGES_RECORDS).get().await()
         snapshot.children.forEach { childSnapshot ->
             val result = childSnapshot.getValue(DomainChangelogModel::class.java)
             if (result?.entityId == movieId.toInt()) {
                 val updates = mapOf("newDataSource" to directionDataSource)
-                databaseReference.child(NODE_LIST_CHANGES).child(childSnapshot.key!!).updateChildren(updates).await()
+                databaseReference.child(NODE_LIST_CHANGES_RECORDS).child(childSnapshot.key!!).updateChildren(updates).await()
             }
         }
     }

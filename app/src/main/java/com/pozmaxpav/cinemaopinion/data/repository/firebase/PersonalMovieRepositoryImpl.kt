@@ -1,11 +1,17 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
 import android.util.Log
+import com.example.core.utils.CoreDatabaseConstants.COMMENTS_KEY_LISTENER
+import com.example.core.utils.CoreDatabaseConstants.MOVIES_KEY_LISTENER
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_CHANGES_RECORDS
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_PERSONAL_MOVIES
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_USERS
+import com.example.core.utils.CoreDatabaseConstants.NODE_PERSONAL_COMMENTS
+import com.example.core.utils.FirebaseListenerHolder
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
-import com.pozmaxpav.cinemaopinion.data.listeners.FirebaseListenerHolder
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
 import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
@@ -13,12 +19,6 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepository
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_PERSONAL_MOVIES
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_USERS
-import com.pozmaxpav.cinemaopinion.utilits.NODE_PERSONAL_COMMENTS
-import com.pozmaxpav.cinemaopinion.utilits.COMMENTS_KEY_LISTENER
-import com.pozmaxpav.cinemaopinion.utilits.MOVIES_KEY_LISTENER
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -41,7 +41,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             .children.firstOrNull()?.key
             ?: throw IllegalArgumentException("User with ID $userId not found.")
 
-        val newSelectedMovieId = databaseReference // TODO: неправильно название переменной
+        val newSelectedMovieId = databaseReference
             .child(NODE_LIST_USERS)
             .child(userSnapshot)
             .child(NODE_LIST_PERSONAL_MOVIES)
@@ -55,6 +55,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             .setValue(selectedMovie)
             .await()
     }
+
     override suspend fun getMovies(userId: String): List<DomainSelectedMovieModel> {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
@@ -75,7 +76,11 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             .await()
             .children.mapNotNull { it.getValue(DomainSelectedMovieModel::class.java) }
     }
-    override suspend fun observeListMovies(userId: String, onSelectedMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit) {
+
+    override suspend fun observeListMovies(
+        userId: String,
+        onSelectedMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit
+    ) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
         databaseReference
@@ -114,6 +119,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                 }
             })
     }
+
     override suspend fun deleteMovie(userId: String, selectedMovieId: Int) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
         val userKey = databaseReference
@@ -140,7 +146,11 @@ class PersonalMovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addComment(userId: String, selectedMovieId: Int, comment: DomainCommentModel) {
+    override suspend fun addComment(
+        userId: String,
+        selectedMovieId: Int,
+        comment: DomainCommentModel
+    ) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
         val userKey = databaseReference
@@ -184,7 +194,11 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                 .await()
         }
     }
-    override suspend fun getComments(userId: String, selectedMovieId: Int): List<DomainCommentModel> {
+
+    override suspend fun getComments(
+        userId: String,
+        selectedMovieId: Int
+    ): List<DomainCommentModel> {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
         val userKey = databaseReference
@@ -220,6 +234,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             it.getValue(DataComment::class.java)?.commentToDomain()
         }
     }
+
     override suspend fun observeListComments(
         userId: String,
         selectedMovieId: Int,
@@ -260,19 +275,24 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                                     .child(movieKey)
                                     .child(NODE_PERSONAL_COMMENTS)
 
-                                val listener = commentsRef.addValueEventListener(object : ValueEventListener {
-                                    override fun onDataChange(commentsSnapshot: DataSnapshot) {
-                                        val comments = commentsSnapshot.children.mapNotNull {
-                                            it.getValue(DataComment::class.java)?.commentToDomain()
+                                val listener =
+                                    commentsRef.addValueEventListener(object : ValueEventListener {
+                                        override fun onDataChange(commentsSnapshot: DataSnapshot) {
+                                            val comments = commentsSnapshot.children.mapNotNull {
+                                                it.getValue(DataComment::class.java)
+                                                    ?.commentToDomain()
+                                            }
+                                            onCommentsUpdated(comments)
                                         }
-                                        onCommentsUpdated(comments)
-                                    }
 
-                                    override fun onCancelled(error: DatabaseError) {
-                                        Log.e("Firebase", "Error loading comments: ${error.message}")
-                                        onCommentsUpdated(emptyList())
-                                    }
-                                })
+                                        override fun onCancelled(error: DatabaseError) {
+                                            Log.e(
+                                                "Firebase",
+                                                "Error loading comments: ${error.message}"
+                                            )
+                                            onCommentsUpdated(emptyList())
+                                        }
+                                    })
                                 listenerHolder.addListener(COMMENTS_KEY_LISTENER, listener)
                             }
 
@@ -289,6 +309,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                 }
             })
     }
+
     override suspend fun updateComment(
         userId: String,
         selectedMovieId: Int,
@@ -400,13 +421,15 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             e.printStackTrace()
         }
     }
+
     private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
-        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
+        val snapshot = databaseReference.child(NODE_LIST_CHANGES_RECORDS).get().await()
         snapshot.children.forEach { childSnapshot ->
             val result = childSnapshot.getValue(DomainChangelogModel::class.java)
             if (result?.entityId == movieId.toInt()) {
                 val updates = mapOf("newDataSource" to directionDataSource)
-                databaseReference.child(NODE_LIST_CHANGES).child(childSnapshot.key!!).updateChildren(updates).await()
+                databaseReference.child(NODE_LIST_CHANGES_RECORDS).child(childSnapshot.key!!)
+                    .updateChildren(updates).await()
             }
         }
     }
@@ -414,6 +437,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
     override fun removeMoviesListener() {
         listenerHolder.removeListener(MOVIES_KEY_LISTENER)
     }
+
     override fun removeCommentsListener() {
         listenerHolder.removeListener(COMMENTS_KEY_LISTENER)
     }

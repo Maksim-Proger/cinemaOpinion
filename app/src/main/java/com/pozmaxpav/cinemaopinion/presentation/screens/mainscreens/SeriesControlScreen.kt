@@ -49,18 +49,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.ui.presentation.components.CustomBottomSheet
+import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.components.fab.FABMenu
+import com.example.ui.presentation.components.text.CustomTextField
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
-import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
-import com.pozmaxpav.cinemaopinion.presentation.components.FABMenu
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SeriesControlItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SeriesControlViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
-import com.pozmaxpav.cinemaopinion.utilits.CustomTextField
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
@@ -68,27 +68,30 @@ import com.pozmaxpav.cinemaopinion.utilits.showToast
 @Composable
 fun SeriesControlScreen(
     navController: NavHostController,
-    seriesControlViewModel: SeriesControlViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel()
+    systemViewModel: SystemViewModel,
+    seriesControlViewModel: SeriesControlViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val context = LocalContext.current
+    val listState = rememberLazyListState()
 
     val listMovies by seriesControlViewModel.listMovies.collectAsState()
-    val userId by mainViewModel.userId.collectAsState()
+    val userId by systemViewModel.userId.collectAsState()
+
     var selectedEntry by remember { mutableStateOf<DomainSeriesControlModel?>(null) }
     var openBottomSheetAdd by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
-    val listState = rememberLazyListState()
-
+    LaunchedEffect(Unit) {
+        systemViewModel.getUserId()
+    }
     LaunchedEffect(userId) {
         seriesControlViewModel.getListEntries(userId)
         seriesControlViewModel.observeListEntries(userId)
     }
 
     if (openBottomSheetAdd) {
-        MyBottomSheet(
+        CustomBottomSheet(
             onClose = { openBottomSheetAdd = false },
             content = {
                 AddItem(
@@ -108,7 +111,7 @@ fun SeriesControlScreen(
     }
 
     if (openBottomSheetChange) {
-        MyBottomSheet(
+        CustomBottomSheet(
             onClose = { openBottomSheetChange = false },
             content = {
                 ChangeItem(
@@ -197,7 +200,9 @@ fun SeriesControlScreen(
 
                             IconButton(
                                 onClick = { isVisible = false },
-                                modifier = Modifier.size(50.dp).padding(end = 10.dp)
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(end = 10.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Close,

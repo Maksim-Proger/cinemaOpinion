@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.items.MovieItem
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 
 @Composable
 fun FetchMovies(

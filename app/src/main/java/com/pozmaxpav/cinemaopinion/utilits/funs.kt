@@ -14,22 +14,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.selection.LocalTextSelectionColors
-import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,32 +30,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.core.domain.DomainUserModel
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_MOVIES
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_SERIALS
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WAITING_CONTINUATION_SERIES
+import com.example.core.utils.state.LoadingState
+import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.lottie.CustomLottieAnimation
+import com.example.ui.presentation.components.text.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Country
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Genre
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.presentation.components.lottie.CustomLottieAnimation
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.MainScreenState
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.MovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
-import com.pozmaxpav.cinemaopinion.utilits.state.LoadingState
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import java.text.SimpleDateFormat
 import java.time.DateTimeException
 import java.time.LocalDateTime
@@ -72,142 +66,6 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
-
-@Composable
-fun CustomTextField(
-    value: String,
-    verticalPadding: Dp = 15.dp,
-    horizontalPadding: Dp = 15.dp,
-    onValueChange: (String) -> Unit,
-    label: @Composable (() -> Unit)? = null,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    imeAction: ImeAction = ImeAction.Default,
-    singleLine: Boolean = true
-) {
-
-    // Определяем цвета для ползунка и выделения
-    val customSelectionColors = TextSelectionColors(
-        handleColor = MaterialTheme.colorScheme.onPrimary, // цвет ползунка
-        backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f) // фон выделенного текста
-    )
-
-    CompositionLocalProvider(LocalTextSelectionColors provides customSelectionColors) {
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-            value = value,
-            shape = RoundedCornerShape(16.dp),
-            onValueChange = onValueChange,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
-
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-
-                focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                unfocusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-
-                focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-
-                focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-                unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-
-                cursorColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            label = label,
-            placeholder = placeholder,
-            leadingIcon = leadingIcon,
-            trailingIcon = if (value.isNotEmpty()) {
-                {
-                    IconButton(onClick = { onValueChange("") }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(id = R.string.description_clear_text),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-            } else null,
-            supportingText = supportingText,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = keyboardType,
-                imeAction = imeAction
-            ),
-            keyboardActions = keyboardActions,
-            singleLine = singleLine,
-        )
-    }
-}
-
-@Composable
-fun CustomTextFieldForComments(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: @Composable (() -> Unit)? = null,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    keyboardActions: KeyboardActions = KeyboardActions.Default
-) {
-    // Определяем цвета для ползунка и выделения
-    val customSelectionColors = TextSelectionColors(
-        handleColor = Color.Black, // цвет ползунка
-        backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f) // фон выделенного текста
-    )
-
-    CompositionLocalProvider(LocalTextSelectionColors provides customSelectionColors) {
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 15.dp),
-            value = value,
-            shape = RoundedCornerShape(16.dp),
-            onValueChange = { newText ->
-                if (newText.endsWith('.') || newText.endsWith('!') || newText.endsWith('?')) {
-                    onValueChange(capitalizeSentences(newText))
-                } else {
-                    onValueChange(newText)
-                }
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-                focusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.outline,
-                focusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-                unfocusedSupportingTextColor = MaterialTheme.colorScheme.outline,
-                cursorColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            label = label,
-            placeholder = placeholder,
-            leadingIcon = leadingIcon,
-            trailingIcon = if (value.isNotEmpty()) {
-                {
-                    IconButton(onClick = { onValueChange("") }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(id = R.string.description_clear_text),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-            } else null,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = keyboardActions,
-            maxLines = 10
-        )
-    }
-}
 
 @Composable
 fun WorkerWithImage(
@@ -252,7 +110,8 @@ fun formatMonth(month: String): String {
         Month.of(month.toInt())
             .name
             .replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                if (it.isLowerCase()) it.titlecase(Locale.getDefault())
+                else it.toString()
             }
     } catch (e: DateTimeException) {
         "Invalid month"
@@ -365,16 +224,82 @@ fun simpleTransliterate(text: String): String {
     }.joinToString("")
 }
 
-fun capitalizeSentences(text: String): String {
-    if (text.isEmpty()) return text
-    val sentences = text.split("(?<=[.!?]\\s)|(?<=[.!?]\$)".toRegex())
-    return sentences.joinToString("") { sentence ->
-        if (sentence.isBlank()) sentence
-        else {
-            sentence.trimStart().replaceFirstChar { firstChar ->
-                if (firstChar.isLowerCase()) firstChar.titlecase() else firstChar.toString()
+@Composable
+fun AddComment(
+    dataUser: DomainUserModel?,
+    dataSource: String = "",
+    newDataSource: String = "",
+    movieViewModel: MovieViewModel,
+    selectedItem: DomainSelectedMovieModel?,
+    context: Context,
+    onClick: () -> Unit
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val (comment, setComment) = remember { mutableStateOf("") }
+
+    CustomTextFieldForComments(
+        value = comment,
+        onValueChange = setComment,
+        placeholder = {
+            Text(
+                text = stringResource(R.string.placeholder_for_comment_field),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.outline
+            )
+        },
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
             }
-        }
+        )
+    )
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        CustomTextButton(
+            textButton = stringResource(R.string.button_add),
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary,
+            endPadding = 15.dp,
+            onClickButton = {
+                dataUser?.let { user ->
+                    selectedItem?.let { movie ->
+                        movieViewModel.addComment(
+                            dataSource = dataSource,
+                            movieId = movie.id.toDouble(),
+                            username = user.nikName,
+                            commentUser = comment
+                        )
+                        movieViewModel.savingChangeRecord(
+                            context = context,
+                            username = user.nikName,
+                            stringResourceId = when(dataSource) {
+                                NODE_LIST_MOVIES -> R.string.record_added_comment_to_movie
+                                NODE_LIST_SERIALS -> R.string.record_added_comment_to_series
+                                NODE_LIST_WAITING_CONTINUATION_SERIES -> R.string.record_added_comment_to_series
+                                else -> R.string.record_added_comment_to_movie // TODO: Исправить это на дефолтное значение
+                            },
+                            title = movie.nameFilm,
+                            newDataSource = newDataSource,
+                            entityId = movie.id
+                        )
+                        showToast(context, R.string.comment_added)
+                        setComment("")
+                        onClick()
+                    }
+                }
+            }
+        )
     }
 }
 

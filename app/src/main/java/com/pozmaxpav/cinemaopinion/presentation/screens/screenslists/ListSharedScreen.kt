@@ -48,22 +48,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.domain.DomainUserModel
+import com.example.ui.presentation.components.CustomBottomSheet
+import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.ExpandedCard
+import com.example.ui.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.components.text.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.User
-import com.pozmaxpav.cinemaopinion.presentation.components.TopAppBarAllScreens
-import com.pozmaxpav.cinemaopinion.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
-import com.pozmaxpav.cinemaopinion.presentation.components.MyBottomSheet
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.SharedListsViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
-import com.pozmaxpav.cinemaopinion.utilits.CustomTextFieldForComments
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunctionClearAllScreens
 import com.pozmaxpav.cinemaopinion.utilits.showToast
@@ -72,32 +72,40 @@ import com.pozmaxpav.cinemaopinion.utilits.showToast
 @Composable
 fun ListSharedScreen(
     navController: NavHostController,
+    systemViewModel: SystemViewModel,
     listId: String,
     title: String,
     apiViewModel: ApiViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel(),
     sharedListsViewModel: SharedListsViewModel = hiltViewModel()
 ) {
-    val movies by sharedListsViewModel.movies.collectAsState()
-    var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
-    var openBottomSheetComments by remember { mutableStateOf(false) }
-    var openBottomSheetChange by remember { mutableStateOf(false) }
-    val userId by mainViewModel.userId.collectAsState()
-    val userData by userViewModel.userData.collectAsState()
-    val info by apiViewModel.informationMovie.collectAsState()
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
-    LaunchedEffect(listId) { sharedListsViewModel.getMovies(listId) }
+    val movies by sharedListsViewModel.movies.collectAsState()
+    val userId by systemViewModel.userId.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
+    val info by apiViewModel.informationMovie.collectAsState()
+
+    var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    var openBottomSheetComments by remember { mutableStateOf(false) }
+    var openBottomSheetChange by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        systemViewModel.getUserId()
+    }
+    LaunchedEffect(listId) {
+        sharedListsViewModel.getMovies(listId)
+    }
     LaunchedEffect(selectedMovie) {
         selectedMovie?.let { movie ->
             apiViewModel.getInformationMovie(movie.id)
         }
     }
-    LaunchedEffect(userId) { userViewModel.getUserData(userId) }
+    LaunchedEffect(userId) {
+        userViewModel.getUserData(userId)
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -120,7 +128,7 @@ fun ListSharedScreen(
         ) {
 
             if (openBottomSheetChange) {
-                MyBottomSheet(
+                CustomBottomSheet(
                     onClose = { openBottomSheetChange = false },
                     content = { /* TODO: Добавить действие */ },
                     fraction = 0.5f
@@ -133,12 +141,12 @@ fun ListSharedScreen(
             }
 
             if (openBottomSheetComments) {
-                MyBottomSheet(
+                CustomBottomSheet(
                     onClose = { openBottomSheetComments = false },
                     content = {
                         AddComment(
-                            userData = userData,
-                            viewModel = sharedListsViewModel,
+                            domainUserModelData = userData,
+                            sharedListsViewModel = sharedListsViewModel,
                             selectedMovie = selectedMovie,
                             context = context,
                             listId = listId,
@@ -169,7 +177,8 @@ fun ListSharedScreen(
                     openDescription = {
                         ExpandedCard(
                             title = stringResource(R.string.text_for_expandedCard_field),
-                            description = info?.description ?: stringResource(R.string.limit_is_over),
+                            description = info?.description
+                                ?: stringResource(R.string.limit_is_over),
                             bottomPadding = 7.dp
                         )
                     },
@@ -186,7 +195,9 @@ fun ListSharedScreen(
                 )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     OnBackInvokedHandler { selectedMovie = null }
-                } else { BackHandler { selectedMovie = null } }
+                } else {
+                    BackHandler { selectedMovie = null }
+                }
             }
 
             if (selectedMovie == null) {
@@ -234,7 +245,9 @@ fun ListSharedScreen(
 
                                     IconButton(
                                         onClick = { isVisible = false },
-                                        modifier = Modifier.size(50.dp).padding(end = 10.dp)
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .padding(end = 10.dp)
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Close,
@@ -255,8 +268,8 @@ fun ListSharedScreen(
 
 @Composable
 private fun AddComment(
-    userData: User?,
-    viewModel: SharedListsViewModel,
+    domainUserModelData: DomainUserModel?,
+    sharedListsViewModel: SharedListsViewModel,
     selectedMovie: DomainSelectedMovieModel?,
     context: Context,
     listId: String,
@@ -300,9 +313,9 @@ private fun AddComment(
             contentColor = MaterialTheme.colorScheme.onSecondary,
             endPadding = 15.dp,
             onClickButton = {
-                userData?.let { user ->
+                domainUserModelData?.let { user ->
                     selectedMovie?.let { movie ->
-                        viewModel.addComment(
+                        sharedListsViewModel.addComment(
                             listId = listId,
                             movieId = movie.id,
                             username = user.nikName,

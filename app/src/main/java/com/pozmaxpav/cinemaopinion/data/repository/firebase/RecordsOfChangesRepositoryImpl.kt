@@ -1,9 +1,9 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_CHANGES_RECORDS
 import com.google.firebase.database.DatabaseReference
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.RecordsOfChangesRepository
-import com.pozmaxpav.cinemaopinion.utilits.NODE_LIST_CHANGES
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -12,7 +12,7 @@ class RecordsOfChangesRepositoryImpl @Inject constructor(
 ) : RecordsOfChangesRepository {
 
     override suspend fun savingChangeRecord(domainChangelogModel: DomainChangelogModel) {
-        val key = databaseReference.child(NODE_LIST_CHANGES).push().key
+        val key = databaseReference.child(NODE_LIST_CHANGES_RECORDS).push().key
         key?.let {
             val record = DomainChangelogModel(
                 noteId = it,
@@ -22,12 +22,12 @@ class RecordsOfChangesRepositoryImpl @Inject constructor(
                 newDataSource = domainChangelogModel.newDataSource,
                 entityId = domainChangelogModel.entityId
             )
-            databaseReference.child(NODE_LIST_CHANGES).child(it).setValue(record).await()
+            databaseReference.child(NODE_LIST_CHANGES_RECORDS).child(it).setValue(record).await()
         } ?: throw Exception("Failed to generate key")
     }
 
     override suspend fun getRecordsOfChanges(): List<DomainChangelogModel> {
-        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
+        val snapshot = databaseReference.child(NODE_LIST_CHANGES_RECORDS).get().await()
         return snapshot.children.mapNotNull { childSnapshot ->
             childSnapshot.getValue(DomainChangelogModel::class.java)
         }
@@ -46,7 +46,7 @@ class RecordsOfChangesRepositoryImpl @Inject constructor(
     override suspend fun removeRecordsOfChanges(id: String) {
         try {
             val snapshot = databaseReference
-                .child(NODE_LIST_CHANGES)
+                .child(NODE_LIST_CHANGES_RECORDS)
                 .orderByKey()
                 .equalTo(id)
                 .get()

@@ -36,26 +36,27 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.presentation.components.ExpandedCard
-import com.pozmaxpav.cinemaopinion.presentation.components.ratingbar.RatingBarScaffold
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.system.MainViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModel.firebase.PersonalMovieViewModel
+import com.example.ui.presentation.components.ExpandedCard
+import com.example.ui.presentation.components.ratingbar.RatingBarScaffold
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 
 @Composable
 fun DetailsCardSeasonalEvent(
     movie: DomainSelectedMovieModel,
+    userId: String,
     onCloseButton: () -> Unit,
     padding: PaddingValues,
-    mainViewModel: MainViewModel = hiltViewModel(),
+    systemViewModel: SystemViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
     selectedMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel()
 ) {
 
-    val userId by mainViewModel.userId.collectAsState()
+
     val info by apiViewModel.informationMovie.collectAsState()
     var showRatingBar by remember { mutableStateOf(false) }
     val quantitySeasonalEventPoints by userViewModel.seasonalEventPoints.collectAsState()
