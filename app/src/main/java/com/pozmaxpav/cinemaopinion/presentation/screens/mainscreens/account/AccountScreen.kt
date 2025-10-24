@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens
+package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,9 +47,6 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.items.AccountItem
 import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account.AccountSettingMenu
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account.SharedListAlertDialog
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account.TextAwardsFields
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -104,6 +101,7 @@ fun AccountScreen(
 
             AccountSettingMenu(
                 navController,
+                systemViewModel,
                 openDialog = { locationShowDialogEvents = true }
             )
         }

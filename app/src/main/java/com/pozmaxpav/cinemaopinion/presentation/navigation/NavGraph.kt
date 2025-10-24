@@ -115,8 +115,9 @@ fun NavGraph(
         }
 
         authNavGraph(
-            onLoginSuccess = { userId ->
+            onLoginSuccess = { userId, registrationFlag ->
                 systemViewModel.saveUserId(userId)
+                systemViewModel.saveRegistrationFlag(registrationFlag)
                 navigateFunction(navController, Route.MainScreen.route)
             }
         )

@@ -2,12 +2,15 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModels.system
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.auth.domain.usecases.system.GetUserIdUseCase
-import com.example.auth.domain.usecases.system.SaveUserIdUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.ClearUserDataUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetAppVersionUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetRegistrationFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetResultCheckingUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetUserIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveAppVersionUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveRegistrationFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveResultCheckingUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +24,10 @@ class SystemViewModel @Inject constructor(
     private val getResultCheckingUseCase: GetResultCheckingUseCase,
     private val saveResultCheckingUseCase: SaveResultCheckingUseCase,
     private val saveUserIdUseCase: SaveUserIdUseCase,
-    private val getUserIdUseCase: GetUserIdUseCase
+    private val getUserIdUseCase: GetUserIdUseCase,
+    private val saveRegistrationFlagUseCase: SaveRegistrationFlagUseCase,
+    private val getRegistrationFlagUseCase: GetRegistrationFlagUseCase,
+    private val clearUserDataUseCase: ClearUserDataUseCase
 ) : ViewModel() {
 
     private val _versionApp = MutableStateFlow("Unknown")
@@ -33,9 +39,27 @@ class SystemViewModel @Inject constructor(
     private val _userId = MutableStateFlow("Unknown")
     val userId = _userId.asStateFlow()
 
+    private val _registrationFlag = MutableStateFlow(false)
+    val registrationFlag = _registrationFlag.asStateFlow()
+
     init {
+        getRegistrationFlag()
         getAppVersion()
         getResultChecking()
+    }
+
+    fun saveRegistrationFlag(registrationFlag: Boolean) {
+        viewModelScope.launch {
+            runCatching { saveRegistrationFlagUseCase(registrationFlag) }
+        }
+    }
+
+    fun getRegistrationFlag() {
+        viewModelScope.launch {
+            _registrationFlag.value = runCatching {
+                getRegistrationFlagUseCase()
+            }.getOrDefault(false)
+        }
     }
 
     fun saveUserId(userId: String) {
@@ -98,6 +122,12 @@ class SystemViewModel @Inject constructor(
 
     fun resetResultChecking() {
         _resultChecking.value = true
+    }
+
+    fun clearUserData() {
+        viewModelScope.launch {
+            runCatching { clearUserDataUseCase() }
+        }
     }
 
 }

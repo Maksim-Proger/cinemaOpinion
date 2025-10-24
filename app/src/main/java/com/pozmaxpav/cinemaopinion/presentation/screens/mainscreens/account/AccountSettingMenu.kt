@@ -2,6 +2,7 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
@@ -19,23 +20,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.auth.presentation.navigation.AuthRoute
 import com.example.ui.presentation.components.dropmenu.DropdownMenuItem
 import com.example.ui.presentation.components.dropmenu.SettingsMenu
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunctionClearAllScreens
+import kotlinx.coroutines.launch
 
 @Composable
 fun AccountSettingMenu(
     navController: NavHostController,
+    systemViewModel: SystemViewModel,
     openDialog: () -> Unit = {}
 ) {
     var triggerOnClickCloseMenu by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
 
     SettingsMenu { closeMenu ->
 
-        LaunchedEffect(triggerOnClickCloseMenu) { if (triggerOnClickCloseMenu) { closeMenu() } }
+        LaunchedEffect(triggerOnClickCloseMenu) {
+            if (triggerOnClickCloseMenu) {
+                closeMenu()
+            }
+        }
 
         DropdownMenuItem(
             onAction = {
@@ -81,23 +90,21 @@ fun AccountSettingMenu(
                 )
             }
         )
-//        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-//        DropdownMenuItem( TODO: Это логика переехала в другой модуль, СОГЛАСОВАТЬ!
-//            onAction = {
-//                coroutineScope.launch {
-//                    systemViewModel.logout { userViewModel.clearFlag() }
-//                    navigateFunctionClearAllScreens(navController, Route.LoginScreen.route)
-//                    triggerOnClickCloseMenu = true
-//                }
-//            },
-//            title = stringResource(R.string.drop_down_menu_item_exit),
-//            leadingIcon = {
-//                Icon(
-//                    Icons.AutoMirrored.Filled.Logout,
-//                    contentDescription = stringResource(id = R.string.description_icon_exit),
-//                    tint = MaterialTheme.colorScheme.onSecondary
-//                )
-//            }
-//        )
+        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+        DropdownMenuItem(
+            onAction = {
+                systemViewModel.clearUserData()
+                navigateFunctionClearAllScreens(navController, AuthRoute.LOGIN_SCREEN)
+                triggerOnClickCloseMenu = true
+            },
+            title = stringResource(R.string.drop_down_menu_item_exit),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Logout,
+                    contentDescription = stringResource(id = R.string.description_icon_exit),
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+        )
     }
 }

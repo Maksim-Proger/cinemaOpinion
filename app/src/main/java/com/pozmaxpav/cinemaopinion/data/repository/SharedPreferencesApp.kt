@@ -8,6 +8,18 @@ object SharedPreferencesApp {
     private const val APP_VERSION = "app_version"
     private const val RESULT_CHECKING_APP_VERSION = "result_checking"
     private const val USER_ID = "user_id"
+    private const val REGISTRATION_FLAG = "registration_flag"
+
+    fun saveRegistrationFlag(context: Context, registrationFlag: Boolean) {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        sharedPreferences.edit {
+            putBoolean(REGISTRATION_FLAG, registrationFlag)
+        }
+    }
+    fun getRegistrationFlag(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(REGISTRATION_FLAG, false)
+    }
 
     fun saveUserId(context: Context, userId: String) {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
@@ -15,7 +27,6 @@ object SharedPreferencesApp {
             putString(USER_ID, userId)
         }
     }
-
     fun getUserId(context: Context): String? {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
         return sharedPreferences.getString(USER_ID, null)
@@ -42,5 +53,13 @@ object SharedPreferencesApp {
     fun getResultChecking(context: Context): Boolean {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
         return sharedPreferences.getBoolean(RESULT_CHECKING_APP_VERSION, false)
+    }
+
+    fun clearUserData(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        sharedPreferences.edit {
+            remove(USER_ID)
+            remove(REGISTRATION_FLAG)
+        }
     }
 }

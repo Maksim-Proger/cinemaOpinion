@@ -1,4 +1,4 @@
-package com.example.auth.domain.repository.firebase
+package com.example.auth.domain.repository
 
 import com.example.core.domain.DomainUserModel
 

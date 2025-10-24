@@ -8,12 +8,24 @@ import javax.inject.Inject
 class SystemRepositoryAppImpl @Inject constructor(
     private val context: Context
 ) : SystemRepositoryApp {
+    override fun clearUserData() {
+        SharedPreferencesApp.clearUserData(context)
+    }
+
     override fun saveUserId(userId: String) {
         SharedPreferencesApp.saveUserId(context, userId)
     }
 
     override fun getUserId(): String? {
         return SharedPreferencesApp.getUserId(context)
+    }
+
+    override fun saveRegistrationFlag(registrationFlag: Boolean) {
+        SharedPreferencesApp.saveRegistrationFlag(context, registrationFlag)
+    }
+
+    override fun getRegistrationFlag(): Boolean {
+        return SharedPreferencesApp.getRegistrationFlag(context)
     }
 
     override fun saveAppVersion(version: String) {
