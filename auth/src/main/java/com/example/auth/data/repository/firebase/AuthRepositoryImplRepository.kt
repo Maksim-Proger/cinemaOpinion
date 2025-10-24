@@ -1,7 +1,7 @@
 package com.example.auth.data.repository.firebase
 
 import com.example.core.domain.DomainUserModel
-import com.example.auth.domain.repository.firebase.AuthRepository
+import com.example.auth.domain.repository.AuthRepository
 import com.example.core.utils.CoreDatabaseConstants
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.tasks.await

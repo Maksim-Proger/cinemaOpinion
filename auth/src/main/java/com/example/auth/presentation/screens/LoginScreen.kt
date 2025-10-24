@@ -35,10 +35,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.auth.R
 import com.example.auth.presentation.viewmodel.AuthViewModel
-import com.example.auth.presentation.viewmodel.SystemViewModelAuth
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.TopAppBarAllScreens
@@ -47,9 +45,8 @@ import com.example.ui.presentation.components.text.CustomTextField
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    onLoginSuccess: (String) -> Unit,
-    authViewModel: AuthViewModel = hiltViewModel(),
-    systemViewModelAuth: SystemViewModelAuth = hiltViewModel()
+    onLoginSuccess: (String, Boolean) -> Unit,
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val userData by authViewModel.userData.collectAsState()
     val loginResult by authViewModel.authResult.collectAsState()
@@ -68,9 +65,7 @@ fun LoginScreen(
         loginResult?.let {
             if (it.isSuccess) {
                 userData?.let { user ->
-                    systemViewModelAuth.saveUserId(user.id)
-                    systemViewModelAuth.saveRegistrationFlag(true)
-                    onLoginSuccess(user.id)
+                    onLoginSuccess(user.id, true)
                 }
             } else {
                 val errorMessage = it.exceptionOrNull()?.message
@@ -202,6 +197,4 @@ fun LoginScreen(
         }
     }
 }
-
-
 

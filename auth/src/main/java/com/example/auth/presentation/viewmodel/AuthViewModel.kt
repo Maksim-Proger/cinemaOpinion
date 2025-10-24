@@ -2,8 +2,8 @@ package com.example.auth.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.auth.domain.usecases.users.AddUserUseCase
-import com.example.auth.domain.usecases.users.AuthorizationUseCase
+import com.example.auth.domain.usecases.AddUserUseCase
+import com.example.auth.domain.usecases.AuthorizationUseCase
 import com.example.core.domain.DomainUserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,7 +1,7 @@
-package com.example.auth.domain.usecases.users
+package com.example.auth.domain.usecases
 
 import com.example.core.domain.DomainUserModel
-import com.example.auth.domain.repository.firebase.AuthRepository
+import com.example.auth.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class AddUserUseCase @Inject constructor(

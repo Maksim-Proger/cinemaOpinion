@@ -9,10 +9,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.example.auth.domain.repository.system.UserPreferences
 import com.example.auth.presentation.navigation.AuthRoute
 import com.example.intro.presentation.introscreens.viewmodel.OnBoardingViewModel
 import com.example.intro.presentation.navigation.IntroRoute
@@ -28,9 +28,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var userPreferences: UserPreferences
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -38,14 +35,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
 
-            val registrationFlag by userPreferences.registrationFlag.collectAsState()
-
-            // TODO: Переработать, чтобы уменьшить уровень привязки
+            // TODO: Переработать, чтобы уменьшить уровень привязки. Убрать мерцание.
             val onBoardingViewModel: OnBoardingViewModel = hiltViewModel()
             val hasEntered by onBoardingViewModel.hasUserEnteredApp.collectAsState(initial = false)
 
             val themeViewModel: ThemeViewModel = hiltViewModel()
             val systemViewModel: SystemViewModel = hiltViewModel()
+
+            val registrationFlag by systemViewModel.registrationFlag.collectAsState()
 
             // Получаем "destination" из ярлыка
             val destinationFromShortcut = intent.extras?.getString("destination")
