@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.example.ui.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.components.SettingsRadioButtons
 import com.example.ui.presentation.viewmodels.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route

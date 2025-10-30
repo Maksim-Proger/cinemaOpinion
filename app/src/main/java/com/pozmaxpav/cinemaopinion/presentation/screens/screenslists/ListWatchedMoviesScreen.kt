@@ -1,7 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
-import android.os.Build
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,7 +47,7 @@ import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WATCHED_MOVIES
 import com.example.core.utils.state.LoadingState
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
-import com.example.ui.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 import com.example.ui.presentation.components.text.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.R
@@ -58,7 +56,6 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
-import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel

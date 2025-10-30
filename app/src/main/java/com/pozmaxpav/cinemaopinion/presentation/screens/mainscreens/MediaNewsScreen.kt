@@ -41,7 +41,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.ui.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.theme.UrlLinkColor
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsModel

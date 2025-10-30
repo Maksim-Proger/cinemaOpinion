@@ -2,7 +2,6 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -21,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.core.utils.state.LoadingState
-import com.example.ui.presentation.components.TopAppBarMainScreen
+import com.example.ui.presentation.components.topappbar.TopAppBarMainScreen
 import com.example.ui.presentation.components.fab.FABMenu
 import com.example.ui.presentation.components.lottie.AnimationImplementation
 import com.pozmaxpav.cinemaopinion.R
@@ -90,6 +89,7 @@ fun ScaffoldMainScreen(
                 !state.searchBarActive.value &&
                 !state.onAdvancedSearchButtonClick.value &&
                 state.selectedMovie.value == null &&
+                state.selectedSeasonalMovie.value == null &&
                 !state.showDatePicker.value &&
                 !state.locationShowPageAppDescription.value
             ) {
@@ -122,8 +122,6 @@ fun ScaffoldMainScreen(
         }
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
-
-            Spacer(Modifier.padding(innerPadding))
 
             SendSelectedDate(state, apiViewModel)
             SendRequestAdvancedSearch(state, apiViewModel)
