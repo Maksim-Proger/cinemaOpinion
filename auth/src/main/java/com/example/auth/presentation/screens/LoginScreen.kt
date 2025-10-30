@@ -39,7 +39,7 @@ import com.example.auth.R
 import com.example.auth.presentation.viewmodel.AuthViewModel
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
-import com.example.ui.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.components.text.CustomTextField
 
 @OptIn(ExperimentalMaterial3Api::class)

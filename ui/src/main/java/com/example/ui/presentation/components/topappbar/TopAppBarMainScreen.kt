@@ -1,4 +1,4 @@
-package com.example.ui.presentation.components
+package com.example.ui.presentation.components.topappbar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle

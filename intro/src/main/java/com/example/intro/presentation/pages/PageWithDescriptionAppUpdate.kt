@@ -33,7 +33,7 @@ import com.example.core.utils.CoreConstants.DEVELOPER_COMMENT
 import com.example.core.utils.CoreConstants.NEW_YEAR_TEXT
 import com.example.intro.R
 import com.example.ui.presentation.components.CustomTextButton
-import com.example.ui.presentation.components.TopAppBarAllScreens
+import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 
 // TODO: Надо доработать это, чтобы не приходилось напрямую связывать с app

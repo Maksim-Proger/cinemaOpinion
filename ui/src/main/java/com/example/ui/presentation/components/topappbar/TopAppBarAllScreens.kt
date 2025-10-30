@@ -1,4 +1,4 @@
-package com.example.ui.presentation.components
+package com.example.ui.presentation.components.topappbar
 
 import android.content.Context
 import androidx.compose.material.icons.Icons
