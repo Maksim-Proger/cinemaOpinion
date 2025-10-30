@@ -66,6 +66,4 @@ interface MovieApi {
         @Query("page") page: Int
     ): ApiNewsList
 
-
-
 }

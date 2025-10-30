@@ -59,12 +59,12 @@ fun FetchSeasonalMovies(
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = stringResource(R.string.title_of_the_list_for_the_new_year),
-                    style = MaterialTheme.typography.displayMedium
-                )
+//                Text(
+//                    text = stringResource(R.string.title_of_the_list_for_the_new_year),
+//                    style = MaterialTheme.typography.displayMedium
+//                )
             }
-            Spacer(modifier = Modifier.padding(6.dp))
+//            Spacer(modifier = Modifier.padding(6.dp))
 
             seasonalMovies?.let { list ->
                 LazyRow(
@@ -100,7 +100,7 @@ private fun getSeasonalListMovies(
 
     val currentSeason = remember(currentMonth) {
         when (currentMonth) {
-            12, 1, 10 -> Season.NewYear
+            12, 1 -> Season.NewYear
 //            10 -> Season.Halloween
 //            2 -> Season.Valentine
 //            3 -> Season.March8

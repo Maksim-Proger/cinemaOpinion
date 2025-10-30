@@ -90,6 +90,7 @@ fun ScaffoldMainScreen(
                 !state.searchBarActive.value &&
                 !state.onAdvancedSearchButtonClick.value &&
                 state.selectedMovie.value == null &&
+                state.selectedSeasonalMovie.value == null &&
                 !state.showDatePicker.value &&
                 !state.locationShowPageAppDescription.value
             ) {
@@ -122,8 +123,6 @@ fun ScaffoldMainScreen(
         }
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
-
-            Spacer(Modifier.padding(innerPadding))
 
             SendSelectedDate(state, apiViewModel)
             SendRequestAdvancedSearch(state, apiViewModel)
