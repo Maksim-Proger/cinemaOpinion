@@ -349,11 +349,14 @@ fun ListWaitingContinuationSeries(
                 }
             }
         }
-        SpecialTopAppBar(
-            isAtTop = isAtTop,
-            title = stringResource(R.string.title_list_waiting_continuation_series),
-            goToBack = { navController.popBackStack() },
-            goToHome = { navigateFunction(navController, Route.MainScreen.route) }
-        )
+
+        if (selectedSerial == null) {
+            SpecialTopAppBar(
+                isAtTop = isAtTop,
+                title = stringResource(R.string.title_list_waiting_continuation_series),
+                goToBack = { navController.popBackStack() },
+                goToHome = { navigateFunction(navController, Route.MainScreen.route) }
+            )
+        }
     }
 }

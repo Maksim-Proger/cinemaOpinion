@@ -23,13 +23,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.pozmaxpav.cinemaopinion.R
+import com.example.core.utils.events.Season
+import com.example.core.utils.events.SeasonTitles
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SeasonalMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
-import com.example.core.utils.events.Season
 import java.time.LocalDate
 
 @Composable
@@ -59,12 +58,12 @@ fun FetchSeasonalMovies(
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-//                Text(
-//                    text = stringResource(R.string.title_of_the_list_for_the_new_year),
-//                    style = MaterialTheme.typography.displayMedium
-//                )
+                Text(
+                    text = getSeasonalTitle(),
+                    style = MaterialTheme.typography.displayMedium
+                )
             }
-//            Spacer(modifier = Modifier.padding(6.dp))
+            Spacer(modifier = Modifier.padding(6.dp))
 
             seasonalMovies?.let { list ->
                 LazyRow(
@@ -90,9 +89,20 @@ fun FetchSeasonalMovies(
 }
 
 @Composable
-private fun getSeasonalListMovies(
-    viewModel: MovieViewModel
-): List<DomainSelectedMovieModel>? {
+private fun getSeasonalTitle(): String {
+    val currentMonth = remember { LocalDate.now().monthValue }
+    val titleString = remember(currentMonth) {
+        when (currentMonth) {
+            12, 1 -> SeasonTitles.NewYear.title
+            10, 11 -> SeasonTitles.Halloween.title
+            else -> ""
+        }
+    }
+    return titleString
+}
+
+@Composable
+private fun getSeasonalListMovies(viewModel: MovieViewModel): List<DomainSelectedMovieModel>? {
 
     val currentMonth = remember { LocalDate.now().monthValue }
 
@@ -101,7 +111,7 @@ private fun getSeasonalListMovies(
     val currentSeason = remember(currentMonth) {
         when (currentMonth) {
             12, 1 -> Season.NewYear
-//            10 -> Season.Halloween
+            10, 11 -> Season.Halloween
 //            2 -> Season.Valentine
 //            3 -> Season.March8
             else -> null

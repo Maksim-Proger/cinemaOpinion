@@ -1,15 +1,10 @@
 package com.example.ui.presentation.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -30,48 +25,31 @@ fun SettingsRadioButtons(
 ) {
     var selectedOption by remember { mutableStateOf(optionsList[indexSelectedTheme]) }
 
-    Card(
-        modifier = Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .padding(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiary,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    ) {
-        Column(
+    optionsList.forEach { option ->
+        Row(
             modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center
+                .fillMaxWidth()
+                .height(56.dp)
+                .selectable(
+                    selected = selectedOption == option,
+                    onClick = {
+                        selectedOption = option
+                        onOptionClick(option)
+                    }
+                )
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            optionsList.forEach { option ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .selectable(
-                            selected = selectedOption == option,
-                            onClick = {
-                                selectedOption = option
-                                onOptionClick(option)
-                            }
-                        )
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = selectedOption == option,
-                        onClick = null // обработка не требуется, так как обработчик находится в selectable
-                    )
+            RadioButton(
+                selected = selectedOption == option,
+                onClick = null // обработка не требуется, так как обработчик находится в selectable
+            )
 
-                    Text(
-                        text = option,
-                        modifier = Modifier.padding(start = 16.dp)
-                    )
-                }
-            }
+            Text(
+                text = option,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(start = 16.dp)
+            )
         }
     }
 }

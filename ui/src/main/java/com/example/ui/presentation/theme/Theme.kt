@@ -63,9 +63,6 @@ fun AppTheme(
 
     val isDarkThemeActive by themeViewModel.isDarkThemeActive.collectAsState()
     val isSystemThemeActive by themeViewModel.isSystemThemeActive.collectAsState()
-    val isSystemInDarkMode = isSystemInDarkTheme()
-
-    val useDarkIcons = if (isSystemThemeActive) !isSystemInDarkMode else !isDarkThemeActive
 
     val colorScheme = when {
         isSystemThemeActive -> if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
@@ -87,28 +84,6 @@ fun AppTheme(
                 lightScrim = Color.Transparent.toArgb()
             )
         )
-//        activity.enableEdgeToEdge(
-//            statusBarStyle = if (useDarkIcons) {
-//                SystemBarStyle.light(
-//                    darkScrim = Color.Transparent.toArgb(),
-//                    scrim = Color.Transparent.toArgb(),
-//                )
-//            } else {
-//                SystemBarStyle.dark(
-//                    scrim = Color.Transparent.toArgb(),
-//                )
-//            },
-//            navigationBarStyle = if (useDarkIcons) {
-//                SystemBarStyle.light(
-//                    darkScrim = Color.Transparent.toArgb(),
-//                    scrim = Color.Transparent.toArgb(),
-//                )
-//            } else {
-//                SystemBarStyle.dark(
-//                    scrim = Color.Transparent.toArgb(),
-//                )
-//            }
-//        )
     }
 
     MaterialTheme(

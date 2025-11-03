@@ -51,9 +51,6 @@ fun NavGraph(
         composable(Route.SeriesControlScreen.route) {
             SeriesControlScreen(navController, systemViewModel)
         }
-        composable(Route.SettingsScreen.route) {
-            SettingsScreen(themeViewModel, navController)
-        }
         composable(Route.ListWatchedMovies.route) {
             ListWatchedMovies(navController, systemViewModel)
         }
@@ -68,6 +65,19 @@ fun NavGraph(
         }
         composable(Route.ListWaitingContinuationSeries.route) {
             ListWaitingContinuationSeries(navController, systemViewModel)
+        }
+        composable(
+            Route.SettingsScreen.route,
+            arguments = listOf(
+                navArgument("userName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val userName = backStackEntry.arguments?.getString("userName") ?: ""
+            SettingsScreen(
+                userName = userName,
+                themeViewModel = themeViewModel,
+                navController = navController
+            )
         }
         composable(
             Route.ListSharedScreen.route,

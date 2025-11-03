@@ -104,17 +104,19 @@ fun ListOfChangesScreen(
 
                     ChangelogItem(
                         modifier = Modifier.animateItem(),
-                        icon,
-                        color,
-                        item
+                        icon = icon,
+                        color = color,
+                        it = item
                     ) {
-                        navController.navigate(
-                            Route.MovieDetailScreen.createRoute(
-                                newDataSource = item.newDataSource,
-                                movieId = item.entityId,
-                                userName = userData!!.nikName
+                        userData?.let { user ->
+                            navController.navigate(
+                                Route.MovieDetailScreen.createRoute(
+                                    newDataSource = item.newDataSource,
+                                    movieId = item.entityId,
+                                    userName = user.nikName
+                                )
                             )
-                        )
+                        }
                     }
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
                 }

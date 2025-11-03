@@ -7,7 +7,7 @@
   <!-- Фон (круг) -->
   <path
       android:pathData="M480,480m-400,0a400,400 0,1 1,800 0a400,400 0,1 1,-800 0"
-      android:fillColor="#354B4C"/>
+      android:fillColor="#FFFFFF"/>
 
   <!-- Группа для масштабирования иконки -->
   <group

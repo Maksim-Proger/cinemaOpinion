@@ -4,5 +4,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface IntroScreensRepository {
     suspend fun saveAppEntry()
-    fun readAppEntry(): Flow<Boolean>
+    fun readAppEntry(): Flow<Boolean?>
 }

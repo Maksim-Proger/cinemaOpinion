@@ -396,11 +396,14 @@ fun ListSelectedGeneralSerials(
             }
             // endregion
         }
-        SpecialTopAppBar(
-            isAtTop = isAtTop,
-            title = stringResource(R.string.title_page_serials_list),
-            goToBack = { navController.popBackStack() },
-            goToHome = { navigateFunction(navController, Route.MainScreen.route) }
-        )
+
+        if (selectedSerial == null) {
+            SpecialTopAppBar(
+                isAtTop = isAtTop,
+                title = stringResource(R.string.title_page_serials_list),
+                goToBack = { navController.popBackStack() },
+                goToHome = { navigateFunction(navController, Route.MainScreen.route) }
+            )
+        }
     }
 }

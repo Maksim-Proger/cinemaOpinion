@@ -30,7 +30,7 @@ fun FetchMovies(
 
     LaunchedEffect(Unit) {
         if (!isInitialized) {
-            apiViewModel.fetchPremiersMovies(2025, "October")
+            apiViewModel.fetchPremiersMovies(2025, "November")
             apiViewModel.fetchTopListMovies(state.currentPage.intValue)
         }
     }

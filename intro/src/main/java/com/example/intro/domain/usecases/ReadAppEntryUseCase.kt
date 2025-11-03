@@ -7,7 +7,7 @@ import javax.inject.Inject
 class ReadAppEntryUseCase @Inject constructor(
     private val introScreensRepository: IntroScreensRepository
 ) {
-    operator fun invoke() : Flow<Boolean> {
+    operator fun invoke() : Flow<Boolean?> {
         return introScreensRepository.readAppEntry()
     }
 }

@@ -18,8 +18,8 @@ class OnBoardingViewModel @Inject constructor(
     private val saveAppEntryUseCase: SaveAppEntryUseCase
 ) : ViewModel() {
 
-    private val _hasUserEnteredApp = MutableStateFlow(false)
-    val hasUserEnteredApp: StateFlow<Boolean> = _hasUserEnteredApp
+    private val _hasUserEnteredApp = MutableStateFlow<Boolean?>(null)
+    val hasUserEnteredApp: StateFlow<Boolean?> = _hasUserEnteredApp
 
     init {
         viewModelScope.launch {

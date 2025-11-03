@@ -52,6 +52,7 @@
     <string name="record_deleted_the_series">удалил(а) сериал: </string>
     <string name="record_added_movie">добавил(а) фильм: </string>
     <string name="record_added_series">добавил(а) сериал: </string>
+    <string name="record_added_default">добавил(а) объект по умолчанию: </string>
 
     <!--   Text for Drop-Down Menu   -->
     <string name="drop_down_menu_create_shared_list">Создать совместный список</string>
@@ -151,8 +152,10 @@
     <string name="description_icon_fab_button_with_menu">Icon FabButtonWithMenu MainScreen</string>
 
     <!--  Seasonal lines  -->
-    <string name="title_of_the_list_for_the_new_year">Почувствуй новый год!</string>
+    <string name="title_of_the_list_for_the_new_year">Почувствуй Новый год!</string>
+    <string name="title_of_the_list_for_the_halloween">Ужасного Хэллоуина!</string>
     <string name="record_added_to_new_year_collection">Пополнил(а) коллекцию новогодней подборки: </string>
+
 
     <!--  Text Error  -->
     <string name="limit_is_over">К сожалению, в базе пусто или суточный лимит закончился</string>

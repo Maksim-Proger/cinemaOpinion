@@ -1,10 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
 import android.content.Context
-import android.os.Build
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
@@ -28,7 +25,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,7 +32,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -69,14 +64,12 @@ import com.example.ui.presentation.components.ExpandedCard
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 import com.example.ui.presentation.components.text.CustomTextFieldForComments
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
-import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
-import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
@@ -405,12 +398,14 @@ fun ListSelectedMovies(
             )
         }
 
-        SpecialTopAppBar(
-            isAtTop = isAtTop,
-            title = stringResource(R.string.title_page_personal_list),
-            goToBack = { navController.popBackStack() },
-            goToHome = { navigateFunction(navController, Route.MainScreen.route) }
-        )
+        if (selectedMovie == null) {
+            SpecialTopAppBar(
+                isAtTop = isAtTop,
+                title = stringResource(R.string.title_page_personal_list),
+                goToBack = { navController.popBackStack() },
+                goToHome = { navigateFunction(navController, Route.MainScreen.route) }
+            )
+        }
     }
 
 }
