@@ -36,8 +36,9 @@
     <string name="title_series_control_screen">Контроль серий</string>
     <string name="title_media_news_screen">Медиа новости</string>
     <string name="title_listWatched_movies">Просмотренные</string>
-    <string name="title_page_personal_list">Личный список</string>
-    <string name="title_page_movie_list">Список с фильмами</string>
+    <string name="title_page_personal_list">Мое</string>
+    <string name="title_page_movie_list">Фильмы</string>
+    <string name="title_page_serials_list">Сериалы</string>
 
     <!--  Text for Changes Records Screen  -->
     <string name="record_added_comment_to_movie">добавил(а) комментарий к фильму: </string>

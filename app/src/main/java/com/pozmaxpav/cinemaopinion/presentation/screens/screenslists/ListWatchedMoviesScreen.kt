@@ -47,9 +47,9 @@ import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WATCHED_MOVIES
 import com.example.core.utils.state.LoadingState
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
-import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 import com.example.ui.presentation.components.text.CustomTextFieldForComments
+import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
