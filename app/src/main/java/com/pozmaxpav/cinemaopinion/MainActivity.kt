@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,6 +23,7 @@ import com.pozmaxpav.cinemaopinion.presentation.navigation.NavGraph
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.CheckAndUpdateAppVersion
+import com.pozmaxpav.cinemaopinion.utilits.LoadingScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -37,7 +39,8 @@ class MainActivity : ComponentActivity() {
 
             // TODO: Переработать, чтобы уменьшить уровень привязки. Убрать мерцание.
             val onBoardingViewModel: OnBoardingViewModel = hiltViewModel()
-            val hasEntered by onBoardingViewModel.hasUserEnteredApp.collectAsState(initial = false)
+//            val hasEntered by onBoardingViewModel.hasUserEnteredApp.collectAsState(initial = false)
+            val hasEntered by onBoardingViewModel.hasUserEnteredApp.collectAsState(initial = null)
 
             val themeViewModel: ThemeViewModel = hiltViewModel()
             val systemViewModel: SystemViewModel = hiltViewModel()
@@ -54,20 +57,40 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if (hasEntered) {
-                        CheckAndUpdateAppVersion(context)
-                        NavGraph(
-                            themeViewModel = themeViewModel,
-                            systemViewModel = systemViewModel,
-                            startDestination = destination
-                        )
-                    } else {
-                        NavGraph(
-                            themeViewModel = themeViewModel,
-                            systemViewModel = systemViewModel,
-                            startDestination = IntroRoute.ON_BOARDING_SCREEN
-                        )
+                    Log.d("@@@", hasEntered.toString())
+                    when(hasEntered) {
+                        true -> {
+                            CheckAndUpdateAppVersion(context)
+                            NavGraph(
+                                themeViewModel = themeViewModel,
+                                systemViewModel = systemViewModel,
+                                startDestination = destination
+                            )
+                        }
+                        false -> {
+                            NavGraph(
+                                themeViewModel = themeViewModel,
+                                systemViewModel = systemViewModel,
+                                startDestination = IntroRoute.ON_BOARDING_SCREEN
+                            )
+                        }
+                        null -> LoadingScreen()
                     }
+
+//                    if (hasEntered) {
+//                        CheckAndUpdateAppVersion(context)
+//                        NavGraph(
+//                            themeViewModel = themeViewModel,
+//                            systemViewModel = systemViewModel,
+//                            startDestination = destination
+//                        )
+//                    } else {
+//                        NavGraph(
+//                            themeViewModel = themeViewModel,
+//                            systemViewModel = systemViewModel,
+//                            startDestination = IntroRoute.ON_BOARDING_SCREEN
+//                        )
+//                    }
                 }
             }
         }

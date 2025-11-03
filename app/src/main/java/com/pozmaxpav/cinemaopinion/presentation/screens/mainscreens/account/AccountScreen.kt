@@ -99,11 +99,14 @@ fun AccountScreen(
                 style = MaterialTheme.typography.displayLarge
             )
 
-            AccountSettingMenu(
-                navController,
-                systemViewModel,
-                openDialog = { locationShowDialogEvents = true }
-            )
+            userData?.let { user ->
+                AccountSettingMenu(
+                    userName = user.nikName,
+                    navController = navController,
+                    systemViewModel = systemViewModel,
+                    openDialog = { locationShowDialogEvents = true }
+                )
+            }
         }
 
         Card(

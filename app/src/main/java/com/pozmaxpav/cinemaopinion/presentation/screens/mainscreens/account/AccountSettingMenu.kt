@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AccountSettingMenu(
+    userName: String,
     navController: NavHostController,
     systemViewModel: SystemViewModel,
     openDialog: () -> Unit = {}
@@ -54,7 +55,7 @@ fun AccountSettingMenu(
             title = stringResource(R.string.drop_down_menu_create_shared_list),
             leadingIcon = {
                 Icon(
-                    Icons.Default.Create,
+                    imageVector = Icons.Default.Create,
                     contentDescription = stringResource(R.string.description_icon_create_shared_list),
                     tint = MaterialTheme.colorScheme.onSecondary
                 )
@@ -78,13 +79,17 @@ fun AccountSettingMenu(
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         DropdownMenuItem(
             onAction = {
-                navigateFunction(navController, Route.SettingsScreen.route)
+                navController.navigate(
+                    Route.SettingsScreen.getUserName(
+                        userName = userName
+                    )
+                )
                 triggerOnClickCloseMenu = true
             },
             title = stringResource(id = R.string.drop_down_menu_item_settings),
             leadingIcon = {
                 Icon(
-                    Icons.Default.Settings,
+                    imageVector = Icons.Default.Settings,
                     contentDescription = stringResource(id = R.string.description_icon_settings),
                     tint = MaterialTheme.colorScheme.onSecondary
                 )

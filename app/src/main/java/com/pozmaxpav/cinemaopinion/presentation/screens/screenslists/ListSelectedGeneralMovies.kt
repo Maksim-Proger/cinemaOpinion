@@ -388,11 +388,14 @@ fun ListSelectedGeneralMovies(
             }
             // endregion
         }
-        SpecialTopAppBar(
-            isAtTop = isAtTop,
-            title = stringResource(R.string.title_page_movie_list),
-            goToBack = { navController.popBackStack() },
-            goToHome = { navigateFunction(navController, Route.MainScreen.route) }
-        )
+
+        if (selectedMovie == null) {
+            SpecialTopAppBar(
+                isAtTop = isAtTop,
+                title = stringResource(R.string.title_page_movie_list),
+                goToBack = { navController.popBackStack() },
+                goToHome = { navigateFunction(navController, Route.MainScreen.route) }
+            )
+        }
     }
 }

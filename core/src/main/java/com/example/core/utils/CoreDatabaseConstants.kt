@@ -2,9 +2,9 @@ package com.example.core.utils
 
 object CoreDatabaseConstants {
     const val NODE_NEW_YEAR_LIST = "new_year_list"
-    const val NODE_HALLOWEEN_LIST = "halloween"
-    const val NODE_VALENTINE_LIST = "valentine"
-    const val NODE_MARCH_8_LIST = "march_8"
+    const val NODE_HALLOWEEN_LIST = "halloween_list"
+    const val NODE_VALENTINE_LIST = "valentine_list"
+    const val NODE_MARCH_8_LIST = "march_8_list"
     const val NODE_DEFAULT_LIST = "default"
 
     const val NODE_LIST_MOVIES = "list_movies"

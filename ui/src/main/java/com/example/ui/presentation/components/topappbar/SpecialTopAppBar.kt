@@ -136,13 +136,13 @@ private fun TopBarIconGroup(
             contentDescription = null,
             tint = tint
         )
-        Spacer(Modifier.padding(horizontal = 5.dp))
-        Icon(
-            modifier = Modifier.clickable(onClick = onClick2),
-            imageVector = icons[1],
-            contentDescription = null,
-            tint = tint
-        )
+//        Spacer(Modifier.padding(horizontal = 5.dp))
+//        Icon(
+//            modifier = Modifier.clickable(onClick = onClick2),
+//            imageVector = icons[1],
+//            contentDescription = null,
+//            tint = tint
+//        )
     }
 }
 

@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.utils.CoreDatabaseConstants.NODE_HALLOWEEN_LIST
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_MOVIES
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_SERIALS
 import com.example.ui.presentation.components.CustomBoxShowOverlay
@@ -64,7 +65,6 @@ fun DetailsCardFilm(
     navController: NavHostController,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     movieViewModel: MovieViewModel = hiltViewModel(),
-    systemViewModel: SystemViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel()
 ) {
@@ -105,7 +105,7 @@ fun DetailsCardFilm(
                     stringResourceId = when (dataSource) {
                         NODE_LIST_MOVIES -> { R.string.record_added_movie }
                         NODE_LIST_SERIALS -> { R.string.record_added_series }
-                        else -> { R.string.record_added_movie /* <- Заменить это */ }
+                        else -> { R.string.record_added_default }
                     },
                     title = movie.nameFilm,
                     newDataSource = dataSource,
@@ -351,6 +351,24 @@ fun DetailsCardFilm(
                             triggerOnClickGeneralMovie = true
                         }
                     )
+
+                    if (userData?.nikName == "Разработчик") {
+                        CustomTextButton(
+                            textButton = "В сезонный список",
+                            bottomPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = {
+                                movie?.let {
+                                    movieViewModel.saveMovie(
+                                        dataSource = NODE_HALLOWEEN_LIST,
+                                        selectedMovie = it.toSelectedMovie()
+                                    )
+                                }
+                            }
+                        )
+                    }
+
                     // region Seasonal Event
 //                    CustomTextButton(
 //                        textButton = context.getString(R.string.button_add_to_new_year_list),
