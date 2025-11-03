@@ -78,27 +78,37 @@ fun AppTheme(
 
     SideEffect {
         activity.enableEdgeToEdge(
-            statusBarStyle = if (useDarkIcons) {
-                SystemBarStyle.light(
-                    darkScrim = Color.Transparent.toArgb(),
-                    scrim = Color.Transparent.toArgb(),
-                )
-            } else {
-                SystemBarStyle.dark(
-                    scrim = Color.Transparent.toArgb(),
-                )
-            },
-            navigationBarStyle = if (useDarkIcons) {
-                SystemBarStyle.light(
-                    darkScrim = Color.Transparent.toArgb(),
-                    scrim = Color.Transparent.toArgb(),
-                )
-            } else {
-                SystemBarStyle.dark(
-                    scrim = Color.Transparent.toArgb(),
-                )
-            },
+            statusBarStyle = SystemBarStyle.auto(
+                darkScrim = Color.Transparent.toArgb(),
+                lightScrim = Color.Transparent.toArgb()
+            ),
+            navigationBarStyle = SystemBarStyle.auto(
+                darkScrim = Color.Transparent.toArgb(),
+                lightScrim = Color.Transparent.toArgb()
+            )
         )
+//        activity.enableEdgeToEdge(
+//            statusBarStyle = if (useDarkIcons) {
+//                SystemBarStyle.light(
+//                    darkScrim = Color.Transparent.toArgb(),
+//                    scrim = Color.Transparent.toArgb(),
+//                )
+//            } else {
+//                SystemBarStyle.dark(
+//                    scrim = Color.Transparent.toArgb(),
+//                )
+//            },
+//            navigationBarStyle = if (useDarkIcons) {
+//                SystemBarStyle.light(
+//                    darkScrim = Color.Transparent.toArgb(),
+//                    scrim = Color.Transparent.toArgb(),
+//                )
+//            } else {
+//                SystemBarStyle.dark(
+//                    scrim = Color.Transparent.toArgb(),
+//                )
+//            }
+//        )
     }
 
     MaterialTheme(

@@ -5,9 +5,11 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -42,19 +45,8 @@ fun SpecialTopAppBar(
     goToBack: () -> Unit
 ) {
     val backgroundColor by animateColorAsState(
-        targetValue = if (isAtTop) MaterialTheme.colorScheme.secondary else Color.Transparent,
+        targetValue = if (isAtTop) MaterialTheme.colorScheme.background else Color.Transparent,
         animationSpec = tween(durationMillis = 600, easing = LinearOutSlowInEasing)
-    )
-
-    val secondBackgroundColor by animateColorAsState(
-        targetValue = if (isAtTop)
-            MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.background,
-        animationSpec = tween(durationMillis = 600, easing = LinearOutSlowInEasing)
-    )
-
-    val iconsColor by animateColorAsState(
-        targetValue = if (isAtTop) MaterialTheme.colorScheme.onSecondary
-        else MaterialTheme.colorScheme.secondary
     )
 
     val offset by animateDpAsState(
@@ -73,34 +65,43 @@ fun SpecialTopAppBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         TopBarIconGroup(
+            modifier = Modifier.graphicsLayer {
+                translationX = offset.toPx()
+                translationY = offset.toPx()
+            },
             icons = listOf(Icons.Default.ArrowBackIosNew, Icons.Default.Home),
-            offset = offset,
-            color = secondBackgroundColor,
-            tint = iconsColor,
+            color = MaterialTheme.colorScheme.background,
+            tint = MaterialTheme.colorScheme.secondary,
             onClick1 = goToBack,
             onClick2 = goToHome
         )
 
         TopAppBarString(
+            modifier = Modifier.graphicsLayer {
+                translationX = -offset.toPx()
+                translationY = offset.toPx()
+            },
             title = title,
-            offset = offset,
-            color = secondBackgroundColor,
-            textColor = iconsColor
+            color = MaterialTheme.colorScheme.background,
+            textColor = MaterialTheme.colorScheme.secondary
         )
     }
 }
 
 @Composable
-private fun TopAppBarString(title: String, offset: Dp, color: Color, textColor: Color) {
+private fun TopAppBarString(
+    modifier: Modifier = Modifier,
+    title: String,
+    color: Color,
+    textColor: Color
+) {
     Row(
-        modifier = Modifier
-            .offset(x = offset, y = offset)
+        modifier = modifier
             .background(
                 color = color.copy(alpha = 0.8f),
                 shape = RoundedCornerShape(16.dp)
             )
             .padding(horizontal = 10.dp, vertical = 6.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -113,36 +114,31 @@ private fun TopAppBarString(title: String, offset: Dp, color: Color, textColor: 
 
 @Composable
 private fun TopBarIconGroup(
+    modifier: Modifier = Modifier,
     icons: List<ImageVector>,
-    offset: Dp,
     color: Color,
     tint: Color,
     onClick1: () -> Unit,
     onClick2: () -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .offset(x = offset, y = offset)
+        modifier = modifier
             .background(
                 color = color.copy(alpha = 0.8f),
                 shape = RoundedCornerShape(16.dp)
             )
             .padding(horizontal = 10.dp, vertical = 6.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            modifier = Modifier.clickable(
-                onClick = onClick1
-            ),
+            modifier = Modifier.clickable(onClick = onClick1),
             imageVector = icons[0],
             contentDescription = null,
             tint = tint
         )
+        Spacer(Modifier.padding(horizontal = 5.dp))
         Icon(
-            modifier = Modifier.clickable(
-                onClick = onClick2
-            ),
+            modifier = Modifier.clickable(onClick = onClick2),
             imageVector = icons[1],
             contentDescription = null,
             tint = tint

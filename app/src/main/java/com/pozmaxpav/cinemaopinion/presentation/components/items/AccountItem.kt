@@ -68,7 +68,7 @@ fun AccountItem(
             Spacer(Modifier.width(15.dp))
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }

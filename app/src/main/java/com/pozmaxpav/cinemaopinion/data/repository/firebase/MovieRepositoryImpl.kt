@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.core.utils.CoreDatabaseConstants.COMMENTS_KEY_LISTENER
 import com.example.core.utils.CoreDatabaseConstants.MOVIES_KEY_LISTENER
 import com.example.core.utils.CoreDatabaseConstants.NODE_COMMENTS
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_CHANGES_RECORDS
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_CHANGES
 import com.example.core.utils.FirebaseListenerHolder
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -253,12 +253,12 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
     private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
-        val snapshot = databaseReference.child(NODE_LIST_CHANGES_RECORDS).get().await()
+        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
         snapshot.children.forEach { childSnapshot ->
             val result = childSnapshot.getValue(DomainChangelogModel::class.java)
             if (result?.entityId == movieId.toInt()) {
                 val updates = mapOf("newDataSource" to directionDataSource)
-                databaseReference.child(NODE_LIST_CHANGES_RECORDS).child(childSnapshot.key!!).updateChildren(updates).await()
+                databaseReference.child(NODE_LIST_CHANGES).child(childSnapshot.key!!).updateChildren(updates).await()
             }
         }
     }
