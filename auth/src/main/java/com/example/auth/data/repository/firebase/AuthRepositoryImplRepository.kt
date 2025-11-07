@@ -1,5 +1,6 @@
 package com.example.auth.data.repository.firebase
 
+import android.util.Log
 import com.example.core.domain.DomainUserModel
 import com.example.auth.domain.repository.AuthRepository
 import com.example.core.utils.CoreDatabaseConstants
@@ -18,8 +19,23 @@ class AuthRepositoryImplRepository @Inject constructor(
         else throw Exception("User ID is missing")
     }
 
+    override suspend fun checkUser(email: String): Boolean {
+        val query = databaseReference
+            .child(CoreDatabaseConstants.NODE_LIST_USERS)
+            .orderByChild("email")
+            .equalTo(email)
+
+        val userSnapshot = query.get().await()
+
+        return userSnapshot.exists()
+    }
+
     override suspend fun authorization(email: String, password: String): DomainUserModel? {
-        val query = databaseReference.child(CoreDatabaseConstants.NODE_LIST_USERS).orderByChild("email").equalTo(email)
+        val query = databaseReference
+                .child(CoreDatabaseConstants.NODE_LIST_USERS)
+                .orderByChild("email")
+                .equalTo(email)
+
         val userSnapshot = query.get().await()
 
         if (!userSnapshot.exists()) {

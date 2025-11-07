@@ -1,4 +1,7 @@
 <resources>
+<!--    <string name="app_name">Cinema Opinion</string>-->
+<!--    <string name="app_name">PopCorn</string>-->
+    <string name="app_name">КиноМнение</string>
 
     <!--  Context Menu  -->
     <string name="shortcut_series_control_short">Серии</string>
@@ -12,7 +15,6 @@
     <string name="shortcut_list_selected_movies_disabled">Недоступно</string>
 
     <!--  General Strings  -->
-    <string name="app_name">Cinema Opinion</string>
     <string name="title_awards_field">Зал славы</string>
     <string name="list_awards_empty">Наград пока нет</string>
     <string name="top_app_bar_header_name_all_movies">Фильмы</string>

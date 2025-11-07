@@ -17,5 +17,8 @@
 
     <!--  Description Icons  -->
     <string name="description_icon_add_name">Icon Add Name</string>
+    
+    <!--  Toast  -->
+    <string name="already_such_user">Такой пользователь уже есть</string>
 
 </resources>

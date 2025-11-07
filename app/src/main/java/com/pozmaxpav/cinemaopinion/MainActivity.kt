@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
 
             // TODO: Переработать, чтобы уменьшить уровень привязки. Убрать мерцание.
             val onBoardingViewModel: OnBoardingViewModel = hiltViewModel()
-//            val hasEntered by onBoardingViewModel.hasUserEnteredApp.collectAsState(initial = false)
             val hasEntered by onBoardingViewModel.hasUserEnteredApp.collectAsState(initial = null)
 
             val themeViewModel: ThemeViewModel = hiltViewModel()
@@ -57,7 +56,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Log.d("@@@", hasEntered.toString())
                     when(hasEntered) {
                         true -> {
                             CheckAndUpdateAppVersion(context)
@@ -76,21 +74,6 @@ class MainActivity : ComponentActivity() {
                         }
                         null -> LoadingScreen()
                     }
-
-//                    if (hasEntered) {
-//                        CheckAndUpdateAppVersion(context)
-//                        NavGraph(
-//                            themeViewModel = themeViewModel,
-//                            systemViewModel = systemViewModel,
-//                            startDestination = destination
-//                        )
-//                    } else {
-//                        NavGraph(
-//                            themeViewModel = themeViewModel,
-//                            systemViewModel = systemViewModel,
-//                            startDestination = IntroRoute.ON_BOARDING_SCREEN
-//                        )
-//                    }
                 }
             }
         }

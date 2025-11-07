@@ -174,7 +174,7 @@ fun navigateFunction(navController: NavHostController, route: String) {
     navController.navigate(route) {
         launchSingleTop = true
         restoreState = true
-        popUpTo(navController.graph.startDestinationId) { saveState = true }
+        //popUpTo(navController.graph.startDestinationId) { saveState = true }
     }
 
 //    navController.navigate(route) {

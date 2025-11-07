@@ -4,12 +4,11 @@ import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +20,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -73,12 +71,13 @@ fun MovieDetailScreen(
         }
     }
 
-    Scaffold { innerPadding ->
+    Column(
+        modifier = Modifier.wrapContentSize()
+    ) {
         if (newDataSource == stringResource(R.string.movie_was_deleted)) {
-            TheMovieWasDeleted(innerPadding, navController)
+            TheMovieWasDeleted(navController)
         } else {
             OtherActions(
-                innerPadding,
                 movie,
                 newDataSource,
                 movieId,
@@ -93,7 +92,6 @@ fun MovieDetailScreen(
 
 @Composable
 private fun OtherActions(
-    innerPadding: PaddingValues,
     movie: DomainSelectedMovieModel?,
     newDataSource: String,
     movieId: Int,
@@ -105,12 +103,7 @@ private fun OtherActions(
 
     var openBottomSheetComments by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
-    ) {
-
+    Column {
         if (openBottomSheetComments) {
             CustomBottomSheet(
                 onClose = {
@@ -155,6 +148,42 @@ private fun OtherActions(
                         launchSingleTop = true
                     }
                 }
+            )
+        }
+    }
+}
+
+@Composable
+private fun TheMovieWasDeleted(navController: NavHostController) {
+    Column {
+        Row(
+            modifier = Modifier
+                .padding(10.dp)
+                .clickable {
+                    navController.navigate(Route.ListOfChangesScreen.route) {
+                        popUpTo(Route.MovieDetailScreen.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(R.string.movie_was_deleted),
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }
@@ -233,49 +262,6 @@ private fun AddComment(
     }
 }
 
-@Composable
-private fun TheMovieWasDeleted(
-    innerPadding: PaddingValues,
-    navController: NavHostController
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(10.dp)
-                .clickable {
-                    navController.navigate(Route.ListOfChangesScreen.route) {
-                        popUpTo(Route.MovieDetailScreen.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                },
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary
-            )
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(R.string.movie_was_deleted),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    }
-}
-
 private fun elementDirectory(newDataSource: String): String {
     return when {
         newDataSource.contains("list_movies") -> "В списке с фильмами"
@@ -308,6 +294,7 @@ fun ShowComment(
                 modifier = Modifier.scale(0.5f)
             )
         }
+
         is LoadingState.Success -> {
             LazyColumn {
                 items(listComments) { comment ->
@@ -351,12 +338,12 @@ fun ShowComment(
                             ) {
                                 Text(
                                     text =
-                                    SimpleDateFormat(
-                                        "dd.MM.yyyy HH:mm",
-                                        Locale.getDefault()
-                                    ).format(
-                                        Date(comment.timestamp)
-                                    ),
+                                        SimpleDateFormat(
+                                            "dd.MM.yyyy HH:mm",
+                                            Locale.getDefault()
+                                        ).format(
+                                            Date(comment.timestamp)
+                                        ),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                             }
@@ -365,6 +352,7 @@ fun ShowComment(
                 }
             }
         }
+
         is LoadingState.Error -> {
             // TODO: Добавить логику работы при ошибке.
         }
