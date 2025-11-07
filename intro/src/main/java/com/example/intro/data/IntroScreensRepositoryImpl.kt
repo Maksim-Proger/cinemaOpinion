@@ -22,18 +22,11 @@ class IntroScreensRepositoryImpl(
         }
     }
 
-//    override fun readAppEntry(): Flow<Boolean> {
-//        return context.dataStore.data.map { preferences ->
-//            preferences[PreferencesKeys.APP_ENTRY] ?: false
-//        }
-//    }
-    override fun readAppEntry(): Flow<Boolean?> {
+    override fun readAppEntry(): Flow<Boolean> {
         return context.dataStore.data.map { preferences ->
-            preferences[PreferencesKeys.APP_ENTRY] // ⚠️ убираем ?: false
+            preferences[PreferencesKeys.APP_ENTRY] ?: false
         }
     }
-
-
 }
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = USER_SETTINGS)

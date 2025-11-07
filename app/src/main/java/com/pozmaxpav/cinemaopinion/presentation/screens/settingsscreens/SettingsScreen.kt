@@ -28,6 +28,7 @@ import com.example.ui.presentation.components.SettingsRadioButtons
 import com.example.ui.presentation.viewmodels.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunctionClearAllScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +51,9 @@ fun SettingsScreen(
                 context = context,
                 titleId = R.string.drop_down_menu_item_settings,
                 scrollBehavior = scrollBehavior,
-                onTransitionAction = { navigateFunction(navController, Route.MainScreen.route) }
+                onTransitionAction = {
+                    navigateFunctionClearAllScreens(navController, Route.MainScreen.route)
+                }
             )
         },
     ) { innerPadding ->

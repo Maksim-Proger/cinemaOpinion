@@ -1,5 +1,6 @@
 package com.example.auth.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,12 +15,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -37,10 +42,21 @@ fun RegistrationScreen(
     focusManager: FocusManager,
     onClose: () -> Unit
 ) {
-
+    val context = LocalContext.current
     val (nikName, setNikName) = remember { mutableStateOf("") }
     val (email, setEmail) = remember { mutableStateOf("") }
     val (password, setPassword) = remember { mutableStateOf("") }
+    var triggerOnClick by remember { mutableStateOf(false) }
+
+    LaunchedEffect(triggerOnClick) {
+        if (triggerOnClick) {
+            authViewModel.toastMessage.collect { resId ->
+                val message = context.getString(resId)
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                onClose()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -133,7 +149,7 @@ fun RegistrationScreen(
                 endPadding = 15.dp,
                 onClickButton = {
                     authViewModel.addUser(nikName, email, password)
-                    onClose()
+                    triggerOnClick = true
                 }
             )
         }

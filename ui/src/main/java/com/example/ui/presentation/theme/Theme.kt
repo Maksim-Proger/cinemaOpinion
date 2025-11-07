@@ -64,6 +64,9 @@ fun AppTheme(
     val isDarkThemeActive by themeViewModel.isDarkThemeActive.collectAsState()
     val isSystemThemeActive by themeViewModel.isSystemThemeActive.collectAsState()
 
+    val isSystemInDarkMode = isSystemInDarkTheme()
+    val useDarkIcons = if (isSystemThemeActive) !isSystemInDarkMode else !isDarkThemeActive
+
     val colorScheme = when {
         isSystemThemeActive -> if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
@@ -75,14 +78,26 @@ fun AppTheme(
 
     SideEffect {
         activity.enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.auto(
-                darkScrim = Color.Transparent.toArgb(),
-                lightScrim = Color.Transparent.toArgb()
-            ),
-            navigationBarStyle = SystemBarStyle.auto(
-                darkScrim = Color.Transparent.toArgb(),
-                lightScrim = Color.Transparent.toArgb()
-            )
+            statusBarStyle = if (useDarkIcons) {
+                SystemBarStyle.light(
+                    darkScrim = Color.Transparent.toArgb(),
+                    scrim = Color.Transparent.toArgb(),
+                )
+            } else {
+                SystemBarStyle.dark(
+                    scrim = Color.Transparent.toArgb(),
+                )
+            },
+            navigationBarStyle = if (useDarkIcons) {
+                SystemBarStyle.light(
+                    darkScrim = Color.Transparent.toArgb(),
+                    scrim = Color.Transparent.toArgb(),
+                )
+            } else {
+                SystemBarStyle.dark(
+                    scrim = Color.Transparent.toArgb(),
+                )
+            }
         )
     }
 

@@ -273,7 +273,6 @@ fun ListWaitingContinuationSeries(
                                     .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
                                 contentPadding = PaddingValues(10.dp)
                             ) {
-                                item { Spacer(Modifier.padding(vertical = 60.dp)) }
                                 items(listMovies, key = { it.id }) { movie ->
 
                                     var isVisible by remember { mutableStateOf(true) }
