@@ -12,7 +12,7 @@ class CreatingSharedListUseCase @Inject constructor(
         newList: DomainSharedListModel,
         forProfile: DomainMySharedListModel,
         userCreatorId: String,
-        invitedUserAddress: String
+        invitedUserAddress: List<String>
     ) {
         repository.createSharedList(newList, forProfile, userCreatorId, invitedUserAddress)
     }

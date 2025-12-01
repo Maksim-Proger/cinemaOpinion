@@ -17,14 +17,12 @@ import com.example.ui.presentation.components.text.CustomTextField
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 
-
 @Composable
 fun SharedListAlertDialog(
     userId: String,
     sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
     onDismiss: () -> Unit
 ) {
-
     val (title, setTitle) = remember { mutableStateOf("") }
     val (invitedUserAddress, setInvitedUserAddress) = remember { mutableStateOf("") }
 
@@ -37,10 +35,15 @@ fun SharedListAlertDialog(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
                 onClickButton = {
+                    val invitedUserAddressSplit = invitedUserAddress
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() }
+
                     sharedListsViewModel.createList(
                         title = title,
                         userCreatorId = userId,
-                        invitedUserAddress = invitedUserAddress
+                        invitedUserAddress = invitedUserAddressSplit
                     )
                     onDismiss()
                 }
@@ -71,7 +74,8 @@ fun SharedListAlertDialog(
                         )
                     },
                     keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Done,
+                    singleLine = false
                 )
             }
         }

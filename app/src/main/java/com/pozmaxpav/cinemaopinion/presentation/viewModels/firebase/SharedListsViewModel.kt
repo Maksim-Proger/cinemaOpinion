@@ -13,6 +13,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.CreatingS
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetCommentsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetSharedListsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.utilits.formatTextWithUnderscores
 import com.pozmaxpav.cinemaopinion.utilits.simpleTransliterate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +33,7 @@ class SharedListsViewModel @Inject constructor(
     private val addMovieUseCase: AddMovieUseCase,
     private val getMoviesUseCase: GetMoviesUseCase,
     private val addCommentUseCase: AddCommentUseCase,
+    private val removeMovieUseCase: RemoveMovieUseCase,
     private val getCommentsUseCase: GetCommentsUseCase
 ) : ViewModel() {
 
@@ -76,7 +78,7 @@ class SharedListsViewModel @Inject constructor(
         }
     }
 
-    fun createList(title: String, userCreatorId: String, invitedUserAddress: String) {
+    fun createList(title: String, userCreatorId: String, invitedUserAddress: List<String>) {
         val source = simpleTransliterate(formatTextWithUnderscores(title))
         val sharedID = UUID.randomUUID().toString()
 
@@ -122,6 +124,15 @@ class SharedListsViewModel @Inject constructor(
                     addMovieUseCase(listId, selectedMovie)
                     _toastMessage.emit(R.string.movie_has_been_added_to_general_list)
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    fun removeMovie(listId: String, movieId: Int) {
+        viewModelScope.launch {
+            try {
+                removeMovieUseCase(listId, movieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

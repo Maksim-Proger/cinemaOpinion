@@ -1,20 +1,40 @@
 package com.pozmaxpav.cinemaopinion.presentation.funs
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SharedListItem
@@ -30,6 +50,7 @@ fun ShowSharedLists(
     selectedMovie: DomainSelectedMovieModel? = null,
     onCloseSharedLists: () -> Unit = {}
 ) {
+    val listState = rememberLazyListState()
     val lists by sharedListsViewModel.list.collectAsState()
 
     LaunchedEffect(userId) { sharedListsViewModel.getLists(userId) }
@@ -37,38 +58,84 @@ fun ShowSharedLists(
     Column(
         modifier = Modifier
             .background(
-                MaterialTheme.colorScheme.surface,
-                RoundedCornerShape(16.dp)
+                color = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(16.dp)
             )
     ) {
         LazyColumn(
+            state = listState,
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(10.dp)
         ) {
-            items(lists) { item ->
-                SharedListItem(
-                    item = item,
-                    onClick = {
-                        if (addButton) {
-                            selectedMovie?.let {
-                                sharedListsViewModel.addMovie(
-                                    item.listId,
-                                    it
+            items(lists, key = { it.listId }) { item ->
+                var isVisible by remember { mutableStateOf(true) }
+                LaunchedEffect(isVisible) {
+                    if (!isVisible) {
+                        // Добавить метод удаления.
+                        // Добавить метод уведомления о создании нового списка.
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = isVisible,
+                    modifier = Modifier.animateItem(),
+                    exit = slideOutHorizontally(
+                        targetOffsetX = { -it },
+                        animationSpec = tween(durationMillis = 300)
+                    )
+                ) {
+                    Card(
+                        modifier = Modifier.wrapContentHeight(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            SharedListItem(
+                                item = item,
+                                onClick = {
+                                    if (addButton) {
+                                        selectedMovie?.let {
+                                            sharedListsViewModel.addMovie(
+                                                listId = item.listId,
+                                                selectedMovie = it
+                                            )
+                                        }
+                                        onCloseSharedLists()
+                                    } else {
+                                        navController.navigate(
+                                            Route.ListSharedScreen.getListId(
+                                                listId = item.listId,
+                                                title = item.title
+                                            )
+                                        )
+                                    }
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            IconButton(
+                                onClick = { isVisible = false },
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(end = 10.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondary
                                 )
                             }
-                            onCloseSharedLists()
-                        } else {
-                            navController.navigate(
-                                Route.ListSharedScreen.getListId(
-                                    listId = item.listId,
-                                    title = item.title
-                                )
-                            )
                         }
                     }
-                )
+                }
+                Spacer(Modifier.padding(5.dp))
             }
         }
     }
 }
-
