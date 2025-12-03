@@ -13,6 +13,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.CreatingS
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetCommentsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetSharedListsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.RemoveListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.RemoveMovieUseCase
 import com.pozmaxpav.cinemaopinion.utilits.formatTextWithUnderscores
 import com.pozmaxpav.cinemaopinion.utilits.simpleTransliterate
@@ -29,6 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SharedListsViewModel @Inject constructor(
     private val creatingSharedListUseCase: CreatingSharedListUseCase,
+    private val removeListUseCase: RemoveListUseCase,
     private val getSharedListsUseCase: GetSharedListsUseCase,
     private val addMovieUseCase: AddMovieUseCase,
     private val getMoviesUseCase: GetMoviesUseCase,
@@ -78,6 +80,16 @@ class SharedListsViewModel @Inject constructor(
         }
     }
 
+    fun getLists(userId: String) {
+        viewModelScope.launch {
+            try {
+                val myList = getSharedListsUseCase(userId)
+                _lists.value = myList
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
     fun createList(title: String, userCreatorId: String, invitedUserAddress: List<String>) {
         val source = simpleTransliterate(formatTextWithUnderscores(title))
         val sharedID = UUID.randomUUID().toString()
@@ -103,11 +115,10 @@ class SharedListsViewModel @Inject constructor(
             }
         }
     }
-    fun getLists(userId: String) {
+    fun removeList(listId: String) {
         viewModelScope.launch {
             try {
-                val myList = getSharedListsUseCase(userId)
-                _lists.value = myList
+                removeListUseCase(listId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

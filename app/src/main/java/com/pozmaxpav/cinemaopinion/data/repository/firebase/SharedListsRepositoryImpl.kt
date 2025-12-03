@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
+import android.util.Log
 import com.example.core.domain.DomainUserModel
 import com.example.core.utils.CoreDatabaseConstants.NODE_COMMENTS
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_USERS
@@ -49,7 +50,7 @@ class SharedListsRepositoryImpl @Inject constructor(
         if (listId.isEmpty()) throw IllegalArgumentException("List ID cannot be empty")
 
         // Находим ключ списка
-        val sharedListKey  = databaseReference
+        val sharedListKey = databaseReference
             .child(NODE_SHARED_LIST)
             .orderByChild("listId")
             .equalTo(listId)
@@ -227,6 +228,40 @@ class SharedListsRepositoryImpl @Inject constructor(
         return sharedLists.filter { it.listId in sharedListIds }
     }
 
+    override suspend fun removeSharedList(listId: String) {
+        try {
+            require(listId.isNotEmpty()) { "List ID cannot be empty" }
+
+            val snapshot = databaseReference
+                .child(NODE_SHARED_LIST)
+                .orderByChild("listId")
+                .equalTo(listId)
+                .get()
+                .await()
+//            Log.d("@@@", "Просто snapshot = $snapshot")
+//            Log.d("@@@", "Просто snapshot.children = ${snapshot.children}")
+//            Log.d("@@@", "Просто snapshot.value = ${snapshot.value}")
+
+            var users = ""
+            for (child in snapshot.children) {
+                val item = child.getValue(DomainSharedListModel::class.java)
+                users = item?.users ?: ""
+            }
+            updateUserData2(users, listId)
+
+            if (!snapshot.exists()) {
+                Log.w("Firebase", "Shared list not found for listId=$listId")
+                return
+            }
+
+            for (child in snapshot.children) {
+                child.ref.removeValue().await()
+            }
+        } catch (e: Exception) {
+            Log.e("Firebase", "Error removing shared list: ${e.message}", e)
+        }
+    }
+
     private suspend fun updateUserData(
         userCreatorId: String,
         invitedUserAddress: List<String>,
@@ -297,6 +332,40 @@ class SharedListsRepositoryImpl @Inject constructor(
 
         for (userKey in invitedUserKeys) {
             addProfileToUser(userKey)
+        }
+    }
+
+    private suspend fun updateUserData2(
+        users: String,
+        listId: String
+    ) {
+        val usersList = users
+            .split(",")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+
+        for (user in usersList) {
+            val userKey = databaseReference
+                .child(NODE_LIST_USERS)
+                .orderByChild("nikName")
+                .equalTo(user)
+                .get().await().children.firstOrNull()?.key
+                ?: throw IllegalArgumentException("User with nikName $user not found")
+
+            val sharedListSnapshot = databaseReference
+                .child(NODE_LIST_USERS)
+                .child(userKey)
+                .child(NODE_SHARED_LIST_PROFILE)
+                .orderByChild("listId")
+                .equalTo(listId)
+                .get().await()
+
+            if (!sharedListSnapshot.exists()) {
+                throw IllegalArgumentException("List with listId $listId not found")
+            }
+            for (childrenSnapshot in sharedListSnapshot.children) {
+                childrenSnapshot.ref.removeValue().await()
+            }
         }
     }
 

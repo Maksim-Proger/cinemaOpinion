@@ -28,6 +28,8 @@
     <string name="movie_is_not_uploaded">Фильм не загружен</string>
     <string name="movie_was_deleted">Фильм удален, страницы нет</string>
     <string name="watched_movies_sup_text">Просмотренных фильмов:</string>
+    <string name="list_participants">Участники:</string>
+    <string name="animation_for_rotating_icon">Анимация для поворота иконки</string>
 
     <!--  TopAppBarTitle  -->
     <string name="title_list_waiting_continuation_series">Лист ожидания</string>
