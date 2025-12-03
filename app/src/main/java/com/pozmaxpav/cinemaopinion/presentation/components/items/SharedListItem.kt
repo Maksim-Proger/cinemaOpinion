@@ -4,25 +4,15 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,12 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.ui.R
-import com.example.ui.presentation.components.ExpandedCard
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
 
 @Composable
@@ -49,7 +36,6 @@ fun SharedListItem(
 ) {
     Column(
         modifier = modifier
-            .background(color = Color.Blue)
             .padding(vertical = 12.dp, horizontal = 12.dp)
             .clickable { onClick() },
     ) {
@@ -58,12 +44,12 @@ fun SharedListItem(
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(Modifier.padding(vertical = 5.dp))
-        expandedCardTest(item.users)
+        ExpandedCardTest(item.users)
     }
 }
 
 @Composable
-private fun expandedCardTest(listParticipants: String) {
+private fun ExpandedCardTest(listParticipants: String) {
 
     var expandedState by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
@@ -74,20 +60,19 @@ private fun expandedCardTest(listParticipants: String) {
     Column(
         modifier = Modifier
             .clickable(onClick = { expandedState = !expandedState })
-            .animateContentSize( // Анимация для изменения размера карточки при раскрытии
+            .animateContentSize(
                 animationSpec = tween(
                     durationMillis = 300,
-                    easing = LinearOutSlowInEasing // Эффект анимации (замедление к концу)
+                    easing = LinearOutSlowInEasing
                 )
             )
-            .background(color = Color.Red)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable { expandedState = !expandedState }
         ) {
             Text(
-                text = "Участники",
+                text = stringResource(R.string.list_participants),
                 style = MaterialTheme.typography.bodySmall
             )
 

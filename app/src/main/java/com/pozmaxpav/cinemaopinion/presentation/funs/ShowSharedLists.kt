@@ -72,6 +72,7 @@ fun ShowSharedLists(
                 LaunchedEffect(isVisible) {
                     if (!isVisible) {
                         // Добавить метод удаления.
+                        sharedListsViewModel.removeList(item.listId)
                         // Добавить метод уведомления о создании нового списка.
                     }
                 }
