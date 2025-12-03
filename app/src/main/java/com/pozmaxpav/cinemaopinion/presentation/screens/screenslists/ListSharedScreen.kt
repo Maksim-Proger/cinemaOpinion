@@ -6,15 +6,21 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -28,19 +34,18 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -52,12 +57,13 @@ import com.example.core.domain.DomainUserModel
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.ExpandedCard
-import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.components.text.CustomTextFieldForComments
+import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
@@ -65,7 +71,7 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsV
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunctionClearAllScreens
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +85,6 @@ fun ListSharedScreen(
     userViewModel: UserViewModel = hiltViewModel(),
     sharedListsViewModel: SharedListsViewModel = hiltViewModel()
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
@@ -91,6 +96,12 @@ fun ListSharedScreen(
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
+
+    val isAtTop by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
+        }
+    }
 
     LaunchedEffect(Unit) {
         systemViewModel.getUserId()
@@ -107,25 +118,8 @@ fun ListSharedScreen(
         userViewModel.getUserData(userId)
     }
 
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopAppBarAllScreens(
-                context = context,
-                titleString = title,
-                scrollBehavior = scrollBehavior,
-                onTransitionAction = {
-                    navigateFunctionClearAllScreens(navController, Route.MainScreen.route)
-                }
-            )
-        }
-    ) { innerPadding ->
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(innerPadding)
-        ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
 
             if (openBottomSheetChange) {
                 CustomBottomSheet(
@@ -133,11 +127,7 @@ fun ListSharedScreen(
                     content = { /* TODO: Добавить действие */ },
                     fraction = 0.5f
                 )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    OnBackInvokedHandler { openBottomSheetChange = false }
-                } else {
-                    BackHandler { openBottomSheetChange = false }
-                }
+                AdaptiveBackHandler { openBottomSheetChange = false }
             }
 
             if (openBottomSheetComments) {
@@ -155,11 +145,7 @@ fun ListSharedScreen(
                     },
                     fraction = 0.7f
                 )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    OnBackInvokedHandler { openBottomSheetComments = false }
-                } else {
-                    BackHandler { openBottomSheetComments = false }
-                }
+                AdaptiveBackHandler { openBottomSheetComments = false }
             }
 
             selectedMovie?.let { movie ->
@@ -201,67 +187,86 @@ fun ListSharedScreen(
             }
 
             if (selectedMovie == null) {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(10.dp)
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(MaterialTheme.colorScheme.background)
                 ) {
-                    items(movies, key = { it.id }) { movie ->
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(WindowInsets.statusBars.asPaddingValues())
+                            .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
+                        contentPadding = PaddingValues(10.dp)
+                    ) {
+                        items(movies, key = { it.id }) { movie ->
+                            var isVisible by remember { mutableStateOf(true) }
 
-                        var isVisible by remember { mutableStateOf(true) }
-
-                        LaunchedEffect(isVisible) {
-                            if (!isVisible) {
-                                // TODO: Добавить метод удаления
+                            LaunchedEffect(isVisible) {
+                                if (!isVisible) {
+                                    sharedListsViewModel.removeMovie(listId, movie.id)
+                                    // TODO: Добавить метод записи в список изменений
+                                }
                             }
-                        }
 
-                        AnimatedVisibility(
-                            visible = isVisible,
-                            modifier = Modifier.animateItem(),
-                            exit = slideOutHorizontally(
-                                targetOffsetX = { -it },
-                                animationSpec = tween(durationMillis = 300)
-                            )
-                        ) {
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                    contentColor = MaterialTheme.colorScheme.onSecondary
+                            AnimatedVisibility(
+                                visible = isVisible,
+                                modifier = Modifier.animateItem(),
+                                exit = slideOutHorizontally(
+                                    targetOffsetX = { -it },
+                                    animationSpec = tween(durationMillis = 300)
                                 )
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                Card(
+                                    modifier = Modifier.wrapContentHeight(),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.secondary,
+                                        contentColor = MaterialTheme.colorScheme.onSecondary
+                                    )
                                 ) {
-                                    Row(modifier = Modifier.weight(1f)) {
-                                        SelectedMovieItem(
-                                            movie = movie,
-                                            onClick = { selectedMovie = movie }
-                                        )
-                                    }
-
-                                    IconButton(
-                                        onClick = { isVisible = false },
+                                    Row(
                                         modifier = Modifier
-                                            .size(50.dp)
-                                            .padding(end = 10.dp)
+                                            .fillMaxWidth()
+                                            .wrapContentHeight(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Close,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSecondary
-                                        )
+                                        Row(modifier = Modifier.weight(1f)) {
+                                            SelectedMovieItem(
+                                                movie = movie,
+                                                onClick = { selectedMovie = movie }
+                                            )
+                                        }
+                                        IconButton(
+                                            onClick = { isVisible = false },
+                                            modifier = Modifier
+                                                .size(50.dp)
+                                                .padding(end = 10.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Close,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
                                     }
                                 }
                             }
+                            Spacer(Modifier.padding(5.dp))
                         }
-                        Spacer(Modifier.padding(5.dp))
                     }
                 }
             }
+        }
+
+        if (selectedMovie == null) {
+            SpecialTopAppBar(
+                isAtTop = isAtTop,
+                title = title,
+                goToBack = { navController.popBackStack() },
+                goToHome = { navigateFunction(navController, Route.MainScreen.route) }
+            )
         }
     }
 }

@@ -45,6 +45,36 @@ class SharedListsRepositoryImpl @Inject constructor(
         movieRef.setValue(selectedMovie).await()
     }
 
+    override suspend fun removeMovie(listId: String, movieId: Int) {
+        if (listId.isEmpty()) throw IllegalArgumentException("List ID cannot be empty")
+
+        // Находим ключ списка
+        val sharedListKey  = databaseReference
+            .child(NODE_SHARED_LIST)
+            .orderByChild("listId")
+            .equalTo(listId)
+            .get()
+            .await()
+            .children.firstOrNull()?.key
+            ?: throw IllegalArgumentException("List with ID $listId not found")
+
+        // Переходим в shared_list_movies
+        val moviesNode = databaseReference
+            .child(NODE_SHARED_LIST)
+            .child(sharedListKey)
+            .child(NODE_SHARED_LIST_MOVIES)
+            .get()
+            .await()
+
+        // Ищем фильм по id
+        val movieSnapshot = moviesNode.children.firstOrNull { movie ->
+            movie.child("id").getValue(Int::class.java) == movieId
+        } ?: throw IllegalArgumentException("Movie with ID $movieId not found")
+
+        // Удаляем конкретный фильм
+        movieSnapshot.ref.removeValue().await()
+    }
+
     override suspend fun getMovies(listId: String): List<DomainSelectedMovieModel> {
         if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
 
@@ -148,21 +178,14 @@ class SharedListsRepositoryImpl @Inject constructor(
         newList: DomainSharedListModel,
         forProfile: DomainMySharedListModel,
         userCreatorId: String,
-        invitedUserAddress: String
+        invitedUserAddress: List<String>
     ) {
         try {
             updateUserData(userCreatorId, invitedUserAddress, forProfile)
             val entryWithUsers =
                 newList.copy(users = getNikNamesUsers(userCreatorId, invitedUserAddress))
-
-            val key = databaseReference.child(NODE_SHARED_LIST).push().key
-            key?.let {
-                databaseReference
-                    .child(NODE_SHARED_LIST)
-                    .child(it)
-                    .setValue(entryWithUsers)
-                    .await()
-            } ?: throw Exception("Failed to generate key")
+            val newRef = databaseReference.child(NODE_SHARED_LIST).push()
+            newRef.setValue(entryWithUsers).await()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -206,96 +229,106 @@ class SharedListsRepositoryImpl @Inject constructor(
 
     private suspend fun updateUserData(
         userCreatorId: String,
-        invitedUserAddress: String,
+        invitedUserAddress: List<String>,
         forProfile: DomainMySharedListModel,
     ) {
-        if (userCreatorId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
-        if (invitedUserAddress.isEmpty()) throw IllegalArgumentException("User Email cannot be empty")
+        if (userCreatorId.isEmpty()) {
+            throw IllegalArgumentException("User ID cannot be empty")
+        }
 
-        // region userCreator
-        val userCreator = databaseReference
+        if (invitedUserAddress.isEmpty()) {
+            throw IllegalArgumentException("Invited users list cannot be empty")
+        }
+
+        if (invitedUserAddress.any { it.isEmpty() }) {
+            throw IllegalArgumentException("One or more invited emails are empty")
+        }
+
+        val usersSnapshot = databaseReference
             .child(NODE_LIST_USERS)
-            .orderByChild("id")
-            .equalTo(userCreatorId)
             .get()
             .await()
-            .children.firstOrNull()?.key
+
+        if (!usersSnapshot.exists()) {
+            throw IllegalStateException("Users list is empty in DB")
+        }
+
+        val idToUserKey = mutableMapOf<String, String>()
+        val emailToUserKey = mutableMapOf<String, String>()
+
+        for (snapshot in usersSnapshot.children) {
+            val id = snapshot.child("id").getValue(String::class.java)
+            val email = snapshot.child("email").getValue(String::class.java)
+            val key = snapshot.key
+
+            if (id != null && key != null) idToUserKey[id] = key
+            if (email != null && key != null) emailToUserKey[email] = key
+        }
+
+        val creatorUserKey = idToUserKey[userCreatorId]
             ?: throw IllegalArgumentException("User with ID = $userCreatorId not found.")
 
-        val entryForUserCreator = databaseReference
-            .child(NODE_LIST_USERS)
-            .child(userCreator)
-            .child(NODE_SHARED_LIST_PROFILE)
-            .push().key
+        val missingEmails = invitedUserAddress.filter { it !in emailToUserKey }
 
-        databaseReference
-            .child(NODE_LIST_USERS)
-            .child(userCreator)
-            .child(NODE_SHARED_LIST_PROFILE)
-            .child(entryForUserCreator!!)
-            .setValue(forProfile)
-            .await()
-        // endregion
+        if (missingEmails.isNotEmpty()) {
+            throw IllegalArgumentException("Users not found with emails: $missingEmails")
+        }
 
-        // region invitedUser
-        val invitedUser = databaseReference
-            .child(NODE_LIST_USERS)
-            .orderByChild("email")
-            .equalTo(invitedUserAddress)
-            .get()
-            .await()
-            .children.firstOrNull()?.key
-            ?: throw IllegalArgumentException("User with Email = $invitedUserAddress not found.")
+        val invitedUserKeys = invitedUserAddress.map { emailToUserKey[it]!! }
 
-        val entryForInvitedUser = databaseReference
-            .child(NODE_LIST_USERS)
-            .child(invitedUser)
-            .child(NODE_SHARED_LIST_PROFILE)
-            .push().key
+        suspend fun addProfileToUser(userKey: String) {
+            val entryKey = databaseReference
+                .child(NODE_LIST_USERS)
+                .child(userKey)
+                .child(NODE_SHARED_LIST_PROFILE)
+                .push().key
+                ?: throw IllegalStateException("Failed to generate entry key")
 
-        databaseReference
-            .child(NODE_LIST_USERS)
-            .child(invitedUser)
-            .child(NODE_SHARED_LIST_PROFILE)
-            .child(entryForInvitedUser!!)
-            .setValue(forProfile)
-            .await()
-        // endregion
+            databaseReference
+                .child(NODE_LIST_USERS)
+                .child(userKey)
+                .child(NODE_SHARED_LIST_PROFILE)
+                .child(entryKey)
+                .setValue(forProfile)
+                .await()
+        }
 
+        addProfileToUser(creatorUserKey)
+
+        for (userKey in invitedUserKeys) {
+            addProfileToUser(userKey)
+        }
     }
 
     private suspend fun getNikNamesUsers(
         userCreatorId: String,
-        invitedUserAddress: String
+        invitedUserAddress: List<String>
     ): String {
-
-        // Получаем ники без создания полных объектов User
-        val creatorNick = databaseReference
+        val usersSnapshot = databaseReference
             .child(NODE_LIST_USERS)
-            .orderByChild("id")
-            .equalTo(userCreatorId)
             .get()
             .await()
-            .children
-            .firstOrNull()
-            ?.getValue(DomainUserModel::class.java)
+
+        val allUsers = usersSnapshot.children.mapNotNull {
+            it.getValue(DomainUserModel::class.java)
+        }
+
+        // Ник создателя
+        val creatorNick = allUsers
+            .firstOrNull { it.id == userCreatorId }
             ?.nikName
-            ?: ""  // или другое значение по умолчанию
+            ?: ""
 
-        val invitedNick = databaseReference
-            .child(NODE_LIST_USERS)
-            .orderByChild("email")
-            .equalTo(invitedUserAddress)
-            .get()
-            .await()
-            .children
-            .firstOrNull()
-            ?.getValue(DomainUserModel::class.java)
-            ?.nikName
-            ?: ""  // или другое значение по умолчанию
+        // Ники приглашённых
+        val invitedNicks = invitedUserAddress
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .mapNotNull { email -> allUsers.firstOrNull { it.email == email }?.nikName }
 
-        return "$creatorNick, $invitedNick"
-
+        return listOf(creatorNick)
+            .plus(invitedNicks)
+            .filter { it.isNotBlank() }
+            .joinToString(", ")
     }
 
 }

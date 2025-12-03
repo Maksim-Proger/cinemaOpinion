@@ -56,7 +56,6 @@ fun DetailsCardSeasonalEvent(
     apiViewModel: ApiViewModel = hiltViewModel()
 ) {
 
-
     val info by apiViewModel.informationMovie.collectAsState()
     var showRatingBar by remember { mutableStateOf(false) }
     val quantitySeasonalEventPoints by userViewModel.seasonalEventPoints.collectAsState()
@@ -77,7 +76,6 @@ fun DetailsCardSeasonalEvent(
             .wrapContentSize()
             .padding(padding)
     ) {
-
         if (showRatingBar) {
             RatingBarScaffold(
                 score = quantitySeasonalEventPoints,

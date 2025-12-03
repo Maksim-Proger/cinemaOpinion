@@ -118,12 +118,8 @@ fun ListSelectedGeneralMovies(
         }
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-        ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
             if (openBottomSheetChange) {
                 CustomBottomSheet(
                     onClose = { openBottomSheetChange = false },
@@ -272,7 +268,6 @@ fun ListSelectedGeneralMovies(
                                 )
                             }
                         }
-
                         is LoadingState.Success -> {
                             LazyColumn(
                                 state = listState,
@@ -289,13 +284,15 @@ fun ListSelectedGeneralMovies(
                                     LaunchedEffect(isVisible) {
                                         if (!isVisible) {
                                             movieViewModel.removeMovie(NODE_LIST_MOVIES, movie.id)
-                                            movieViewModel.savingChangeRecord(
-                                                context,
-                                                userData!!.nikName,
-                                                R.string.record_deleted_the_movie,
-                                                movie.nameFilm,
-                                                context.getString(R.string.movie_was_deleted)
-                                            )
+                                            userData?.let { user ->
+                                                movieViewModel.savingChangeRecord(
+                                                    context = context,
+                                                    username = user.nikName,
+                                                    stringResourceId = R.string.record_deleted_the_movie,
+                                                    title = movie.nameFilm,
+                                                    newDataSource = context.getString(R.string.movie_was_deleted)
+                                                )
+                                            }
                                         }
                                     }
 
@@ -346,7 +343,6 @@ fun ListSelectedGeneralMovies(
                                 }
                             }
                         }
-
                         is LoadingState.Error -> {
                             // TODO: Добавить логику работы при ошибке.
                         }
