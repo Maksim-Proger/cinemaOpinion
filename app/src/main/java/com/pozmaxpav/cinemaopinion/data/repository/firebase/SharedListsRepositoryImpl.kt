@@ -175,7 +175,7 @@ class SharedListsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createSharedList(
+    override suspend fun createList(
         newList: DomainSharedListModel,
         forProfile: DomainMySharedListModel,
         userCreatorId: String,
@@ -192,7 +192,7 @@ class SharedListsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSharedLists(userId: String): List<DomainSharedListModel> {
+    override suspend fun getLists(userId: String): List<DomainSharedListModel> {
 
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
@@ -228,7 +228,7 @@ class SharedListsRepositoryImpl @Inject constructor(
         return sharedLists.filter { it.listId in sharedListIds }
     }
 
-    override suspend fun removeSharedList(listId: String) {
+    override suspend fun removeList(listId: String) {
         try {
             require(listId.isNotEmpty()) { "List ID cannot be empty" }
 

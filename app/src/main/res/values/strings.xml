@@ -15,6 +15,8 @@
     <string name="shortcut_list_selected_movies_disabled">Недоступно</string>
 
     <!--  General Strings  -->
+    <string name="country">Страна:</string>
+    <string name="name_of_the_movie">Название фильма:</string>
     <string name="developer_field">Разработчик</string>
     <string name="title_awards_field">Зал славы</string>
     <string name="list_awards_empty">Наград пока нет</string>
@@ -28,6 +30,7 @@
     <string name="untitled_movie">Фильм без названия</string>
     <string name="movie_is_not_uploaded">Фильм не загружен</string>
     <string name="movie_was_deleted">Фильм удален, страницы нет</string>
+    <string name="list_was_deleted">Список удален, страницы нет</string>
     <string name="watched_movies_sup_text">Просмотренных фильмов:</string>
     <string name="list_participants">Участники:</string>
     <string name="animation_for_rotating_icon">Анимация для поворота иконки</string>
@@ -54,11 +57,12 @@
     <string name="record_series_has_been_moved_to_waiting_list">переместил(а) сериал в лист ожидания: </string>
     <string name="record_series_has_been_moved_to_series_list">переместил(а) сериал в список с сериалами: </string>
     <string name="record_deleted_the_movie">удалил(а) фильм: </string>
-    <string name="record_deleted_the_list">удалил(а) список: </string>
     <string name="record_deleted_the_series">удалил(а) сериал: </string>
     <string name="record_added_movie">добавил(а) фильм: </string>
     <string name="record_added_series">добавил(а) сериал: </string>
     <string name="record_added_default">добавил(а) объект по умолчанию: </string>
+    <string name="record_deleted_the_list">удалил(а) список: </string>
+    <string name="record_add_the_list">добавил(а) список: </string>
 
     <!--   Text for Drop-Down Menu   -->
     <string name="drop_down_menu_create_shared_list">Создать совместный список</string>

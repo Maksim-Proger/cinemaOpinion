@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +24,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -45,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -211,61 +215,62 @@ fun ListSelectedMovies(
                             CustomTextButton(
                                 textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
                                 topPadding = 7.dp,
+                                bottomPadding = 7.dp,
                                 containerColor = MaterialTheme.colorScheme.secondary,
                                 contentColor = MaterialTheme.colorScheme.onSecondary,
                                 onClickButton = { openSharedLists = true }
                             )
                         },
-                        movieTransferButtonToMoviesList = {
-                            CustomTextButton(
-                                textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
-                                topPadding = 7.dp,
-                                bottomPadding = 7.dp,
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                onClickButton = {
-                                    personalMovieViewModel.sendingToNewDirectory(
-                                        userId = userId,
-                                        dataSource = NODE_LIST_PERSONAL_MOVIES,
-                                        directionDataSource = NODE_LIST_MOVIES,
-                                        selectedMovieId = movie.id
-                                    )
-                                    showToast(context, R.string.movie_has_been_moved)
-                                    movieViewModel.createNotification(
-                                        context,
-                                        username = user.nikName,
-                                        stringResourceId = R.string.record_added_movie,
-                                        title = movie.nameFilm,
-                                        newDataSource = NODE_LIST_MOVIES,
-                                        entityId = movie.id
-                                    )
-                                }
-                            )
-                        },
-                        movieTransferButtonToSerialsList = {
-                            CustomTextButton(
-                                textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
-                                bottomPadding = 7.dp,
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                onClickButton = {
-                                    movieViewModel.sendingToNewDirectory(
-                                        dataSource = NODE_LIST_PERSONAL_MOVIES,
-                                        directionDataSource = NODE_LIST_SERIALS,
-                                        movieId = movie.id.toDouble()
-                                    )
-                                    showToast(context, R.string.series_has_been_moved)
-                                    movieViewModel.createNotification(
-                                        context = context,
-                                        username = user.nikName,
-                                        stringResourceId = R.string.record_added_series,
-                                        title = movie.nameFilm,
-                                        newDataSource = NODE_LIST_SERIALS,
-                                        entityId = movie.id
-                                    )
-                                }
-                            )
-                        },
+//                        movieTransferButtonToMoviesList = {
+//                            CustomTextButton(
+//                                textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
+//                                topPadding = 7.dp,
+//                                bottomPadding = 7.dp,
+//                                containerColor = MaterialTheme.colorScheme.secondary,
+//                                contentColor = MaterialTheme.colorScheme.onSecondary,
+//                                onClickButton = {
+//                                    personalMovieViewModel.sendingToNewDirectory(
+//                                        userId = userId,
+//                                        dataSource = NODE_LIST_PERSONAL_MOVIES,
+//                                        directionDataSource = NODE_LIST_MOVIES,
+//                                        selectedMovieId = movie.id
+//                                    )
+//                                    showToast(context, R.string.movie_has_been_moved)
+//                                    sharedListsViewModel.createNotification(
+//                                        context,
+//                                        username = user.nikName,
+//                                        stringResourceId = R.string.record_added_movie,
+//                                        title = movie.nameFilm,
+//                                        newDataSource = NODE_LIST_MOVIES,
+//                                        entityId = movie.id
+//                                    )
+//                                }
+//                            )
+//                        },
+//                        movieTransferButtonToSerialsList = {
+//                            CustomTextButton(
+//                                textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
+//                                bottomPadding = 7.dp,
+//                                containerColor = MaterialTheme.colorScheme.secondary,
+//                                contentColor = MaterialTheme.colorScheme.onSecondary,
+//                                onClickButton = {
+//                                    movieViewModel.sendingToNewDirectory(
+//                                        dataSource = NODE_LIST_PERSONAL_MOVIES,
+//                                        directionDataSource = NODE_LIST_SERIALS,
+//                                        movieId = movie.id.toDouble()
+//                                    )
+//                                    showToast(context, R.string.series_has_been_moved)
+//                                    sharedListsViewModel.createNotification(
+//                                        context = context,
+//                                        username = user.nikName,
+//                                        stringResourceId = R.string.record_added_series,
+//                                        title = movie.nameFilm,
+//                                        newDataSource = NODE_LIST_SERIALS,
+//                                        entityId = movie.id
+//                                    )
+//                                }
+//                            )
+//                        },
                         commentButton = {
                             CustomTextButton(
                                 textButton = context.getString(R.string.placeholder_for_comment_field),
@@ -277,7 +282,6 @@ fun ListSelectedMovies(
                         },
                         onClick = { selectedMovie = null }
                     )
-
                     AdaptiveBackHandler { selectedMovie = null }
                 }
             }
@@ -377,12 +381,24 @@ fun ListSelectedMovies(
                 }
             }
         }
+
         if (openSharedLists) {
-            CustomBoxShowOverlay(
-                onDismiss = { openSharedLists = false },
-                paddingVerticalSecondBox = 150.dp,
-                paddingHorizontalSecondBox = 36.dp,
-                content = {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight(0.9f)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .clickable { openSharedLists = false }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     ShowSharedLists(
                         navController = navController,
                         movieViewModel = movieViewModel,
@@ -396,7 +412,7 @@ fun ListSelectedMovies(
                         }
                     )
                 }
-            )
+            }
         }
 
         if (selectedMovie == null) {

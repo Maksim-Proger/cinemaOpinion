@@ -5,7 +5,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SharedListsRepository
 import javax.inject.Inject
 
-class CreatingSharedListUseCase @Inject constructor(
+class CreatingListUseCase @Inject constructor(
     private val repository: SharedListsRepository
 ) {
     suspend operator fun invoke(
@@ -14,6 +14,6 @@ class CreatingSharedListUseCase @Inject constructor(
         userCreatorId: String,
         invitedUserAddress: List<String>
     ) {
-        repository.createSharedList(newList, forProfile, userCreatorId, invitedUserAddress)
+        repository.createList(newList, forProfile, userCreatorId, invitedUserAddress)
     }
 }

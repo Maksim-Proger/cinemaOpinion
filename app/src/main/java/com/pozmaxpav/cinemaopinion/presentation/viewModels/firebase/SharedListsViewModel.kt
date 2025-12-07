@@ -5,16 +5,21 @@ import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainMySharedListModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.CreateNotificationUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.GetNotificationsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.RemoveNotificationUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.AddCommentUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.AddMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.CreatingSharedListUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.CreatingListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetCommentsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetSharedListsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.GetListsUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.RemoveListUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.RemoveMovieUseCase
+import com.pozmaxpav.cinemaopinion.utilits.deletingOldRecords
 import com.pozmaxpav.cinemaopinion.utilits.formatTextWithUnderscores
 import com.pozmaxpav.cinemaopinion.utilits.simpleTransliterate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,15 +34,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SharedListsViewModel @Inject constructor(
-    private val creatingSharedListUseCase: CreatingSharedListUseCase,
+    private val creatingListUseCase: CreatingListUseCase,
     private val removeListUseCase: RemoveListUseCase,
-    private val getSharedListsUseCase: GetSharedListsUseCase,
+    private val getListsUseCase: GetListsUseCase,
+
     private val addMovieUseCase: AddMovieUseCase,
     private val getMoviesUseCase: GetMoviesUseCase,
-    private val addCommentUseCase: AddCommentUseCase,
     private val removeMovieUseCase: RemoveMovieUseCase,
-    private val getCommentsUseCase: GetCommentsUseCase
+
+    private val addCommentUseCase: AddCommentUseCase,
+    private val getCommentsUseCase: GetCommentsUseCase,
+
+    private val createNotificationUseCase: CreateNotificationUseCase,
+    private val getNotificationsUseCase: GetNotificationsUseCase,
+    private val removeNotificationUseCase: RemoveNotificationUseCase,
 ) : ViewModel() {
+
+    private val _listOfChanges = MutableStateFlow<List<DomainNotificationModel>>(emptyList())
+    val listOfChanges = _listOfChanges.asStateFlow()
 
     private val _lists = MutableStateFlow<List<DomainSharedListModel>>(emptyList())
     val list = _lists.asStateFlow()
@@ -83,7 +97,7 @@ class SharedListsViewModel @Inject constructor(
     fun getLists(userId: String) {
         viewModelScope.launch {
             try {
-                val myList = getSharedListsUseCase(userId)
+                val myList = getListsUseCase(userId)
                 _lists.value = myList
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -109,7 +123,7 @@ class SharedListsViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                creatingSharedListUseCase(newList, forProfile, userCreatorId, invitedUserAddress)
+                creatingListUseCase(newList, forProfile, userCreatorId, invitedUserAddress)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -157,6 +171,43 @@ class SharedListsViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun getNotifications(userId: String) {
+        viewModelScope.launch {
+            try {
+                _listOfChanges.value = getNotificationsUseCase(userId)
+                removeOldNotifications() // Удаляем старые записи
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    private fun removeNotification(id: String) {
+        viewModelScope.launch {
+            try {
+                removeNotificationUseCase(id)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    private fun removeOldNotifications() { // Удаление записей из базы данных и списка
+        viewModelScope.launch {
+            val currentList = _listOfChanges.value
+            val filteredList = mutableListOf<DomainNotificationModel>()
+
+            currentList.forEach { record ->
+                if (deletingOldRecords(record.timestamp)) {
+                    // Удаляем запись из базы данных
+                    removeNotification(record.noteId)
+                } else {
+                    filteredList.add(record)
+                }
+            }
+
+            _listOfChanges.value = filteredList // Обновляем список после удаления
         }
     }
 }

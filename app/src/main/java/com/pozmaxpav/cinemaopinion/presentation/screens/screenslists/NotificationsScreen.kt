@@ -50,6 +50,7 @@ import com.example.ui.presentation.theme.MovingElement
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import java.text.SimpleDateFormat
@@ -62,7 +63,8 @@ fun ListOfChangesScreen(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
     userViewModel: UserViewModel = hiltViewModel(),
-    movieViewModel: MovieViewModel = hiltViewModel()
+    movieViewModel: MovieViewModel = hiltViewModel(),
+    sharedListsViewModel: SharedListsViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
@@ -72,7 +74,7 @@ fun ListOfChangesScreen(
     val userData by userViewModel.userData.collectAsState()
 
     LaunchedEffect(Unit) {
-        movieViewModel.getNotifications(userId)
+        sharedListsViewModel.getNotifications(userId)
         systemViewModel.getUserId()
     }
     LaunchedEffect(userId) {

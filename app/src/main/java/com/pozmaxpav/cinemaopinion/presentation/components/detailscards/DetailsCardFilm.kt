@@ -1,11 +1,15 @@
 package com.pozmaxpav.cinemaopinion.presentation.components.detailscards
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -96,24 +101,24 @@ fun DetailsCardFilm(
     }
 
     // TODO: Переписать это на совместные списки
-    LaunchedEffect(Unit) {
-        movieViewModel.successfulResult.collect { (dataSource, movie) ->
-            userData?.let { user ->
-                movieViewModel.createNotification(
-                    context = context,
-                    username = user.nikName,
-                    stringResourceId = when (dataSource) {
-                        NODE_LIST_MOVIES -> { R.string.record_added_movie }
-                        NODE_LIST_SERIALS -> { R.string.record_added_series }
-                        else -> { R.string.record_added_default }
-                    },
-                    title = movie.nameFilm,
-                    newDataSource = dataSource,
-                    entityId = movie.id
-                )
-            }
-        }
-    }
+//    LaunchedEffect(Unit) {
+//        movieViewModel.successfulResult.collect { (dataSource, movie) ->
+//            userData?.let { user ->
+//                movieViewModel.createNotification(
+//                    context = context,
+//                    username = user.nikName,
+//                    stringResourceId = when (dataSource) {
+//                        NODE_LIST_MOVIES -> { R.string.record_added_movie }
+//                        NODE_LIST_SERIALS -> { R.string.record_added_series }
+//                        else -> { R.string.record_added_default }
+//                    },
+//                    title = movie.nameFilm,
+//                    newDataSource = dataSource,
+//                    entityId = movie.id
+//                )
+//            }
+//        }
+//    }
 
     LaunchedEffect(movie?.id) {
         movie?.let { apiViewModel.getSearchMovieById(it.id) }
@@ -180,7 +185,8 @@ fun DetailsCardFilm(
                         .padding(vertical = 7.dp)
                 ) {
                     Text(
-                        text = "Название фильма: ${movie?.nameRu ?: stringResource(id = R.string.no_movie_title)}",
+                        text = "${stringResource(R.string.name_of_the_movie)} " +
+                                (movie?.nameRu ?: stringResource(id = R.string.no_movie_title)),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -188,7 +194,8 @@ fun DetailsCardFilm(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Страна: ${movie?.let { formatCountries(it.countries) }}",
+                        text = "${stringResource(R.string.country)} " +
+                                "${movie?.let { formatCountries(it.countries) }}",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -321,6 +328,8 @@ fun DetailsCardFilm(
                             triggerOnClickPersonalMovie = true
                         }
                     )
+
+                    // region Кнопки больше не нужны
 //                    CustomTextButton(
 //                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
 //                        bottomPadding = 7.dp,
@@ -368,17 +377,29 @@ fun DetailsCardFilm(
 //                            }
 //                        )
 //                    }
+                    // endregion
                 }
             }
         }
     }
 
     if (openSharedLists) {
-        CustomBoxShowOverlay(
-            onDismiss = { openSharedLists = false },
-            paddingVerticalSecondBox = 150.dp,
-            paddingHorizontalSecondBox = 36.dp,
-            content = {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight(0.9f)
+                .background(
+                    color = Color.Black.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .clickable { openSharedLists = false }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 ShowSharedLists(
                     navController = navController,
                     movieViewModel = movieViewModel,
@@ -391,7 +412,7 @@ fun DetailsCardFilm(
                     }
                 )
             }
-        )
+        }
     }
 }
 

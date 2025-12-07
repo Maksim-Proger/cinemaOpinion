@@ -210,7 +210,6 @@ fun ListSharedScreen(
                             LaunchedEffect(isVisible) {
                                 if (!isVisible) {
                                     sharedListsViewModel.removeMovie(listId, movie.id)
-                                    // TODO: Добавить новый параметр, чтобы каждый видел только нужные ему уведомления
                                     movieViewModel.createNotification(
                                         context = context,
                                         username = userName,
