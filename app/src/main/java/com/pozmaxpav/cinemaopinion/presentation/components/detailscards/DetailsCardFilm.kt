@@ -321,79 +321,53 @@ fun DetailsCardFilm(
                             triggerOnClickPersonalMovie = true
                         }
                     )
-                    CustomTextButton(
-                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
-                        bottomPadding = 7.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        onClickButton = {
-                            movie?.let { movie ->
-                                movieViewModel.saveMovie(
-                                    dataSource = NODE_LIST_MOVIES,
-                                    selectedMovie = movie.toSelectedMovie()
-                                )
-                            }
-                            triggerOnClickGeneralMovie = true
-                        }
-                    )
-                    CustomTextButton(
-                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
-                        bottomPadding = 7.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        onClickButton = {
-                            movie?.let {
-                                movieViewModel.saveMovie(
-                                    NODE_LIST_SERIALS,
-                                    it.toSelectedMovie()
-                                )
-                            }
-                            triggerOnClickGeneralMovie = true
-                        }
-                    )
-
-                    if (userData?.nikName == "Разработчик") {
-                        CustomTextButton(
-                            textButton = "В сезонный список",
-                            bottomPadding = 7.dp,
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = {
-                                movie?.let {
-                                    movieViewModel.saveMovie(
-                                        dataSource = NODE_HALLOWEEN_LIST,
-                                        selectedMovie = it.toSelectedMovie()
-                                    )
-                                }
-                            }
-                        )
-                    }
-
-                    // region Seasonal Event
 //                    CustomTextButton(
-//                        textButton = context.getString(R.string.button_add_to_new_year_list),
+//                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
+//                        bottomPadding = 7.dp,
 //                        containerColor = MaterialTheme.colorScheme.secondary,
 //                        contentColor = MaterialTheme.colorScheme.onSecondary,
 //                        onClickButton = {
-//                            userData?.let {
-//                                firebaseViewModel.savingChangeRecord(
-//                                    context,
-//                                    it.nikName,
-//                                    R.string.record_added_to_new_year_collection,
-//                                    movie?.nameRu.toString()
+//                            movie?.let { movie ->
+//                                movieViewModel.saveMovie(
+//                                    dataSource = NODE_LIST_MOVIES,
+//                                    selectedMovie = movie.toSelectedMovie()
 //                                )
 //                            }
+//                            triggerOnClickGeneralMovie = true
+//                        }
+//                    )
+//                    CustomTextButton(
+//                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
+//                        bottomPadding = 7.dp,
+//                        containerColor = MaterialTheme.colorScheme.secondary,
+//                        contentColor = MaterialTheme.colorScheme.onSecondary,
+//                        onClickButton = {
 //                            movie?.let {
-//                                firebaseViewModel.saveMovie(
-//                                    NODE_NEW_YEAR_LIST,
+//                                movieViewModel.saveMovie(
+//                                    NODE_LIST_SERIALS,
 //                                    it.toSelectedMovie()
 //                                )
 //                            }
-//                            showToast(context, R.string.movie_has_been_added_to_general_list)
-//                            onClick()
-//                        } // TODO: Добавить проверку
+//                            triggerOnClickGeneralMovie = true
+//                        }
 //                    )
-                    // endregion
+//
+//                    if (userData?.nikName == stringResource(R.string.developer_field)) {
+//                        CustomTextButton(
+//                            textButton = stringResource(R.string.button_add_to_seasonal_list),
+//                            bottomPadding = 7.dp,
+//                            containerColor = MaterialTheme.colorScheme.secondary,
+//                            contentColor = MaterialTheme.colorScheme.onSecondary,
+//                            onClickButton = {
+//                                movie?.let {
+//                                    movieViewModel.saveMovie(
+//                                        dataSource = NODE_HALLOWEEN_LIST,
+//                                        selectedMovie = it.toSelectedMovie()
+//                                    )
+//                                }
+//                            }
+//                        )
+//                    }
                 }
             }
         }

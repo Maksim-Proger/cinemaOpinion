@@ -72,338 +72,338 @@ import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ListSelectedGeneralSerials(
-    navController: NavHostController,
-    systemViewModel: SystemViewModel,
-    movieViewModel: MovieViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel(),
-    apiViewModel: ApiViewModel = hiltViewModel(),
-) {
-    val context = LocalContext.current
-    val listState = rememberLazyListState()
-
-    val listSerials by movieViewModel.movies.collectAsState()
-    val userId by systemViewModel.userId.collectAsState()
-    val userData by userViewModel.userData.collectAsState()
-    val info by apiViewModel.informationMovie.collectAsState()
-
-    var selectedSerial by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
-    var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
-    var openBottomSheetAddComments by remember { mutableStateOf(false) }
-    var openBottomSheetChangeComments by remember { mutableStateOf(false) }
-
-    val isAtTop by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        systemViewModel.getUserId()
-        movieViewModel.getMovies(NODE_LIST_SERIALS)
-        movieViewModel.observeListMovies(NODE_LIST_SERIALS)
-    }
-    LaunchedEffect(userId) {
-        userViewModel.getUserData(userId)
-    }
-    LaunchedEffect(selectedSerial) {
-        selectedSerial?.let { movie ->
-            apiViewModel.getInformationMovie(movie.id)
-        }
-    }
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            if (openBottomSheetChangeComments) {
-                CustomBottomSheet(
-                    onClose = { openBottomSheetChangeComments = false },
-                    content = {
-                        userData?.let { user ->
-                            selectedSerial?.let { serial ->
-                                selectedComment?.let { comment ->
-                                    ChangeComment(
-                                        dataSource = NODE_LIST_SERIALS,
-                                        userName = user.nikName,
-                                        selectedMovieId = serial.id,
-                                        selectedComment = comment,
-                                        viewModel = movieViewModel
-                                    ) {
-                                        openBottomSheetChangeComments = false
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    fraction = 0.7f
-                )
-                AdaptiveBackHandler { openBottomSheetChangeComments = false }
-            }
-
-            if (openBottomSheetAddComments) {
-                CustomBottomSheet(
-                    onClose = { openBottomSheetAddComments = false },
-                    content = {
-                        AddComment(
-                            dataUser = userData,
-                            dataSource = NODE_LIST_SERIALS,
-                            newDataSource = NODE_LIST_SERIALS,
-                            movieViewModel = movieViewModel,
-                            selectedItem = selectedSerial,
-                            context = context,
-                            onClick = { openBottomSheetAddComments = false }
-                        )
-                    },
-                    fraction = 0.7f
-                )
-                AdaptiveBackHandler { openBottomSheetAddComments = false }
-            }
-
-            selectedSerial?.let { serial ->
-                userData?.let { user ->
-                    DetailsCardSelectedMovie(
-                        movie = serial,
-                        content = {
-                            ShowCommentList(
-                                dataSource = NODE_LIST_SERIALS,
-                                selectedMovieId = serial.id,
-                                viewModel = movieViewModel,
-                                onClick = { comment ->
-                                    selectedComment = comment
-                                    openBottomSheetChangeComments = true
-                                }
-                            )
-                        },
-                        openDescription = {
-                            ExpandedCard(
-                                title = stringResource(R.string.text_for_expandedCard_field),
-                                description = info?.description
-                                    ?: stringResource(R.string.limit_is_over),
-                                bottomPadding = 7.dp
-                            )
-                        },
-                        commentButton = {
-                            CustomTextButton(
-                                textButton = context.getString(R.string.button_leave_comment),
-                                bottomPadding = 7.dp,
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                onClickButton = {
-                                    openBottomSheetAddComments = !openBottomSheetAddComments
-                                }
-                            )
-                        },
-                        movieTransferButtonToWaitingList = {
-                            CustomTextButton(
-                                textButton = context.getString(R.string.button_move_to_waiting_list),
-                                topPadding = 7.dp,
-                                bottomPadding = 7.dp,
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                onClickButton = {
-                                    movieViewModel.sendingToNewDirectory(
-                                        dataSource = NODE_LIST_SERIALS,
-                                        directionDataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                        movieId = serial.id.toDouble()
-                                    )
-                                    showToast(
-                                        context,
-                                        R.string.series_has_been_moved_to_waiting_list
-                                    )
-                                    movieViewModel.createNotification(
-                                        context = context,
-                                        username = user.nikName,
-                                        stringResourceId = R.string.record_series_has_been_moved_to_waiting_list,
-                                        title = serial.nameFilm,
-                                        newDataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                        entityId = serial.id
-                                    )
-                                }
-                            )
-                        },
-                        movieTransferButtonToWatchedMoviesList = {
-                            CustomTextButton(
-                                textButton = context.getString(R.string.button_viewed),
-                                topPadding = 7.dp,
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                onClickButton = {
-                                    movieViewModel.sendingToNewDirectory(
-                                        dataSource = NODE_LIST_SERIALS,
-                                        directionDataSource = NODE_LIST_WATCHED_MOVIES,
-                                        movieId = serial.id.toDouble()
-                                    )
-                                    showToast(context, R.string.series_has_been_moved)
-                                    movieViewModel.createNotification(
-                                        context = context,
-                                        username = user.nikName,
-                                        stringResourceId = R.string.record_series_has_been_moved_to_viewed,
-                                        title = serial.nameFilm,
-                                        newDataSource = NODE_LIST_WATCHED_MOVIES,
-                                        entityId = serial.id
-                                    )
-                                }
-                            )
-                        },
-                        onClick = { selectedSerial = null }
-                    )
-                    AdaptiveBackHandler { selectedSerial = null }
-                }
-            }
-
-            if (selectedSerial == null) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(MaterialTheme.colorScheme.background)
-                ) {
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(WindowInsets.statusBars.asPaddingValues())
-                            .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
-                        contentPadding = PaddingValues(10.dp)
-                    ) {
-                        items(listSerials, key = { it.id }) { movie ->
-
-                            var isVisible by remember { mutableStateOf(true) }
-
-                            LaunchedEffect(isVisible) {
-                                if (!isVisible) {
-                                    movieViewModel.removeMovie(
-                                        NODE_LIST_SERIALS,
-                                        movie.id
-                                    )
-                                    movieViewModel.createNotification(
-                                        context,
-                                        userData!!.nikName,
-                                        R.string.record_deleted_the_series,
-                                        movie.nameFilm,
-                                        context.getString(R.string.movie_was_deleted)
-                                    )
-                                }
-                            }
-
-                            AnimatedVisibility(
-                                visible = isVisible,
-                                modifier = Modifier.animateItem(),
-                                exit = slideOutHorizontally(
-                                    targetOffsetX = { -it },
-                                    animationSpec = tween(durationMillis = 300)
-                                )
-                            ) {
-                                Card(
-                                    modifier = Modifier.wrapContentHeight(),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                        contentColor = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .wrapContentHeight(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Row(modifier = Modifier.weight(1f)) {
-                                            SelectedMovieItem(
-                                                movie = movie,
-                                                onClick = { selectedSerial = movie }
-                                            )
-                                        }
-                                        IconButton(
-                                            onClick = { isVisible = false },
-                                            modifier = Modifier
-                                                .size(50.dp)
-                                                .padding(end = 10.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Close,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.onSecondary
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                            Spacer(Modifier.padding(5.dp))
-                        }
-                    }
-                }
-            }
-
-            // region Кнопки
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(25.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Card(
-                    modifier = Modifier
-                        .clickable {
-                            navigateFunction(navController, Route.ListWatchedMovies.route)
-                        },
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                ) {
-                    Box(
-                        modifier = Modifier.padding(10.dp)
-                    ) {
-                        Text(
-                            text = "Просмотренные",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-
-                Card(
-                    modifier = Modifier
-                        .clickable {
-                            navigateFunction(
-                                navController,
-                                Route.ListWaitingContinuationSeries.route
-                            )
-                        },
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                ) {
-                    Box(
-                        modifier = Modifier.padding(10.dp)
-                    ) {
-                        Text(
-                            text = "Лист ожидания",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
-            // endregion
-        }
-
-        if (selectedSerial == null) {
-            SpecialTopAppBar(
-                isAtTop = isAtTop,
-                title = stringResource(R.string.title_page_serials_list),
-                goToBack = { navController.popBackStack() },
-                goToHome = { navigateFunction(navController, Route.MainScreen.route) }
-            )
-        }
-    }
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun ListSelectedGeneralSerials(
+//    navController: NavHostController,
+//    systemViewModel: SystemViewModel,
+//    movieViewModel: MovieViewModel = hiltViewModel(),
+//    userViewModel: UserViewModel = hiltViewModel(),
+//    apiViewModel: ApiViewModel = hiltViewModel(),
+//) {
+//    val context = LocalContext.current
+//    val listState = rememberLazyListState()
+//
+//    val listSerials by movieViewModel.movies.collectAsState()
+//    val userId by systemViewModel.userId.collectAsState()
+//    val userData by userViewModel.userData.collectAsState()
+//    val info by apiViewModel.informationMovie.collectAsState()
+//
+//    var selectedSerial by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+//    var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
+//    var openBottomSheetAddComments by remember { mutableStateOf(false) }
+//    var openBottomSheetChangeComments by remember { mutableStateOf(false) }
+//
+//    val isAtTop by remember {
+//        derivedStateOf {
+//            listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
+//        }
+//    }
+//
+//    LaunchedEffect(Unit) {
+//        systemViewModel.getUserId()
+//        movieViewModel.getMovies(NODE_LIST_SERIALS)
+//        movieViewModel.observeListMovies(NODE_LIST_SERIALS)
+//    }
+//    LaunchedEffect(userId) {
+//        userViewModel.getUserData(userId)
+//    }
+//    LaunchedEffect(selectedSerial) {
+//        selectedSerial?.let { movie ->
+//            apiViewModel.getInformationMovie(movie.id)
+//        }
+//    }
+//
+//    Box(
+//        modifier = Modifier.fillMaxSize()
+//    ) {
+//        Column(
+//            modifier = Modifier.fillMaxSize(),
+//        ) {
+//            if (openBottomSheetChangeComments) {
+//                CustomBottomSheet(
+//                    onClose = { openBottomSheetChangeComments = false },
+//                    content = {
+//                        userData?.let { user ->
+//                            selectedSerial?.let { serial ->
+//                                selectedComment?.let { comment ->
+//                                    ChangeComment(
+//                                        dataSource = NODE_LIST_SERIALS,
+//                                        userName = user.nikName,
+//                                        selectedMovieId = serial.id,
+//                                        selectedComment = comment,
+//                                        viewModel = movieViewModel
+//                                    ) {
+//                                        openBottomSheetChangeComments = false
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    },
+//                    fraction = 0.7f
+//                )
+//                AdaptiveBackHandler { openBottomSheetChangeComments = false }
+//            }
+//
+//            if (openBottomSheetAddComments) {
+//                CustomBottomSheet(
+//                    onClose = { openBottomSheetAddComments = false },
+//                    content = {
+//                        AddComment(
+//                            dataUser = userData,
+//                            dataSource = NODE_LIST_SERIALS,
+//                            newDataSource = NODE_LIST_SERIALS,
+//                            movieViewModel = movieViewModel,
+//                            selectedItem = selectedSerial,
+//                            context = context,
+//                            onClick = { openBottomSheetAddComments = false }
+//                        )
+//                    },
+//                    fraction = 0.7f
+//                )
+//                AdaptiveBackHandler { openBottomSheetAddComments = false }
+//            }
+//
+//            selectedSerial?.let { serial ->
+//                userData?.let { user ->
+//                    DetailsCardSelectedMovie(
+//                        movie = serial,
+//                        content = {
+//                            ShowCommentList(
+//                                dataSource = NODE_LIST_SERIALS,
+//                                selectedMovieId = serial.id,
+//                                viewModel = movieViewModel,
+//                                onClick = { comment ->
+//                                    selectedComment = comment
+//                                    openBottomSheetChangeComments = true
+//                                }
+//                            )
+//                        },
+//                        openDescription = {
+//                            ExpandedCard(
+//                                title = stringResource(R.string.text_for_expandedCard_field),
+//                                description = info?.description
+//                                    ?: stringResource(R.string.limit_is_over),
+//                                bottomPadding = 7.dp
+//                            )
+//                        },
+//                        commentButton = {
+//                            CustomTextButton(
+//                                textButton = context.getString(R.string.button_leave_comment),
+//                                bottomPadding = 7.dp,
+//                                containerColor = MaterialTheme.colorScheme.secondary,
+//                                contentColor = MaterialTheme.colorScheme.onSecondary,
+//                                onClickButton = {
+//                                    openBottomSheetAddComments = !openBottomSheetAddComments
+//                                }
+//                            )
+//                        },
+//                        movieTransferButtonToWaitingList = {
+//                            CustomTextButton(
+//                                textButton = context.getString(R.string.button_move_to_waiting_list),
+//                                topPadding = 7.dp,
+//                                bottomPadding = 7.dp,
+//                                containerColor = MaterialTheme.colorScheme.secondary,
+//                                contentColor = MaterialTheme.colorScheme.onSecondary,
+//                                onClickButton = {
+//                                    movieViewModel.sendingToNewDirectory(
+//                                        dataSource = NODE_LIST_SERIALS,
+//                                        directionDataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+//                                        movieId = serial.id.toDouble()
+//                                    )
+//                                    showToast(
+//                                        context,
+//                                        R.string.series_has_been_moved_to_waiting_list
+//                                    )
+//                                    movieViewModel.createNotification(
+//                                        context = context,
+//                                        username = user.nikName,
+//                                        stringResourceId = R.string.record_series_has_been_moved_to_waiting_list,
+//                                        title = serial.nameFilm,
+//                                        newDataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+//                                        entityId = serial.id
+//                                    )
+//                                }
+//                            )
+//                        },
+//                        movieTransferButtonToWatchedMoviesList = {
+//                            CustomTextButton(
+//                                textButton = context.getString(R.string.button_viewed),
+//                                topPadding = 7.dp,
+//                                containerColor = MaterialTheme.colorScheme.secondary,
+//                                contentColor = MaterialTheme.colorScheme.onSecondary,
+//                                onClickButton = {
+//                                    movieViewModel.sendingToNewDirectory(
+//                                        dataSource = NODE_LIST_SERIALS,
+//                                        directionDataSource = NODE_LIST_WATCHED_MOVIES,
+//                                        movieId = serial.id.toDouble()
+//                                    )
+//                                    showToast(context, R.string.series_has_been_moved)
+//                                    movieViewModel.createNotification(
+//                                        context = context,
+//                                        username = user.nikName,
+//                                        stringResourceId = R.string.record_series_has_been_moved_to_viewed,
+//                                        title = serial.nameFilm,
+//                                        newDataSource = NODE_LIST_WATCHED_MOVIES,
+//                                        entityId = serial.id
+//                                    )
+//                                }
+//                            )
+//                        },
+//                        onClick = { selectedSerial = null }
+//                    )
+//                    AdaptiveBackHandler { selectedSerial = null }
+//                }
+//            }
+//
+//            if (selectedSerial == null) {
+//                Column(
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .background(MaterialTheme.colorScheme.background)
+//                ) {
+//                    LazyColumn(
+//                        state = listState,
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .padding(WindowInsets.statusBars.asPaddingValues())
+//                            .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
+//                        contentPadding = PaddingValues(10.dp)
+//                    ) {
+//                        items(listSerials, key = { it.id }) { movie ->
+//
+//                            var isVisible by remember { mutableStateOf(true) }
+//
+//                            LaunchedEffect(isVisible) {
+//                                if (!isVisible) {
+//                                    movieViewModel.removeMovie(
+//                                        NODE_LIST_SERIALS,
+//                                        movie.id
+//                                    )
+//                                    movieViewModel.createNotification(
+//                                        context,
+//                                        userData!!.nikName,
+//                                        R.string.record_deleted_the_series,
+//                                        movie.nameFilm,
+//                                        context.getString(R.string.movie_was_deleted)
+//                                    )
+//                                }
+//                            }
+//
+//                            AnimatedVisibility(
+//                                visible = isVisible,
+//                                modifier = Modifier.animateItem(),
+//                                exit = slideOutHorizontally(
+//                                    targetOffsetX = { -it },
+//                                    animationSpec = tween(durationMillis = 300)
+//                                )
+//                            ) {
+//                                Card(
+//                                    modifier = Modifier.wrapContentHeight(),
+//                                    colors = CardDefaults.cardColors(
+//                                        containerColor = MaterialTheme.colorScheme.secondary,
+//                                        contentColor = MaterialTheme.colorScheme.onSecondary
+//                                    )
+//                                ) {
+//                                    Row(
+//                                        modifier = Modifier
+//                                            .fillMaxWidth()
+//                                            .wrapContentHeight(),
+//                                        horizontalArrangement = Arrangement.SpaceBetween,
+//                                        verticalAlignment = Alignment.CenterVertically
+//                                    ) {
+//                                        Row(modifier = Modifier.weight(1f)) {
+//                                            SelectedMovieItem(
+//                                                movie = movie,
+//                                                onClick = { selectedSerial = movie }
+//                                            )
+//                                        }
+//                                        IconButton(
+//                                            onClick = { isVisible = false },
+//                                            modifier = Modifier
+//                                                .size(50.dp)
+//                                                .padding(end = 10.dp)
+//                                        ) {
+//                                            Icon(
+//                                                imageVector = Icons.Default.Close,
+//                                                contentDescription = null,
+//                                                tint = MaterialTheme.colorScheme.onSecondary
+//                                            )
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                            Spacer(Modifier.padding(5.dp))
+//                        }
+//                    }
+//                }
+//            }
+//
+//            // region Кнопки
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(25.dp),
+//                horizontalArrangement = Arrangement.SpaceEvenly,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Card(
+//                    modifier = Modifier
+//                        .clickable {
+//                            navigateFunction(navController, Route.ListWatchedMovies.route)
+//                        },
+//                    shape = RoundedCornerShape(8.dp),
+//                    elevation = CardDefaults.cardElevation(8.dp),
+//                    colors = CardDefaults.cardColors(
+//                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+//                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+//                    )
+//                ) {
+//                    Box(
+//                        modifier = Modifier.padding(10.dp)
+//                    ) {
+//                        Text(
+//                            text = "Просмотренные",
+//                            style = MaterialTheme.typography.bodyMedium
+//                        )
+//                    }
+//                }
+//
+//                Card(
+//                    modifier = Modifier
+//                        .clickable {
+//                            navigateFunction(
+//                                navController,
+//                                Route.ListWaitingContinuationSeries.route
+//                            )
+//                        },
+//                    shape = RoundedCornerShape(8.dp),
+//                    elevation = CardDefaults.cardElevation(8.dp),
+//                    colors = CardDefaults.cardColors(
+//                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+//                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+//                    )
+//                ) {
+//                    Box(
+//                        modifier = Modifier.padding(10.dp)
+//                    ) {
+//                        Text(
+//                            text = "Лист ожидания",
+//                            style = MaterialTheme.typography.bodyMedium
+//                        )
+//                    }
+//                }
+//            }
+//            // endregion
+//        }
+//
+//        if (selectedSerial == null) {
+//            SpecialTopAppBar(
+//                isAtTop = isAtTop,
+//                title = stringResource(R.string.title_page_serials_list),
+//                goToBack = { navController.popBackStack() },
+//                goToHome = { navigateFunction(navController, Route.MainScreen.route) }
+//            )
+//        }
+//    }
+//}
