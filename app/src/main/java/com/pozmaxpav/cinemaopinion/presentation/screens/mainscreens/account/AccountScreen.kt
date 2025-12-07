@@ -169,17 +169,25 @@ fun AccountScreen(
 
                     AccountItem(
                         icon = painterResource(id = R.drawable.ic_movie_list),
-                        contentDescription = stringResource(id = R.string.description_icon_movie_list),
-                        title = stringResource(id = R.string.joint_list_films)
-                    ) { navigateFunction(navController, Route.ListSelectedGeneralMovies.route) }
+                        contentDescription = stringResource(R.string.description_icon_shared_lists),
+                        title = stringResource(R.string.shared_lists)
+                    ) { openSharedLists = true }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    // region Кнопки больше не нужны
+//                    AccountItem(
+//                        icon = painterResource(id = R.drawable.ic_movie_list),
+//                        contentDescription = stringResource(id = R.string.description_icon_movie_list),
+//                        title = stringResource(id = R.string.joint_list_films)
+//                    ) { navigateFunction(navController, Route.ListSelectedGeneralMovies.route) }
+//
+//                    Spacer(modifier = Modifier.height(20.dp))
 
-                    AccountItem(
-                        icon = painterResource(id = R.drawable.ic_movie_list),
-                        contentDescription = stringResource(id = R.string.description_icon_serials_list),
-                        title = stringResource(id = R.string.joint_list_serials)
-                    ) { navigateFunction(navController, Route.ListSelectedGeneralSerials.route) }
+//                    AccountItem(
+//                        icon = painterResource(id = R.drawable.ic_movie_list),
+//                        contentDescription = stringResource(id = R.string.description_icon_serials_list),
+//                        title = stringResource(id = R.string.joint_list_serials)
+//                    ) { navigateFunction(navController, Route.ListSelectedGeneralSerials.route) }
+// endregion
 
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -189,13 +197,6 @@ fun AccountScreen(
                         title = stringResource(R.string.series_control)
                     ) { navigateFunction(navController, Route.SeriesControlScreen.route) }
 
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    AccountItem(
-                        icon = painterResource(id = R.drawable.ic_movie_list),
-                        contentDescription = stringResource(R.string.description_icon_shared_lists),
-                        title = stringResource(R.string.shared_lists)
-                    ) { openSharedLists = true }
                 }
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
@@ -231,7 +232,7 @@ fun AccountScreen(
             modifier = Modifier
                 .fillMaxHeight(0.9f)
                 .background(
-                    Color.Black.copy(alpha = 0.5f),
+                    color = Color.Black.copy(alpha = 0.5f),
                     shape = RoundedCornerShape(12.dp)
                 )
                 .clickable { openSharedLists = false }

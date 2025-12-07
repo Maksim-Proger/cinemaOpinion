@@ -39,13 +39,12 @@ class MovieViewModel @Inject constructor(
     private val getMovieUseCase: GetMovieUseCase,
     private val observeListMoviesUseCase: ObserveListMoviesUseCase,
     private val getMovieByIdUseCase: GetMovieByIdUseCase,
+
     private val addCommentUseCase: AddCommentUseCase,
     private val getCommentsUseCase: GetCommentsUseCase,
     private val observeListCommentsUseCase: ObserveListCommentsUseCase,
     private val updateCommentUseCase: UpdateCommentUseCase,
-    private val createNotificationUseCase: CreateNotificationUseCase,
-    private val getNotificationsUseCase: GetNotificationsUseCase,
-    private val removeNotificationUseCase: RemoveNotificationUseCase,
+
     private val sendingToNewDirectoryUseCase: SendingToNewDirectoryUseCase
 ) : ViewModel() {
 
@@ -61,8 +60,7 @@ class MovieViewModel @Inject constructor(
     private val _comments = MutableStateFlow<List<DomainCommentModel>>(emptyList())
     val comments = _comments.asStateFlow()
 
-    private val _listOfChanges = MutableStateFlow<List<DomainNotificationModel>>(emptyList())
-    val listOfChanges = _listOfChanges.asStateFlow()
+
 
     private val _movie = MutableStateFlow<DomainSelectedMovieModel?>(null)
     val movie = _movie.asStateFlow()
@@ -137,17 +135,7 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun getNotifications(userId: String) {
-        viewModelScope.launch {
-            try {
-                val list = getNotificationsUseCase(userId)
-                _listOfChanges.value = list
-                removeOldNotifications() // Удаляем старые записи
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
+
     fun createNotification(
         context: Context,
         username: String,
@@ -177,32 +165,8 @@ class MovieViewModel @Inject constructor(
             }
         }
     }
-    private fun removeNotification(id: String) {
-        viewModelScope.launch {
-            try {
-                removeNotificationUseCase(id)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-    private fun removeOldNotifications() { // Удаление записей из базы данных и списка
-        viewModelScope.launch {
-            val currentList = _listOfChanges.value
-            val filteredList = mutableListOf<DomainNotificationModel>()
 
-            currentList.forEach { record ->
-                if (deletingOldRecords(record.timestamp)) {
-                    // Удаляем запись из базы данных
-                    removeNotification(record.noteId)
-                } else {
-                    filteredList.add(record)
-                }
-            }
 
-            _listOfChanges.value = filteredList // Обновляем список после удаления
-        }
-    }
 
     fun addComment(dataSource: String, movieId: Double, username: String, commentUser: String) {
         val comment = DomainCommentModel(

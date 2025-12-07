@@ -7,6 +7,6 @@ class RemoveListUseCase @Inject constructor(
     private val repository: SharedListsRepository
 ) {
     suspend operator fun invoke(listId: String) {
-        repository.removeSharedList(listId)
+        repository.removeList(listId)
     }
 }

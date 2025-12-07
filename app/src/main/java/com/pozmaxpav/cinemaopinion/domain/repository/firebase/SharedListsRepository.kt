@@ -9,16 +9,18 @@ interface SharedListsRepository {
     suspend fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel)
     suspend fun removeMovie(listId: String, movieId: Int)
     suspend fun getMovies(listId: String): List<DomainSelectedMovieModel>
+
     suspend fun addComment(listId: String, movieId: Int, comment: DomainCommentModel)
     suspend fun getComments(listId: String, movieId: Int): List<DomainCommentModel>
 
-    suspend fun createSharedList(
+    suspend fun createList(
         newList: DomainSharedListModel,
         forProfile: DomainMySharedListModel,
         userCreatorId: String,
         invitedUserAddress: List<String>
     )
+    suspend fun getLists(userId: String): List<DomainSharedListModel>
+    suspend fun removeList(listId: String)
 
-    suspend fun getSharedLists(userId: String): List<DomainSharedListModel>
-    suspend fun removeSharedList(listId: String)
+
 }

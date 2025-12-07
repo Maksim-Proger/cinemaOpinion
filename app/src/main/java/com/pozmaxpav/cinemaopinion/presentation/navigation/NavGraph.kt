@@ -13,12 +13,12 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.MediaNewsScr
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.SeriesControlScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.ScaffoldMainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListOfChangesScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralMovies
-import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralSerials
+//import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralMovies
+//import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralSerials
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSharedScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWaitingContinuationSeries
-import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWatchedMovies
+//import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWaitingContinuationSeries
+//import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWatchedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.EditPersonalInformationScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.MovieDetailScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SettingsScreen
@@ -51,21 +51,21 @@ fun NavGraph(
         composable(Route.SeriesControlScreen.route) {
             SeriesControlScreen(navController, systemViewModel)
         }
-        composable(Route.ListWatchedMovies.route) {
-            ListWatchedMovies(navController, systemViewModel)
-        }
-        composable(Route.ListSelectedGeneralMovies.route) {
-            ListSelectedGeneralMovies(navController, systemViewModel)
-        }
-        composable(Route.ListSelectedGeneralSerials.route) {
-            ListSelectedGeneralSerials(navController, systemViewModel)
-        }
+//        composable(Route.ListWatchedMovies.route) {
+//            ListWatchedMovies(navController, systemViewModel)
+//        }
+//        composable(Route.ListSelectedGeneralMovies.route) {
+//            ListSelectedGeneralMovies(navController, systemViewModel)
+//        }
+//        composable(Route.ListSelectedGeneralSerials.route) {
+//            ListSelectedGeneralSerials(navController, systemViewModel)
+//        }
         composable(Route.ListSelectedMovies.route) {
             ListSelectedMovies(navController, systemViewModel)
         }
-        composable(Route.ListWaitingContinuationSeries.route) {
-            ListWaitingContinuationSeries(navController, systemViewModel)
-        }
+//        composable(Route.ListWaitingContinuationSeries.route) {
+//            ListWaitingContinuationSeries(navController, systemViewModel)
+//        }
         composable(
             Route.SettingsScreen.route,
             arguments = listOf(

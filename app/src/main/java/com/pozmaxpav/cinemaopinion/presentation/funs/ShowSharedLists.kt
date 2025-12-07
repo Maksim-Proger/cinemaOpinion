@@ -79,8 +79,7 @@ fun ShowSharedLists(
                 LaunchedEffect(isVisible) {
                     if (!isVisible) {
                         sharedListsViewModel.removeList(item.listId)
-                        // TODO: Добавить новый параметр, чтобы каждый видел только нужные ему уведомления
-                        movieViewModel.createNotification(
+                        sharedListsViewModel.createNotification(
                             context = context,
                             username = userName,
                             stringResourceId = R.string.record_deleted_the_list,
