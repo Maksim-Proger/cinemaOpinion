@@ -83,13 +83,16 @@ fun NavGraph(
             Route.ListSharedScreen.route,
             arguments = listOf(
                 navArgument("listId") { type = NavType.StringType },
-                navArgument("title") { type = NavType.StringType }
+                navArgument("title") { type = NavType.StringType },
+                navArgument("userName") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val listId = backStackEntry.arguments?.getString("listId") ?: ""
             val title = backStackEntry.arguments?.getString("title") ?: ""
+            val userName = backStackEntry.arguments?.getString("userName") ?: ""
             ListSharedScreen(
                 navController = navController,
+                userName = userName,
                 systemViewModel = systemViewModel,
                 listId = listId,
                 title = title

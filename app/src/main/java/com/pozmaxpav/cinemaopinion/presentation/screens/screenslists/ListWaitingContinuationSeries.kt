@@ -221,7 +221,7 @@ fun ListWaitingContinuationSeries(
                                             movieId = serial.id.toDouble()
                                         )
                                         showToast(context, R.string.series_has_been_moved_to_viewed)
-                                        movieViewModel.savingChangeRecord(
+                                        movieViewModel.createNotification(
                                             context = context,
                                             username = user.nikName,
                                             stringResourceId = R.string.record_series_has_been_moved_to_viewed,
@@ -282,7 +282,7 @@ fun ListWaitingContinuationSeries(
                                                 NODE_LIST_WAITING_CONTINUATION_SERIES,
                                                 movie.id
                                             )
-                                            movieViewModel.savingChangeRecord(
+                                            movieViewModel.createNotification(
                                                 context,
                                                 userData!!.nikName,
                                                 R.string.record_deleted_the_movie,

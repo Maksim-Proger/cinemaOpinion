@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.GetMovieByIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.AddCommentUseCase
@@ -17,9 +17,9 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.RemoveMovieUse
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SaveMovieUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.SendingToNewDirectoryUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.movies.comments.UpdateCommentUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.GetRecordsOfChangesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.RemoveRecordsOfChangesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.records.SavingChangeRecordUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.GetNotificationsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.RemoveNotificationUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.CreateNotificationUseCase
 import com.pozmaxpav.cinemaopinion.utilits.deletingOldRecords
 import com.example.core.utils.state.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,9 +43,9 @@ class MovieViewModel @Inject constructor(
     private val getCommentsUseCase: GetCommentsUseCase,
     private val observeListCommentsUseCase: ObserveListCommentsUseCase,
     private val updateCommentUseCase: UpdateCommentUseCase,
-    private val savingChangeRecordUseCase: SavingChangeRecordUseCase,
-    private val getRecordsOfChangesUseCase: GetRecordsOfChangesUseCase,
-    private val removeRecordsOfChangesUseCase: RemoveRecordsOfChangesUseCase,
+    private val createNotificationUseCase: CreateNotificationUseCase,
+    private val getNotificationsUseCase: GetNotificationsUseCase,
+    private val removeNotificationUseCase: RemoveNotificationUseCase,
     private val sendingToNewDirectoryUseCase: SendingToNewDirectoryUseCase
 ) : ViewModel() {
 
@@ -61,7 +61,7 @@ class MovieViewModel @Inject constructor(
     private val _comments = MutableStateFlow<List<DomainCommentModel>>(emptyList())
     val comments = _comments.asStateFlow()
 
-    private val _listOfChanges = MutableStateFlow<List<DomainChangelogModel>>(emptyList())
+    private val _listOfChanges = MutableStateFlow<List<DomainNotificationModel>>(emptyList())
     val listOfChanges = _listOfChanges.asStateFlow()
 
     private val _movie = MutableStateFlow<DomainSelectedMovieModel?>(null)
@@ -137,62 +137,64 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun getRecordsOfChanges() {
+    fun getNotifications(userId: String) {
         viewModelScope.launch {
             try {
-                val list = getRecordsOfChangesUseCase()
+                val list = getNotificationsUseCase(userId)
                 _listOfChanges.value = list
-                removeOldRecords() // Удаляем старые записи
+                removeOldNotifications() // Удаляем старые записи
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-    fun savingChangeRecord(
+    fun createNotification(
         context: Context,
         username: String,
         stringResourceId: Int,
         title: String,
         newDataSource: String,
-        entityId: Int = 0
+        entityId: Int = 0,
+        sharedListId: String = ""
     ) {
         viewModelScope.launch {
             try {
                 val stringResource = context.getString(stringResourceId)
                 val noteText = "$stringResource $title"
-                val note = DomainChangelogModel(
+                val note = DomainNotificationModel(
                     noteId = "", // Оставляем пустым, так как key будет сгенерирован позже
                     entityId = entityId,
+                    sharedListId = sharedListId,
                     newDataSource = newDataSource,
                     username = username,
                     noteText = noteText,
                     timestamp = System.currentTimeMillis()
                 )
 
-                savingChangeRecordUseCase(note)
+                createNotificationUseCase(note)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-    private fun removeRecordsOfChanges(id: String) {
+    private fun removeNotification(id: String) {
         viewModelScope.launch {
             try {
-                removeRecordsOfChangesUseCase(id)
+                removeNotificationUseCase(id)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-    private fun removeOldRecords() { // Удаление записей из базы данных и списка
+    private fun removeOldNotifications() { // Удаление записей из базы данных и списка
         viewModelScope.launch {
             val currentList = _listOfChanges.value
-            val filteredList = mutableListOf<DomainChangelogModel>()
+            val filteredList = mutableListOf<DomainNotificationModel>()
 
             currentList.forEach { record ->
                 if (deletingOldRecords(record.timestamp)) {
                     // Удаляем запись из базы данных
-                    removeRecordsOfChanges(record.noteId)
+                    removeNotification(record.noteId)
                 } else {
                     filteredList.add(record)
                 }

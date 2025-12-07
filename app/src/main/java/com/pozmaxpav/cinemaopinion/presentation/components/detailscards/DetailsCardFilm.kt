@@ -49,7 +49,6 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 import com.pozmaxpav.cinemaopinion.utilits.formatCountries
 import com.pozmaxpav.cinemaopinion.utilits.formatGenres
@@ -96,10 +95,11 @@ fun DetailsCardFilm(
         }
     }
 
+    // TODO: Переписать это на совместные списки
     LaunchedEffect(Unit) {
         movieViewModel.successfulResult.collect { (dataSource, movie) ->
             userData?.let { user ->
-                movieViewModel.savingChangeRecord(
+                movieViewModel.createNotification(
                     context = context,
                     username = user.nikName,
                     stringResourceId = when (dataSource) {
@@ -407,6 +407,7 @@ fun DetailsCardFilm(
             content = {
                 ShowSharedLists(
                     navController = navController,
+                    movieViewModel = movieViewModel,
                     userId = userId,
                     addButton = true,
                     selectedMovie = movie?.toSelectedMovie(),

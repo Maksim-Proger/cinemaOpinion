@@ -215,7 +215,7 @@ fun ListSelectedGeneralSerials(
                                         context,
                                         R.string.series_has_been_moved_to_waiting_list
                                     )
-                                    movieViewModel.savingChangeRecord(
+                                    movieViewModel.createNotification(
                                         context = context,
                                         username = user.nikName,
                                         stringResourceId = R.string.record_series_has_been_moved_to_waiting_list,
@@ -239,7 +239,7 @@ fun ListSelectedGeneralSerials(
                                         movieId = serial.id.toDouble()
                                     )
                                     showToast(context, R.string.series_has_been_moved)
-                                    movieViewModel.savingChangeRecord(
+                                    movieViewModel.createNotification(
                                         context = context,
                                         username = user.nikName,
                                         stringResourceId = R.string.record_series_has_been_moved_to_viewed,
@@ -280,7 +280,7 @@ fun ListSelectedGeneralSerials(
                                         NODE_LIST_SERIALS,
                                         movie.id
                                     )
-                                    movieViewModel.savingChangeRecord(
+                                    movieViewModel.createNotification(
                                         context,
                                         userData!!.nikName,
                                         R.string.record_deleted_the_series,

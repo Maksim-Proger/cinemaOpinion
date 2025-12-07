@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.funs
 
+import com.pozmaxpav.cinemaopinion.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
@@ -33,23 +34,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SharedListItem
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 
 @Composable
 fun ShowSharedLists(
     userId: String,
+    userName: String = "",
     navController: NavHostController,
     sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
+    movieViewModel: MovieViewModel,
     addButton: Boolean = false,
     selectedMovie: DomainSelectedMovieModel? = null,
     onCloseSharedLists: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
     val listState = rememberLazyListState()
     val lists by sharedListsViewModel.list.collectAsState()
 
@@ -71,9 +78,15 @@ fun ShowSharedLists(
                 var isVisible by remember { mutableStateOf(true) }
                 LaunchedEffect(isVisible) {
                     if (!isVisible) {
-                        // Добавить метод удаления.
                         sharedListsViewModel.removeList(item.listId)
-                        // Добавить метод уведомления о создании нового списка.
+                        // TODO: Добавить новый параметр, чтобы каждый видел только нужные ему уведомления
+                        movieViewModel.createNotification(
+                            context = context,
+                            username = userName,
+                            stringResourceId = R.string.record_deleted_the_list,
+                            title = item.title,
+                            newDataSource = context.getString(R.string.movie_was_deleted)
+                        )
                     }
                 }
 
@@ -111,6 +124,7 @@ fun ShowSharedLists(
                                     } else {
                                         navController.navigate(
                                             Route.ListSharedScreen.getListId(
+                                                userName = userName,
                                                 listId = item.listId,
                                                 title = item.title
                                             )

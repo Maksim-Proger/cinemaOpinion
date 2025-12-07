@@ -89,7 +89,7 @@ fun ListSelectedMovies(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    firebaseViewModel: MovieViewModel = hiltViewModel(),
+    movieViewModel: MovieViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
     sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
@@ -97,7 +97,7 @@ fun ListSelectedMovies(
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
-    val stateMovie by firebaseViewModel.movieDownloadStatus.collectAsState()
+    val stateMovie by movieViewModel.movieDownloadStatus.collectAsState()
     val listSelectedMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
     val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
@@ -231,7 +231,7 @@ fun ListSelectedMovies(
                                         selectedMovieId = movie.id
                                     )
                                     showToast(context, R.string.movie_has_been_moved)
-                                    firebaseViewModel.savingChangeRecord(
+                                    movieViewModel.createNotification(
                                         context,
                                         username = user.nikName,
                                         stringResourceId = R.string.record_added_movie,
@@ -249,13 +249,13 @@ fun ListSelectedMovies(
                                 containerColor = MaterialTheme.colorScheme.secondary,
                                 contentColor = MaterialTheme.colorScheme.onSecondary,
                                 onClickButton = {
-                                    firebaseViewModel.sendingToNewDirectory(
+                                    movieViewModel.sendingToNewDirectory(
                                         dataSource = NODE_LIST_PERSONAL_MOVIES,
                                         directionDataSource = NODE_LIST_SERIALS,
                                         movieId = movie.id.toDouble()
                                     )
                                     showToast(context, R.string.series_has_been_moved)
-                                    firebaseViewModel.savingChangeRecord(
+                                    movieViewModel.createNotification(
                                         context = context,
                                         username = user.nikName,
                                         stringResourceId = R.string.record_added_series,
@@ -385,6 +385,7 @@ fun ListSelectedMovies(
                 content = {
                     ShowSharedLists(
                         navController = navController,
+                        movieViewModel = movieViewModel,
                         userId = userId,
                         addButton = true,
                         selectedMovie = selectedMovie,

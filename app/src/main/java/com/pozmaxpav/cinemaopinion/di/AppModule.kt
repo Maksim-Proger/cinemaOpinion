@@ -9,7 +9,7 @@ import com.pozmaxpav.cinemaopinion.data.repository.api.GetMovieInformationApiRep
 import com.pozmaxpav.cinemaopinion.data.repository.api.MovieRepositoryApiImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.PersonalMovieRepositoryImpl
-import com.pozmaxpav.cinemaopinion.data.repository.firebase.RecordsOfChangesRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.NotificationRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SharedListsRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepoImpl
@@ -18,7 +18,7 @@ import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiR
 import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepository
-import com.pozmaxpav.cinemaopinion.domain.repository.firebase.RecordsOfChangesRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.NotificationRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SharedListsRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepo
@@ -124,8 +124,8 @@ object AppModule {
     @Singleton
     fun provideRecordsOfChangesRepository(
         databaseReference: DatabaseReference
-    ): RecordsOfChangesRepository {
-        return RecordsOfChangesRepositoryImpl(databaseReference)
+    ): NotificationRepository {
+        return NotificationRepositoryImpl(databaseReference)
     }
 
     @Provides

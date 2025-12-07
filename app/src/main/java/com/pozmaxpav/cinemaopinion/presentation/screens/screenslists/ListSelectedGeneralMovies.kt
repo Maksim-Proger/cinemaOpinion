@@ -209,7 +209,7 @@ fun ListSelectedGeneralMovies(
                                         movieId = movie.id.toDouble()
                                     )
                                     showToast(context, R.string.movie_has_been_moved_to_viewed)
-                                    movieViewModel.savingChangeRecord(
+                                    movieViewModel.createNotification(
                                         context = context,
                                         username = user.nikName,
                                         stringResourceId = R.string.record_movie_has_been_moved_to_viewed,
@@ -234,7 +234,7 @@ fun ListSelectedGeneralMovies(
                                         movieId = movie.id.toDouble()
                                     )
                                     showToast(context, R.string.series_has_been_moved)
-                                    movieViewModel.savingChangeRecord(
+                                    movieViewModel.createNotification(
                                         context = context,
                                         username = user.nikName,
                                         stringResourceId = R.string.record_series_has_been_moved_to_series_list,
@@ -285,7 +285,7 @@ fun ListSelectedGeneralMovies(
                                         if (!isVisible) {
                                             movieViewModel.removeMovie(NODE_LIST_MOVIES, movie.id)
                                             userData?.let { user ->
-                                                movieViewModel.savingChangeRecord(
+                                                movieViewModel.createNotification(
                                                     context = context,
                                                     username = user.nikName,
                                                     stringResourceId = R.string.record_deleted_the_movie,

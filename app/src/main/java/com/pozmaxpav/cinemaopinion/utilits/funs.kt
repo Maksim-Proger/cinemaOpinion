@@ -229,6 +229,7 @@ fun AddComment(
     dataUser: DomainUserModel?,
     dataSource: String = "",
     newDataSource: String = "",
+    sharedListId: String = "",
     movieViewModel: MovieViewModel,
     selectedItem: DomainSelectedMovieModel?,
     context: Context,
@@ -280,7 +281,7 @@ fun AddComment(
                             username = user.nikName,
                             commentUser = comment
                         )
-                        movieViewModel.savingChangeRecord(
+                        movieViewModel.createNotification(
                             context = context,
                             username = user.nikName,
                             stringResourceId = when(dataSource) {
@@ -291,7 +292,8 @@ fun AddComment(
                             },
                             title = movie.nameFilm,
                             newDataSource = newDataSource,
-                            entityId = movie.id
+                            entityId = movie.id,
+                            sharedListId = sharedListId
                         )
                         showToast(context, R.string.comment_added)
                         setComment("")

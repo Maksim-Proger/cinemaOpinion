@@ -245,7 +245,7 @@ private fun AddComment(
                         userName,
                         comment
                     )
-                    movieViewModel.savingChangeRecord(
+                    movieViewModel.createNotification(
                         context,
                         userName,
                         R.string.record_added_comment_to_movie,

@@ -13,7 +13,7 @@ import com.google.firebase.database.ValueEventListener
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
 import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
@@ -255,7 +255,7 @@ class MovieRepositoryImpl @Inject constructor(
     private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
         val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
         snapshot.children.forEach { childSnapshot ->
-            val result = childSnapshot.getValue(DomainChangelogModel::class.java)
+            val result = childSnapshot.getValue(DomainNotificationModel::class.java)
             if (result?.entityId == movieId.toInt()) {
                 val updates = mapOf("newDataSource" to directionDataSource)
                 databaseReference.child(NODE_LIST_CHANGES).child(childSnapshot.key!!).updateChildren(updates).await()

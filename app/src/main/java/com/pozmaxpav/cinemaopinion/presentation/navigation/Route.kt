@@ -15,14 +15,18 @@ sealed class Route(val route: String) {
         fun getUserName(userName: String) = "settings_screen/$userName"
     }
 
-    data object ListSharedScreen : Route(route = "list_shared_screen/{listId}/{title}") {
-        fun getListId(listId: String, title: String) = "list_shared_screen/$listId/$title"
+    data object ListSharedScreen :
+        Route(route = "list_shared_screen/{listId}/{title}/{userName}") {
+        fun getListId(listId: String, title: String, userName: String) =
+            "list_shared_screen/$listId/$title/$userName"
     }
 
     // Экран с параметрами newDataSource (String) и movieId (Int)
-    data object MovieDetailScreen : Route(route = "movie_details/{newDataSource}/{movieId}/{userName}") {
+    data object MovieDetailScreen :
+        Route(route = "movie_details/{newDataSource}/{movieId}/{userName}") {
         // Функция для удобного создания пути с параметром
-        fun createRoute(newDataSource: String, movieId: Int, userName: String) = "movie_details/$newDataSource/$movieId/$userName"
+        fun createRoute(newDataSource: String, movieId: Int, userName: String) =
+            "movie_details/$newDataSource/$movieId/$userName"
     }
 }
 

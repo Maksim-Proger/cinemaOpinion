@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainChangelogModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.theme.CommentAddedColor
 import com.example.ui.presentation.theme.DeveloperCommentColor
@@ -72,7 +72,7 @@ fun ListOfChangesScreen(
     val userData by userViewModel.userData.collectAsState()
 
     LaunchedEffect(Unit) {
-        movieViewModel.getRecordsOfChanges()
+        movieViewModel.getNotifications(userId)
         systemViewModel.getUserId()
     }
     LaunchedEffect(userId) {
@@ -102,7 +102,7 @@ fun ListOfChangesScreen(
                     val color = colorMethod(item.noteText)
                     val icon = iconMethod(item.noteText)
 
-                    ChangelogItem(
+                    NotificationItem(
                         modifier = Modifier.animateItem(),
                         icon = icon,
                         color = color,
@@ -137,11 +137,11 @@ fun ListOfChangesScreen(
 }
 
 @Composable
-private fun ChangelogItem(
+private fun NotificationItem(
     modifier: Modifier = Modifier,
     icon: ImageVector,
     color: Color,
-    it: DomainChangelogModel,
+    it: DomainNotificationModel,
     onClick: () -> Unit
 ) {
     Card(

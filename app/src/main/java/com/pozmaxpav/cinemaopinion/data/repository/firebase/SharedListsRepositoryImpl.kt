@@ -238,9 +238,6 @@ class SharedListsRepositoryImpl @Inject constructor(
                 .equalTo(listId)
                 .get()
                 .await()
-//            Log.d("@@@", "Просто snapshot = $snapshot")
-//            Log.d("@@@", "Просто snapshot.children = ${snapshot.children}")
-//            Log.d("@@@", "Просто snapshot.value = ${snapshot.value}")
 
             var users = ""
             for (child in snapshot.children) {
@@ -335,10 +332,7 @@ class SharedListsRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun updateUserData2(
-        users: String,
-        listId: String
-    ) {
+    private suspend fun updateUserData2(users: String, listId: String) {
         val usersList = users
             .split(",")
             .map { it.trim() }

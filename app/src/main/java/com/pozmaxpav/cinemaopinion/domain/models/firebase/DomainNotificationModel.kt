@@ -1,8 +1,9 @@
 package com.pozmaxpav.cinemaopinion.domain.models.firebase
 
-data class DomainChangelogModel(
+data class DomainNotificationModel(
     val noteId: String = "",
     val entityId: Int = 0,
+    val sharedListId: String = "",
     val newDataSource: String = "",
     val username: String = "",
     val noteText: String = "",
