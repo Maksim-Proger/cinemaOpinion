@@ -67,6 +67,7 @@ import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.Adap
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
@@ -79,8 +80,10 @@ import com.pozmaxpav.cinemaopinion.utilits.showToast
 fun ListSharedScreen(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
+    userName: String,
     listId: String,
     title: String,
+    movieViewModel: MovieViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
     sharedListsViewModel: SharedListsViewModel = hiltViewModel()
@@ -140,6 +143,7 @@ fun ListSharedScreen(
                             selectedMovie = selectedMovie,
                             context = context,
                             listId = listId,
+                            movieViewModel = movieViewModel,
                             onClick = { openBottomSheetComments = false }
                         )
                     },
@@ -206,7 +210,15 @@ fun ListSharedScreen(
                             LaunchedEffect(isVisible) {
                                 if (!isVisible) {
                                     sharedListsViewModel.removeMovie(listId, movie.id)
-                                    // TODO: Добавить метод записи в список изменений
+                                    // TODO: Добавить новый параметр, чтобы каждый видел только нужные ему уведомления
+                                    movieViewModel.createNotification(
+                                        context = context,
+                                        username = userName,
+                                        stringResourceId = R.string.record_deleted_the_movie,
+                                        title = movie.nameFilm,
+                                        newDataSource = context.getString(R.string.movie_was_deleted),
+                                        sharedListId = listId
+                                    )
                                 }
                             }
 
@@ -278,6 +290,7 @@ private fun AddComment(
     selectedMovie: DomainSelectedMovieModel?,
     context: Context,
     listId: String,
+    movieViewModel: MovieViewModel,
     onClick: () -> Unit
 ) {
     val (comment, setComment) = remember { mutableStateOf("") }
@@ -325,6 +338,15 @@ private fun AddComment(
                             movieId = movie.id,
                             username = user.nikName,
                             commentUser = comment
+                        )
+                        movieViewModel.createNotification(
+                            context = context,
+                            username = user.nikName,
+                            stringResourceId = R.string.record_added_comment_to_movie, // TODO: Исправить!
+                            title = movie.nameFilm,
+                            newDataSource = "Тут пока пусто",
+                            entityId = movie.id,
+                            sharedListId = listId
                         )
                         showToast(context, R.string.comment_added)
                         setComment("")

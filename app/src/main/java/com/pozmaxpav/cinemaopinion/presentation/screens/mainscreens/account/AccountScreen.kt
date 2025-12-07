@@ -47,6 +47,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.items.AccountItem
 import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -56,6 +57,7 @@ fun AccountScreen(
     navController: NavHostController,
     userId: String,
     onClick: () -> Unit,
+    movieViewModel: MovieViewModel = hiltViewModel(),
     systemViewModel: SystemViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel()
 ) {
@@ -244,7 +246,8 @@ fun AccountScreen(
             ) {
                 ShowSharedLists(
                     navController = navController,
-                    userId = userId
+                    userId = userId,
+                    movieViewModel = movieViewModel
                 )
             }
         }

@@ -53,6 +53,7 @@
     <string name="record_series_has_been_moved_to_waiting_list">переместил(а) сериал в лист ожидания: </string>
     <string name="record_series_has_been_moved_to_series_list">переместил(а) сериал в список с сериалами: </string>
     <string name="record_deleted_the_movie">удалил(а) фильм: </string>
+    <string name="record_deleted_the_list">удалил(а) список: </string>
     <string name="record_deleted_the_series">удалил(а) сериал: </string>
     <string name="record_added_movie">добавил(а) фильм: </string>
     <string name="record_added_series">добавил(а) сериал: </string>

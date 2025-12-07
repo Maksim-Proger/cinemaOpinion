@@ -187,7 +187,7 @@ fun ListWatchedMovies(
                                             username = user.nikName,
                                             commentUser = comment
                                         )
-                                        movieViewModel.savingChangeRecord(
+                                        movieViewModel.createNotification(
                                             context = context,
                                             username = user.nikName,
                                             stringResourceId = R.string.record_added_comment_to_movie_in_the_viewed,
