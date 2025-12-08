@@ -51,7 +51,6 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
@@ -68,29 +67,28 @@ fun DetailsCardFilm(
     padding: PaddingValues,
     navController: NavHostController,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    movieViewModel: MovieViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+    val scrollState = rememberScrollState()
+
     val userData by userViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
     val detailedInformationAboutFilm by apiViewModel.detailedInformationAboutFilm.collectAsState()
     var openSharedLists by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
-    val scrollState = rememberScrollState()
-
     var triggerOnClickPersonalMovie by remember { mutableStateOf(false) }
     var triggerOnClickGeneralMovie by remember { mutableStateOf(false) }
 
-    LaunchedEffect(triggerOnClickGeneralMovie) {
-        if (triggerOnClickGeneralMovie) {
-            movieViewModel.toastMessage.collect { resId ->
-                showToast(context = context, messageId = resId)
-                onCloseButton()
-            }
-        }
-    }
+//    LaunchedEffect(triggerOnClickGeneralMovie) {
+//        if (triggerOnClickGeneralMovie) {
+//            movieViewModel.toastMessage.collect { resId ->
+//                showToast(context = context, messageId = resId)
+//                onCloseButton()
+//            }
+//        }
+//    }
     LaunchedEffect(triggerOnClickPersonalMovie) {
         if (triggerOnClickPersonalMovie) {
             personalMovieViewModel.toastMessage.collect { resId ->
@@ -400,17 +398,19 @@ fun DetailsCardFilm(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ShowSharedLists(
-                    navController = navController,
-                    movieViewModel = movieViewModel,
-                    userId = userId,
-                    addButton = true,
-                    selectedMovie = movie?.toSelectedMovie(),
-                    onCloseSharedLists = {
-                        openSharedLists = false
-                        onCloseButton()
-                    }
-                )
+                userData?.let { user ->
+                    ShowSharedLists(
+                        userId = userId,
+                        userName = user.nikName,
+                        navController = navController,
+                        addButton = true,
+                        selectedMovie = movie?.toSelectedMovie(),
+                        onCloseSharedLists = {
+                            openSharedLists = false
+                            onCloseButton()
+                        }
+                    )
+                }
             }
         }
     }

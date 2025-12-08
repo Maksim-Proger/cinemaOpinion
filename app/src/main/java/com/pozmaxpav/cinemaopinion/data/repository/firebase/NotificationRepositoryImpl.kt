@@ -20,7 +20,6 @@ class NotificationRepositoryImpl @Inject constructor(
                 noteId = it,
                 entityId = domainNotificationModel.entityId,
                 sharedListId = domainNotificationModel.sharedListId,
-                newDataSource = domainNotificationModel.newDataSource,
                 username = domainNotificationModel.username,
                 noteText = domainNotificationModel.noteText,
                 timestamp = domainNotificationModel.timestamp
@@ -63,24 +62,6 @@ class NotificationRepositoryImpl @Inject constructor(
 
         return notifications.filter { it.sharedListId in sharedListIds }
     }
-
-//    override suspend fun getNotifications(): List<DomainNotificationModel> {
-//        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
-//        return snapshot.children.mapNotNull { childSnapshot ->
-//            childSnapshot.getValue(DomainNotificationModel::class.java)
-//        }
-//            .map {
-//                DomainNotificationModel(
-//                    noteId = it.noteId,
-//                    entityId = it.entityId,
-//                    sharedListId = it.sharedListId,
-//                    newDataSource = it.newDataSource,
-//                    username = it.username,
-//                    noteText = it.noteText,
-//                    timestamp = it.timestamp
-//                )
-//            }
-//    }
 
     override suspend fun removeNotification(id: String) {
         try {

@@ -41,18 +41,16 @@ import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SharedListItem
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 
 @Composable
 fun ShowSharedLists(
     userId: String,
-    userName: String = "",
+    userName: String,
     navController: NavHostController,
-    sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
-    movieViewModel: MovieViewModel,
     addButton: Boolean = false,
     selectedMovie: DomainSelectedMovieModel? = null,
+    sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
     onCloseSharedLists: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -79,13 +77,16 @@ fun ShowSharedLists(
                 LaunchedEffect(isVisible) {
                     if (!isVisible) {
                         sharedListsViewModel.removeList(item.listId)
-                        sharedListsViewModel.createNotification(
-                            context = context,
-                            username = userName,
-                            stringResourceId = R.string.record_deleted_the_list,
-                            title = item.title,
-                            newDataSource = context.getString(R.string.movie_was_deleted)
-                        )
+                        selectedMovie?.let { movie ->
+                            sharedListsViewModel.createNotification(
+                                context = context,
+                                entityId = movie.id,
+                                sharedListId = context.getString(R.string.record_deleted_the_list),
+                                username = userName,
+                                stringResourceId = R.string.record_deleted_the_list,
+                                title = item.title
+                            )
+                        }
                     }
                 }
 
@@ -113,10 +114,18 @@ fun ShowSharedLists(
                                 item = item,
                                 onClick = {
                                     if (addButton) {
-                                        selectedMovie?.let {
+                                        selectedMovie?.let { movie ->
                                             sharedListsViewModel.addMovie(
                                                 listId = item.listId,
-                                                selectedMovie = it
+                                                selectedMovie = movie
+                                            )
+                                            sharedListsViewModel.createNotification(
+                                                context = context,
+                                                entityId = movie.id,
+                                                sharedListId = item.listId,
+                                                username = userName,
+                                                stringResourceId = R.string.record_added_movie,
+                                                title = movie.nameFilm
                                             )
                                         }
                                         onCloseSharedLists()

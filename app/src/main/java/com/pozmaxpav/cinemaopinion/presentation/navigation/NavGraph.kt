@@ -111,17 +111,17 @@ fun NavGraph(
         composable(
             Route.MovieDetailScreen.route,
             arguments = listOf(
-                navArgument("newDataSource") { type = NavType.StringType },
+                navArgument("listId") { type = NavType.StringType },
                 navArgument("movieId") { type = NavType.IntType },
                 navArgument("userName") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val newDataSource = backStackEntry.arguments?.getString("newDataSource") ?: ""
+            val listId = backStackEntry.arguments?.getString("listId") ?: ""
             val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
             val userName = backStackEntry.arguments?.getString("userName") ?: ""
             MovieDetailScreen(
                 navController = navController,
-                newDataSource = newDataSource,
+                listId = listId,
                 movieId = movieId,
                 userName = userName
             )

@@ -7,7 +7,6 @@ import com.pozmaxpav.cinemaopinion.data.api.MovieApi
 import com.pozmaxpav.cinemaopinion.data.api.MovieInformationApi
 import com.pozmaxpav.cinemaopinion.data.repository.api.GetMovieInformationApiRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.api.MovieRepositoryApiImpl
-import com.pozmaxpav.cinemaopinion.data.repository.firebase.MovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.PersonalMovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.NotificationRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SeriesControlRepositoryImpl
@@ -16,7 +15,6 @@ import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepoImpl
 import com.pozmaxpav.cinemaopinion.data.repository.system.SystemRepositoryAppImpl
 import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
-import com.pozmaxpav.cinemaopinion.domain.repository.firebase.MovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.NotificationRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
@@ -95,52 +93,31 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMovieRepository(
-        databaseReference: DatabaseReference,
-        listenerHolder: FirebaseListenerHolder
-    ): MovieRepository {
-        return MovieRepositoryImpl(databaseReference, listenerHolder)
-    }
-
-    @Provides
-    @Singleton
-    fun provideSeriesControlRepository(
-        databaseReference: DatabaseReference,
-        listenerHolder: FirebaseListenerHolder
-    ): SeriesControlRepository {
+    fun provideSeriesControlRepo(databaseReference: DatabaseReference, listenerHolder: FirebaseListenerHolder): SeriesControlRepository {
         return SeriesControlRepositoryImpl(databaseReference, listenerHolder)
     }
 
     @Provides
     @Singleton
-    fun providePersonalMovieRepository(
-        databaseReference: DatabaseReference,
-        listenerHolder: FirebaseListenerHolder
-    ): PersonalMovieRepository {
+    fun providePersonalMovieRepo(databaseReference: DatabaseReference, listenerHolder: FirebaseListenerHolder): PersonalMovieRepository {
         return PersonalMovieRepositoryImpl(databaseReference, listenerHolder)
     }
 
     @Provides
     @Singleton
-    fun provideRecordsOfChangesRepository(
-        databaseReference: DatabaseReference
-    ): NotificationRepository {
+    fun provideNotificationRepo(databaseReference: DatabaseReference): NotificationRepository {
         return NotificationRepositoryImpl(databaseReference)
     }
 
     @Provides
     @Singleton
-    fun provideSharedListsRepository(
-        databaseReference: DatabaseReference
-    ): SharedListsRepository {
-        return SharedListsRepositoryImpl(databaseReference)
+    fun provideSharedListsRepo(databaseReference: DatabaseReference, listenerHolder: FirebaseListenerHolder): SharedListsRepository {
+        return SharedListsRepositoryImpl(databaseReference, listenerHolder)
     }
 
     @Provides
     @Singleton
-    fun provideUserRepo(
-        databaseReference: DatabaseReference
-    ) : UserRepo {
+    fun provideUserRepo(databaseReference: DatabaseReference) : UserRepo {
         return UserRepoImpl(databaseReference)
     }
 

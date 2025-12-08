@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists
+package com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.movies
 
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SharedListsRepository
 import javax.inject.Inject

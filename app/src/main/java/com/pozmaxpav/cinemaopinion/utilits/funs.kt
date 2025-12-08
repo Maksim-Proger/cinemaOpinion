@@ -29,7 +29,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -39,13 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.core.domain.DomainUserModel
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_MOVIES
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_SERIALS
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WAITING_CONTINUATION_SERIES
-import com.example.core.utils.state.LoadingState
 import com.example.ui.presentation.components.CustomTextButton
-import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 import com.example.ui.presentation.components.text.CustomTextFieldForComments
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Country
@@ -55,7 +48,6 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.MainScreenState
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import java.text.SimpleDateFormat
@@ -224,86 +216,86 @@ fun simpleTransliterate(text: String): String {
     }.joinToString("")
 }
 
-@Composable
-fun AddComment(
-    dataUser: DomainUserModel?,
-    dataSource: String = "",
-    newDataSource: String = "",
-    sharedListId: String = "",
-    movieViewModel: MovieViewModel,
-    selectedItem: DomainSelectedMovieModel?,
-    context: Context,
-    onClick: () -> Unit
-) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-    val (comment, setComment) = remember { mutableStateOf("") }
-
-    CustomTextFieldForComments(
-        value = comment,
-        onValueChange = setComment,
-        placeholder = {
-            Text(
-                text = stringResource(R.string.placeholder_for_comment_field),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outline
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-        )
-    )
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        CustomTextButton(
-            textButton = stringResource(R.string.button_add),
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            endPadding = 15.dp,
-            onClickButton = {
-                dataUser?.let { user ->
-                    selectedItem?.let { movie ->
-                        movieViewModel.addComment(
-                            dataSource = dataSource,
-                            movieId = movie.id.toDouble(),
-                            username = user.nikName,
-                            commentUser = comment
-                        )
-                        movieViewModel.createNotification(
-                            context = context,
-                            username = user.nikName,
-                            stringResourceId = when(dataSource) {
-                                NODE_LIST_MOVIES -> R.string.record_added_comment_to_movie
-                                NODE_LIST_SERIALS -> R.string.record_added_comment_to_series
-                                NODE_LIST_WAITING_CONTINUATION_SERIES -> R.string.record_added_comment_to_series
-                                else -> R.string.record_added_comment_to_movie // TODO: Исправить это на дефолтное значение
-                            },
-                            title = movie.nameFilm,
-                            newDataSource = newDataSource,
-                            entityId = movie.id,
-                            sharedListId = sharedListId
-                        )
-                        showToast(context, R.string.comment_added)
-                        setComment("")
-                        onClick()
-                    }
-                }
-            }
-        )
-    }
-}
+//@Composable
+//fun AddComment(
+//    dataUser: DomainUserModel?,
+//    dataSource: String = "",
+//    newDataSource: String = "",
+//    sharedListId: String = "",
+//    movieViewModel: MovieViewModel,
+//    selectedItem: DomainSelectedMovieModel?,
+//    context: Context,
+//    onClick: () -> Unit
+//) {
+//    val keyboardController = LocalSoftwareKeyboardController.current
+//    val focusManager = LocalFocusManager.current
+//    val (comment, setComment) = remember { mutableStateOf("") }
+//
+//    CustomTextFieldForComments(
+//        value = comment,
+//        onValueChange = setComment,
+//        placeholder = {
+//            Text(
+//                text = stringResource(R.string.placeholder_for_comment_field),
+//                style = MaterialTheme.typography.bodyMedium
+//            )
+//        },
+//        leadingIcon = {
+//            Icon(
+//                imageVector = Icons.Default.Add,
+//                contentDescription = null,
+//                tint = MaterialTheme.colorScheme.outline
+//            )
+//        },
+//        keyboardActions = KeyboardActions(
+//            onDone = {
+//                keyboardController?.hide()
+//                focusManager.clearFocus()
+//            }
+//        )
+//    )
+//
+//    Row(
+//        modifier = Modifier.fillMaxWidth(),
+//        horizontalArrangement = Arrangement.End
+//    ) {
+//        CustomTextButton(
+//            textButton = stringResource(R.string.button_add),
+//            containerColor = MaterialTheme.colorScheme.secondary,
+//            contentColor = MaterialTheme.colorScheme.onSecondary,
+//            endPadding = 15.dp,
+//            onClickButton = {
+//                dataUser?.let { user ->
+//                    selectedItem?.let { movie ->
+//                        movieViewModel.addComment(
+//                            dataSource = dataSource,
+//                            movieId = movie.id.toDouble(),
+//                            username = user.nikName,
+//                            commentUser = comment
+//                        )
+//                        movieViewModel.createNotification(
+//                            context = context,
+//                            username = user.nikName,
+//                            stringResourceId = when(dataSource) {
+//                                NODE_LIST_MOVIES -> R.string.record_added_comment_to_movie
+//                                NODE_LIST_SERIALS -> R.string.record_added_comment_to_series
+//                                NODE_LIST_WAITING_CONTINUATION_SERIES -> R.string.record_added_comment_to_series
+//                                else -> R.string.record_added_comment_to_movie // TODO: Исправить это на дефолтное значение
+//                            },
+//                            title = movie.nameFilm,
+//                            newDataSource = newDataSource,
+//                            entityId = movie.id,
+//                            sharedListId = sharedListId
+//                        )
+//                        showToast(context, R.string.comment_added)
+//                        setComment("")
+//                        onClick()
+//                    }
+//                }
+//            }
+//        )
+//    }
+//}
 
 @Composable
 fun ShowCommentList(
@@ -315,85 +307,85 @@ fun ShowCommentList(
     onClick: (DomainCommentModel) -> Unit,
 ) {
     when (viewModel) {
-        is MovieViewModel -> {
-            val stateComments by viewModel.commentsDownloadStatus.collectAsState()
-            val listComments by viewModel.comments.collectAsState()
-
-            LaunchedEffect(selectedMovieId) {
-                viewModel.getComments(dataSource, selectedMovieId)
-                viewModel.observeComments(dataSource, selectedMovieId)
-            }
-
-            when (stateComments) {
-                is LoadingState.Loading -> {
-                    CustomLottieAnimation(
-                        nameFile = "loading_animation.lottie",
-                        modifier = Modifier.scale(0.5f)
-                    )
-                }
-                is LoadingState.Success -> {
-                    LazyColumn {
-                        items(listComments) { comment ->
-                            Card(
-                                modifier = Modifier
-                                    .wrapContentHeight()
-                                    .fillMaxWidth()
-                                    .padding(vertical = 7.dp)
-                                    .clickable { onClick(comment) },
-                                shape = RoundedCornerShape(16.dp),
-                                elevation = CardDefaults.cardElevation(16.dp),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                    contentColor = MaterialTheme.colorScheme.onSecondary
-                                )
-                            ) {
-                                Column(modifier = Modifier.padding(8.dp)) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(10.dp),
-                                        horizontalArrangement = Arrangement.End,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = comment.username,
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    }
-
-                                    Text(
-                                        text = comment.commentText,
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
-
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(10.dp),
-                                        horizontalArrangement = Arrangement.End,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text =
-                                                SimpleDateFormat(
-                                                    "dd.MM.yyyy HH:mm",
-                                                    Locale.getDefault()
-                                                ).format(
-                                                    Date(comment.timestamp)
-                                                ),
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                is LoadingState.Error -> {
-                    // TODO: Добавить логику работы при ошибке.
-                }
-            }
-        }
+//        is MovieViewModel -> {
+//            val stateComments by viewModel.commentsDownloadStatus.collectAsState()
+//            val listComments by viewModel.comments.collectAsState()
+//
+//            LaunchedEffect(selectedMovieId) {
+//                viewModel.getComments(dataSource, selectedMovieId)
+//                viewModel.observeComments(dataSource, selectedMovieId)
+//            }
+//
+//            when (stateComments) {
+//                is LoadingState.Loading -> {
+//                    CustomLottieAnimation(
+//                        nameFile = "loading_animation.lottie",
+//                        modifier = Modifier.scale(0.5f)
+//                    )
+//                }
+//                is LoadingState.Success -> {
+//                    LazyColumn {
+//                        items(listComments) { comment ->
+//                            Card(
+//                                modifier = Modifier
+//                                    .wrapContentHeight()
+//                                    .fillMaxWidth()
+//                                    .padding(vertical = 7.dp)
+//                                    .clickable { onClick(comment) },
+//                                shape = RoundedCornerShape(16.dp),
+//                                elevation = CardDefaults.cardElevation(16.dp),
+//                                colors = CardDefaults.cardColors(
+//                                    containerColor = MaterialTheme.colorScheme.secondary,
+//                                    contentColor = MaterialTheme.colorScheme.onSecondary
+//                                )
+//                            ) {
+//                                Column(modifier = Modifier.padding(8.dp)) {
+//                                    Row(
+//                                        modifier = Modifier
+//                                            .fillMaxWidth()
+//                                            .padding(10.dp),
+//                                        horizontalArrangement = Arrangement.End,
+//                                        verticalAlignment = Alignment.CenterVertically
+//                                    ) {
+//                                        Text(
+//                                            text = comment.username,
+//                                            style = MaterialTheme.typography.bodyLarge
+//                                        )
+//                                    }
+//
+//                                    Text(
+//                                        text = comment.commentText,
+//                                        style = MaterialTheme.typography.bodyLarge
+//                                    )
+//
+//                                    Row(
+//                                        modifier = Modifier
+//                                            .fillMaxWidth()
+//                                            .padding(10.dp),
+//                                        horizontalArrangement = Arrangement.End,
+//                                        verticalAlignment = Alignment.CenterVertically
+//                                    ) {
+//                                        Text(
+//                                            text =
+//                                                SimpleDateFormat(
+//                                                    "dd.MM.yyyy HH:mm",
+//                                                    Locale.getDefault()
+//                                                ).format(
+//                                                    Date(comment.timestamp)
+//                                                ),
+//                                            style = MaterialTheme.typography.bodyLarge
+//                                        )
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                is LoadingState.Error -> {
+//                    // TODO: Добавить логику работы при ошибке.
+//                }
+//            }
+//        }
         is PersonalMovieViewModel -> {
             val listComments by viewModel.listComments.collectAsState()
 
@@ -533,67 +525,67 @@ fun ChangeComment(
     onClick: () -> Unit
 ) {
     when (viewModel) {
-        is MovieViewModel -> {
-            val (comment, setComment) = remember { mutableStateOf("") }
-            val keyboardController = LocalSoftwareKeyboardController.current
-            val focusManager = LocalFocusManager.current
-
-            LaunchedEffect(Unit) {
-                setComment(selectedComment.commentText)
-            }
-
-            CustomTextFieldForComments(
-                value = comment,
-                onValueChange = setComment,
-                label = {
-                    Text(
-                        text = stringResource(R.string.text_for_field_change_comment),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                },
-                placeholder = {
-                    Text(
-                        text = stringResource(R.string.placeholder_for_comment_field),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.outline
-                    )
-                },
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    }
-                )
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                CustomTextButton(
-                    textButton = stringResource(R.string.button_save),
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                    endPadding = 15.dp,
-                    onClickButton = {
-                        viewModel.updateComment(
-                            dataSource = dataSource,
-                            userName = userName,
-                            selectedMovieId = selectedMovieId,
-                            commentId = selectedComment.commentId,
-                            newCommentText = comment
-                        )
-                        onClick()
-                    }
-                )
-            }
-        }
+//        is MovieViewModel -> {
+//            val (comment, setComment) = remember { mutableStateOf("") }
+//            val keyboardController = LocalSoftwareKeyboardController.current
+//            val focusManager = LocalFocusManager.current
+//
+//            LaunchedEffect(Unit) {
+//                setComment(selectedComment.commentText)
+//            }
+//
+//            CustomTextFieldForComments(
+//                value = comment,
+//                onValueChange = setComment,
+//                label = {
+//                    Text(
+//                        text = stringResource(R.string.text_for_field_change_comment),
+//                        style = MaterialTheme.typography.bodyMedium
+//                    )
+//                },
+//                placeholder = {
+//                    Text(
+//                        text = stringResource(R.string.placeholder_for_comment_field),
+//                        style = MaterialTheme.typography.bodyMedium
+//                    )
+//                },
+//                leadingIcon = {
+//                    Icon(
+//                        imageVector = Icons.Default.Add,
+//                        contentDescription = null,
+//                        tint = MaterialTheme.colorScheme.outline
+//                    )
+//                },
+//                keyboardActions = KeyboardActions(
+//                    onDone = {
+//                        keyboardController?.hide()
+//                        focusManager.clearFocus()
+//                    }
+//                )
+//            )
+//
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.End
+//            ) {
+//                CustomTextButton(
+//                    textButton = stringResource(R.string.button_save),
+//                    containerColor = MaterialTheme.colorScheme.secondary,
+//                    contentColor = MaterialTheme.colorScheme.onSecondary,
+//                    endPadding = 15.dp,
+//                    onClickButton = {
+//                        viewModel.updateComment(
+//                            dataSource = dataSource,
+//                            userName = userName,
+//                            selectedMovieId = selectedMovieId,
+//                            commentId = selectedComment.commentId,
+//                            newCommentText = comment
+//                        )
+//                        onClick()
+//                    }
+//                )
+//            }
+//        }
         is PersonalMovieViewModel -> {
             val (comment, setComment) = remember { mutableStateOf("") }
             val keyboardController = LocalSoftwareKeyboardController.current

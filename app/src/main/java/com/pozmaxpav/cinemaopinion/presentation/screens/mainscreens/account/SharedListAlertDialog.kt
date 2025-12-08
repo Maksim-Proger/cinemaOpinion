@@ -19,7 +19,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.text.CustomTextField
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 
@@ -27,7 +26,6 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewMode
 fun SharedListAlertDialog(
     userId: String,
     sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
-    movieViewModel: MovieViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
     onDismiss: () -> Unit
 ) {
@@ -61,8 +59,7 @@ fun SharedListAlertDialog(
                             context = context,
                             username = user.nikName,
                             stringResourceId = R.string.record_add_the_list,
-                            title = title,
-                            newDataSource = context.getString(R.string.list_was_deleted)
+                            title = title
                         )
                     }
 

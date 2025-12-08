@@ -85,7 +85,13 @@ class PersonalMovieViewModel @Inject constructor(
             }
         }
     }
-    fun updateComment(userId: String, userName: String, selectedMovieId: Int, commentId: String, newCommentText: String) {
+    fun updateComment(
+        userId: String,
+        userName: String,
+        selectedMovieId: Int,
+        commentId: String,
+        newCommentText: String
+    ) {
         viewModelScope.launch {
             try {
                 val selectedComment = DomainCommentModel(
@@ -148,7 +154,12 @@ class PersonalMovieViewModel @Inject constructor(
         }
     }
 
-    fun sendingToNewDirectory(userId: String, dataSource: String, directionDataSource: String, selectedMovieId: Int) {
+    fun sendingToNewDirectory(
+        userId: String,
+        dataSource: String,
+        directionDataSource: String,
+        selectedMovieId: Int
+    ) {
         viewModelScope.launch {
             try {
                 sendingToNewDirectoryUseCase(userId, dataSource, directionDataSource, selectedMovieId)
