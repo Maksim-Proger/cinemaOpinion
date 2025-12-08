@@ -23,10 +23,10 @@ sealed class Route(val route: String) {
 
     // Экран с параметрами newDataSource (String) и movieId (Int)
     data object MovieDetailScreen :
-        Route(route = "movie_details/{newDataSource}/{movieId}/{userName}") {
+        Route(route = "movie_details/{listId}/{movieId}/{userName}") {
         // Функция для удобного создания пути с параметром
-        fun createRoute(newDataSource: String, movieId: Int, userName: String) =
-            "movie_details/$newDataSource/$movieId/$userName"
+        fun createRoute(listId: String, movieId: Int, userName: String) =
+            "movie_details/$listId/$movieId/$userName"
     }
 }
 

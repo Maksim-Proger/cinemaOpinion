@@ -67,7 +67,6 @@ import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.Adap
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
@@ -83,7 +82,6 @@ fun ListSharedScreen(
     userName: String,
     listId: String,
     title: String,
-    movieViewModel: MovieViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
     sharedListsViewModel: SharedListsViewModel = hiltViewModel()
@@ -143,7 +141,6 @@ fun ListSharedScreen(
                             selectedMovie = selectedMovie,
                             context = context,
                             listId = listId,
-                            movieViewModel = movieViewModel,
                             onClick = { openBottomSheetComments = false }
                         )
                     },
@@ -210,12 +207,12 @@ fun ListSharedScreen(
                             LaunchedEffect(isVisible) {
                                 if (!isVisible) {
                                     sharedListsViewModel.removeMovie(listId, movie.id)
-                                    movieViewModel.createNotification(
+                                    sharedListsViewModel.createNotification(
                                         context = context,
+                                        entityId = movie.id,
                                         username = userName,
                                         stringResourceId = R.string.record_deleted_the_movie,
                                         title = movie.nameFilm,
-                                        newDataSource = context.getString(R.string.movie_was_deleted),
                                         sharedListId = listId
                                     )
                                 }
@@ -282,6 +279,7 @@ fun ListSharedScreen(
     }
 }
 
+// TODO: Убрать отсюда!
 @Composable
 private fun AddComment(
     domainUserModelData: DomainUserModel?,
@@ -289,7 +287,6 @@ private fun AddComment(
     selectedMovie: DomainSelectedMovieModel?,
     context: Context,
     listId: String,
-    movieViewModel: MovieViewModel,
     onClick: () -> Unit
 ) {
     val (comment, setComment) = remember { mutableStateOf("") }
@@ -325,7 +322,7 @@ private fun AddComment(
         horizontalArrangement = Arrangement.End
     ) {
         CustomTextButton(
-            textButton = "Добавить",
+            textButton = stringResource(R.string.button_add),
             containerColor = MaterialTheme.colorScheme.secondary,
             contentColor = MaterialTheme.colorScheme.onSecondary,
             endPadding = 15.dp,
@@ -338,14 +335,13 @@ private fun AddComment(
                             username = user.nikName,
                             commentUser = comment
                         )
-                        movieViewModel.createNotification(
+                        sharedListsViewModel.createNotification(
                             context = context,
-                            username = user.nikName,
-                            stringResourceId = R.string.record_added_comment_to_movie, // TODO: Исправить!
-                            title = movie.nameFilm,
-                            newDataSource = "Тут пока пусто",
                             entityId = movie.id,
-                            sharedListId = listId
+                            sharedListId = listId,
+                            username = user.nikName,
+                            stringResourceId = R.string.record_added_comment_to_movie,
+                            title = movie.nameFilm
                         )
                         showToast(context, R.string.comment_added)
                         setComment("")

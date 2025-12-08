@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists
+package com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.lists
 
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainMySharedListModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel

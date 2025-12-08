@@ -57,12 +57,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.core.domain.DomainUserModel
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_MOVIES
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_PERSONAL_MOVIES
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_SERIALS
 import com.example.core.utils.state.LoadingState
 import com.example.ui.presentation.components.CustomBottomSheet
-import com.example.ui.presentation.components.CustomBoxShowOverlay
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.ExpandedCard
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
@@ -77,7 +73,6 @@ import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.Adap
 import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
@@ -93,7 +88,6 @@ fun ListSelectedMovies(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    movieViewModel: MovieViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
     sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
@@ -101,7 +95,7 @@ fun ListSelectedMovies(
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
-    val stateMovie by movieViewModel.movieDownloadStatus.collectAsState()
+//    val stateMovie by movieViewModel.movieDownloadStatus.collectAsState()
     val listSelectedMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
     val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
@@ -141,12 +135,9 @@ fun ListSelectedMovies(
         }
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-        ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+
             if (openBottomSheetChange) {
                 CustomBottomSheet(
                     onClose = { openBottomSheetChange = false },
@@ -171,6 +162,7 @@ fun ListSelectedMovies(
                 )
                 AdaptiveBackHandler { openBottomSheetChange = false }
             }
+
             if (openBottomSheetComments) {
                 CustomBottomSheet(
                     onClose = { openBottomSheetComments = false },
@@ -189,102 +181,53 @@ fun ListSelectedMovies(
                 )
                 AdaptiveBackHandler { openBottomSheetComments = false }
             }
+
             selectedMovie?.let { movie ->
-                userData?.let { user ->
-                    DetailsCardSelectedMovie(
-                        movie = movie,
-                        content = {
-                            ShowCommentList(
-                                userId = userId,
-                                selectedMovieId = movie.id,
-                                viewModel = personalMovieViewModel,
-                                onClick = { comment ->
-                                    selectedComment = comment
-                                    openBottomSheetChange = true
-                                }
-                            )
-                        },
-                        openDescription = {
-                            ExpandedCard(
-                                title = stringResource(R.string.text_for_expandedCard_field),
-                                description = info?.description
-                                    ?: stringResource(R.string.limit_is_over),
-                            )
-                        },
-                        movieTransferButtonToSharedList = {
-                            CustomTextButton(
-                                textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
-                                topPadding = 7.dp,
-                                bottomPadding = 7.dp,
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                onClickButton = { openSharedLists = true }
-                            )
-                        },
-//                        movieTransferButtonToMoviesList = {
-//                            CustomTextButton(
-//                                textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
-//                                topPadding = 7.dp,
-//                                bottomPadding = 7.dp,
-//                                containerColor = MaterialTheme.colorScheme.secondary,
-//                                contentColor = MaterialTheme.colorScheme.onSecondary,
-//                                onClickButton = {
-//                                    personalMovieViewModel.sendingToNewDirectory(
-//                                        userId = userId,
-//                                        dataSource = NODE_LIST_PERSONAL_MOVIES,
-//                                        directionDataSource = NODE_LIST_MOVIES,
-//                                        selectedMovieId = movie.id
-//                                    )
-//                                    showToast(context, R.string.movie_has_been_moved)
-//                                    sharedListsViewModel.createNotification(
-//                                        context,
-//                                        username = user.nikName,
-//                                        stringResourceId = R.string.record_added_movie,
-//                                        title = movie.nameFilm,
-//                                        newDataSource = NODE_LIST_MOVIES,
-//                                        entityId = movie.id
-//                                    )
-//                                }
-//                            )
-//                        },
-//                        movieTransferButtonToSerialsList = {
-//                            CustomTextButton(
-//                                textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
-//                                bottomPadding = 7.dp,
-//                                containerColor = MaterialTheme.colorScheme.secondary,
-//                                contentColor = MaterialTheme.colorScheme.onSecondary,
-//                                onClickButton = {
-//                                    movieViewModel.sendingToNewDirectory(
-//                                        dataSource = NODE_LIST_PERSONAL_MOVIES,
-//                                        directionDataSource = NODE_LIST_SERIALS,
-//                                        movieId = movie.id.toDouble()
-//                                    )
-//                                    showToast(context, R.string.series_has_been_moved)
-//                                    sharedListsViewModel.createNotification(
-//                                        context = context,
-//                                        username = user.nikName,
-//                                        stringResourceId = R.string.record_added_series,
-//                                        title = movie.nameFilm,
-//                                        newDataSource = NODE_LIST_SERIALS,
-//                                        entityId = movie.id
-//                                    )
-//                                }
-//                            )
-//                        },
-                        commentButton = {
-                            CustomTextButton(
-                                textButton = context.getString(R.string.placeholder_for_comment_field),
-                                bottomPadding = 7.dp,
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                onClickButton = { openBottomSheetComments = !openBottomSheetComments }
-                            )
-                        },
-                        onClick = { selectedMovie = null }
-                    )
-                    AdaptiveBackHandler { selectedMovie = null }
-                }
+                DetailsCardSelectedMovie(
+                    movie = movie,
+                    content = {
+                        ShowCommentList(
+                            userId = userId,
+                            selectedMovieId = movie.id,
+                            viewModel = personalMovieViewModel,
+                            onClick = { comment ->
+                                selectedComment = comment
+                                openBottomSheetChange = true
+                            }
+                        )
+                    },
+                    openDescription = {
+                        ExpandedCard(
+                            title = stringResource(R.string.text_for_expandedCard_field),
+                            description = info?.description
+                                ?: stringResource(R.string.limit_is_over),
+                        )
+                    },
+                    movieTransferButtonToSharedList = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
+                            topPadding = 7.dp,
+                            bottomPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = { openSharedLists = true }
+                        )
+                        showToast(context, R.string.movie_has_been_moved)
+                    },
+                    commentButton = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.placeholder_for_comment_field),
+                            bottomPadding = 7.dp,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+                        )
+                    },
+                    onClick = { selectedMovie = null }
+                )
+                AdaptiveBackHandler { selectedMovie = null }
             }
+
             if (selectedMovie == null) {
                 Column(
                     modifier = Modifier
@@ -399,18 +342,20 @@ fun ListSelectedMovies(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ShowSharedLists(
-                        navController = navController,
-                        movieViewModel = movieViewModel,
-                        userId = userId,
-                        addButton = true,
-                        selectedMovie = selectedMovie,
-                        onCloseSharedLists = {
-                            triggerOnClickSharedMovie = true
-                            openSharedLists = false
-                            selectedMovie = null
-                        }
-                    )
+                    userData?.let { user ->
+                        ShowSharedLists(
+                            navController = navController,
+                            userId = userId,
+                            userName = user.nikName,
+                            addButton = true,
+                            selectedMovie = selectedMovie,
+                            onCloseSharedLists = {
+                                triggerOnClickSharedMovie = true
+                                openSharedLists = false
+                                selectedMovie = null
+                            }
+                        )
+                    }
                 }
             }
         }

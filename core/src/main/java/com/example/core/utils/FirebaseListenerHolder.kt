@@ -4,28 +4,28 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import javax.inject.Inject
 
-class FirebaseListenerHolder @Inject constructor(
-    private val databaseReference: DatabaseReference
-) {
-    private val activeListeners = mutableMapOf<String, ValueEventListener>()
+class FirebaseListenerHolder @Inject constructor() {
 
-    fun addListener(key: String, listener: ValueEventListener) {
+    private val activeListeners = mutableMapOf<String, Pair<DatabaseReference, ValueEventListener>>()
+
+    fun addListener(key: String, ref: DatabaseReference, listener: ValueEventListener) {
         removeListener(key)
-        activeListeners[key] = listener
+        activeListeners[key] = ref to listener
     }
 
     fun removeListener(key: String) {
-        activeListeners[key]?.let {
-            databaseReference.removeEventListener(it)
-            activeListeners.remove(key)
+        activeListeners[key]?.let { (ref, listener) ->
+            ref.removeEventListener(listener)
         }
+        activeListeners.remove(key)
     }
 
     fun clearAll() {
-        activeListeners.forEach { (_, listener) ->
-            databaseReference.removeEventListener(listener)
+        activeListeners.forEach { (_, pair) ->
+            val (ref, listener) = pair
+            ref.removeEventListener(listener)
         }
         activeListeners.clear()
     }
-}
 
+}

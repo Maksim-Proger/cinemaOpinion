@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
@@ -48,6 +47,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -56,30 +56,30 @@ import java.util.Locale
 @Composable
 fun MovieDetailScreen(
     navController: NavHostController,
-    newDataSource: String,
+    listId: String,
     movieId: Int,
     userName: String,
-    movieViewModel: MovieViewModel = hiltViewModel()
+    sharedListsViewModel: SharedListsViewModel = hiltViewModel()
 ) {
 
     val movie by movieViewModel.movie.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(movieId) {
-        if (newDataSource.isNotEmpty() && movieId != 0) {
-            movieViewModel.getMovieById(newDataSource, movieId)
+        if (listId.isNotEmpty() && movieId != 0) {
+            movieViewModel.getMovieById(listId, movieId)
         }
     }
 
     Column(
         modifier = Modifier.wrapContentSize()
     ) {
-        if (newDataSource == stringResource(R.string.movie_was_deleted)) {
+        if (listId == stringResource(R.string.movie_was_deleted)) {
             TheMovieWasDeleted(navController)
         } else {
             OtherActions(
                 movie,
-                newDataSource,
+                listId,
                 movieId,
                 navController,
                 movieViewModel,
@@ -245,14 +245,14 @@ private fun AddComment(
                         userName,
                         comment
                     )
-                    movieViewModel.createNotification(
-                        context,
-                        userName,
-                        R.string.record_added_comment_to_movie,
-                        movie.nameFilm,
-                        newDataSource,
-                        movieId
-                    )
+//                    sharedListsViewModel.createNotification(
+//                        context,
+//                        userName,
+//                        R.string.record_added_comment_to_movie,
+//                        movie.nameFilm,
+//                        newDataSource,
+//                        movieId
+//                    )
                     showToast(context, R.string.comment_added)
                     setComment("")
                 }
