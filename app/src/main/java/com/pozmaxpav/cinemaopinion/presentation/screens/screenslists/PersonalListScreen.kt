@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
-import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
@@ -25,9 +24,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -50,19 +47,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.core.domain.DomainUserModel
 import com.example.core.utils.state.LoadingState
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.ExpandedCard
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
-import com.example.ui.presentation.components.text.CustomTextFieldForComments
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
@@ -70,13 +63,13 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
-import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
+import com.pozmaxpav.cinemaopinion.utilits.AddComment
 import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -95,7 +88,7 @@ fun ListSelectedMovies(
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
-//    val stateMovie by movieViewModel.movieDownloadStatus.collectAsState()
+    val stateMovie by personalMovieViewModel.movieDownloadStatus.collectAsState()
     val listSelectedMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
     val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
@@ -168,13 +161,11 @@ fun ListSelectedMovies(
                     onClose = { openBottomSheetComments = false },
                     content = {
                         AddComment(
-                            personalMovieViewModel = personalMovieViewModel,
-                            domainUserModelData = userData,
-                            selectedMovie = selectedMovie,
+                            dataUser = userData,
+                            viewModel = personalMovieViewModel,
+                            selectedItem = selectedMovie,
                             context = context,
-                            onClick = {
-                                openBottomSheetComments = false
-                            }
+                            onClick = { openBottomSheetComments = false }
                         )
                     },
                     fraction = 0.7f
@@ -318,7 +309,15 @@ fun ListSelectedMovies(
                         }
 
                         is LoadingState.Error -> {
-                            // TODO: Добавить логику работы при ошибке.
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "При загрузке произошла ошибка.",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
                         }
                     }
                 }
@@ -343,7 +342,7 @@ fun ListSelectedMovies(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     userData?.let { user ->
-                        ShowSharedLists(
+                        SharedListsScreen(
                             navController = navController,
                             userId = userId,
                             userName = user.nikName,
@@ -372,67 +371,67 @@ fun ListSelectedMovies(
 
 }
 
-@Composable
-private fun AddComment(
-    personalMovieViewModel: PersonalMovieViewModel,
-    domainUserModelData: DomainUserModel?,
-    selectedMovie: DomainSelectedMovieModel?,
-    context: Context,
-    onClick: () -> Unit
-) {
-    val (comment, setComment) = remember { mutableStateOf("") }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    CustomTextFieldForComments(
-        value = comment,
-        onValueChange = setComment,
-        placeholder = {
-            Text(
-                text = stringResource(R.string.placeholder_for_comment_field),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outline
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-        )
-    )
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        CustomTextButton(
-            textButton = stringResource(R.string.button_add),
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            endPadding = 15.dp,
-            onClickButton = {
-                selectedMovie?.let { movie ->
-                    domainUserModelData?.let { user ->
-                        personalMovieViewModel.addComment(
-                            userId = user.id,
-                            selectedMovieId = movie.id,
-                            username = user.nikName,
-                            textComment = comment
-                        )
-                        showToast(context, R.string.comment_added)
-                        setComment("")
-                        onClick()
-                    }
-                }
-            }
-        )
-    }
-}
+//@Composable
+//private fun AddComment(
+//    domainUserModelData: DomainUserModel?,
+//    personalMovieViewModel: PersonalMovieViewModel,
+//    selectedMovie: DomainSelectedMovieModel?,
+//    context: Context,
+//    onClick: () -> Unit
+//) {
+//    val (comment, setComment) = remember { mutableStateOf("") }
+//    val keyboardController = LocalSoftwareKeyboardController.current
+//    val focusManager = LocalFocusManager.current
+//
+//    CustomTextFieldForComments(
+//        value = comment,
+//        onValueChange = setComment,
+//        placeholder = {
+//            Text(
+//                text = stringResource(R.string.placeholder_for_comment_field),
+//                style = MaterialTheme.typography.bodyMedium
+//            )
+//        },
+//        leadingIcon = {
+//            Icon(
+//                imageVector = Icons.Default.Add,
+//                contentDescription = null,
+//                tint = MaterialTheme.colorScheme.outline
+//            )
+//        },
+//        keyboardActions = KeyboardActions(
+//            onDone = {
+//                keyboardController?.hide()
+//                focusManager.clearFocus()
+//            }
+//        )
+//    )
+//
+//    Row(
+//        modifier = Modifier.fillMaxWidth(),
+//        horizontalArrangement = Arrangement.End
+//    ) {
+//        CustomTextButton(
+//            textButton = stringResource(R.string.button_add),
+//            containerColor = MaterialTheme.colorScheme.secondary,
+//            contentColor = MaterialTheme.colorScheme.onSecondary,
+//            endPadding = 15.dp,
+//            onClickButton = {
+//                selectedMovie?.let { movie ->
+//                    domainUserModelData?.let { user ->
+//                        personalMovieViewModel.addComment(
+//                            userId = user.id,
+//                            selectedMovieId = movie.id,
+//                            username = user.nikName,
+//                            textComment = comment
+//                        )
+//                        showToast(context, R.string.comment_added)
+//                        setComment("")
+//                        onClick()
+//                    }
+//                }
+//            }
+//        )
+//    }
+//}
 

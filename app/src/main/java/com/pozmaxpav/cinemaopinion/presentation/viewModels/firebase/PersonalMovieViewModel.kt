@@ -2,18 +2,20 @@ package com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.core.utils.state.LoadingState
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.AddCommentUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.AddMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.DeleteMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.GetCommentsUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.GetMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.ObserveListCommentsUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.ObserveListMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.SendingToNewDirectoryUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personalmovie.UpdateCommentUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personallist.comments.AddCommentUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personallist.comments.CommentsUseCases
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personallist.movies.AddMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personallist.movies.DeleteMovieUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personallist.comments.GetCommentsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personallist.movies.GetMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personallist.comments.ObserveListCommentsUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personallist.movies.ObserveListMoviesUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personallist.comments.UpdateCommentUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.personallist.movies.MoviesUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,19 +28,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PersonalMovieViewModel @Inject constructor(
-    private val addMovieUseCase: AddMovieUseCase,
-    private val getMoviesUseCase: GetMoviesUseCase,
-    private val observeListMoviesUseCase: ObserveListMoviesUseCase,
-    private val deleteMovieUseCase: DeleteMovieUseCase,
-    private val addCommentUseCase: AddCommentUseCase,
-    private val getCommentsUseCase: GetCommentsUseCase,
-    private val observeCommentsForMovieFromPersonalListUseCase: ObserveListCommentsUseCase,
-    private val sendingToNewDirectoryUseCase: SendingToNewDirectoryUseCase,
-    private val updateCommentUseCase: UpdateCommentUseCase
-    ) : ViewModel() {
+    private val commentsUseCases: CommentsUseCases,
+    private val moviesUseCases: MoviesUseCases
+) : ViewModel() {
+
+    private val _movieDownloadStatus = MutableStateFlow<LoadingState>(LoadingState.Success)
+    val movieDownloadStatus = _movieDownloadStatus.asStateFlow()
 
     private val _listSelectedMovies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
     val listSelectedMovies: StateFlow<List<DomainSelectedMovieModel>> = _listSelectedMovies
+
+    private val _commentsDownloadStatus = MutableStateFlow<LoadingState>(LoadingState.Success)
+    val commentsDownloadStatus = _commentsDownloadStatus.asStateFlow()
 
     private val _listComments = MutableStateFlow<List<DomainCommentModel>>(emptyList())
     val listComments = _listComments.asStateFlow()
@@ -50,7 +51,12 @@ class PersonalMovieViewModel @Inject constructor(
     )
     val toastMessage = _toastMessage.asSharedFlow()
 
-    fun addComment(userId: String, selectedMovieId: Int, username: String, textComment: String) {
+    fun addComment(
+        userId: String,
+        selectedMovieId: Int,
+        username: String,
+        textComment: String
+    ) {
         viewModelScope.launch {
             try {
                 val comment = DomainCommentModel(
@@ -59,7 +65,7 @@ class PersonalMovieViewModel @Inject constructor(
                     commentText = textComment,
                     timestamp = System.currentTimeMillis()
                 )
-                addCommentUseCase(userId,selectedMovieId,comment)
+                commentsUseCases.addComment(userId, selectedMovieId, comment)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -67,9 +73,12 @@ class PersonalMovieViewModel @Inject constructor(
     }
     fun getComments(userId: String, selectedMovieId: Int) {
         viewModelScope.launch {
+            _commentsDownloadStatus.value = LoadingState.Loading
             try {
-                _listComments.value = getCommentsUseCase(userId, selectedMovieId)
+                _listComments.value = commentsUseCases.getComments(userId, selectedMovieId)
+                _commentsDownloadStatus.value = LoadingState.Success
             } catch (e: Exception) {
+                _commentsDownloadStatus.value = LoadingState.Error
                 e.printStackTrace()
             }
         }
@@ -77,7 +86,10 @@ class PersonalMovieViewModel @Inject constructor(
     fun observeComments(userId: String, selectedMovieId: Int) {
         viewModelScope.launch {
             try {
-                observeCommentsForMovieFromPersonalListUseCase(userId, selectedMovieId) { onCommentsUpdated ->
+                commentsUseCases.observeComments(
+                    userId,
+                    selectedMovieId
+                ) { onCommentsUpdated ->
                     _listComments.value = onCommentsUpdated
                 }
             } catch (e: Exception) {
@@ -100,7 +112,7 @@ class PersonalMovieViewModel @Inject constructor(
                     newCommentText,
                     System.currentTimeMillis()
                 )
-                updateCommentUseCase(userId, selectedMovieId, commentId, selectedComment)
+                commentsUseCases.updateComment(userId, selectedMovieId, commentId, selectedComment)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -110,11 +122,11 @@ class PersonalMovieViewModel @Inject constructor(
     fun addMovie(userId: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
-                val movies = getMoviesUseCase(userId)
+                val movies = moviesUseCases.getMovies(userId)
                 if (movies.any { it.id == selectedMovie.id }) {
                     _toastMessage.emit(R.string.movie_has_already_been_added)
                 } else {
-                    addMovieUseCase(userId, selectedMovie)
+                    moviesUseCases.addMovie(userId, selectedMovie)
                     _toastMessage.emit(R.string.movie_has_been_added)
                 }
             } catch (e: Exception) {
@@ -124,10 +136,12 @@ class PersonalMovieViewModel @Inject constructor(
     }
     fun getMovies(userId: String) {
         viewModelScope.launch {
+            _movieDownloadStatus.value = LoadingState.Loading
             try {
-                val movies = getMoviesUseCase(userId)
-                _listSelectedMovies.value = movies
+                _listSelectedMovies.value = moviesUseCases.getMovies(userId)
+                _movieDownloadStatus.value = LoadingState.Success
             } catch (e: Exception) {
+                _movieDownloadStatus.value = LoadingState.Error
                 e.printStackTrace()
             }
 
@@ -136,7 +150,7 @@ class PersonalMovieViewModel @Inject constructor(
     fun observeMovies(userId: String) {
         viewModelScope.launch {
             try {
-                observeListMoviesUseCase(userId) { onSelectedMoviesUpdated ->
+                moviesUseCases.observeList(userId) { onSelectedMoviesUpdated ->
                     _listSelectedMovies.value = onSelectedMoviesUpdated
                 }
             } catch (e: Exception) {
@@ -147,31 +161,31 @@ class PersonalMovieViewModel @Inject constructor(
     fun deleteMovie(userId: String, selectedMovieId: Int) {
         viewModelScope.launch {
             try {
-                deleteMovieUseCase(userId, selectedMovieId)
+                moviesUseCases.dellMovie(userId, selectedMovieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    fun sendingToNewDirectory(
-        userId: String,
-        dataSource: String,
-        directionDataSource: String,
-        selectedMovieId: Int
-    ) {
-        viewModelScope.launch {
-            try {
-                sendingToNewDirectoryUseCase(userId, dataSource, directionDataSource, selectedMovieId)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
+//    fun sendingToNewDirectory(
+//        userId: String,
+//        dataSource: String,
+//        directionDataSource: String,
+//        selectedMovieId: Int
+//    ) {
+//        viewModelScope.launch {
+//            try {
+//                sendingToNewDirectoryUseCase(userId, dataSource, directionDataSource, selectedMovieId)
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
 
     public override fun onCleared() {
-        observeListMoviesUseCase.removeListener()
-        observeCommentsForMovieFromPersonalListUseCase.removeListener()
+        moviesUseCases.observeList.removeListener()
+        commentsUseCases.observeComments.removeListener()
         super.onCleared()
     }
 

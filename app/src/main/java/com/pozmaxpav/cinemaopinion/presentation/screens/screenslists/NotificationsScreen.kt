@@ -39,17 +39,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.theme.CommentAddedColor
 import com.example.ui.presentation.theme.DeveloperCommentColor
 import com.example.ui.presentation.theme.FilmAddedColor
 import com.example.ui.presentation.theme.FilmDeleteColor
 import com.example.ui.presentation.theme.MovingElement
+import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import java.text.SimpleDateFormat
@@ -62,17 +62,17 @@ fun ListOfChangesScreen(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
     userViewModel: UserViewModel = hiltViewModel(),
-    sharedListsViewModel: SharedListsViewModel = hiltViewModel()
+    notificationViewModel: NotificationViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
 
-    val list by sharedListsViewModel.notifications.collectAsState()
+    val list by notificationViewModel.notifications.collectAsState()
     val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
 
     LaunchedEffect(Unit) {
-        sharedListsViewModel.getNotifications(userId)
+        notificationViewModel.getNotifications(userId)
         systemViewModel.getUserId()
     }
     LaunchedEffect(userId) {

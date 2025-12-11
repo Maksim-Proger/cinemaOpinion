@@ -3,6 +3,7 @@ package com.pozmaxpav.cinemaopinion.data.repository.firebase
 import android.util.Log
 import com.example.core.domain.DomainUserModel
 import com.example.core.utils.CoreDatabaseConstants.COMMENTS_KEY_LISTENER
+import com.example.core.utils.CoreDatabaseConstants.LISTS_KEY_LISTENER
 import com.example.core.utils.CoreDatabaseConstants.MOVIES_KEY_LISTENER
 import com.example.core.utils.CoreDatabaseConstants.NODE_COMMENTS
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_CHANGES
@@ -32,119 +33,91 @@ class SharedListsRepositoryImpl @Inject constructor(
     private val listenerHolder: FirebaseListenerHolder
 ) : SharedListsRepository {
     // TODO: Проверить методы!
-    override suspend fun getMovieById(listId: String, movieId: Int): DomainSelectedMovieModel? {
-        if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
-
-        val sharedListKey = databaseReference
-            .child(NODE_SHARED_LIST)
-            .orderByChild("listId")
-            .equalTo(listId)
-            .get().await()
-            .children.firstOrNull()?.key
-            ?: throw java.lang.IllegalArgumentException("List with ID $listId not found")
-
-        val movieKey = databaseReference
-            .child(NODE_SHARED_LIST)
-            .child(sharedListKey)
-            .child(NODE_SHARED_LIST_MOVIES)
-            .orderByChild("id")
-            .equalTo(movieId.toDouble())
-            .get().await()
-            .children.firstOrNull()?.key
-            ?: throw java.lang.IllegalArgumentException("Movie with ID $movieId not found")
-
-        val movieData = databaseReference
-            .child(listId)
-            .child(movieKey)
-            .get()
-            .await()
-
-        return movieData.getValue(DomainSelectedMovieModel::class.java)
-    }
-    override fun removeMoviesListener() {
-        listenerHolder.removeListener(MOVIES_KEY_LISTENER)
-    }
-    override fun removeCommentsListener() {
-        listenerHolder.removeListener(COMMENTS_KEY_LISTENER)
-    }
-    override suspend fun sendingToNewDirectory(dataSource: String, directionDataSource: String, movieId: Double) {
-        try {
-            val snapshot = databaseReference
-                .child(dataSource)
-                .orderByChild("id")
-                .equalTo(movieId)
-                .get()
-                .await()
-
-            if (snapshot.exists()) {
-                val movieSnapshot =
-                    snapshot.children.firstOrNull() // Берём первую подходящую запись
-                val movieKey = movieSnapshot?.key // Получаем ключ записи
-
-                if (movieSnapshot != null && movieKey != null) {
-                    val movieData = movieSnapshot.value // Получаем данные записи
-
-                    // Копируем запись в новую папку
-                    databaseReference
-                        .child(directionDataSource)
-                        .child(movieKey)
-                        .setValue(movieData)
-                        .await()
-
-                    // Удаляем запись после переноса
-                    databaseReference
-                        .child(dataSource)
-                        .child(movieKey)
-                        .removeValue()
-                        .await()
-
-                    changeRecords(movieId, directionDataSource)
-                }
-            }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-    private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
-        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
-        snapshot.children.forEach { childSnapshot ->
-            val result = childSnapshot.getValue(DomainNotificationModel::class.java)
-            if (result?.entityId == movieId.toInt()) {
-                val updates = mapOf("newDataSource" to directionDataSource)
-                databaseReference.child(NODE_LIST_CHANGES).child(childSnapshot.key!!).updateChildren(updates).await()
-            }
-        }
-    }
+//    override suspend fun getMovieById(listId: String, movieId: Int): DomainSelectedMovieModel? {
+//        if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
+//
+//        val sharedListKey = databaseReference
+//            .child(NODE_SHARED_LIST)
+//            .orderByChild("listId")
+//            .equalTo(listId)
+//            .get().await()
+//            .children.firstOrNull()?.key
+//            ?: throw java.lang.IllegalArgumentException("List with ID $listId not found")
+//
+//        val movieKey = databaseReference
+//            .child(NODE_SHARED_LIST)
+//            .child(sharedListKey)
+//            .child(NODE_SHARED_LIST_MOVIES)
+//            .orderByChild("id")
+//            .equalTo(movieId.toDouble())
+//            .get().await()
+//            .children.firstOrNull()?.key
+//            ?: throw java.lang.IllegalArgumentException("Movie with ID $movieId not found")
+//
+//        val movieData = databaseReference
+//            .child(listId)
+//            .child(movieKey)
+//            .get()
+//            .await()
+//
+//        return movieData.getValue(DomainSelectedMovieModel::class.java)
+//    }
+//    override suspend fun sendingToNewDirectory(dataSource: String, directionDataSource: String, movieId: Double) {
+//        try {
+//            val snapshot = databaseReference
+//                .child(dataSource)
+//                .orderByChild("id")
+//                .equalTo(movieId)
+//                .get()
+//                .await()
+//
+//            if (snapshot.exists()) {
+//                val movieSnapshot =
+//                    snapshot.children.firstOrNull() // Берём первую подходящую запись
+//                val movieKey = movieSnapshot?.key // Получаем ключ записи
+//
+//                if (movieSnapshot != null && movieKey != null) {
+//                    val movieData = movieSnapshot.value // Получаем данные записи
+//
+//                    // Копируем запись в новую папку
+//                    databaseReference
+//                        .child(directionDataSource)
+//                        .child(movieKey)
+//                        .setValue(movieData)
+//                        .await()
+//
+//                    // Удаляем запись после переноса
+//                    databaseReference
+//                        .child(dataSource)
+//                        .child(movieKey)
+//                        .removeValue()
+//                        .await()
+//
+//                    changeRecords(movieId, directionDataSource)
+//                }
+//            }
+//
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+//    }
+//    private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
+//        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
+//        snapshot.children.forEach { childSnapshot ->
+//            val result = childSnapshot.getValue(DomainNotificationModel::class.java)
+//            if (result?.entityId == movieId.toInt()) {
+//                val updates = mapOf("newDataSource" to directionDataSource)
+//                databaseReference
+//                    .child(NODE_LIST_CHANGES)
+//                    .child(childSnapshot.key!!)
+//                    .updateChildren(updates).await()
+//            }
+//        }
+//    }
 
 
-    override suspend fun updateComment(dataSource: String, selectedMovieId: Int, commentId: String, selectedComment: DomainCommentModel) {
-        val movieKey = databaseReference
-            .child(dataSource)
-            .orderByChild("id")
-            .equalTo(selectedMovieId.toDouble())
-            .get()
-            .await()
-            .children.firstOrNull()?.key
-            ?: throw IllegalArgumentException("Movie with ID $selectedMovieId not found")
 
-        val commentSnapshot = databaseReference
-            .child(dataSource)
-            .child(movieKey)
-            .child(NODE_COMMENTS)
-            .orderByChild("commentId")
-            .equalTo(commentId)
-            .get()
-            .await()
-            ?: throw IllegalArgumentException("Comment with ID $commentId not found")
 
-        for (comment in commentSnapshot.children) {
-            if (comment.child("commentId").getValue(String::class.java) == commentId) {
-                comment.ref.setValue(selectedComment).await()
-                break
-            }
-        }
-    }
 
 
 
@@ -304,6 +277,47 @@ class SharedListsRepositoryImpl @Inject constructor(
             .await()
 
     }
+    override suspend fun updateComment(listId: String, movieId: Int, commentId: String, selectedComment: DomainCommentModel) {
+        if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
+
+        val sharedListKey = databaseReference
+            .child(NODE_SHARED_LIST)
+            .orderByChild("listId")
+            .equalTo(listId)
+            .get()
+            .await()
+            .children.firstOrNull()?.key
+            ?: throw IllegalArgumentException("List with ID $listId not found")
+
+        val movieKey = databaseReference
+            .child(NODE_SHARED_LIST)
+            .child(sharedListKey)
+            .child(NODE_SHARED_LIST_MOVIES)
+            .orderByChild("id")
+            .equalTo(movieId.toDouble())
+            .get()
+            .await()
+            .children.firstOrNull()?.key
+            ?: throw IllegalArgumentException("Movie with ID $movieId not found")
+
+        val commentsRef = databaseReference
+            .child(NODE_SHARED_LIST)
+            .child(sharedListKey)
+            .child(NODE_SHARED_LIST_MOVIES)
+            .child(movieKey)
+            .child(NODE_COMMENTS)
+
+        val commentSnapshot = commentsRef
+            .orderByChild("commentId")
+            .equalTo(commentId)
+            .get()
+            .await()
+            .children.firstOrNull()
+            ?: throw IllegalArgumentException("Comment with ID $commentId not found")
+
+        val updatedDataComment = selectedComment.commentToData().copy(commentId = commentId)
+        commentSnapshot.ref.setValue(updatedDataComment).await()
+    }
     override suspend fun getComments(listId: String, movieId: Int): List<DomainCommentModel> {
         if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
 
@@ -394,6 +408,36 @@ class SharedListsRepositoryImpl @Inject constructor(
             e.printStackTrace()
         }
     }
+    override suspend fun removeList(listId: String) {
+        try {
+            require(listId.isNotEmpty()) { "List ID cannot be empty" }
+
+            val snapshot = databaseReference
+                .child(NODE_SHARED_LIST)
+                .orderByChild("listId")
+                .equalTo(listId)
+                .get()
+                .await()
+
+            var users = ""
+            for (child in snapshot.children) {
+                val item = child.getValue(DomainSharedListModel::class.java)
+                users = item?.users ?: ""
+            }
+            updateUserData2(users, listId)
+
+            if (!snapshot.exists()) {
+                Log.w("Firebase", "Shared list not found for listId=$listId")
+                return
+            }
+
+            for (child in snapshot.children) {
+                child.ref.removeValue().await()
+            }
+        } catch (e: Exception) {
+            Log.e("Firebase", "Error removing shared list: ${e.message}", e)
+        }
+    }
     override suspend fun getLists(userId: String): List<DomainSharedListModel> {
 
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
@@ -429,36 +473,56 @@ class SharedListsRepositoryImpl @Inject constructor(
 
         return sharedLists.filter { it.listId in sharedListIds }
     }
-    override suspend fun removeList(listId: String) {
-        try {
-            require(listId.isNotEmpty()) { "List ID cannot be empty" }
+    override suspend fun observeLists(userId: String, onListsUpdated: (List<DomainSharedListModel>) -> Unit) {
+        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
-            val snapshot = databaseReference
-                .child(NODE_SHARED_LIST)
-                .orderByChild("listId")
-                .equalTo(listId)
-                .get()
-                .await()
+        val userKey = databaseReference
+            .child(NODE_LIST_USERS)
+            .orderByChild("id")
+            .equalTo(userId)
+            .get()
+            .await()
+            .children.firstOrNull()
+            ?.key
+            ?: throw IllegalArgumentException("User with ID $userId not found.")
 
-            var users = ""
-            for (child in snapshot.children) {
-                val item = child.getValue(DomainSharedListModel::class.java)
-                users = item?.users ?: ""
+        val userListsRef = databaseReference
+            .child(NODE_LIST_USERS)
+            .child(userKey)
+            .child("my_shared_list")
+
+        val sharedListsRef = databaseReference
+            .child(NODE_SHARED_LIST)
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(sharedSnapshot: DataSnapshot) {
+                userListsRef.get().addOnSuccessListener { userSnapshot ->
+                    val userListIds = userSnapshot.children
+                        .mapNotNull { it.child("listId").getValue(String::class.java) }
+                        .toSet()
+
+                    if (userListIds.isEmpty()) {
+                        onListsUpdated(emptyList())
+                        return@addOnSuccessListener
+                    }
+
+                    val lists = sharedSnapshot.children
+                        .mapNotNull { it.getValue(DomainSharedListModel::class.java) }
+                        .filter { it.listId in userListIds }
+
+                    onListsUpdated(lists)
+                }
             }
-            updateUserData2(users, listId)
 
-            if (!snapshot.exists()) {
-                Log.w("Firebase", "Shared list not found for listId=$listId")
-                return
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Shared lists listener cancelled: ${error.message}")
             }
-
-            for (child in snapshot.children) {
-                child.ref.removeValue().await()
-            }
-        } catch (e: Exception) {
-            Log.e("Firebase", "Error removing shared list: ${e.message}", e)
         }
+
+        sharedListsRef.addValueEventListener(listener)
+        listenerHolder.addListener(LISTS_KEY_LISTENER, sharedListsRef, listener)
     }
+
     private suspend fun updateUserData(userCreatorId: String, invitedUserAddress: List<String>, forProfile: DomainMySharedListModel, ) {
         if (userCreatorId.isEmpty()) {
             throw IllegalArgumentException("User ID cannot be empty")
@@ -583,6 +647,16 @@ class SharedListsRepositoryImpl @Inject constructor(
             .plus(invitedNicks)
             .filter { it.isNotBlank() }
             .joinToString(", ")
+    }
+
+    override fun removeMoviesListener() {
+        listenerHolder.removeListener(MOVIES_KEY_LISTENER)
+    }
+    override fun removeCommentsListener() {
+        listenerHolder.removeListener(COMMENTS_KEY_LISTENER)
+    }
+    override fun removeListsListener() {
+        listenerHolder.removeListener(LISTS_KEY_LISTENER)
     }
 
 }

@@ -1,27 +1,16 @@
 package com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.utils.state.LoadingState
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainMySharedListModel
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.CreateNotificationUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.GetNotificationsUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.RemoveNotificationUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.comments.AddCommentUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.movies.AddMovieUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.lists.CreatingListUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.comments.GetCommentsUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.movies.GetMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.lists.GetListsUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.lists.RemoveListUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlists.movies.RemoveMovieUseCase
-import com.pozmaxpav.cinemaopinion.utilits.deletingOldRecords
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlist.comments.CommentsUseCases
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlist.lists.ListsUseCases
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlist.movies.MoviesUseCases
 import com.pozmaxpav.cinemaopinion.utilits.formatTextWithUnderscores
 import com.pozmaxpav.cinemaopinion.utilits.simpleTransliterate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,20 +25,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SharedListsViewModel @Inject constructor(
-    private val creatingListUseCase: CreatingListUseCase,
-    private val removeListUseCase: RemoveListUseCase,
-    private val getListsUseCase: GetListsUseCase,
-
-    private val addMovieUseCase: AddMovieUseCase,
-    private val getMoviesUseCase: GetMoviesUseCase,
-    private val removeMovieUseCase: RemoveMovieUseCase,
-
-    private val addCommentUseCase: AddCommentUseCase,
-    private val getCommentsUseCase: GetCommentsUseCase,
-
-    private val createNotificationUseCase: CreateNotificationUseCase,
-    private val getNotificationsUseCase: GetNotificationsUseCase,
-    private val removeNotificationUseCase: RemoveNotificationUseCase,
+    private val listsUseCases: ListsUseCases,
+    private val moviesUseCases: MoviesUseCases,
+    private val commentsUseCases: CommentsUseCases
 ) : ViewModel() {
 
     private val _movieDownloadStatus = MutableStateFlow<LoadingState>(LoadingState.Success)
@@ -57,9 +35,6 @@ class SharedListsViewModel @Inject constructor(
 
     private val _commentsDownloadStatus = MutableStateFlow<LoadingState>(LoadingState.Success)
     val commentsDownloadStatus = _commentsDownloadStatus.asStateFlow()
-
-    private val _notifications = MutableStateFlow<List<DomainNotificationModel>>(emptyList())
-    val notifications = _notifications.asStateFlow()
 
     private val _lists = MutableStateFlow<List<DomainSharedListModel>>(emptyList())
     val list = _lists.asStateFlow()
@@ -77,7 +52,19 @@ class SharedListsViewModel @Inject constructor(
     )
     val toastMessage = _toastMessage.asSharedFlow()
 
-    fun addComment(listId: String, movieId: Int, username: String, commentUser: String) {
+    private val _successfulResult = MutableSharedFlow<Pair<String, String>>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val successfulResult = _successfulResult.asSharedFlow()
+
+    fun addComment(
+        listId: String,
+        movieId: Int,
+        username: String,
+        commentUser: String
+    ) {
         viewModelScope.launch {
             try {
                 val comment = DomainCommentModel(
@@ -86,7 +73,22 @@ class SharedListsViewModel @Inject constructor(
                     commentText = commentUser,
                     timestamp = System.currentTimeMillis()
                 )
-                addCommentUseCase(listId, movieId, comment)
+                commentsUseCases.addComment(listId, movieId, comment)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    fun updateComment(listId: String, movieId: Int, commentId: String, userName: String, newCommentText: String) {
+        viewModelScope.launch {
+            try {
+                val selectedComment = DomainCommentModel(
+                    commentId = commentId,
+                    username = userName,
+                    commentText = newCommentText,
+                    timestamp = System.currentTimeMillis()
+                )
+                commentsUseCases.updateComment(listId, movieId, commentId, selectedComment)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -95,9 +97,16 @@ class SharedListsViewModel @Inject constructor(
     fun getComments(listId: String, movieId: Int) {
         viewModelScope.launch {
             try {
-                _comments.value = getCommentsUseCase(listId, movieId)
+                _comments.value = commentsUseCases.getComments(listId, movieId)
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+    }
+    fun observeComments(listId: String, movieId: Int) {
+        viewModelScope.launch {
+            commentsUseCases.observeComments(listId, movieId) { onCommentsUpdated ->
+                _comments.value = onCommentsUpdated
             }
         }
     }
@@ -105,8 +114,7 @@ class SharedListsViewModel @Inject constructor(
     fun getLists(userId: String) {
         viewModelScope.launch {
             try {
-                val myList = getListsUseCase(userId)
-                _lists.value = myList
+                _lists.value = listsUseCases.getLists(userId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -131,7 +139,9 @@ class SharedListsViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                creatingListUseCase(newList, forProfile, userCreatorId, invitedUserAddress)
+                listsUseCases.addList(newList, forProfile, userCreatorId, invitedUserAddress)
+                _toastMessage.emit(R.string.list_created)
+                _successfulResult.emit(sharedID to title)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -140,9 +150,16 @@ class SharedListsViewModel @Inject constructor(
     fun removeList(listId: String) {
         viewModelScope.launch {
             try {
-                removeListUseCase(listId)
+                listsUseCases.removeList(listId)
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+    }
+    fun observeLists(userId: String) {
+        viewModelScope.launch {
+            listsUseCases.observeLists(userId) { onListsUpdated ->
+                _lists.value = onListsUpdated
             }
         }
     }
@@ -150,12 +167,13 @@ class SharedListsViewModel @Inject constructor(
     fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
-                val moviesForCheck = getMoviesUseCase(listId)
+                val moviesForCheck = moviesUseCases.getMovies(listId)
                 if (moviesForCheck.any { it.id == selectedMovie.id }) {
                     _toastMessage.emit(R.string.movie_has_already_been_added)
                 } else {
-                    addMovieUseCase(listId, selectedMovie)
-                    _toastMessage.emit(R.string.movie_has_been_added_to_general_list)
+                    moviesUseCases.addMovie(listId, selectedMovie)
+                    _toastMessage.emit(R.string.movie_has_been_added_to_general_list) // TODO: Переписать текст
+//                    _successfulResult.emit(dataSource to selectedMovie)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -165,7 +183,7 @@ class SharedListsViewModel @Inject constructor(
     fun removeMovie(listId: String, movieId: Int) {
         viewModelScope.launch {
             try {
-                removeMovieUseCase(listId, movieId)
+                moviesUseCases.removeMovie(listId, movieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -174,74 +192,37 @@ class SharedListsViewModel @Inject constructor(
     fun getMovies(listId: String) {
         viewModelScope.launch {
             try {
-                val listMovies = getMoviesUseCase(listId)
-                _movies.value = listMovies
+                _movies.value = moviesUseCases.getMovies(listId)
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+    }
+    fun observeMovies(listId: String) {
+        viewModelScope.launch {
+            moviesUseCases.observeListMovies(listId) { onMoviesUpdated ->
+                _movies.value = onMoviesUpdated
             }
         }
     }
 
-    fun createNotification(
-        context: Context,
-        entityId: Int = 0,
-        sharedListId: String = "",
-        username: String,
-        stringResourceId: Int,
-        title: String
-    ) {
-        viewModelScope.launch {
-            try {
-                val stringResource = context.getString(stringResourceId)
-                val noteText = "$stringResource $title"
-                val note = DomainNotificationModel(
-                    noteId = "", // Оставляем пустым, так как key будет сгенерирован позже
-                    entityId = entityId,
-                    sharedListId = sharedListId,
-                    username = username,
-                    noteText = noteText,
-                    timestamp = System.currentTimeMillis()
-                )
-                createNotificationUseCase(note)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-    fun getNotifications(userId: String) {
-        viewModelScope.launch {
-            try {
-                _notifications.value = getNotificationsUseCase(userId)
-                removeOldNotifications() // Удаляем старые записи
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-    private fun removeNotification(id: String) {
-        viewModelScope.launch {
-            try {
-                removeNotificationUseCase(id)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-    private fun removeOldNotifications() { // Удаление записей из базы данных и списка
-        viewModelScope.launch {
-            val currentList = _notifications.value
-            val filteredList = mutableListOf<DomainNotificationModel>()
+//    fun sendingToNewDirectory(
+//        dataSource: String,
+//        directionDataSource: String,
+//        movieId: Double
+//    ) {
+//        viewModelScope.launch {
+//            try {
+//                sendingToNewDirectoryUseCase(dataSource, directionDataSource, movieId)
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//    }
 
-            currentList.forEach { record ->
-                if (deletingOldRecords(record.timestamp)) {
-                    // Удаляем запись из базы данных
-                    removeNotification(record.noteId)
-                } else {
-                    filteredList.add(record)
-                }
-            }
-
-            _notifications.value = filteredList // Обновляем список после удаления
-        }
+    public override fun onCleared() {
+        commentsUseCases.observeComments.removeListener()
+        listsUseCases.observeLists.removeListener()
+        moviesUseCases.observeListMovies.removeListener()
     }
 }

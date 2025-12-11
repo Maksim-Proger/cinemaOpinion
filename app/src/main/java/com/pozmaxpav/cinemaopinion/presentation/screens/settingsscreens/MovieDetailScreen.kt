@@ -46,7 +46,6 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 import java.text.SimpleDateFormat
@@ -61,301 +60,301 @@ fun MovieDetailScreen(
     userName: String,
     sharedListsViewModel: SharedListsViewModel = hiltViewModel()
 ) {
-
-    val movie by movieViewModel.movie.collectAsState()
-    val context = LocalContext.current
-
-    LaunchedEffect(movieId) {
-        if (listId.isNotEmpty() && movieId != 0) {
-            movieViewModel.getMovieById(listId, movieId)
-        }
-    }
-
-    Column(
-        modifier = Modifier.wrapContentSize()
-    ) {
-        if (listId == stringResource(R.string.movie_was_deleted)) {
-            TheMovieWasDeleted(navController)
-        } else {
-            OtherActions(
-                movie,
-                listId,
-                movieId,
-                navController,
-                movieViewModel,
-                userName,
-                context
-            )
-        }
-    }
+//
+//    val movie by movieViewModel.movie.collectAsState()
+//    val context = LocalContext.current
+//
+//    LaunchedEffect(movieId) {
+//        if (listId.isNotEmpty() && movieId != 0) {
+//            movieViewModel.getMovieById(listId, movieId)
+//        }
+//    }
+//
+//    Column(
+//        modifier = Modifier.wrapContentSize()
+//    ) {
+//        if (listId == stringResource(R.string.movie_was_deleted)) {
+//            TheMovieWasDeleted(navController)
+//        } else {
+//            OtherActions(
+//                movie,
+//                listId,
+//                movieId,
+//                navController,
+//                movieViewModel,
+//                userName,
+//                context
+//            )
+//        }
+//    }
 }
 
-@Composable
-private fun OtherActions(
-    movie: DomainSelectedMovieModel?,
-    newDataSource: String,
-    movieId: Int,
-    navController: NavHostController,
-    movieViewModel: MovieViewModel,
-    userName: String,
-    context: Context,
-) {
-
-    var openBottomSheetComments by remember { mutableStateOf(false) }
-
-    Column {
-        if (openBottomSheetComments) {
-            CustomBottomSheet(
-                onClose = {
-                    openBottomSheetComments = !openBottomSheetComments
-                },
-                content = {
-                    AddComment(
-                        movie,
-                        movieViewModel,
-                        newDataSource,
-                        movieId,
-                        userName,
-                        context,
-                        onClick = {
-                            openBottomSheetComments = false
-                        }
-                    )
-                },
-                fraction = 0.7f
-            )
-        }
-
-        movie?.let { movie ->
-            DetailsCardSelectedMovie(
-                titleForMovieDetailScreen = elementDirectory(newDataSource),
-                movie = movie,
-                content = {
-                    ShowComment(newDataSource, movieId, movieViewModel)
-                },
-                commentButton = {
-                    CustomTextButton(
-                        textButton = context.getString(R.string.placeholder_for_comment_field),
-                        bottomPadding = 7.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        onClickButton = { openBottomSheetComments = !openBottomSheetComments }
-                    )
-                },
-                onClick = {
-                    navController.navigate(Route.ListOfChangesScreen.route) {
-                        popUpTo(Route.MovieDetailScreen.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            )
-        }
-    }
-}
-
-@Composable
-private fun TheMovieWasDeleted(navController: NavHostController) {
-    Column {
-        Row(
-            modifier = Modifier
-                .padding(10.dp)
-                .clickable {
-                    navController.navigate(Route.ListOfChangesScreen.route) {
-                        popUpTo(Route.MovieDetailScreen.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                },
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary
-            )
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(R.string.movie_was_deleted),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    }
-}
-
-@Composable
-private fun AddComment(
-    movie: DomainSelectedMovieModel?,
-    movieViewModel: MovieViewModel,
-    newDataSource: String,
-    movieId: Int,
-    userName: String,
-    context: Context,
-    onClick: () -> Unit
-) {
-
-    val (comment, setComment) = remember { mutableStateOf("") }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    CustomTextFieldForComments(
-        value = comment,
-        onValueChange = setComment,
-        placeholder = {
-            Text(
-                text = stringResource(R.string.placeholder_for_comment_field),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outline
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-        )
-    )
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        CustomTextButton(
-            textButton = "Добавить",
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            endPadding = 15.dp,
-            onClickButton = {
-                movie?.let { movie ->
-                    movieViewModel.addComment(
-                        newDataSource,
-                        movieId.toDouble(),
-                        userName,
-                        comment
-                    )
-//                    sharedListsViewModel.createNotification(
-//                        context,
-//                        userName,
-//                        R.string.record_added_comment_to_movie,
-//                        movie.nameFilm,
+//@Composable
+//private fun OtherActions(
+//    movie: DomainSelectedMovieModel?,
+//    newDataSource: String,
+//    movieId: Int,
+//    navController: NavHostController,
+//    movieViewModel: MovieViewModel,
+//    userName: String,
+//    context: Context,
+//) {
+//
+//    var openBottomSheetComments by remember { mutableStateOf(false) }
+//
+//    Column {
+//        if (openBottomSheetComments) {
+//            CustomBottomSheet(
+//                onClose = {
+//                    openBottomSheetComments = !openBottomSheetComments
+//                },
+//                content = {
+//                    AddComment(
+//                        movie,
+//                        movieViewModel,
 //                        newDataSource,
-//                        movieId
+//                        movieId,
+//                        userName,
+//                        context,
+//                        onClick = {
+//                            openBottomSheetComments = false
+//                        }
 //                    )
-                    showToast(context, R.string.comment_added)
-                    setComment("")
-                }
-                onClick()
-            }
-        )
-    }
-}
-
-private fun elementDirectory(newDataSource: String): String {
-    return when {
-        newDataSource.contains("list_movies") -> "В списке с фильмами"
-        newDataSource.contains("list_serials") -> "В списке с сериалами"
-        newDataSource.contains("list_watched_movies") -> "В списке просмотренных"
-        newDataSource.contains("list_waiting_continuation_series") -> "В листе ожидания"
-        else -> ""
-    }
-}
-
-@Composable
-fun ShowComment(
-    newDataSource: String,
-    movieId: Int,
-    movieViewModel: MovieViewModel,
-) {
-
-    val stateComments by movieViewModel.commentsDownloadStatus.collectAsState()
-    val listComments by movieViewModel.comments.collectAsState()
-
-    LaunchedEffect(movieId) {
-        movieViewModel.getComments(newDataSource, movieId)
-        movieViewModel.observeComments(newDataSource, movieId)
-    }
-
-    when (stateComments) {
-        is LoadingState.Loading -> {
-            CustomLottieAnimation(
-                nameFile = "loading_animation.lottie",
-                modifier = Modifier.scale(0.5f)
-            )
-        }
-
-        is LoadingState.Success -> {
-            LazyColumn {
-                items(listComments) { comment ->
-                    Card(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth()
-                            .padding(vertical = 7.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        )
-                    ) {
-                        Column(modifier = Modifier.padding(8.dp)) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = comment.username,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-
-                            Text(
-                                text = comment.commentText,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text =
-                                        SimpleDateFormat(
-                                            "dd.MM.yyyy HH:mm",
-                                            Locale.getDefault()
-                                        ).format(
-                                            Date(comment.timestamp)
-                                        ),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        is LoadingState.Error -> {
-            // TODO: Добавить логику работы при ошибке.
-        }
-    }
-
-}
+//                },
+//                fraction = 0.7f
+//            )
+//        }
+//
+//        movie?.let { movie ->
+//            DetailsCardSelectedMovie(
+//                titleForMovieDetailScreen = elementDirectory(newDataSource),
+//                movie = movie,
+//                content = {
+//                    ShowComment(newDataSource, movieId, movieViewModel)
+//                },
+//                commentButton = {
+//                    CustomTextButton(
+//                        textButton = context.getString(R.string.placeholder_for_comment_field),
+//                        bottomPadding = 7.dp,
+//                        containerColor = MaterialTheme.colorScheme.secondary,
+//                        contentColor = MaterialTheme.colorScheme.onSecondary,
+//                        onClickButton = { openBottomSheetComments = !openBottomSheetComments }
+//                    )
+//                },
+//                onClick = {
+//                    navController.navigate(Route.ListOfChangesScreen.route) {
+//                        popUpTo(Route.MovieDetailScreen.route) { inclusive = true }
+//                        launchSingleTop = true
+//                    }
+//                }
+//            )
+//        }
+//    }
+//}
+//
+//@Composable
+//private fun TheMovieWasDeleted(navController: NavHostController) {
+//    Column {
+//        Row(
+//            modifier = Modifier
+//                .padding(10.dp)
+//                .clickable {
+//                    navController.navigate(Route.ListOfChangesScreen.route) {
+//                        popUpTo(Route.MovieDetailScreen.route) { inclusive = true }
+//                        launchSingleTop = true
+//                    }
+//                },
+//            horizontalArrangement = Arrangement.Start,
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Icon(
+//                imageVector = Icons.Default.Close,
+//                contentDescription = null,
+//                tint = MaterialTheme.colorScheme.secondary
+//            )
+//        }
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .weight(1f),
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.Center
+//        ) {
+//            Text(
+//                text = stringResource(R.string.movie_was_deleted),
+//                style = MaterialTheme.typography.bodyLarge
+//            )
+//        }
+//    }
+//}
+//
+//@Composable
+//private fun AddComment(
+//    movie: DomainSelectedMovieModel?,
+//    movieViewModel: MovieViewModel,
+//    newDataSource: String,
+//    movieId: Int,
+//    userName: String,
+//    context: Context,
+//    onClick: () -> Unit
+//) {
+//
+//    val (comment, setComment) = remember { mutableStateOf("") }
+//    val keyboardController = LocalSoftwareKeyboardController.current
+//    val focusManager = LocalFocusManager.current
+//
+//    CustomTextFieldForComments(
+//        value = comment,
+//        onValueChange = setComment,
+//        placeholder = {
+//            Text(
+//                text = stringResource(R.string.placeholder_for_comment_field),
+//                style = MaterialTheme.typography.bodyMedium
+//            )
+//        },
+//        leadingIcon = {
+//            Icon(
+//                imageVector = Icons.Default.Add,
+//                contentDescription = null,
+//                tint = MaterialTheme.colorScheme.outline
+//            )
+//        },
+//        keyboardActions = KeyboardActions(
+//            onDone = {
+//                keyboardController?.hide()
+//                focusManager.clearFocus()
+//            }
+//        )
+//    )
+//
+//    Row(
+//        modifier = Modifier.fillMaxWidth(),
+//        horizontalArrangement = Arrangement.End
+//    ) {
+//        CustomTextButton(
+//            textButton = "Добавить",
+//            containerColor = MaterialTheme.colorScheme.secondary,
+//            contentColor = MaterialTheme.colorScheme.onSecondary,
+//            endPadding = 15.dp,
+//            onClickButton = {
+//                movie?.let { movie ->
+//                    movieViewModel.addComment(
+//                        newDataSource,
+//                        movieId.toDouble(),
+//                        userName,
+//                        comment
+//                    )
+////                    sharedListsViewModel.createNotification(
+////                        context,
+////                        userName,
+////                        R.string.record_added_comment_to_movie,
+////                        movie.nameFilm,
+////                        newDataSource,
+////                        movieId
+////                    )
+//                    showToast(context, R.string.comment_added)
+//                    setComment("")
+//                }
+//                onClick()
+//            }
+//        )
+//    }
+//}
+//
+//private fun elementDirectory(newDataSource: String): String {
+//    return when {
+//        newDataSource.contains("list_movies") -> "В списке с фильмами"
+//        newDataSource.contains("list_serials") -> "В списке с сериалами"
+//        newDataSource.contains("list_watched_movies") -> "В списке просмотренных"
+//        newDataSource.contains("list_waiting_continuation_series") -> "В листе ожидания"
+//        else -> ""
+//    }
+//}
+//
+//@Composable
+//fun ShowComment(
+//    newDataSource: String,
+//    movieId: Int,
+//    movieViewModel: MovieViewModel,
+//) {
+//
+//    val stateComments by movieViewModel.commentsDownloadStatus.collectAsState()
+//    val listComments by movieViewModel.comments.collectAsState()
+//
+//    LaunchedEffect(movieId) {
+//        movieViewModel.getComments(newDataSource, movieId)
+//        movieViewModel.observeComments(newDataSource, movieId)
+//    }
+//
+//    when (stateComments) {
+//        is LoadingState.Loading -> {
+//            CustomLottieAnimation(
+//                nameFile = "loading_animation.lottie",
+//                modifier = Modifier.scale(0.5f)
+//            )
+//        }
+//
+//        is LoadingState.Success -> {
+//            LazyColumn {
+//                items(listComments) { comment ->
+//                    Card(
+//                        modifier = Modifier
+//                            .wrapContentHeight()
+//                            .fillMaxWidth()
+//                            .padding(vertical = 7.dp),
+//                        shape = RoundedCornerShape(16.dp),
+//                        elevation = CardDefaults.cardElevation(16.dp),
+//                        colors = CardDefaults.cardColors(
+//                            containerColor = MaterialTheme.colorScheme.secondary,
+//                            contentColor = MaterialTheme.colorScheme.onSecondary
+//                        )
+//                    ) {
+//                        Column(modifier = Modifier.padding(8.dp)) {
+//                            Row(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .padding(10.dp),
+//                                horizontalArrangement = Arrangement.End,
+//                                verticalAlignment = Alignment.CenterVertically
+//                            ) {
+//                                Text(
+//                                    text = comment.username,
+//                                    style = MaterialTheme.typography.bodyLarge
+//                                )
+//                            }
+//
+//                            Text(
+//                                text = comment.commentText,
+//                                style = MaterialTheme.typography.bodyLarge
+//                            )
+//
+//                            Row(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .padding(10.dp),
+//                                horizontalArrangement = Arrangement.End,
+//                                verticalAlignment = Alignment.CenterVertically
+//                            ) {
+//                                Text(
+//                                    text =
+//                                        SimpleDateFormat(
+//                                            "dd.MM.yyyy HH:mm",
+//                                            Locale.getDefault()
+//                                        ).format(
+//                                            Date(comment.timestamp)
+//                                        ),
+//                                    style = MaterialTheme.typography.bodyLarge
+//                                )
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        is LoadingState.Error -> {
+//            // TODO: Добавить логику работы при ошибке.
+//        }
+//    }
+//
+//}

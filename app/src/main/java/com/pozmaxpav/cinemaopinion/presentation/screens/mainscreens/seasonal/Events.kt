@@ -28,101 +28,99 @@ import com.example.core.utils.events.Season
 import com.example.core.utils.events.SeasonTitles
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SeasonalMovieItem
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.MovieViewModel
 import java.time.LocalDate
 
-@Composable
-fun FetchSeasonalMovies(
-    isScrolling: Boolean,
-    viewModel: MovieViewModel,
-    selectedMovie: (DomainSelectedMovieModel) -> Unit
-) {
-    val lisStateRow = rememberLazyListState()
-    val seasonalMovies = getSeasonalListMovies(viewModel)
-
-    AnimatedVisibility(
-        visible = !isScrolling,
-        enter = slideInHorizontally(
-            initialOffsetX = { -it },
-            animationSpec = tween(durationMillis = 300)
-        ),
-        exit = slideOutHorizontally(
-            targetOffsetX = { -it },
-            animationSpec = tween(durationMillis = 300)
-        )
-    ) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = getSeasonalTitle(),
-                    style = MaterialTheme.typography.displayMedium
-                )
-            }
-            Spacer(modifier = Modifier.padding(6.dp))
-
-            seasonalMovies?.let { list ->
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .padding(horizontal = 16.dp)
-                        .background(color = MaterialTheme.colorScheme.surface),
-                    state = lisStateRow
-                ) {
-                    items(list, key = { it.id }) { movie ->
-                        SeasonalMovieItem(
-                            modifier = Modifier.animateItem(),
-                            movie = movie
-                        ) {
-                            selectedMovie(movie)
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun getSeasonalTitle(): String {
-    val currentMonth = remember { LocalDate.now().monthValue }
-    val titleString = remember(currentMonth) {
-        when (currentMonth) {
-            12, 1 -> SeasonTitles.NewYear.title
-            10, 11 -> SeasonTitles.Halloween.title
-            else -> ""
-        }
-    }
-    return titleString
-}
-
-@Composable
-private fun getSeasonalListMovies(viewModel: MovieViewModel): List<DomainSelectedMovieModel>? {
-
-    val currentMonth = remember { LocalDate.now().monthValue }
-
-    val movies by viewModel.movies.collectAsState()
-
-    val currentSeason = remember(currentMonth) {
-        when (currentMonth) {
-            12, 1 -> Season.NewYear
-            10, 11 -> Season.Halloween
-//            2 -> Season.Valentine
-//            3 -> Season.March8
-            else -> null
-        }
-    }
-
-    LaunchedEffect(currentSeason) {
-        currentSeason?.let {
-            viewModel.getMovies(it.node)
-        }
-    }
-
-    return currentSeason?.let { movies }
-}
+//@Composable
+//fun FetchSeasonalMovies(
+//    isScrolling: Boolean,
+//    selectedMovie: (DomainSelectedMovieModel) -> Unit
+//) {
+//    val lisStateRow = rememberLazyListState()
+//    val seasonalMovies = getSeasonalListMovies(viewModel)
+//
+//    AnimatedVisibility(
+//        visible = !isScrolling,
+//        enter = slideInHorizontally(
+//            initialOffsetX = { -it },
+//            animationSpec = tween(durationMillis = 300)
+//        ),
+//        exit = slideOutHorizontally(
+//            targetOffsetX = { -it },
+//            animationSpec = tween(durationMillis = 300)
+//        )
+//    ) {
+//        Column {
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 16.dp),
+//                horizontalArrangement = Arrangement.Center
+//            ) {
+//                Text(
+//                    text = getSeasonalTitle(),
+//                    style = MaterialTheme.typography.displayMedium
+//                )
+//            }
+//            Spacer(modifier = Modifier.padding(6.dp))
+//
+//            seasonalMovies?.let { list ->
+//                LazyRow(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(150.dp)
+//                        .padding(horizontal = 16.dp)
+//                        .background(color = MaterialTheme.colorScheme.surface),
+//                    state = lisStateRow
+//                ) {
+//                    items(list, key = { it.id }) { movie ->
+//                        SeasonalMovieItem(
+//                            modifier = Modifier.animateItem(),
+//                            movie = movie
+//                        ) {
+//                            selectedMovie(movie)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//@Composable
+//private fun getSeasonalTitle(): String {
+//    val currentMonth = remember { LocalDate.now().monthValue }
+//    val titleString = remember(currentMonth) {
+//        when (currentMonth) {
+//            12, 1 -> SeasonTitles.NewYear.title
+//            10, 11 -> SeasonTitles.Halloween.title
+//            else -> ""
+//        }
+//    }
+//    return titleString
+//}
+//
+//@Composable
+//private fun getSeasonalListMovies(viewModel: MovieViewModel): List<DomainSelectedMovieModel>? {
+//
+//    val currentMonth = remember { LocalDate.now().monthValue }
+//
+//    val movies by viewModel.movies.collectAsState()
+//
+//    val currentSeason = remember(currentMonth) {
+//        when (currentMonth) {
+//            12, 1 -> Season.NewYear
+//            10, 11 -> Season.Halloween
+////            2 -> Season.Valentine
+////            3 -> Season.March8
+//            else -> null
+//        }
+//    }
+//
+//    LaunchedEffect(currentSeason) {
+//        currentSeason?.let {
+//            viewModel.getMovies(it.node)
+//        }
+//    }
+//
+//    return currentSeason?.let { movies }
+//}

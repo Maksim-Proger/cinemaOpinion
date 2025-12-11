@@ -28,8 +28,8 @@ object CoreModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseListenerHolder(databaseReference: DatabaseReference): FirebaseListenerHolder {
-        return FirebaseListenerHolder(databaseReference)
+    fun provideFirebaseListenerHolder(): FirebaseListenerHolder {
+        return FirebaseListenerHolder()
     }
 
 }

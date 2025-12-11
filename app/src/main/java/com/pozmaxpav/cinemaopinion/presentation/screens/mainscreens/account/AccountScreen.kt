@@ -45,8 +45,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.items.AccountItem
-import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListsScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
@@ -55,9 +55,9 @@ import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 fun AccountScreen(
     navController: NavHostController,
     userId: String,
-    onClick: () -> Unit,
     systemViewModel: SystemViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel(),
+    onClick: () -> Unit
 ) {
     val userData by userViewModel.userData.collectAsState()
     val listAwards by userViewModel.listAwards.collectAsState()
@@ -74,7 +74,7 @@ fun AccountScreen(
     }
 
     Card(
-        modifier = Modifier.fillMaxHeight(0.9f),
+        modifier = Modifier.fillMaxHeight(1f),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -93,12 +93,10 @@ fun AccountScreen(
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
             Text(
                 text = stringResource(id = R.string.title_account_screen),
                 style = MaterialTheme.typography.displayLarge
             )
-
             userData?.let { user ->
                 AccountSettingMenu(
                     userName = user.nikName,
@@ -131,9 +129,7 @@ fun AccountScreen(
                         colorFilter = ColorFilter
                             .tint(MaterialTheme.colorScheme.onSurfaceVariant)
                     )
-
                     Spacer(modifier = Modifier.padding(8.dp))
-
                     if (userData != null) {
                         Column {
                             userData?.let { user ->
@@ -162,43 +158,22 @@ fun AccountScreen(
                         contentDescription = stringResource(id = R.string.description_icon_movie_list),
                         title = stringResource(id = R.string.my_list_movies)
                     ) { navigateFunction(navController, Route.ListSelectedMovies.route) }
-
                     Spacer(modifier = Modifier.height(20.dp))
-
                     AccountItem(
                         icon = painterResource(id = R.drawable.ic_movie_list),
                         contentDescription = stringResource(R.string.description_icon_shared_lists),
                         title = stringResource(R.string.shared_lists)
                     ) { openSharedLists = true }
-
-                    // region Кнопки больше не нужны
-//                    AccountItem(
-//                        icon = painterResource(id = R.drawable.ic_movie_list),
-//                        contentDescription = stringResource(id = R.string.description_icon_movie_list),
-//                        title = stringResource(id = R.string.joint_list_films)
-//                    ) { navigateFunction(navController, Route.ListSelectedGeneralMovies.route) }
-//
-//                    Spacer(modifier = Modifier.height(20.dp))
-
-//                    AccountItem(
-//                        icon = painterResource(id = R.drawable.ic_movie_list),
-//                        contentDescription = stringResource(id = R.string.description_icon_serials_list),
-//                        title = stringResource(id = R.string.joint_list_serials)
-//                    ) { navigateFunction(navController, Route.ListSelectedGeneralSerials.route) }
-// endregion
-
                     Spacer(modifier = Modifier.height(20.dp))
-
                     AccountItem(
                         icon = painterResource(id = R.drawable.ic_movie_list),
                         contentDescription = stringResource(R.string.description_icon_series_control),
                         title = stringResource(R.string.series_control)
                     ) { navigateFunction(navController, Route.SeriesControlScreen.route) }
-
                 }
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp))
-
+                // region AwardsFields
                 Column(
                     modifier = Modifier.padding(10.dp),
                     verticalArrangement = Arrangement.Bottom
@@ -221,6 +196,7 @@ fun AccountScreen(
                         }
                     }
                 }
+                // endregion
             }
         }
     }
@@ -244,7 +220,7 @@ fun AccountScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 userData?.let { user ->
-                    ShowSharedLists(
+                    SharedListsScreen(
                         navController = navController,
                         userId = userId,
                         userName = user.nikName
