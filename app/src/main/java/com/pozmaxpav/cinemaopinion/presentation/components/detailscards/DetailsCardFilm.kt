@@ -41,15 +41,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.core.utils.CoreDatabaseConstants.NODE_HALLOWEEN_LIST
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_MOVIES
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_SERIALS
-import com.example.ui.presentation.components.CustomBoxShowOverlay
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.ExpandedCard
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
-import com.pozmaxpav.cinemaopinion.presentation.funs.ShowSharedLists
+import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListsScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
@@ -79,16 +75,7 @@ fun DetailsCardFilm(
     var openSharedLists by remember { mutableStateOf(false) }
 
     var triggerOnClickPersonalMovie by remember { mutableStateOf(false) }
-    var triggerOnClickGeneralMovie by remember { mutableStateOf(false) }
 
-//    LaunchedEffect(triggerOnClickGeneralMovie) {
-//        if (triggerOnClickGeneralMovie) {
-//            movieViewModel.toastMessage.collect { resId ->
-//                showToast(context = context, messageId = resId)
-//                onCloseButton()
-//            }
-//        }
-//    }
     LaunchedEffect(triggerOnClickPersonalMovie) {
         if (triggerOnClickPersonalMovie) {
             personalMovieViewModel.toastMessage.collect { resId ->
@@ -97,26 +84,6 @@ fun DetailsCardFilm(
             }
         }
     }
-
-    // TODO: Переписать это на совместные списки
-//    LaunchedEffect(Unit) {
-//        movieViewModel.successfulResult.collect { (dataSource, movie) ->
-//            userData?.let { user ->
-//                movieViewModel.createNotification(
-//                    context = context,
-//                    username = user.nikName,
-//                    stringResourceId = when (dataSource) {
-//                        NODE_LIST_MOVIES -> { R.string.record_added_movie }
-//                        NODE_LIST_SERIALS -> { R.string.record_added_series }
-//                        else -> { R.string.record_added_default }
-//                    },
-//                    title = movie.nameFilm,
-//                    newDataSource = dataSource,
-//                    entityId = movie.id
-//                )
-//            }
-//        }
-//    }
 
     LaunchedEffect(movie?.id) {
         movie?.let { apiViewModel.getSearchMovieById(it.id) }
@@ -327,38 +294,6 @@ fun DetailsCardFilm(
                         }
                     )
 
-                    // region Кнопки больше не нужны
-//                    CustomTextButton(
-//                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_movies),
-//                        bottomPadding = 7.dp,
-//                        containerColor = MaterialTheme.colorScheme.secondary,
-//                        contentColor = MaterialTheme.colorScheme.onSecondary,
-//                        onClickButton = {
-//                            movie?.let { movie ->
-//                                movieViewModel.saveMovie(
-//                                    dataSource = NODE_LIST_MOVIES,
-//                                    selectedMovie = movie.toSelectedMovie()
-//                                )
-//                            }
-//                            triggerOnClickGeneralMovie = true
-//                        }
-//                    )
-//                    CustomTextButton(
-//                        textButton = context.getString(R.string.text_buttons_film_card_to_general_list_serials),
-//                        bottomPadding = 7.dp,
-//                        containerColor = MaterialTheme.colorScheme.secondary,
-//                        contentColor = MaterialTheme.colorScheme.onSecondary,
-//                        onClickButton = {
-//                            movie?.let {
-//                                movieViewModel.saveMovie(
-//                                    NODE_LIST_SERIALS,
-//                                    it.toSelectedMovie()
-//                                )
-//                            }
-//                            triggerOnClickGeneralMovie = true
-//                        }
-//                    )
-//
 //                    if (userData?.nikName == stringResource(R.string.developer_field)) {
 //                        CustomTextButton(
 //                            textButton = stringResource(R.string.button_add_to_seasonal_list),
@@ -375,7 +310,7 @@ fun DetailsCardFilm(
 //                            }
 //                        )
 //                    }
-                    // endregion
+
                 }
             }
         }
@@ -399,7 +334,7 @@ fun DetailsCardFilm(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 userData?.let { user ->
-                    ShowSharedLists(
+                    SharedListsScreen(
                         userId = userId,
                         userName = user.nikName,
                         navController = navController,

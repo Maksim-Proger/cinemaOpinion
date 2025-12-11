@@ -49,17 +49,9 @@
     <string name="title_page_serials_list">Сериалы</string>
 
     <!--  Text for Changes Records Screen  -->
-    <string name="record_added_comment_to_movie">добавил(а) комментарий к фильму: </string>
-    <string name="record_added_comment_to_movie_in_the_viewed">добавил(а) комментарий к фильму в просмотренных: </string>
-    <string name="record_added_comment_to_series">добавил(а) комментарий к сериалу: </string>
-    <string name="record_movie_has_been_moved_to_viewed">переместил(а) фильм в просмотренные: </string>
-    <string name="record_series_has_been_moved_to_viewed">переместил(а) сериал в просмотренные: </string>
-    <string name="record_series_has_been_moved_to_waiting_list">переместил(а) сериал в лист ожидания: </string>
-    <string name="record_series_has_been_moved_to_series_list">переместил(а) сериал в список с сериалами: </string>
-    <string name="record_deleted_the_movie">удалил(а) фильм: </string>
-    <string name="record_deleted_the_series">удалил(а) сериал: </string>
-    <string name="record_added_movie">добавил(а) фильм: </string>
-    <string name="record_added_series">добавил(а) сериал: </string>
+    <string name="record_added_comment_to_movie">добавил(а) комментарий к: </string>
+    <string name="record_deleted_the_movie">удалил(а): </string>
+    <string name="record_added_movie">добавил(а): </string>
     <string name="record_added_default">добавил(а) объект по умолчанию: </string>
     <string name="record_deleted_the_list">удалил(а) список: </string>
     <string name="record_add_the_list">добавил(а) список: </string>
@@ -113,6 +105,7 @@
     <string name="content_description_for_button_add">Кнопка добавить</string>
 
     <!--  ShowToast String  -->
+    <string name="list_created">Список создан</string>
     <string name="movie_has_been_added">Фильм добавлен в личный список</string>
     <string name="movie_has_been_added_to_general_list">Фильм добавлен в общий список</string>
     <string name="movie_has_already_been_added">Данный фильм уже добавлен</string>

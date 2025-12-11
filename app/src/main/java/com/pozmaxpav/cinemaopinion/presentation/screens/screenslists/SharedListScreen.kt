@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
-import android.content.Context
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -24,9 +23,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,7 +31,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,19 +43,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.core.domain.DomainUserModel
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.ExpandedCard
-import com.example.ui.presentation.components.text.CustomTextFieldForComments
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
@@ -67,12 +60,13 @@ import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.Adap
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
+import com.pozmaxpav.cinemaopinion.utilits.AddComment
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
-import com.pozmaxpav.cinemaopinion.utilits.showToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +78,8 @@ fun ListSharedScreen(
     title: String,
     apiViewModel: ApiViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
-    sharedListsViewModel: SharedListsViewModel = hiltViewModel()
+    sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
+    notificationViewModel: NotificationViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -95,6 +90,7 @@ fun ListSharedScreen(
     val info by apiViewModel.informationMovie.collectAsState()
 
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
+    var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
 
@@ -109,6 +105,7 @@ fun ListSharedScreen(
     }
     LaunchedEffect(listId) {
         sharedListsViewModel.getMovies(listId)
+        sharedListsViewModel.observeMovies(listId)
     }
     LaunchedEffect(selectedMovie) {
         selectedMovie?.let { movie ->
@@ -136,11 +133,11 @@ fun ListSharedScreen(
                     onClose = { openBottomSheetComments = false },
                     content = {
                         AddComment(
-                            domainUserModelData = userData,
-                            sharedListsViewModel = sharedListsViewModel,
-                            selectedMovie = selectedMovie,
+                            dataUser = userData,
+                            sharedListId = listId,
+                            viewModel = sharedListsViewModel,
+                            selectedItem = selectedMovie,
                             context = context,
-                            listId = listId,
                             onClick = { openBottomSheetComments = false }
                         )
                     },
@@ -158,7 +155,10 @@ fun ListSharedScreen(
                             selectedMovieId = movie.id,
                             viewModel = sharedListsViewModel,
                             listId = listId,
-                            onClick = { }
+                            onClick = { comment ->
+                                selectedComment = comment
+                                openBottomSheetChange = true
+                            }
                         )
                     },
                     openDescription = {
@@ -207,7 +207,7 @@ fun ListSharedScreen(
                             LaunchedEffect(isVisible) {
                                 if (!isVisible) {
                                     sharedListsViewModel.removeMovie(listId, movie.id)
-                                    sharedListsViewModel.createNotification(
+                                    notificationViewModel.createNotification(
                                         context = context,
                                         entityId = movie.id,
                                         username = userName,
@@ -276,80 +276,5 @@ fun ListSharedScreen(
                 goToHome = { navigateFunction(navController, Route.MainScreen.route) }
             )
         }
-    }
-}
-
-// TODO: Убрать отсюда!
-@Composable
-private fun AddComment(
-    domainUserModelData: DomainUserModel?,
-    sharedListsViewModel: SharedListsViewModel,
-    selectedMovie: DomainSelectedMovieModel?,
-    context: Context,
-    listId: String,
-    onClick: () -> Unit
-) {
-    val (comment, setComment) = remember { mutableStateOf("") }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    CustomTextFieldForComments(
-        value = comment,
-        onValueChange = setComment,
-        placeholder = {
-            Text(
-                text = stringResource(R.string.placeholder_for_comment_field),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outline
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-        )
-    )
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        CustomTextButton(
-            textButton = stringResource(R.string.button_add),
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            endPadding = 15.dp,
-            onClickButton = {
-                domainUserModelData?.let { user ->
-                    selectedMovie?.let { movie ->
-                        sharedListsViewModel.addComment(
-                            listId = listId,
-                            movieId = movie.id,
-                            username = user.nikName,
-                            commentUser = comment
-                        )
-                        sharedListsViewModel.createNotification(
-                            context = context,
-                            entityId = movie.id,
-                            sharedListId = listId,
-                            username = user.nikName,
-                            stringResourceId = R.string.record_added_comment_to_movie,
-                            title = movie.nameFilm
-                        )
-                        showToast(context, R.string.comment_added)
-                        setComment("")
-
-                        onClick()
-                    }
-                }
-            }
-        )
     }
 }

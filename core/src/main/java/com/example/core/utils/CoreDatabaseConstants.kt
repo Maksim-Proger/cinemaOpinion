@@ -9,10 +9,13 @@ object CoreDatabaseConstants {
 
     const val NODE_LIST_MOVIES = "list_movies"
     const val NODE_LIST_SERIALS = "list_serials"
-    const val NODE_LIST_PERSONAL_MOVIES = "list_personal_movies"
-    const val NODE_LIST_CHANGES = "list_of_changes"
     const val NODE_LIST_WATCHED_MOVIES = "list_watched_movies"
     const val NODE_LIST_WAITING_CONTINUATION_SERIES = "list_waiting_continuation_series"
+
+
+    const val NODE_LIST_PERSONAL_MOVIES = "list_personal_movies"
+    const val NODE_LIST_CHANGES = "list_of_changes"
+
     const val NODE_LIST_USERS = "list_users"
 
     const val NODE_SHARED_LIST = "shared_lists"
@@ -26,5 +29,6 @@ object CoreDatabaseConstants {
 
     const val MOVIES_KEY_LISTENER = "movies_key_listener"
     const val COMMENTS_KEY_LISTENER = "comments_key_listener"
+    const val LISTS_KEY_LISTENER = "list_key_listener"
     const val ENTRIES_KEY_LISTENER = "entries_key_listener"
 }

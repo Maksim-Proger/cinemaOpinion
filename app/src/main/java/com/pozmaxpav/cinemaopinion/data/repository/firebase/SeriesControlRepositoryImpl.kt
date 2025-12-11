@@ -60,43 +60,43 @@ class SeriesControlRepositoryImpl @Inject constructor(
         userId: String,
         onEntriesUpdated: (List<DomainSeriesControlModel>) -> Unit
     ) {
-        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
-
-        databaseReference
-            .child(NODE_LIST_USERS)
-            .orderByChild("id")
-            .equalTo(userId)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val userSnapshot = snapshot.children.firstOrNull()
-
-                    if (userSnapshot == null) {
-                        onEntriesUpdated(emptyList()) // Если пользователь не найден, вернуть пустой список
-                        return
-                    }
-
-                    val entriesRef = userSnapshot.child(NODE_SERIES_CONTROL).ref
-
-                    val listener = entriesRef.addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(entrySnapshot: DataSnapshot) {
-                            val entry = entrySnapshot.children.mapNotNull {
-                                runCatching { it.getValue(DomainSeriesControlModel::class.java) }.getOrNull()
-                            }
-                            onEntriesUpdated(entry)
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            Log.e("Firebase", "Error loading entries: ${error.message}")
-                        }
-                    })
-                    listenerHolder.addListener(ENTRIES_KEY_LISTENER, listener)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("Firebase", "Error fetching user data: ${error.message}")
-                    onEntriesUpdated(emptyList())
-                }
-            })
+//        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
+//
+//        databaseReference
+//            .child(NODE_LIST_USERS)
+//            .orderByChild("id")
+//            .equalTo(userId)
+//            .addListenerForSingleValueEvent(object : ValueEventListener {
+//                override fun onDataChange(snapshot: DataSnapshot) {
+//                    val userSnapshot = snapshot.children.firstOrNull()
+//
+//                    if (userSnapshot == null) {
+//                        onEntriesUpdated(emptyList()) // Если пользователь не найден, вернуть пустой список
+//                        return
+//                    }
+//
+//                    val entriesRef = userSnapshot.child(NODE_SERIES_CONTROL).ref
+//
+//                    val listener = entriesRef.addValueEventListener(object : ValueEventListener {
+//                        override fun onDataChange(entrySnapshot: DataSnapshot) {
+//                            val entry = entrySnapshot.children.mapNotNull {
+//                                runCatching { it.getValue(DomainSeriesControlModel::class.java) }.getOrNull()
+//                            }
+//                            onEntriesUpdated(entry)
+//                        }
+//
+//                        override fun onCancelled(error: DatabaseError) {
+//                            Log.e("Firebase", "Error loading entries: ${error.message}")
+//                        }
+//                    })
+//                    listenerHolder.addListener(ENTRIES_KEY_LISTENER, listener)
+//                }
+//
+//                override fun onCancelled(error: DatabaseError) {
+//                    Log.e("Firebase", "Error fetching user data: ${error.message}")
+//                    onEntriesUpdated(emptyList())
+//                }
+//            })
     }
 
     override suspend fun addNewEntry(userId: String, entry: DomainSeriesControlModel) {

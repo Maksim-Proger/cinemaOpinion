@@ -55,71 +55,6 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             .setValue(selectedMovie)
             .await()
     }
-
-    override suspend fun getMovies(userId: String): List<DomainSelectedMovieModel> {
-        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
-
-        val userKey = databaseReference
-            .child(NODE_LIST_USERS)
-            .orderByChild("id")
-            .equalTo(userId)
-            .get()
-            .await()
-            .children.firstOrNull()?.key
-            ?: throw IllegalArgumentException("User with ID $userId not found.")
-
-        return databaseReference
-            .child(NODE_LIST_USERS)
-            .child(userKey)
-            .child(NODE_LIST_PERSONAL_MOVIES)
-            .get()
-            .await()
-            .children.mapNotNull { it.getValue(DomainSelectedMovieModel::class.java) }
-    }
-
-    override suspend fun observeListMovies(
-        userId: String,
-        onSelectedMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit
-    ) {
-        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
-
-        databaseReference
-            .child(NODE_LIST_USERS)
-            .orderByChild("id")
-            .equalTo(userId)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val userSnapshot = snapshot.children.firstOrNull()
-
-                    if (userSnapshot == null) {
-                        onSelectedMoviesUpdated(emptyList()) // Если пользователь не найден, вернуть пустой список
-                        return
-                    }
-
-                    val moviesRef = userSnapshot.child(NODE_LIST_PERSONAL_MOVIES).ref
-
-                    val listener = moviesRef.addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(selectedMovieSnapshot: DataSnapshot) {
-                            val selectedMovies = selectedMovieSnapshot.children.mapNotNull {
-                                runCatching { it.getValue(DomainSelectedMovieModel::class.java) }.getOrNull()
-                            }
-                            onSelectedMoviesUpdated(selectedMovies)
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            Log.e("Firebase", "Error loading selected movies: ${error.message}")
-                        }
-                    })
-                    listenerHolder.addListener(MOVIES_KEY_LISTENER, listener)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("Firebase", "Error fetching user data: ${error.message}")
-                    onSelectedMoviesUpdated(emptyList()) // Возвращаем пустой список в случае ошибки
-                }
-            })
-    }
-
     override suspend fun deleteMovie(userId: String, selectedMovieId: Int) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
         val userKey = databaseReference
@@ -145,12 +80,62 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             }
         }
     }
+    override suspend fun getMovies(userId: String): List<DomainSelectedMovieModel> {
+        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
-    override suspend fun addComment(
-        userId: String,
-        selectedMovieId: Int,
-        comment: DomainCommentModel
-    ) {
+        val userKey = databaseReference
+            .child(NODE_LIST_USERS)
+            .orderByChild("id")
+            .equalTo(userId)
+            .get()
+            .await()
+            .children.firstOrNull()?.key
+            ?: throw IllegalArgumentException("User with ID $userId not found.")
+
+        return databaseReference
+            .child(NODE_LIST_USERS)
+            .child(userKey)
+            .child(NODE_LIST_PERSONAL_MOVIES)
+            .get()
+            .await()
+            .children.mapNotNull { it.getValue(DomainSelectedMovieModel::class.java) }
+    }
+    override suspend fun observeListMovies(userId: String, onSelectedMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit) {
+        if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
+
+        val userKey = databaseReference
+            .child(NODE_LIST_USERS)
+            .orderByChild("id")
+            .equalTo(userId)
+            .get()
+            .await()
+            .children.firstOrNull()?.key
+            ?: throw IllegalArgumentException("User with ID $userId not found.")
+
+        val moviesRef = databaseReference
+            .child(NODE_LIST_USERS)
+            .child(userKey)
+            .child(NODE_LIST_PERSONAL_MOVIES)
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val movies = snapshot.children.mapNotNull {
+                    runCatching { it.getValue(DomainSelectedMovieModel::class.java) }.getOrNull()
+                }
+                onSelectedMoviesUpdated(movies)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Error loading selected movies: ${error.message}")
+            }
+        }
+
+        // 4. Навешиваем listener на moviesRef
+        moviesRef.addValueEventListener(listener)
+        listenerHolder.addListener(MOVIES_KEY_LISTENER, moviesRef, listener)
+    }
+
+    override suspend fun addComment(userId: String, selectedMovieId: Int, comment: DomainCommentModel) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
         val userKey = databaseReference
@@ -194,11 +179,7 @@ class PersonalMovieRepositoryImpl @Inject constructor(
                 .await()
         }
     }
-
-    override suspend fun getComments(
-        userId: String,
-        selectedMovieId: Int
-    ): List<DomainCommentModel> {
+    override suspend fun getComments(userId: String, selectedMovieId: Int): List<DomainCommentModel> {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
         val userKey = databaseReference
@@ -234,88 +215,61 @@ class PersonalMovieRepositoryImpl @Inject constructor(
             it.getValue(DataComment::class.java)?.commentToDomain()
         }
     }
-
-    override suspend fun observeListComments(
-        userId: String,
-        selectedMovieId: Int,
-        onCommentsUpdated: (List<DomainCommentModel>) -> Unit
-    ) {
+    override suspend fun observeListComments(userId: String, selectedMovieId: Int, onCommentsUpdated: (List<DomainCommentModel>) -> Unit) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
-        databaseReference
+        // 1. Находим userKey
+        val userKey = databaseReference
             .child(NODE_LIST_USERS)
             .orderByChild("id")
             .equalTo(userId)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(userSnapshot: DataSnapshot) {
-                    val userKey = userSnapshot.children.firstOrNull()?.key
-                    if (userKey == null) {
-                        onCommentsUpdated(emptyList())
-                        return
-                    }
+            .get()
+            .await()
+            .children.firstOrNull()?.key
+            ?: throw IllegalArgumentException("User with ID $userId not found")
 
-                    databaseReference
-                        .child(NODE_LIST_USERS)
-                        .child(userKey)
-                        .child(NODE_LIST_PERSONAL_MOVIES)
-                        .orderByChild("id")
-                        .equalTo(selectedMovieId.toDouble())
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(movieSnapshot: DataSnapshot) {
-                                val movieKey = movieSnapshot.children.firstOrNull()?.key
-                                if (movieKey == null) {
-                                    onCommentsUpdated(emptyList())
-                                    return
-                                }
+        // 2. Находим movieKey среди personal movies
+        val movieKey = databaseReference
+            .child(NODE_LIST_USERS)
+            .child(userKey)
+            .child(NODE_LIST_PERSONAL_MOVIES)
+            .orderByChild("id")
+            .equalTo(selectedMovieId.toDouble())
+            .get()
+            .await()
+            .children.firstOrNull()?.key
+            ?: throw IllegalArgumentException("Movie with ID $selectedMovieId not found")
 
-                                val commentsRef = databaseReference
-                                    .child(NODE_LIST_USERS)
-                                    .child(userKey)
-                                    .child(NODE_LIST_PERSONAL_MOVIES)
-                                    .child(movieKey)
-                                    .child(NODE_PERSONAL_COMMENTS)
+        // 3. Ссылка на комментарии
+        val commentsRef = databaseReference
+            .child(NODE_LIST_USERS)
+            .child(userKey)
+            .child(NODE_LIST_PERSONAL_MOVIES)
+            .child(movieKey)
+            .child(NODE_PERSONAL_COMMENTS)
 
-                                val listener =
-                                    commentsRef.addValueEventListener(object : ValueEventListener {
-                                        override fun onDataChange(commentsSnapshot: DataSnapshot) {
-                                            val comments = commentsSnapshot.children.mapNotNull {
-                                                it.getValue(DataComment::class.java)
-                                                    ?.commentToDomain()
-                                            }
-                                            onCommentsUpdated(comments)
-                                        }
-
-                                        override fun onCancelled(error: DatabaseError) {
-                                            Log.e(
-                                                "Firebase",
-                                                "Error loading comments: ${error.message}"
-                                            )
-                                            onCommentsUpdated(emptyList())
-                                        }
-                                    })
-                                listenerHolder.addListener(COMMENTS_KEY_LISTENER, listener)
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-                                Log.e("Firebase", "Error fetching movie data: ${error.message}")
-                                onCommentsUpdated(emptyList())
-                            }
-                        })
+        // 4. Создаем отдельный listener
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val comments = snapshot.children.mapNotNull {
+                    it.getValue(DataComment::class.java)?.commentToDomain()
                 }
+                onCommentsUpdated(comments)
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("Firebase", "Error fetching user data: ${error.message}")
-                    onCommentsUpdated(emptyList())
-                }
-            })
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Error loading comments: ${error.message}")
+                onCommentsUpdated(emptyList())
+            }
+        }
+
+        // 5. Навешиваем на DatabaseReference
+        commentsRef.addValueEventListener(listener)
+
+        // 6. Сохраняем в holder
+        listenerHolder.addListener(COMMENTS_KEY_LISTENER, commentsRef, listener)
     }
-
-    override suspend fun updateComment(
-        userId: String,
-        selectedMovieId: Int,
-        commentId: String,
-        selectedComment: DomainCommentModel
-    ) {
+    override suspend fun updateComment(userId: String, selectedMovieId: Int, commentId: String, selectedComment: DomainCommentModel) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 
         val userKey = databaseReference
@@ -359,87 +313,79 @@ class PersonalMovieRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun sendingToNewDirectory(
-        userId: String,
-        dataSource: String,
-        directionDataSource: String,
-        selectedMovieId: Int
-    ) {
-        try {
-            if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
-
-            val userKey = databaseReference
-                .child(NODE_LIST_USERS)
-                .orderByChild("id")
-                .equalTo(userId)
-                .get()
-                .await()
-                .children.firstOrNull()?.key
-                ?: throw IllegalArgumentException("User with ID $userId not found.")
-
-            val movieKey = databaseReference
-                .child(NODE_LIST_USERS)
-                .child(userKey)
-                .child(NODE_LIST_PERSONAL_MOVIES)
-                .orderByChild("id")
-                .equalTo(selectedMovieId.toDouble())
-                .get()
-                .await()
-                .children.firstOrNull()?.key
-                ?: throw IllegalArgumentException("Movie with ID $selectedMovieId not found")
-
-            val movieSnapshot = databaseReference
-                .child(NODE_LIST_USERS)
-                .child(userKey)
-                .child(NODE_LIST_PERSONAL_MOVIES)
-                .child(movieKey)
-                .get()
-                .await()
-                ?: throw IllegalArgumentException("Movie with ID $selectedMovieId not found")
-
-            val movieData = movieSnapshot.value // Получаем данные записи
-
-            // Копируем запись в новую папку
-            databaseReference
-                .child(directionDataSource)
-                .child(movieKey)
-                .setValue(movieData)
-                .await()
-
-            // Удаляем запись после переноса
-            databaseReference
-                .child(NODE_LIST_USERS)
-                .child(userKey)
-                .child(NODE_LIST_PERSONAL_MOVIES)
-                .child(movieKey)
-                .removeValue()
-                .await()
-
-            changeRecords(selectedMovieId.toDouble(), directionDataSource)
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
-        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
-        snapshot.children.forEach { childSnapshot ->
-            val result = childSnapshot.getValue(DomainNotificationModel::class.java)
-            if (result?.entityId == movieId.toInt()) {
-                val updates = mapOf("newDataSource" to directionDataSource)
-                databaseReference.child(NODE_LIST_CHANGES).child(childSnapshot.key!!)
-                    .updateChildren(updates).await()
-            }
-        }
-    }
+//    override suspend fun sendingToNewDirectory(userId: String, dataSource: String, directionDataSource: String, selectedMovieId: Int) {
+//        try {
+//            if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
+//
+//            val userKey = databaseReference
+//                .child(NODE_LIST_USERS)
+//                .orderByChild("id")
+//                .equalTo(userId)
+//                .get()
+//                .await()
+//                .children.firstOrNull()?.key
+//                ?: throw IllegalArgumentException("User with ID $userId not found.")
+//
+//            val movieKey = databaseReference
+//                .child(NODE_LIST_USERS)
+//                .child(userKey)
+//                .child(NODE_LIST_PERSONAL_MOVIES)
+//                .orderByChild("id")
+//                .equalTo(selectedMovieId.toDouble())
+//                .get()
+//                .await()
+//                .children.firstOrNull()?.key
+//                ?: throw IllegalArgumentException("Movie with ID $selectedMovieId not found")
+//
+//            val movieSnapshot = databaseReference
+//                .child(NODE_LIST_USERS)
+//                .child(userKey)
+//                .child(NODE_LIST_PERSONAL_MOVIES)
+//                .child(movieKey)
+//                .get()
+//                .await()
+//                ?: throw IllegalArgumentException("Movie with ID $selectedMovieId not found")
+//
+//            val movieData = movieSnapshot.value // Получаем данные записи
+//
+//            // Копируем запись в новую папку
+//            databaseReference
+//                .child(directionDataSource)
+//                .child(movieKey)
+//                .setValue(movieData)
+//                .await()
+//
+//            // Удаляем запись после переноса
+//            databaseReference
+//                .child(NODE_LIST_USERS)
+//                .child(userKey)
+//                .child(NODE_LIST_PERSONAL_MOVIES)
+//                .child(movieKey)
+//                .removeValue()
+//                .await()
+//
+//            changeRecords(selectedMovieId.toDouble(), directionDataSource)
+//
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+//    }
+//    private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
+//        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
+//        snapshot.children.forEach { childSnapshot ->
+//            val result = childSnapshot.getValue(DomainNotificationModel::class.java)
+//            if (result?.entityId == movieId.toInt()) {
+//                val updates = mapOf("newDataSource" to directionDataSource)
+//                databaseReference.child(NODE_LIST_CHANGES).child(childSnapshot.key!!)
+//                    .updateChildren(updates).await()
+//            }
+//        }
+//    }
 
     override fun removeMoviesListener() {
         listenerHolder.removeListener(MOVIES_KEY_LISTENER)
     }
-
     override fun removeCommentsListener() {
         listenerHolder.removeListener(COMMENTS_KEY_LISTENER)
     }
-
 }
