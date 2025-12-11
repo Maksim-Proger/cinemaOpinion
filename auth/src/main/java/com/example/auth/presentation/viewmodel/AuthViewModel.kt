@@ -1,8 +1,8 @@
 package com.example.auth.presentation.viewmodel
 
-import com.example.auth.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.auth.R
 import com.example.auth.domain.usecases.AddUserUseCase
 import com.example.auth.domain.usecases.AuthorizationUseCase
 import com.example.auth.domain.usecases.CheckUserUseCase
@@ -27,9 +27,6 @@ class AuthViewModel @Inject constructor(
     private val _authResult = MutableStateFlow<Result<Unit>?>(null)
     val authResult = _authResult.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
-
     private val _userData = MutableStateFlow<DomainUserModel?>(null)
     val userData = _userData.asStateFlow()
 
@@ -39,6 +36,21 @@ class AuthViewModel @Inject constructor(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val toastMessage = _toastMessage.asSharedFlow()
+
+    fun authorization(email: String, password: String) {
+        viewModelScope.launch {
+            try {
+                val user = authorizationUseCase(email, password)
+                _userData.value = user
+                _authResult.value = Result.success(Unit)
+                if (user == null) {
+                    _toastMessage.emit(R.string.invalid_username_or_password)
+                }
+            } catch (e: Exception) {
+                _authResult.value = Result.failure(e)
+            }
+        }
+    }
 
     fun addUser(nikName: String, email: String, password: String) {
         viewModelScope.launch {
@@ -56,22 +68,6 @@ class AuthViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-            }
-        }
-    }
-
-    fun authorization(email: String, password: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                val user = authorizationUseCase(email, password)
-                _userData.value = user
-                _authResult.value = Result.success(Unit)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _authResult.value = Result.failure(e)
-            } finally {
-                _isLoading.value = false
             }
         }
     }
