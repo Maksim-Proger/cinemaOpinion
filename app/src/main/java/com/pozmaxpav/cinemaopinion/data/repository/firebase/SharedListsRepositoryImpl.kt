@@ -473,6 +473,20 @@ class SharedListsRepositoryImpl @Inject constructor(
 
         return sharedLists.filter { it.listId in sharedListIds }
     }
+    override suspend fun getListName(listId: String): String {
+        val sharedLists = databaseReference
+            .child(NODE_SHARED_LIST)
+            .get()
+            .await()
+            .children
+            .mapNotNull { it.getValue(DomainSharedListModel::class.java) }
+        for (it in sharedLists) {
+            if (it.listId == listId) {
+                return it.title
+            }
+        }
+        return ""
+    }
     override suspend fun observeLists(userId: String, onListsUpdated: (List<DomainSharedListModel>) -> Unit) {
         if (userId.isEmpty()) throw IllegalArgumentException("User ID cannot be empty")
 

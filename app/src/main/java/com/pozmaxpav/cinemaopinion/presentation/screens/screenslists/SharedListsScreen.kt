@@ -82,13 +82,6 @@ fun SharedListsScreen(
                 LaunchedEffect(isVisible) {
                     if (!isVisible) {
                         sharedListsViewModel.removeList(item.listId)
-//                        notificationViewModel.createNotification(
-//                            context = context,
-//                            username = userName,
-//                            sharedListId = item.listId,
-//                            title = item.title,
-//                            stringResourceId = R.string.record_deleted_the_list
-//                        )
                     }
                 }
 

@@ -20,5 +20,6 @@
     
     <!--  Toast  -->
     <string name="already_such_user">Такой пользователь уже есть</string>
+    <string name="invalid_username_or_password">Неверный логин или пароль</string>
 
 </resources>

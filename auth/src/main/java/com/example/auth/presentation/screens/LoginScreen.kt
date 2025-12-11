@@ -1,5 +1,6 @@
 package com.example.auth.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,8 +40,8 @@ import com.example.auth.R
 import com.example.auth.presentation.viewmodel.AuthViewModel
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
-import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.components.text.CustomTextField
+import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +49,12 @@ fun LoginScreen(
     onLoginSuccess: (String, Boolean) -> Unit,
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
+
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+
     val userData by authViewModel.userData.collectAsState()
     val loginResult by authViewModel.authResult.collectAsState()
 
@@ -56,22 +63,21 @@ fun LoginScreen(
 
     var openBottomSheet by remember { mutableStateOf(false) }
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-    val context = LocalContext.current
-
     LaunchedEffect(loginResult) {
         loginResult?.let {
             if (it.isSuccess) {
                 userData?.let { user ->
                     onLoginSuccess(user.id, true)
                 }
-            } else {
-                val errorMessage = it.exceptionOrNull()?.message
-                println("Login failed: $errorMessage")
             }
+
             authViewModel.resetAuthResult()
+        }
+    }
+    LaunchedEffect(Unit) {
+        authViewModel.toastMessage.collect { resId ->
+            val message = context.getString(resId)
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -172,7 +178,7 @@ fun LoginScreen(
 
             Spacer(Modifier.padding(26.dp))
 
-            // region Button
+            // region Buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,

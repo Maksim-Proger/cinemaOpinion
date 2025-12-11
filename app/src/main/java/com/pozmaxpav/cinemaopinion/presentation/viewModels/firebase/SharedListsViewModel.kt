@@ -39,6 +39,9 @@ class SharedListsViewModel @Inject constructor(
     private val _lists = MutableStateFlow<List<DomainSharedListModel>>(emptyList())
     val list = _lists.asStateFlow()
 
+    private val _listName = MutableStateFlow("")
+    val listName = _listName.asStateFlow()
+
     private val _movies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
     val movies = _movies.asStateFlow()
 
@@ -59,12 +62,7 @@ class SharedListsViewModel @Inject constructor(
     )
     val successfulResult = _successfulResult.asSharedFlow()
 
-    fun addComment(
-        listId: String,
-        movieId: Int,
-        username: String,
-        commentUser: String
-    ) {
+    fun addComment(listId: String, movieId: Int, username: String, commentUser: String) {
         viewModelScope.launch {
             try {
                 val comment = DomainCommentModel(
@@ -120,6 +118,15 @@ class SharedListsViewModel @Inject constructor(
             }
         }
     }
+    fun getListName(listId: String) {
+        viewModelScope.launch {
+            try {
+                _listName.value = listsUseCases.getListName(listId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
     fun createList(title: String, userCreatorId: String, invitedUserAddress: List<String>) {
         val source = simpleTransliterate(formatTextWithUnderscores(title))
         val sharedID = UUID.randomUUID().toString()
@@ -167,13 +174,11 @@ class SharedListsViewModel @Inject constructor(
     fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
-                val moviesForCheck = moviesUseCases.getMovies(listId)
-                if (moviesForCheck.any { it.id == selectedMovie.id }) {
+                if (moviesUseCases.getMovies(listId).any { it.id == selectedMovie.id }) {
                     _toastMessage.emit(R.string.movie_has_already_been_added)
                 } else {
                     moviesUseCases.addMovie(listId, selectedMovie)
-                    _toastMessage.emit(R.string.movie_has_been_added_to_general_list) // TODO: Переписать текст
-//                    _successfulResult.emit(dataSource to selectedMovie)
+                    _toastMessage.emit(R.string.movie_has_been_added_to_list)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

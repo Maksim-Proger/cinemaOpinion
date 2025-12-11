@@ -49,7 +49,7 @@
     <string name="title_page_serials_list">Сериалы</string>
 
     <!--  Text for Changes Records Screen  -->
-    <string name="record_added_comment_to_movie">добавил(а) комментарий к: </string>
+    <string name="record_added_comment_to_movie">добавил(а) комментарий</string>
     <string name="record_deleted_the_movie">удалил(а): </string>
     <string name="record_added_movie">добавил(а): </string>
     <string name="record_added_default">добавил(а) объект по умолчанию: </string>
@@ -107,24 +107,18 @@
     <!--  ShowToast String  -->
     <string name="list_created">Список создан</string>
     <string name="movie_has_been_added">Фильм добавлен в личный список</string>
-    <string name="movie_has_been_added_to_general_list">Фильм добавлен в общий список</string>
+    <string name="movie_has_been_added_to_list">Фильм добавлен в список</string>
     <string name="movie_has_already_been_added">Данный фильм уже добавлен</string>
     <string name="add_new_account">Пользователь добавлен</string>
     <string name="login_error">Неверно введен логин или пароль</string>
     <string name="login_completed">Вход выполнен</string>
     <string name="edit_personal_information">Данные пользователя обновлены</string>
     <string name="comment_added">Комментарий добавлен</string>
+
     <string name="element_has_been_added">Элемент добавлен</string>
-    <string name="movie_has_been_moved_to_viewed">Фильм успешно перенесен в просмотренные</string>
-    <string name="series_has_been_moved_to_viewed">Сериал успешно перенесен в просмотренные</string>
-    <string name="series_has_been_moved_to_waiting_list">Сериал успешно перенесен в лист ожидания</string>
-    <string name="series_has_been_moved">Сериал успешно перенесен</string>
-    <string name="movie_has_been_moved">Фильм успешно перенесен</string>
 
     <!--  Title Icons  -->
     <string name="my_list_movies">Личный список</string>
-    <string name="joint_list_films">Общий список с фильмами</string>
-    <string name="joint_list_serials">Общий список с сериалами</string>
     <string name="series_control">Контроль серий</string>
     <string name="shared_lists">Совместные списки</string>
     <string name="floating_action_button_save">Сохранить</string>
