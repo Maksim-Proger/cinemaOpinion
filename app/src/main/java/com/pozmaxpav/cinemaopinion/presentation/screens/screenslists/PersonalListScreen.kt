@@ -203,7 +203,7 @@ fun ListSelectedMovies(
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             onClickButton = { openSharedLists = true }
                         )
-                        showToast(context, R.string.movie_has_been_moved)
+//                        showToast(context, R.string.movie_has_been_moved)
                     },
                     commentButton = {
                         CustomTextButton(

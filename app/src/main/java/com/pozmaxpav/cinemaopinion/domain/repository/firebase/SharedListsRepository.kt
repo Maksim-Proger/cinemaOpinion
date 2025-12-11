@@ -25,6 +25,7 @@ interface SharedListsRepository {
     suspend fun createList(newList: DomainSharedListModel, forProfile: DomainMySharedListModel, userCreatorId: String, invitedUserAddress: List<String>)
     suspend fun removeList(listId: String)
     suspend fun getLists(userId: String): List<DomainSharedListModel>
+    suspend fun getListName(listId: String): String
     suspend fun observeLists(userId: String, onListsUpdated: (List<DomainSharedListModel>) -> Unit)
 
     fun removeMoviesListener()

@@ -24,6 +24,7 @@ class NotificationViewModel @Inject constructor(
         context: Context,
         entityId: Int = 0,
         sharedListId: String = "",
+        listName: String = "",
         username: String,
         stringResourceId: Int,
         title: String
@@ -31,7 +32,11 @@ class NotificationViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val stringResource = context.getString(stringResourceId)
-                val noteText = "$stringResource $title"
+
+                val noteText =
+                    if (listName != "") "$stringResource (в список: $listName) к: $title"
+                    else "$stringResource $title"
+
                 val note = DomainNotificationModel(
                     noteId = "", // Оставляем пустым, так как key будет сгенерирован позже
                     entityId = entityId,

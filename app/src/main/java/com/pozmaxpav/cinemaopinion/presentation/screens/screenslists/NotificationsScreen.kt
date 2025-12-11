@@ -192,10 +192,8 @@ private fun NotificationItem(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Text(
-                            text = SimpleDateFormat(
-                                "dd.MM.yyyy",
-                                Locale.getDefault()
-                            ).format(Date(it.timestamp)),
+                            text = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                                .format(Date(it.timestamp)),
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
@@ -215,15 +213,10 @@ private fun NotificationItem(
 fun colorMethod(text: String): Color {
     return when {
         text.contains("добавил важный комментарий") -> DeveloperCommentColor
-        text.contains("добавил(а) комментарий к фильму") -> CommentAddedColor
-        text.contains("добавил(а) комментарий к сериалу") -> CommentAddedColor
+        text.contains("добавил(а) комментарий") -> CommentAddedColor
+        text.contains("добавил(а) список") -> CommentAddedColor
         text.contains("удалил(а) фильм") -> FilmDeleteColor
-        text.contains("удалил(а) сериал") -> FilmDeleteColor
-        text.contains("добавил(а) фильм") -> FilmAddedColor
-        text.contains("добавил(а) сериал") -> FilmAddedColor
-        text.contains("переместил(а) сериал в лист ожидания") -> MovingElement
-        text.contains("переместил(а) сериал в просмотренные") -> MovingElement
-        text.contains("переместил(а) фильм в просмотренные") -> MovingElement
+        text.contains("добавил(а)") -> FilmAddedColor
         else -> Color.Transparent
     }
 }
@@ -231,15 +224,9 @@ fun colorMethod(text: String): Color {
 fun iconMethod(text: String): ImageVector {
     return when {
         text.contains("добавил важный комментарий") -> Icons.Default.PriorityHigh
-        text.contains("добавил(а) комментарий к фильму") -> Icons.Default.CommentBank
-        text.contains("добавил(а) комментарий к сериалу") -> Icons.Default.CommentBank
+        text.contains("добавил(а) комментарий") -> Icons.Default.CommentBank
         text.contains("удалил(а) фильм") -> Icons.Default.Delete
-        text.contains("удалил(а) сериал") -> Icons.Default.Delete
-        text.contains("добавил(а) фильм") -> Icons.Default.Add
-        text.contains("добавил(а) сериал") -> Icons.Default.Add
-        text.contains("переместил(а) сериал в лист ожидания") -> Icons.Default.Start
-        text.contains("переместил(а) сериал в просмотренные") -> Icons.Default.Start
-        text.contains("переместил(а) фильм в просмотренные") -> Icons.Default.Start
+        text.contains("добавил(а)") -> Icons.Default.Add
         else -> Icons.Default.CommentBank
     }
 }

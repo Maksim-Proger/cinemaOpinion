@@ -65,6 +65,7 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsV
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.AddComment
+import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 
@@ -88,6 +89,7 @@ fun ListSharedScreen(
     val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
     val info by apiViewModel.informationMovie.collectAsState()
+    val listName by sharedListsViewModel.listName.collectAsState()
 
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
@@ -106,6 +108,7 @@ fun ListSharedScreen(
     LaunchedEffect(listId) {
         sharedListsViewModel.getMovies(listId)
         sharedListsViewModel.observeMovies(listId)
+        sharedListsViewModel.getListName(listId)
     }
     LaunchedEffect(selectedMovie) {
         selectedMovie?.let { movie ->
@@ -122,7 +125,21 @@ fun ListSharedScreen(
             if (openBottomSheetChange) {
                 CustomBottomSheet(
                     onClose = { openBottomSheetChange = false },
-                    content = { /* TODO: Добавить действие */ },
+                    content = {
+                        selectedMovie?.let { movie ->
+                            selectedComment?.let { comment ->
+                                ChangeComment(
+                                    sharedListId = listId,
+                                    userName = userName,
+                                    selectedMovieId = movie.id,
+                                    selectedComment = comment,
+                                    viewModel = sharedListsViewModel
+                                ) {
+                                    openBottomSheetChange = false
+                                }
+                            }
+                        }
+                    },
                     fraction = 0.5f
                 )
                 AdaptiveBackHandler { openBottomSheetChange = false }
@@ -136,6 +153,7 @@ fun ListSharedScreen(
                             dataUser = userData,
                             sharedListId = listId,
                             viewModel = sharedListsViewModel,
+                            listName = listName,
                             selectedItem = selectedMovie,
                             context = context,
                             onClick = { openBottomSheetComments = false }
