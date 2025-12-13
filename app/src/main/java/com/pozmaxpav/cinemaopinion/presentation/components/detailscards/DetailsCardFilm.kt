@@ -19,10 +19,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -84,7 +88,6 @@ fun DetailsCardFilm(
             }
         }
     }
-
     LaunchedEffect(movie?.id) {
         movie?.let { apiViewModel.getSearchMovieById(it.id) }
     }
@@ -112,17 +115,32 @@ fun DetailsCardFilm(
             )
         ) {
             Row(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .clickable { onCloseButton() },
-                horizontalArrangement = Arrangement.Start,
+                modifier = Modifier.fillMaxWidth().padding(5.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary
-                )
+                IconButton(onClick = onCloseButton) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBackIosNew,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                }
+
+                IconButton(
+                    onClick = {
+                        movie?.toSelectedMovie()?.let {
+                            personalMovieViewModel.addMovie(userId, selectedMovie = it)
+                        }
+                        triggerOnClickPersonalMovie = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                }
             }
 
             Column(
@@ -132,15 +150,21 @@ fun DetailsCardFilm(
                     .padding(horizontal = 7.dp)
                     .verticalScroll(scrollState)
             ) {
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    movie?.let {
-                        WorkerWithImage(
-                            movie = it,
-                            height = 200.dp
-                        )
+                    Card(
+                        shape = RoundedCornerShape(20.dp),
+                        elevation = CardDefaults.cardElevation(20.dp)
+                    ) {
+                        movie?.let {
+                            WorkerWithImage(
+                                movie = it,
+                                height = 240.dp
+                            )
+                        }
                     }
                 }
 
@@ -279,19 +303,6 @@ fun DetailsCardFilm(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         onClickButton = { openSharedLists = true }
-                    )
-                    CustomTextButton(
-                        textButton = context.getString(R.string.text_buttons_film_card_to_my_list),
-                        topPadding = 7.dp,
-                        bottomPadding = 7.dp,
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        onClickButton = {
-                            movie?.toSelectedMovie()?.let { // Преобразуем MovieData в SelectedMovie
-                                personalMovieViewModel.addMovie(userId, it)
-                            }
-                            triggerOnClickPersonalMovie = true
-                        }
                     )
 
 //                    if (userData?.nikName == stringResource(R.string.developer_field)) {
