@@ -61,6 +61,7 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovi
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import java.text.SimpleDateFormat
 import java.time.DateTimeException
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.format.DateTimeFormatter
@@ -95,8 +96,10 @@ fun WorkerWithImageSelectedMovie(
 }
 
 fun formatGenres(genres: List<Genre>): String {
-    return genres.joinToString(separator = ", ") {
-        it.genre
+    return genres.joinToString(", ") { genre ->
+        genre.genre.replaceFirstChar { char ->
+            if (char.isLowerCase()) char.titlecase() else char.toString()
+        }
     }
 }
 
@@ -126,6 +129,10 @@ fun formatDate(date: String): String {
     val formatterOutput = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
     val dateTime = LocalDateTime.parse(date, formatterInput)
     return dateTime.format(formatterOutput)
+}
+fun formatDate2(date: String): String {
+    val localDate = LocalDate.parse(date)
+    return localDate.year.toString()
 }
 
 fun deletingOldRecords(timestamp: Long): Boolean {
@@ -443,7 +450,7 @@ fun AddComment(
             textButton = stringResource(R.string.button_add),
             containerColor = MaterialTheme.colorScheme.secondary,
             contentColor = MaterialTheme.colorScheme.onSecondary,
-            endPadding = 15.dp,
+            modifier = Modifier,
             onClickButton = {
                 when (viewModel) {
                     is PersonalMovieViewModel -> {
@@ -547,7 +554,7 @@ fun ChangeComment(
             textButton = stringResource(R.string.button_save),
             containerColor = MaterialTheme.colorScheme.secondary,
             contentColor = MaterialTheme.colorScheme.onSecondary,
-            endPadding = 15.dp,
+            modifier = Modifier,
             onClickButton = {
                 when (viewModel) {
                     is PersonalMovieViewModel -> {

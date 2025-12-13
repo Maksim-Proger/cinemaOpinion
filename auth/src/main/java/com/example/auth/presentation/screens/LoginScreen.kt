@@ -188,12 +188,14 @@ fun LoginScreen(
                     textButton = stringResource(R.string.button_registration),
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = MaterialTheme.colorScheme.onSecondary,
+                    modifier = Modifier,
                     onClickButton = { openBottomSheet = true }
                 )
                 CustomTextButton(
                     textButton = stringResource(R.string.button_login),
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = MaterialTheme.colorScheme.onSecondary,
+                    modifier = Modifier,
                     onClickButton = {
                         authViewModel.authorization(login, password)
                     }

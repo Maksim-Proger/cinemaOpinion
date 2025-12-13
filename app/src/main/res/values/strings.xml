@@ -15,8 +15,6 @@
     <string name="shortcut_list_selected_movies_disabled">Недоступно</string>
 
     <!--  General Strings  -->
-    <string name="country">Страна:</string>
-    <string name="name_of_the_movie">Название фильма:</string>
     <string name="developer_field">Разработчик</string>
     <string name="title_awards_field">Зал славы</string>
     <string name="list_awards_empty">Наград пока нет</string>

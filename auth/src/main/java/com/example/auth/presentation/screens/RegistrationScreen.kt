@@ -146,7 +146,7 @@ fun RegistrationScreen(
         ) {
             CustomTextButton(
                 textButton = stringResource(R.string.button_save),
-                endPadding = 15.dp,
+                modifier = Modifier,
                 onClickButton = {
                     authViewModel.addUser(nikName, email, password)
                     triggerOnClick = true

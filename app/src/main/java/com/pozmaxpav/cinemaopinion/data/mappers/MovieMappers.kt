@@ -56,6 +56,7 @@ fun ApiMovieTop.toDomain(): MovieData.MovieTop {
         rating = rating,
         nameRu = nameRu,
         posterUrl = posterUrl,
+        genres = genres.map { it.toDomain() },
         year = year,
         countries = countries.map { it.toDomain() }
     )
