@@ -68,6 +68,7 @@ private fun WithoutEventButton(onDismiss: () -> Unit) {
         textStyle = MaterialTheme.typography.labelMedium,
         containerColor = MaterialTheme.colorScheme.secondary,
         contentColor = MaterialTheme.colorScheme.onSecondary,
+        modifier = Modifier,
         onClickButton = onDismiss
     )
 }
@@ -105,6 +106,7 @@ private fun WithEventButton(onDismiss: () -> Unit) {
         textStyle = MaterialTheme.typography.labelMedium,
         containerColor = MaterialTheme.colorScheme.secondary,
         contentColor = MaterialTheme.colorScheme.onSecondary,
+        modifier = Modifier,
         onClickButton = onDismiss
     )
 }

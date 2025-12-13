@@ -18,18 +18,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomTextButton(
     textButton: String,
-    topPadding: Dp = 0.dp,
-    bottomPadding: Dp = 0.dp,
-    endPadding: Dp = 0.dp,
+    modifier: Modifier,
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     onClickButton: () -> Unit = {}
 ) {
     Card(
-        modifier = Modifier
-            .clickable(onClick = onClickButton)
-            .padding(top = topPadding, bottom = bottomPadding, end = endPadding),
+        modifier = modifier.clickable(onClick = onClickButton),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(16.dp),
         colors = CardDefaults.cardColors(

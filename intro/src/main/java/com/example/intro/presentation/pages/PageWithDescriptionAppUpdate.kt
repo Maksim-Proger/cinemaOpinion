@@ -96,6 +96,7 @@ private fun WithoutEventText(
                 textStyle = MaterialTheme.typography.displayLarge,
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
+                modifier = Modifier,
                 onClickButton = onDismiss
             )
         }

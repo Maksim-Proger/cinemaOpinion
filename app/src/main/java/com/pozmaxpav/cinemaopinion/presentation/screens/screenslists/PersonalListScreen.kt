@@ -197,8 +197,7 @@ fun ListSelectedMovies(
                     movieTransferButtonToSharedList = {
                         CustomTextButton(
                             textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
-                            topPadding = 7.dp,
-                            bottomPadding = 7.dp,
+                            modifier = Modifier,
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             onClickButton = { openSharedLists = true }
@@ -208,7 +207,7 @@ fun ListSelectedMovies(
                     commentButton = {
                         CustomTextButton(
                             textButton = context.getString(R.string.placeholder_for_comment_field),
-                            bottomPadding = 7.dp,
+                            modifier = Modifier,
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             onClickButton = { openBottomSheetComments = !openBottomSheetComments }

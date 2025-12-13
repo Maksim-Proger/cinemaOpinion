@@ -190,7 +190,7 @@ fun ListSharedScreen(
                     commentButton = {
                         CustomTextButton(
                             textButton = context.getString(R.string.button_leave_comment),
-                            bottomPadding = 7.dp,
+                            modifier = Modifier,
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             onClickButton = { openBottomSheetComments = !openBottomSheetComments }

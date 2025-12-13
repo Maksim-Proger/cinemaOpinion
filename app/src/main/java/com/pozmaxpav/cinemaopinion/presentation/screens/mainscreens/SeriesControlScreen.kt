@@ -322,7 +322,7 @@ private fun ChangeItem(
             textButton = "Сохранить",
             containerColor = MaterialTheme.colorScheme.secondary,
             contentColor = MaterialTheme.colorScheme.onSecondary,
-            endPadding = 15.dp,
+            modifier = Modifier,
             onClickButton = {
                 seriesControlViewModel.updateMovie(
                     userId,

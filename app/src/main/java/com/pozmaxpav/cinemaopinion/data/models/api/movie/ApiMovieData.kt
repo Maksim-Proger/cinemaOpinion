@@ -18,6 +18,7 @@ data class ApiMovieTop(
     val rating: String,
     val nameRu: String,
     val posterUrl: String,
+    val genres: List<ApiGenre>,
     val year: String,
     val countries: List<ApiCountry>
 )
