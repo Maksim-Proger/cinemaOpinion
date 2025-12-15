@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.LocalOffer
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.PostAdd
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -69,12 +70,12 @@ import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 fun DetailsCardFilm(
     movie: MovieData?,
     userId: String,
-    onCloseButton: () -> Unit,
     padding: PaddingValues,
     navController: NavHostController,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel(),
+    onCloseButton: () -> Unit
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -108,13 +109,12 @@ fun DetailsCardFilm(
         modifier = Modifier
             .wrapContentSize()
             .padding(padding)
-            .padding(horizontal = 15.dp)
     ) {
         Card(
             modifier = Modifier
                 .wrapContentHeight()
                 .fillMaxWidth()
-                .padding(7.dp),
+                .padding(horizontal = 20.dp),
             elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -161,7 +161,6 @@ fun DetailsCardFilm(
                     .padding(horizontal = 15.dp)
                     .verticalScroll(scrollState)
             ) {
-
                 DetailCardPoster(movie, detailedInfo)
 
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -192,8 +191,26 @@ fun DetailsCardFilm(
                             )
                             Spacer(Modifier.padding(vertical = 5.dp))
                         }
-                        is MovieData.MovieSearch -> {}
-                        is MovieData.MovieSearch2 -> {}
+                        is MovieData.MovieSearch -> {
+                            Spacer(Modifier.padding(vertical = 5.dp))
+                            MetaText(
+                                year = movie.year.toString(),
+                                duration = "${detailedInfo?.filmLength ?: "Н/Д"} мин.",
+                                genre = formatGenres(movie.genres),
+                                country = formatCountries(country = movie.countries)
+                            )
+                            Spacer(Modifier.padding(vertical = 5.dp))
+                        }
+                        is MovieData.MovieSearch2 -> {
+                            Spacer(Modifier.padding(vertical = 5.dp))
+                            MetaText(
+                                year = movie.year.toString(),
+                                duration = "${detailedInfo?.filmLength ?: "Н/Д"} мин.",
+                                genre = formatGenres(movie.genres),
+                                country = formatCountries(country = movie.countries)
+                            )
+                            Spacer(Modifier.padding(vertical = 5.dp))
+                        }
                         null -> { // Обработка случая, когда movie == null
                             Text(
                                 text = stringResource(id = R.string.movie_is_not_uploaded),
@@ -201,81 +218,33 @@ fun DetailsCardFilm(
                             )
                         }
                     }
-
-//                    when (movie) {
-//                        is MovieData.Movie -> {}
-//                        is MovieData.MovieTop -> {
-//                            Text(
-//                                text = "Рейтинг: ${movie.rating}",
-//                                style = MaterialTheme.typography.bodyLarge,
-//                                color = MaterialTheme.colorScheme.secondary
-//                            )
-//                        }
-//                        is MovieData.MovieSearch -> {
-//                            Text(
-//                                text = "Год производства: ${movie.year}",
-//                                style = MaterialTheme.typography.bodyLarge,
-//                                color = MaterialTheme.colorScheme.secondary
-//                            )
-//                            Spacer(modifier = Modifier.height(4.dp))
-//                            Text(
-//                                text = "Рейтинг Kinopoisk: ${movie.ratingKinopoisk ?: "Нет данных о рейтинге"}",
-//                                style = MaterialTheme.typography.bodyLarge,
-//                                color = MaterialTheme.colorScheme.secondary
-//                            )
-//                            Spacer(modifier = Modifier.height(4.dp))
-//                            Text(
-//                                text = "Рейтинг Imdb: ${movie.ratingImdb ?: "Нет данных о рейтинге"}",
-//                                style = MaterialTheme.typography.bodyLarge,
-//                                color = MaterialTheme.colorScheme.secondary
-//                            )
-//                            Spacer(modifier = Modifier.height(7.dp))
-//                            Details(detailedInformationAboutFilm)
-//
-//                        }
-//                        is MovieData.MovieSearch2 -> {
-//                            Text(
-//                                text = "Название на английском: ${movie.nameEn}",
-//                                style = MaterialTheme.typography.bodyLarge,
-//                                color = MaterialTheme.colorScheme.secondary
-//                            )
-//                            Spacer(modifier = Modifier.height(7.dp))
-//                            Text(
-//                                text = "Год производства: ${movie.year}",
-//                                style = MaterialTheme.typography.bodyLarge,
-//                                color = MaterialTheme.colorScheme.secondary
-//                            )
-//                            Spacer(modifier = Modifier.height(7.dp))
-//                            Details(detailedInformationAboutFilm)
-//                        }
-//                        null -> { // Обработка случая, когда movie == null
-//                            Text(
-//                                text = stringResource(id = R.string.movie_is_not_uploaded),
-//                                color = MaterialTheme.colorScheme.error
-//                            )
-//                        }
-//                    }
                 }
-
                 Column(modifier = Modifier.fillMaxWidth()) {
                     ExpandedCard(
                         title = stringResource(R.string.text_for_expandedCard_field),
                         description = info?.description ?: stringResource(R.string.limit_is_over)
                     )
                     Spacer(Modifier.padding(5.dp))
-                    CustomTextButton(
-                        textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        modifier = Modifier.fillMaxWidth(),
-                        onClickButton = { openSharedLists = true }
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Outlined.PostAdd,
+                            contentDescription = null,
+                            modifier = Modifier.size(27.dp).padding(end = 6.dp),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                        CustomTextButton(
+                            textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            modifier = Modifier.fillMaxWidth(),
+                            onClickButton = { openSharedLists = true }
+                        )
+                    }
                     Spacer(Modifier.padding(10.dp))
                 }
             }
         }
     }
-
     if (openSharedLists) {
         Box(
             modifier = Modifier
@@ -426,16 +395,13 @@ private fun DetailCardPoster(
 private fun ShowRating(movie: MovieData.MovieSearch?) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = Color.Gray
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
         ),
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
-        Card(
-            modifier = Modifier.padding(7.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.Gray,
-                contentColor = Color.White
-            )
+        Column(
+            modifier = Modifier.padding(7.dp)
         ) {
             Text(
                 text = "КП: ${movie?.ratingKinopoisk ?: "Н/Д"}",

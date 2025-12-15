@@ -90,6 +90,9 @@ fun ApiMovieSearch2.toDomain(): MovieData.MovieSearch2 {
         nameRu = nameRu,
         posterUrl = posterUrl,
         year = year,
+        rating = rating,
+        filmLength = filmLength,
+        genres = genres.map { it },
         countries = countries.map { it.toDomain() }
     )
 }

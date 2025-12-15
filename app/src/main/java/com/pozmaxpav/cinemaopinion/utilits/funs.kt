@@ -9,18 +9,23 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -239,164 +244,182 @@ fun ShowCommentList(
     viewModel: ViewModel,
     listId: String = "",
     onClick: (DomainCommentModel) -> Unit,
+    onClose: () -> Unit
 ) {
-    when (viewModel) {
-        is PersonalMovieViewModel -> {
-            val stateComments by viewModel.commentsDownloadStatus.collectAsState()
-            val listComments by viewModel.listComments.collectAsState()
-
-            LaunchedEffect(userId) {
-                if (userId.isNotEmpty()) {
-                    viewModel.getComments(userId, selectedMovieId)
-                    viewModel.observeComments(userId, selectedMovieId)
-                }
-            }
-
-            when (stateComments) {
-                is LoadingState.Loading -> {
-                    CustomLottieAnimation(
-                        nameFile = "loading_animation.lottie",
-                        modifier = Modifier.scale(0.5f)
-                    )
-                }
-                is LoadingState.Success -> {
-                    LazyColumn {
-                        items(listComments) { comment ->
-                            Card(
-                                modifier = Modifier
-                                    .wrapContentHeight()
-                                    .fillMaxWidth()
-                                    .padding(vertical = 7.dp)
-                                    .clickable { onClick(comment) },
-                                shape = RoundedCornerShape(16.dp),
-                                elevation = CardDefaults.cardElevation(16.dp),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                    contentColor = MaterialTheme.colorScheme.onSecondary
-                                )
-                            ) {
-                                Column(modifier = Modifier.padding(8.dp)) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(10.dp),
-                                        horizontalArrangement = Arrangement.End,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = comment.username,
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    }
-                                    Text(
-                                        text = comment.commentText,
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(10.dp),
-                                        horizontalArrangement = Arrangement.End,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = SimpleDateFormat(
-                                                "dd.MM.yyyy HH:mm",
-                                                Locale.getDefault()
-                                            ).format(
-                                                Date(comment.timestamp)
-                                            ),
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                is LoadingState.Error -> {
-                    Text(
-                        text = "При загрузке произошла ошибка.",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Start
+    ) {
+        IconButton(onClick = onClose) {
+            Icon(
+                modifier = Modifier.size(35.dp),
+                imageVector = Icons.Default.ArrowBackIosNew,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary
+            )
         }
-        is SharedListsViewModel -> {
-            val stateComments by viewModel.commentsDownloadStatus.collectAsState()
-            val comments by viewModel.comments.collectAsState()
+    }
+    Column(
+        modifier = Modifier.padding(horizontal = 15.dp)
+    ) {
+        when (viewModel) {
+            is PersonalMovieViewModel -> {
+                val stateComments by viewModel.commentsDownloadStatus.collectAsState()
+                val listComments by viewModel.listComments.collectAsState()
 
-            LaunchedEffect(listId) {
-                if (listId.isNotEmpty()) {
-                    viewModel.getComments(listId, selectedMovieId)
-                    viewModel.observeComments(listId, selectedMovieId)
+                LaunchedEffect(userId) {
+                    if (userId.isNotEmpty()) {
+                        viewModel.getComments(userId, selectedMovieId)
+                        viewModel.observeComments(userId, selectedMovieId)
+                    }
                 }
-            }
 
-            when (stateComments) {
-                is LoadingState.Loading -> {
-                    CustomLottieAnimation(
-                        nameFile = "loading_animation.lottie",
-                        modifier = Modifier.scale(0.5f)
-                    )
-                }
-                is LoadingState.Success -> {
-                    LazyColumn {
-                        items(comments, key = { it.commentId }) { comment ->
-                            Card(
-                                modifier = Modifier
-                                    .wrapContentHeight()
-                                    .fillMaxWidth()
-                                    .padding(vertical = 7.dp)
-                                    .clickable { onClick(comment) },
-                                shape = RoundedCornerShape(16.dp),
-                                elevation = CardDefaults.cardElevation(16.dp),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                    contentColor = MaterialTheme.colorScheme.onSecondary
-                                )
-                            ) {
-                                Column(modifier = Modifier.padding(8.dp)) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(10.dp),
-                                        horizontalArrangement = Arrangement.End,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = comment.username,
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                    }
-                                    Text(
-                                        text = comment.commentText,
-                                        style = MaterialTheme.typography.bodyLarge
+                when (stateComments) {
+                    is LoadingState.Loading -> {
+                        CustomLottieAnimation(
+                            nameFile = "loading_animation.lottie",
+                            modifier = Modifier.scale(0.5f)
+                        )
+                    }
+                    is LoadingState.Success -> {
+                        LazyColumn {
+                            items(listComments) { comment ->
+                                Card(
+                                    modifier = Modifier
+                                        .wrapContentHeight()
+                                        .fillMaxWidth()
+                                        .padding(vertical = 7.dp)
+                                        .clickable { onClick(comment) },
+                                    shape = RoundedCornerShape(16.dp),
+                                    elevation = CardDefaults.cardElevation(16.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.secondary,
+                                        contentColor = MaterialTheme.colorScheme.onSecondary
                                     )
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(10.dp),
-                                        horizontalArrangement = Arrangement.End,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
+                                ) {
+                                    Column(modifier = Modifier.padding(8.dp)) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(10.dp),
+                                            horizontalArrangement = Arrangement.End,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = comment.username,
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                        }
                                         Text(
-                                            text = SimpleDateFormat(
-                                                "dd.MM.yyyy HH:mm", Locale.getDefault()
-                                            ).format(Date(comment.timestamp)),
+                                            text = comment.commentText,
                                             style = MaterialTheme.typography.bodyLarge
                                         )
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(10.dp),
+                                            horizontalArrangement = Arrangement.End,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = SimpleDateFormat(
+                                                    "dd.MM.yyyy HH:mm",
+                                                    Locale.getDefault()
+                                                ).format(
+                                                    Date(comment.timestamp)
+                                                ),
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                    is LoadingState.Error -> {
+                        Text(
+                            text = "При загрузке произошла ошибка.",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
                 }
-                is LoadingState.Error -> {
-                    Text(
-                        text = "При загрузке произошла ошибка.",
-                        style = MaterialTheme.typography.titleMedium
-                    )
+            }
+            is SharedListsViewModel -> {
+                val stateComments by viewModel.commentsDownloadStatus.collectAsState()
+                val comments by viewModel.comments.collectAsState()
+
+                LaunchedEffect(listId) {
+                    if (listId.isNotEmpty()) {
+                        viewModel.getComments(listId, selectedMovieId)
+                        viewModel.observeComments(listId, selectedMovieId)
+                    }
+                }
+
+                when (stateComments) {
+                    is LoadingState.Loading -> {
+                        CustomLottieAnimation(
+                            nameFile = "loading_animation.lottie",
+                            modifier = Modifier.scale(0.5f)
+                        )
+                    }
+                    is LoadingState.Success -> {
+                        LazyColumn {
+                            items(comments, key = { it.commentId }) { comment ->
+                                Card(
+                                    modifier = Modifier
+                                        .wrapContentHeight()
+                                        .fillMaxWidth()
+                                        .padding(vertical = 7.dp)
+                                        .clickable { onClick(comment) },
+                                    shape = RoundedCornerShape(16.dp),
+                                    elevation = CardDefaults.cardElevation(16.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.secondary,
+                                        contentColor = MaterialTheme.colorScheme.onSecondary
+                                    )
+                                ) {
+                                    Column(modifier = Modifier.padding(8.dp)) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(10.dp),
+                                            horizontalArrangement = Arrangement.End,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = comment.username,
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                        }
+                                        Text(
+                                            text = comment.commentText,
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(10.dp),
+                                            horizontalArrangement = Arrangement.End,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = SimpleDateFormat(
+                                                    "dd.MM.yyyy HH:mm", Locale.getDefault()
+                                                ).format(Date(comment.timestamp)),
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    is LoadingState.Error -> {
+                        Text(
+                            text = "При загрузке произошла ошибка.",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
                 }
             }
         }

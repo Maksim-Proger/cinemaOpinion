@@ -1,7 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
-import android.os.Build
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
@@ -24,7 +22,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.CommentBank
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,13 +43,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
-import com.example.ui.presentation.components.ExpandedCard
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
@@ -57,7 +55,6 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
-import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
@@ -88,13 +85,13 @@ fun ListSharedScreen(
     val movies by sharedListsViewModel.movies.collectAsState()
     val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
-    val info by apiViewModel.informationMovie.collectAsState()
     val listName by sharedListsViewModel.listName.collectAsState()
 
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
+    var openBottomSheetReviews by remember { mutableStateOf(false) }
 
     val isAtTop by remember {
         derivedStateOf {
@@ -165,44 +162,53 @@ fun ListSharedScreen(
             }
 
             selectedMovie?.let { movie ->
+                if (openBottomSheetReviews) {
+                    CustomBottomSheet(
+                        onClose = { openBottomSheetReviews = false },
+                        content = {
+                            ShowCommentList(
+                                userId = userId,
+                                selectedMovieId = movie.id,
+                                viewModel = sharedListsViewModel,
+                                listId = listId,
+                                onClick = { comment ->
+                                    selectedComment = comment
+                                    openBottomSheetChange = true
+                                },
+                                onClose = { openBottomSheetReviews = false }
+                            )
+                        },
+                        fraction = 0.9f
+                    )
+                    AdaptiveBackHandler { openBottomSheetReviews = false }
+                }
                 DetailsCardSelectedMovie(
                     movie = movie,
-                    content = {
-                        ShowCommentList(
-                            userId = userId,
-                            selectedMovieId = movie.id,
-                            viewModel = sharedListsViewModel,
-                            listId = listId,
-                            onClick = { comment ->
-                                selectedComment = comment
-                                openBottomSheetChange = true
-                            }
-                        )
-                    },
-                    openDescription = {
-                        ExpandedCard(
-                            title = stringResource(R.string.text_for_expandedCard_field),
-                            description = info?.description
-                                ?: stringResource(R.string.limit_is_over),
-                            bottomPadding = 7.dp
-                        )
-                    },
+                    userId = userId,
+                    navController = navController,
                     commentButton = {
                         CustomTextButton(
                             textButton = context.getString(R.string.button_leave_comment),
-                            modifier = Modifier,
+                            imageVector = Icons.Default.AddComment,
+                            modifier = Modifier.fillMaxWidth(),
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             onClickButton = { openBottomSheetComments = !openBottomSheetComments }
                         )
                     },
-                    onClick = { selectedMovie = null }
+                    reviews = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_show_response),
+                            imageVector = Icons.Default.CommentBank,
+                            modifier = Modifier.fillMaxWidth(),
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
+                        )
+                    },
+                    onCloseButton = { selectedMovie = null }
                 )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    OnBackInvokedHandler { selectedMovie = null }
-                } else {
-                    BackHandler { selectedMovie = null }
-                }
+                AdaptiveBackHandler { selectedMovie = null }
             }
 
             if (selectedMovie == null) {

@@ -25,7 +25,7 @@ import com.example.ui.presentation.components.fab.FABMenu
 import com.example.ui.presentation.components.lottie.AnimationImplementation
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
-import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSeasonalEvent
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSpecial
 import com.pozmaxpav.cinemaopinion.presentation.components.items.fabMenuItems
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -140,11 +140,11 @@ fun ScaffoldMainScreen(
 
                 state.selectedSeasonalMovie.value != null -> {
                     state.selectedSeasonalMovie.value?.let {
-                        DetailsCardSeasonalEvent(
+                        DetailsCardSpecial(
                             movie = it,
                             userId = userId,
                             onCloseButton = { state.selectedSeasonalMovie.value = null },
-                            padding = innerPadding,
+                            padding = innerPadding
                         )
                     }
                     AdaptiveBackHandler { state.selectedSeasonalMovie.value = null }

@@ -39,6 +39,9 @@ data class ApiMovieSearch2(
     val filmId: Int,
     val nameRu: String?,
     val nameEn: String?,
+    val rating: Double?,
+    val filmLength: Int?,
+    val genres: List<Genre>,
     val year: String?,
     val countries: List<ApiCountry>,
     val posterUrl: String

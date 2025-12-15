@@ -81,9 +81,12 @@
     <string name="text_for_field_change_comment">Измените комментарий</string>
     <string name="text_for_field_create_shared_list">Название таблицы</string>
     <string name="text_for_field_create_shared_list_invited_user_address">Приглашение</string>
+    <string name="write_series">Укажите серию</string>
+    <string name="write_season">Укажите сезон</string>
 
     <!--  Text Button  -->
-    <string name="button_leave_comment">Оставить комментарий</string>
+    <string name="button_leave_comment">Оставить отзыв</string>
+    <string name="button_show_response">Показать отзывы</string>
     <string name="button_viewed">Просмотрен</string>
     <string name="button_add">Добавить</string>
     <string name="button_save">Сохранить</string>
