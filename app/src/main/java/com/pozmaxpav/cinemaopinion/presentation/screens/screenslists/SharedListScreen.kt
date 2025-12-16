@@ -163,23 +163,23 @@ fun ListSharedScreen(
 
             selectedMovie?.let { movie ->
                 if (openBottomSheetReviews) {
-                    CustomBottomSheet(
-                        onClose = { openBottomSheetReviews = false },
-                        content = {
-                            ShowCommentList(
-                                userId = userId,
-                                selectedMovieId = movie.id,
-                                viewModel = sharedListsViewModel,
-                                listId = listId,
-                                onClick = { comment ->
-                                    selectedComment = comment
-                                    openBottomSheetChange = true
-                                },
-                                onClose = { openBottomSheetReviews = false }
-                            )
-                        },
-                        fraction = 0.9f
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(WindowInsets.statusBars.asPaddingValues())
+                    ) {
+                        ShowCommentList(
+                            userId = userId,
+                            selectedMovieId = movie.id,
+                            viewModel = sharedListsViewModel,
+                            listId = listId,
+                            onClick = { comment ->
+                                selectedComment = comment
+                                openBottomSheetChange = true
+                            },
+                            onClose = { openBottomSheetReviews = false }
+                        )
+                    }
                     AdaptiveBackHandler { openBottomSheetReviews = false }
                 }
                 DetailsCardSelectedMovie(

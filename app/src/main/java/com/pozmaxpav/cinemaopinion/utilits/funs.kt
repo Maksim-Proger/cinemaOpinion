@@ -7,22 +7,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -45,7 +40,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -241,6 +235,10 @@ fun simpleTransliterate(text: String): String {
     }.joinToString("")
 }
 
+
+
+
+
 @Composable
 fun ShowCommentList(
     userId: String = "",
@@ -274,7 +272,7 @@ fun ShowCommentList(
                 val state by viewModel.commentsDownloadStatus.collectAsState()
                 val comments by viewModel.listComments.collectAsState()
 
-                LaunchedEffect(Unit) {
+                LaunchedEffect(userId, selectedMovieId) {
                     if (userId.isNotEmpty()) {
                         viewModel.observeComments(userId, selectedMovieId)
                         viewModel.getComments(userId, selectedMovieId)
@@ -296,7 +294,6 @@ fun ShowCommentList(
                     }
                     is LoadingState.Success -> {
                         CommentsList(
-                            modifier = Modifier.weight(1f),
                             comments = comments,
                             onClick = onClick
                         )
@@ -307,7 +304,7 @@ fun ShowCommentList(
                 val state by viewModel.commentsDownloadStatus.collectAsState()
                 val comments by viewModel.comments.collectAsState()
 
-                LaunchedEffect(Unit) {
+                LaunchedEffect(listId, selectedMovieId) {
                     if (listId.isNotEmpty()) {
                         viewModel.observeComments(listId, selectedMovieId)
                         viewModel.getComments(listId, selectedMovieId)
@@ -329,7 +326,6 @@ fun ShowCommentList(
                     }
                     is LoadingState.Success -> {
                         CommentsList(
-                            modifier = Modifier.weight(1f),
                             comments = comments,
                             onClick = onClick
                         )
@@ -342,35 +338,71 @@ fun ShowCommentList(
 
 @Composable
 private fun CommentsList(
-    modifier: Modifier,
     comments: List<DomainCommentModel>,
     onClick: (DomainCommentModel) -> Unit
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
-        items(
-            items = comments,
-            key = { it.commentId }
-        ) { comment ->
+        items(items = comments, key = { it.commentId }) { comment ->
             Card(
                 modifier = Modifier
+                    .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(vertical = 6.dp)
+                    .padding(vertical = 7.dp)
                     .clickable { onClick(comment) },
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                )
             ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(comment.username)
-                    Spacer(Modifier.height(6.dp))
-                    Text(comment.commentText)
+                Column(modifier = Modifier.padding(8.dp)) {
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = comment.username,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+
+                    Text(
+                        text = comment.commentText,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+                                .format(Date(comment.timestamp)),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+
                 }
             }
         }
     }
 }
+
+
+
+
+
 
 @Composable
 fun AddComment(
