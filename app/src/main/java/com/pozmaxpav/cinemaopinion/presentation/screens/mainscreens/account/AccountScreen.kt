@@ -204,7 +204,7 @@ fun AccountScreen(
     if (openSharedLists) {
         Box(
             modifier = Modifier
-                .fillMaxHeight(0.9f)
+                .fillMaxSize()
                 .background(
                     color = Color.Black.copy(alpha = 0.5f),
                     shape = RoundedCornerShape(12.dp)

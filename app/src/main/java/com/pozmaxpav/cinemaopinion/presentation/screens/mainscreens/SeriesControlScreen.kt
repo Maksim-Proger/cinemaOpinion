@@ -191,7 +191,10 @@ fun SeriesControlScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(modifier = Modifier.weight(1f)) {
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
                                 SeriesControlItem(entry) {
                                     selectedEntry = entry
                                     openBottomSheetChange = true
@@ -281,7 +284,7 @@ private fun ChangeItem(
         onValueChange = setSeason,
         label = {
             Text(
-                text = "Укажите сезон",
+                text = stringResource(R.string.write_season),
                 style = MaterialTheme.typography.bodyMedium
             )
         },
@@ -300,7 +303,7 @@ private fun ChangeItem(
         onValueChange = setSeries,
         label = {
             Text(
-                text = "Укажите серию",
+                text = stringResource(R.string.write_series),
                 style = MaterialTheme.typography.bodyMedium
             )
         },
@@ -319,7 +322,7 @@ private fun ChangeItem(
         horizontalArrangement = Arrangement.End
     ) {
         CustomTextButton(
-            textButton = "Сохранить",
+            textButton = stringResource(R.string.button_save),
             containerColor = MaterialTheme.colorScheme.secondary,
             contentColor = MaterialTheme.colorScheme.onSecondary,
             modifier = Modifier,

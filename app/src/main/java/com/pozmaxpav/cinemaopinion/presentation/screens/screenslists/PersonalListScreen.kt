@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,9 +21,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.CommentBank
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,7 +44,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -54,7 +52,6 @@ import androidx.navigation.NavHostController
 import com.example.core.utils.state.LoadingState
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
-import com.example.ui.presentation.components.ExpandedCard
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
 import com.pozmaxpav.cinemaopinion.R
@@ -92,14 +89,13 @@ fun ListSelectedMovies(
     val listSelectedMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
     val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
-    val info by apiViewModel.informationMovie.collectAsState()
 
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
     var openBottomSheetComments by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
-    var openSharedLists by remember { mutableStateOf(false) }
     var triggerOnClickSharedMovie by remember { mutableStateOf(false) }
+    var openBottomSheetReviews by remember { mutableStateOf(false) }
 
     val isAtTop by remember {
         derivedStateOf {
@@ -174,46 +170,50 @@ fun ListSelectedMovies(
             }
 
             selectedMovie?.let { movie ->
+                if (openBottomSheetReviews) {
+                    CustomBottomSheet(
+                        onClose = { openBottomSheetReviews = false },
+                        content = {
+                            ShowCommentList(
+                                userId = userId,
+                                selectedMovieId = movie.id,
+                                viewModel = personalMovieViewModel,
+                                onClick = { comment ->
+                                    selectedComment = comment
+                                    openBottomSheetChange = true
+                                },
+                                onClose = { openBottomSheetReviews = false }
+                            )
+                        },
+                        fraction = 0.9f
+                    )
+                    AdaptiveBackHandler { openBottomSheetReviews = false }
+                }
                 DetailsCardSelectedMovie(
                     movie = movie,
-                    content = {
-                        ShowCommentList(
-                            userId = userId,
-                            selectedMovieId = movie.id,
-                            viewModel = personalMovieViewModel,
-                            onClick = { comment ->
-                                selectedComment = comment
-                                openBottomSheetChange = true
-                            }
-                        )
-                    },
-                    openDescription = {
-                        ExpandedCard(
-                            title = stringResource(R.string.text_for_expandedCard_field),
-                            description = info?.description
-                                ?: stringResource(R.string.limit_is_over),
-                        )
-                    },
-                    movieTransferButtonToSharedList = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
-                            modifier = Modifier,
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openSharedLists = true }
-                        )
-//                        showToast(context, R.string.movie_has_been_moved)
-                    },
+                    userId = userId,
+                    navController = navController,
                     commentButton = {
                         CustomTextButton(
                             textButton = context.getString(R.string.placeholder_for_comment_field),
-                            modifier = Modifier,
+                            imageVector = Icons.Default.AddComment,
+                            modifier = Modifier.fillMaxWidth(),
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             onClickButton = { openBottomSheetComments = !openBottomSheetComments }
                         )
                     },
-                    onClick = { selectedMovie = null }
+                    reviews = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_show_response),
+                            imageVector = Icons.Default.CommentBank,
+                            modifier = Modifier.fillMaxWidth(),
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
+                        )
+                    },
+                    onCloseButton = { selectedMovie = null }
                 )
                 AdaptiveBackHandler { selectedMovie = null }
             }
@@ -323,41 +323,6 @@ fun ListSelectedMovies(
             }
         }
 
-        if (openSharedLists) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight(0.9f)
-                    .background(
-                        color = Color.Black.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .clickable { openSharedLists = false }
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(12.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    userData?.let { user ->
-                        SharedListsScreen(
-                            navController = navController,
-                            userId = userId,
-                            userName = user.nikName,
-                            addButton = true,
-                            selectedMovie = selectedMovie,
-                            onCloseSharedLists = {
-                                triggerOnClickSharedMovie = true
-                                openSharedLists = false
-                                selectedMovie = null
-                            }
-                        )
-                    }
-                }
-            }
-        }
-
         if (selectedMovie == null) {
             SpecialTopAppBar(
                 isAtTop = isAtTop,
@@ -369,68 +334,3 @@ fun ListSelectedMovies(
     }
 
 }
-
-//@Composable
-//private fun AddComment(
-//    domainUserModelData: DomainUserModel?,
-//    personalMovieViewModel: PersonalMovieViewModel,
-//    selectedMovie: DomainSelectedMovieModel?,
-//    context: Context,
-//    onClick: () -> Unit
-//) {
-//    val (comment, setComment) = remember { mutableStateOf("") }
-//    val keyboardController = LocalSoftwareKeyboardController.current
-//    val focusManager = LocalFocusManager.current
-//
-//    CustomTextFieldForComments(
-//        value = comment,
-//        onValueChange = setComment,
-//        placeholder = {
-//            Text(
-//                text = stringResource(R.string.placeholder_for_comment_field),
-//                style = MaterialTheme.typography.bodyMedium
-//            )
-//        },
-//        leadingIcon = {
-//            Icon(
-//                imageVector = Icons.Default.Add,
-//                contentDescription = null,
-//                tint = MaterialTheme.colorScheme.outline
-//            )
-//        },
-//        keyboardActions = KeyboardActions(
-//            onDone = {
-//                keyboardController?.hide()
-//                focusManager.clearFocus()
-//            }
-//        )
-//    )
-//
-//    Row(
-//        modifier = Modifier.fillMaxWidth(),
-//        horizontalArrangement = Arrangement.End
-//    ) {
-//        CustomTextButton(
-//            textButton = stringResource(R.string.button_add),
-//            containerColor = MaterialTheme.colorScheme.secondary,
-//            contentColor = MaterialTheme.colorScheme.onSecondary,
-//            endPadding = 15.dp,
-//            onClickButton = {
-//                selectedMovie?.let { movie ->
-//                    domainUserModelData?.let { user ->
-//                        personalMovieViewModel.addComment(
-//                            userId = user.id,
-//                            selectedMovieId = movie.id,
-//                            username = user.nikName,
-//                            textComment = comment
-//                        )
-//                        showToast(context, R.string.comment_added)
-//                        setComment("")
-//                        onClick()
-//                    }
-//                }
-//            }
-//        )
-//    }
-//}
-
