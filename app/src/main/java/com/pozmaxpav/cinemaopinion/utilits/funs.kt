@@ -5,7 +5,11 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -246,173 +250,76 @@ fun ShowCommentList(
     onClick: (DomainCommentModel) -> Unit,
     onClose: () -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        IconButton(onClick = onClose) {
-            Icon(
-                modifier = Modifier.size(35.dp),
-                imageVector = Icons.Default.ArrowBackIosNew,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary
-            )
-        }
-    }
     Column(
-        modifier = Modifier.padding(horizontal = 15.dp)
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(horizontal = 15.dp)
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            IconButton(onClick = onClose) {
+                Icon(
+                    modifier = Modifier.size(35.dp),
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+            }
+        }
+
         when (viewModel) {
             is PersonalMovieViewModel -> {
-                val stateComments by viewModel.commentsDownloadStatus.collectAsState()
-                val listComments by viewModel.listComments.collectAsState()
+                val state by viewModel.commentsDownloadStatus.collectAsState()
+                val comments by viewModel.listComments.collectAsState()
 
-                LaunchedEffect(userId) {
+                LaunchedEffect(Unit) {
                     if (userId.isNotEmpty()) {
-                        viewModel.getComments(userId, selectedMovieId)
                         viewModel.observeComments(userId, selectedMovieId)
+                        viewModel.getComments(userId, selectedMovieId)
                     }
                 }
 
-                when (stateComments) {
+                when (state) {
                     is LoadingState.Loading -> {
                         CustomLottieAnimation(
                             nameFile = "loading_animation.lottie",
                             modifier = Modifier.scale(0.5f)
                         )
                     }
-                    is LoadingState.Success -> {
-                        LazyColumn {
-                            items(listComments) { comment ->
-                                Card(
-                                    modifier = Modifier
-                                        .wrapContentHeight()
-                                        .fillMaxWidth()
-                                        .padding(vertical = 7.dp)
-                                        .clickable { onClick(comment) },
-                                    shape = RoundedCornerShape(16.dp),
-                                    elevation = CardDefaults.cardElevation(16.dp),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                        contentColor = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                ) {
-                                    Column(modifier = Modifier.padding(8.dp)) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(10.dp),
-                                            horizontalArrangement = Arrangement.End,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = comment.username,
-                                                style = MaterialTheme.typography.bodyLarge
-                                            )
-                                        }
-                                        Text(
-                                            text = comment.commentText,
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(10.dp),
-                                            horizontalArrangement = Arrangement.End,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = SimpleDateFormat(
-                                                    "dd.MM.yyyy HH:mm",
-                                                    Locale.getDefault()
-                                                ).format(
-                                                    Date(comment.timestamp)
-                                                ),
-                                                style = MaterialTheme.typography.bodyLarge
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
                     is LoadingState.Error -> {
                         Text(
                             text = "При загрузке произошла ошибка.",
                             style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                    is LoadingState.Success -> {
+                        CommentsList(
+                            modifier = Modifier.weight(1f),
+                            comments = comments,
+                            onClick = onClick
                         )
                     }
                 }
             }
             is SharedListsViewModel -> {
-                val stateComments by viewModel.commentsDownloadStatus.collectAsState()
+                val state by viewModel.commentsDownloadStatus.collectAsState()
                 val comments by viewModel.comments.collectAsState()
 
-                LaunchedEffect(listId) {
+                LaunchedEffect(Unit) {
                     if (listId.isNotEmpty()) {
-                        viewModel.getComments(listId, selectedMovieId)
                         viewModel.observeComments(listId, selectedMovieId)
+                        viewModel.getComments(listId, selectedMovieId)
                     }
                 }
 
-                when (stateComments) {
+                when (state) {
                     is LoadingState.Loading -> {
                         CustomLottieAnimation(
                             nameFile = "loading_animation.lottie",
                             modifier = Modifier.scale(0.5f)
                         )
-                    }
-                    is LoadingState.Success -> {
-                        LazyColumn {
-                            items(comments, key = { it.commentId }) { comment ->
-                                Card(
-                                    modifier = Modifier
-                                        .wrapContentHeight()
-                                        .fillMaxWidth()
-                                        .padding(vertical = 7.dp)
-                                        .clickable { onClick(comment) },
-                                    shape = RoundedCornerShape(16.dp),
-                                    elevation = CardDefaults.cardElevation(16.dp),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                        contentColor = MaterialTheme.colorScheme.onSecondary
-                                    )
-                                ) {
-                                    Column(modifier = Modifier.padding(8.dp)) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(10.dp),
-                                            horizontalArrangement = Arrangement.End,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = comment.username,
-                                                style = MaterialTheme.typography.bodyLarge
-                                            )
-                                        }
-                                        Text(
-                                            text = comment.commentText,
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(10.dp),
-                                            horizontalArrangement = Arrangement.End,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = SimpleDateFormat(
-                                                    "dd.MM.yyyy HH:mm", Locale.getDefault()
-                                                ).format(Date(comment.timestamp)),
-                                                style = MaterialTheme.typography.bodyLarge
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                     is LoadingState.Error -> {
                         Text(
@@ -420,6 +327,45 @@ fun ShowCommentList(
                             style = MaterialTheme.typography.titleMedium
                         )
                     }
+                    is LoadingState.Success -> {
+                        CommentsList(
+                            modifier = Modifier.weight(1f),
+                            comments = comments,
+                            onClick = onClick
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CommentsList(
+    modifier: Modifier,
+    comments: List<DomainCommentModel>,
+    onClick: (DomainCommentModel) -> Unit
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(bottom = 24.dp)
+    ) {
+        items(
+            items = comments,
+            key = { it.commentId }
+        ) { comment ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp)
+                    .clickable { onClick(comment) },
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(comment.username)
+                    Spacer(Modifier.height(6.dp))
+                    Text(comment.commentText)
                 }
             }
         }

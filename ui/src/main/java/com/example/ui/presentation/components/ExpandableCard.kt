@@ -83,7 +83,7 @@ fun ExpandedCard(
                 .padding(padding)
         ) {
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = 11.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(

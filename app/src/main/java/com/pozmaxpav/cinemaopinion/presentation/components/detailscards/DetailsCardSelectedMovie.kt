@@ -177,22 +177,15 @@ fun DetailsCardSelectedMovie(
                             description = info?.description ?: stringResource(R.string.limit_is_over)
                         )
                         Spacer(Modifier.padding(5.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Outlined.PostAdd,
-                                contentDescription = null,
-                                modifier = Modifier.size(27.dp).padding(end = 6.dp),
-                                tint = MaterialTheme.colorScheme.secondary
-                            )
-                            CustomTextButton(
-                                textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                modifier = Modifier.fillMaxWidth(),
-                                onClickButton = { openSharedLists = true }
-                            )
-                            Spacer(Modifier.padding(5.dp))
-                        }
+                        CustomTextButton(
+                            textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
+                            imageVector = Icons.Outlined.PostAdd,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            modifier = Modifier.fillMaxWidth(),
+                            onClickButton = { openSharedLists = true }
+                        )
+                        Spacer(Modifier.padding(5.dp))
                         commentButton()
                         Spacer(Modifier.padding(5.dp))
                         reviews()
