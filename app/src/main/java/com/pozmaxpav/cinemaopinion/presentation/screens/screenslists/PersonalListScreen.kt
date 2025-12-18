@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,14 +26,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CommentBank
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -128,6 +132,7 @@ fun ListSelectedMovies(
         Column(modifier = Modifier.fillMaxSize()) {
 
             if (openBottomSheetChange) {
+                // TODO: Добавить fraction
                 CustomBottomSheet(
                     onClose = { openBottomSheetChange = false },
                     content = {
@@ -154,39 +159,37 @@ fun ListSelectedMovies(
 
             if (openBottomSheetComments) {
                 CustomBottomSheet(
-                    onClose = { openBottomSheetComments = false },
                     content = {
                         AddComment(
                             dataUser = userData,
+                            fraction = 0.7f,
                             viewModel = personalMovieViewModel,
                             selectedItem = selectedMovie,
                             context = context,
                             onClick = { openBottomSheetComments = false }
                         )
-                    },
-                    fraction = 0.7f
+                    }
                 )
                 AdaptiveBackHandler { openBottomSheetComments = false }
             }
 
             selectedMovie?.let { movie ->
                 if (openBottomSheetReviews) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(WindowInsets.statusBars.asPaddingValues())
-                    ) {
-                        ShowCommentList(
-                            userId = userId,
-                            selectedMovieId = movie.id,
-                            viewModel = personalMovieViewModel,
-                            onClick = { comment ->
-                                selectedComment = comment
-                                openBottomSheetChange = true
-                            },
-                            onClose = { openBottomSheetReviews = false }
-                        )
-                    }
+                    CustomBottomSheet(
+                        content = {
+                            ShowCommentList(
+                                userId = userId,
+                                selectedMovieId = movie.id,
+                                viewModel = personalMovieViewModel,
+                                fraction = 0.9f,
+                                onClick = { comment ->
+                                    selectedComment = comment
+                                    openBottomSheetChange = true
+                                },
+                                onClose = { openBottomSheetReviews = false }
+                            )
+                        }
+                    )
                     AdaptiveBackHandler { openBottomSheetReviews = false }
                 }
                 DetailsCardSelectedMovie(
@@ -334,3 +337,66 @@ fun ListSelectedMovies(
     }
 
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Test(content: @Composable () -> Unit) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+
+    ModalBottomSheet(
+        onDismissRequest = { /* игнорируем */ },
+        sheetState = sheetState,
+        dragHandle = null,
+        sheetGesturesEnabled = false // 🔴 КЛЮЧЕВО
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun SheetContent(onClose: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+//            .fillMaxHeight(0.85f) // важно
+            .fillMaxHeight(0.5f)
+            .padding(horizontal = 16.dp)
+    ) {
+        // Заголовок
+        Text(
+            text = "Список элементов",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(vertical = 12.dp)
+        )
+
+        // LazyColumn занимает всё оставшееся место
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            contentPadding = PaddingValues(vertical = 8.dp)
+        ) {
+            items(50) { index ->
+                Text(
+                    text = "Элемент #$index",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                )
+            }
+        }
+
+        // Кнопка закрытия
+        Button(
+            onClick = onClose,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp)
+        ) {
+            Text("Закрыть")
+        }
+    }
+}
+

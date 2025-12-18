@@ -235,23 +235,21 @@ fun simpleTransliterate(text: String): String {
     }.joinToString("")
 }
 
-
-
-
-
 @Composable
 fun ShowCommentList(
     userId: String = "",
     selectedMovieId: Int,
     viewModel: ViewModel,
     listId: String = "",
+    fraction: Float,
     onClick: (DomainCommentModel) -> Unit,
     onClose: () -> Unit
 ) {
     Column(
         modifier = Modifier
-            .fillMaxHeight()
-            .padding(horizontal = 15.dp)
+            .fillMaxWidth()
+            .fillMaxHeight(fraction = fraction)
+            .padding(horizontal = 16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -294,6 +292,7 @@ fun ShowCommentList(
                     }
                     is LoadingState.Success -> {
                         CommentsList(
+                            modifier = Modifier.weight(1f).fillMaxWidth(),
                             comments = comments,
                             onClick = onClick
                         )
@@ -326,6 +325,7 @@ fun ShowCommentList(
                     }
                     is LoadingState.Success -> {
                         CommentsList(
+                            modifier = Modifier.weight(1f).fillMaxWidth(),
                             comments = comments,
                             onClick = onClick
                         )
@@ -338,11 +338,12 @@ fun ShowCommentList(
 
 @Composable
 private fun CommentsList(
+    modifier: Modifier,
     comments: List<DomainCommentModel>,
     onClick: (DomainCommentModel) -> Unit
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
         items(items = comments, key = { it.commentId }) { comment ->
@@ -399,16 +400,12 @@ private fun CommentsList(
     }
 }
 
-
-
-
-
-
 @Composable
 fun AddComment(
     dataUser: DomainUserModel?,
     sharedListId: String = "",
     listName: String = "",
+    fraction: Float,
     viewModel: ViewModel,
     selectedItem: DomainSelectedMovieModel?,
     context: Context,
@@ -419,83 +416,90 @@ fun AddComment(
     val focusManager = LocalFocusManager.current
     val (comment, setComment) = remember { mutableStateOf("") }
 
-    CustomTextFieldForComments(
-        value = comment,
-        onValueChange = setComment,
-        placeholder = {
-            Text(
-                text = stringResource(R.string.placeholder_for_comment_field),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outline
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-        )
-    )
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(fraction)
+            .padding(horizontal = 16.dp)
     ) {
-        CustomTextButton(
-            textButton = stringResource(R.string.button_add),
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            modifier = Modifier,
-            onClickButton = {
-                when (viewModel) {
-                    is PersonalMovieViewModel -> {
-                        dataUser?.let { user ->
-                            selectedItem?.let { movie ->
-                                viewModel.addComment(
-                                    userId = user.id,
-                                    username = user.nikName,
-                                    selectedMovieId = movie.id,
-                                    textComment = comment
-                                )
-                                showToast(context, R.string.comment_added)
-                                setComment("")
-                                onClick()
+        CustomTextFieldForComments(
+            value = comment,
+            onValueChange = setComment,
+            placeholder = {
+                Text(
+                    text = stringResource(R.string.placeholder_for_comment_field),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.outline
+                )
+            },
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }
+            )
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            CustomTextButton(
+                textButton = stringResource(R.string.button_add),
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+                modifier = Modifier,
+                onClickButton = {
+                    when (viewModel) {
+                        is PersonalMovieViewModel -> {
+                            dataUser?.let { user ->
+                                selectedItem?.let { movie ->
+                                    viewModel.addComment(
+                                        userId = user.id,
+                                        username = user.nikName,
+                                        selectedMovieId = movie.id,
+                                        textComment = comment
+                                    )
+                                    showToast(context, R.string.comment_added)
+                                    setComment("")
+                                    onClick()
+                                }
                             }
                         }
-                    }
-                    is SharedListsViewModel -> {
-                        dataUser?.let { user ->
-                            selectedItem?.let { movie ->
-                                viewModel.addComment(
-                                    listId = sharedListId,
-                                    movieId = movie.id,
-                                    username = user.nikName,
-                                    commentUser = comment
-                                )
-                                notificationViewModel.createNotification(
-                                    context = context,
-                                    entityId = movie.id,
-                                    sharedListId = sharedListId,
-                                    listName = listName,
-                                    username = user.nikName,
-                                    stringResourceId = R.string.record_added_comment_to_movie,
-                                    title = movie.nameFilm
-                                )
-                                showToast(context, R.string.comment_added)
-                                setComment("")
-                                onClick()
+                        is SharedListsViewModel -> {
+                            dataUser?.let { user ->
+                                selectedItem?.let { movie ->
+                                    viewModel.addComment(
+                                        listId = sharedListId,
+                                        movieId = movie.id,
+                                        username = user.nikName,
+                                        commentUser = comment
+                                    )
+                                    notificationViewModel.createNotification(
+                                        context = context,
+                                        entityId = movie.id,
+                                        sharedListId = sharedListId,
+                                        listName = listName,
+                                        username = user.nikName,
+                                        stringResourceId = R.string.record_added_comment_to_movie,
+                                        title = movie.nameFilm
+                                    )
+                                    showToast(context, R.string.comment_added)
+                                    setComment("")
+                                    onClick()
+                                }
                             }
                         }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
@@ -505,9 +509,10 @@ fun ChangeComment(
     sharedListId: String = "",
     userName: String,
     selectedMovieId: Int,
+    fraction: Float,
     selectedComment: DomainCommentModel,
     viewModel: ViewModel,
-    onClick: () -> Unit
+    onClose: () -> Unit
 ) {
     val (comment, setComment) = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -517,70 +522,76 @@ fun ChangeComment(
         setComment(selectedComment.commentText)
     }
 
-    CustomTextFieldForComments(
-        value = comment,
-        onValueChange = setComment,
-        label = {
-            Text(
-                text = stringResource(R.string.text_for_field_change_comment),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        placeholder = {
-            Text(
-                text = stringResource(R.string.placeholder_for_comment_field),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outline
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-        )
-    )
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(fraction = fraction)
+            .padding(horizontal = 16.dp)
     ) {
-        CustomTextButton(
-            textButton = stringResource(R.string.button_save),
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            modifier = Modifier,
-            onClickButton = {
-                when (viewModel) {
-                    is PersonalMovieViewModel -> {
-                        viewModel.updateComment(
-                            userId = userId,
-                            userName = userName,
-                            selectedMovieId = selectedMovieId,
-                            commentId = selectedComment.commentId,
-                            newCommentText = comment
-                        )
-                        onClick()
-                    }
-                    is SharedListsViewModel -> {
-                        viewModel.updateComment(
-                            listId = sharedListId,
-                            movieId = selectedMovieId,
-                            commentId = selectedComment.commentId,
-                            userName = userName,
-                            newCommentText = comment
-                        )
-                        onClick()
+        CustomTextFieldForComments(
+            value = comment,
+            onValueChange = setComment,
+            label = {
+                Text(
+                    text = stringResource(R.string.text_for_field_change_comment),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            placeholder = {
+                Text(
+                    text = stringResource(R.string.placeholder_for_comment_field),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.outline
+                )
+            },
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }
+            )
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            CustomTextButton(
+                textButton = stringResource(R.string.button_save),
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+                modifier = Modifier,
+                onClickButton = {
+                    when (viewModel) {
+                        is PersonalMovieViewModel -> {
+                            viewModel.updateComment(
+                                userId = userId,
+                                userName = userName,
+                                selectedMovieId = selectedMovieId,
+                                commentId = selectedComment.commentId,
+                                newCommentText = comment
+                            )
+                            onClose()
+                        }
+                        is SharedListsViewModel -> {
+                            viewModel.updateComment(
+                                listId = sharedListId,
+                                movieId = selectedMovieId,
+                                commentId = selectedComment.commentId,
+                                userName = userName,
+                                newCommentText = comment
+                            )
+                            onClose()
+                        }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
