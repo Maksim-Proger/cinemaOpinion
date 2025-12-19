@@ -1,14 +1,14 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens
 
-import android.os.Build
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -51,13 +51,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
-import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.components.fab.FABMenu
 import com.example.ui.presentation.components.text.CustomTextField
+import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SeriesControlItem
-import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
@@ -92,43 +92,33 @@ fun SeriesControlScreen(
 
     if (openBottomSheetAdd) {
         CustomBottomSheet(
-            onClose = { openBottomSheetAdd = false },
             content = {
                 AddItem(
-                    seriesControlViewModel,
-                    userId
-                ) {
-                    openBottomSheetAdd = false
-                }
+                    seriesControlViewModel = seriesControlViewModel,
+                    userId = userId,
+                    fraction = 0.3f,
+                    onClickCloseButton = { openBottomSheetAdd = false }
+                )
             },
-            fraction = 0.3f
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            OnBackInvokedHandler { openBottomSheetAdd = false }
-        } else {
-            BackHandler { openBottomSheetAdd = false }
-        }
+        AdaptiveBackHandler { openBottomSheetAdd = false }
     }
 
     if (openBottomSheetChange) {
         CustomBottomSheet(
-            onClose = { openBottomSheetChange = false },
             content = {
-                ChangeItem(
-                    userId,
-                    selectedEntry!!,
-                    seriesControlViewModel
-                ) {
-                    openBottomSheetChange = false
+                selectedEntry?.let {
+                    ChangeItem(
+                        userId = userId,
+                        fraction = 0.5f,
+                        selectedEntry = it,
+                        seriesControlViewModel = seriesControlViewModel,
+                        onClick = { openBottomSheetChange = false }
+                    )
                 }
             },
-            fraction = 0.5f
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            OnBackInvokedHandler { openBottomSheetChange = false }
-        } else {
-            BackHandler { openBottomSheetChange = false }
-        }
+        AdaptiveBackHandler { openBottomSheetChange = false }
     }
 
     Scaffold(
@@ -153,7 +143,6 @@ fun SeriesControlScreen(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
-
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -228,42 +217,50 @@ fun SeriesControlScreen(
 private fun AddItem(
     seriesControlViewModel: SeriesControlViewModel,
     userId: String,
+    fraction: Float,
     onClickCloseButton: () -> Unit
 ) {
-
     val (titleMovie, setTitleMovie) = remember { mutableStateOf("") }
     val context = LocalContext.current
 
-    CustomTextField(
-        value = titleMovie,
-        onValueChange = setTitleMovie,
-        label = {
-            Text(
-                stringResource(R.string.enter_the_name_of_the_movie_series),
-                style = MaterialTheme.typography.bodySmall
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(fraction)
+            .padding(horizontal = 16.dp)
+    ) {
+        CustomTextField(
+            value = titleMovie,
+            onValueChange = setTitleMovie,
+            label = {
+                Text(
+                    stringResource(R.string.enter_the_name_of_the_movie_series),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.outline
+                )
+            },
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    seriesControlViewModel.addNewEntry(userId, titleMovie)
+                    showToast(context, R.string.element_has_been_added)
+                    setTitleMovie("")
+                    onClickCloseButton()
+                }
             )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outline
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                seriesControlViewModel.addNewEntry(userId, titleMovie)
-                showToast(context, R.string.element_has_been_added)
-                setTitleMovie("")
-                onClickCloseButton()
-            }
         )
-    )
+    }
 }
 
 @Composable
 private fun ChangeItem(
     userId: String,
+    fraction: Float,
     selectedEntry: DomainSeriesControlModel,
     seriesControlViewModel: SeriesControlViewModel,
     onClick: () -> Unit
@@ -279,64 +276,71 @@ private fun ChangeItem(
         setSeries(selectedEntry.series.toString())
     }
 
-    CustomTextField(
-        value = season,
-        onValueChange = setSeason,
-        label = {
-            Text(
-                text = stringResource(R.string.write_season),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-        ),
-        keyboardType = KeyboardType.Number,
-        imeAction = ImeAction.Done
-    )
-
-    CustomTextField(
-        value = series,
-        onValueChange = setSeries,
-        label = {
-            Text(
-                text = stringResource(R.string.write_series),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            }
-        ),
-        keyboardType = KeyboardType.Number,
-        imeAction = ImeAction.Done
-    )
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(fraction)
+            .padding(horizontal = 16.dp)
     ) {
-        CustomTextButton(
-            textButton = stringResource(R.string.button_save),
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            modifier = Modifier,
-            onClickButton = {
-                seriesControlViewModel.updateMovie(
-                    userId,
-                    selectedEntry.id,
-                    selectedEntry.title,
-                    season.toInt(),
-                    series.toInt()
+        CustomTextField(
+            value = season,
+            onValueChange = setSeason,
+            label = {
+                Text(
+                    text = stringResource(R.string.write_season),
+                    style = MaterialTheme.typography.bodyMedium
                 )
-                onClick()
-            }
+            },
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }
+            ),
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
         )
+
+        CustomTextField(
+            value = series,
+            onValueChange = setSeries,
+            label = {
+                Text(
+                    text = stringResource(R.string.write_series),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }
+            ),
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            CustomTextButton(
+                textButton = stringResource(R.string.button_save),
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+                modifier = Modifier,
+                onClickButton = {
+                    seriesControlViewModel.updateMovie(
+                        userId,
+                        selectedEntry.id,
+                        selectedEntry.title,
+                        season.toInt(),
+                        series.toInt()
+                    )
+                    onClick()
+                }
+            )
+        }
     }
 }
 
