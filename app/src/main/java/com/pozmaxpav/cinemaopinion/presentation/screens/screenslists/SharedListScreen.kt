@@ -121,7 +121,6 @@ fun ListSharedScreen(
 
             if (openBottomSheetChange) {
                 CustomBottomSheet(
-                    onClose = { openBottomSheetChange = false },
                     content = {
                         selectedMovie?.let { movie ->
                             selectedComment?.let { comment ->
@@ -130,21 +129,19 @@ fun ListSharedScreen(
                                     userName = userName,
                                     selectedMovieId = movie.id,
                                     selectedComment = comment,
-                                    viewModel = sharedListsViewModel
-                                ) {
-                                    openBottomSheetChange = false
-                                }
+                                    fraction = 0.7f,
+                                    viewModel = sharedListsViewModel,
+                                    onClose = { openBottomSheetChange = false }
+                                )
                             }
                         }
-                    },
-                    fraction = 0.5f
+                    }
                 )
                 AdaptiveBackHandler { openBottomSheetChange = false }
             }
 
             if (openBottomSheetComments) {
                 CustomBottomSheet(
-                    onClose = { openBottomSheetComments = false },
                     content = {
                         AddComment(
                             dataUser = userData,
@@ -152,11 +149,11 @@ fun ListSharedScreen(
                             viewModel = sharedListsViewModel,
                             listName = listName,
                             selectedItem = selectedMovie,
+                            fraction = 0.7f,
                             context = context,
                             onClick = { openBottomSheetComments = false }
                         )
-                    },
-                    fraction = 0.7f
+                    }
                 )
                 AdaptiveBackHandler { openBottomSheetComments = false }
             }
@@ -164,21 +161,20 @@ fun ListSharedScreen(
             selectedMovie?.let { movie ->
                 if (openBottomSheetReviews) {
                     CustomBottomSheet(
-                        onClose = { openBottomSheetReviews = false },
                         content = {
                             ShowCommentList(
                                 userId = userId,
                                 selectedMovieId = movie.id,
                                 viewModel = sharedListsViewModel,
                                 listId = listId,
+                                fraction = 0.7f,
                                 onClick = { comment ->
                                     selectedComment = comment
                                     openBottomSheetChange = true
                                 },
                                 onClose = { openBottomSheetReviews = false }
                             )
-                        },
-                        fraction = 0.9f
+                        }
                     )
                     AdaptiveBackHandler { openBottomSheetReviews = false }
                 }
