@@ -143,6 +143,7 @@ fun SeriesControlScreen(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
+
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -175,34 +176,16 @@ fun SeriesControlScreen(
                             contentColor = MaterialTheme.colorScheme.onSecondary
                         )
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(
-                                modifier = Modifier.weight(1f),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                SeriesControlItem(entry) {
-                                    selectedEntry = entry
-                                    openBottomSheetChange = true
-                                }
+                        SeriesControlItem(
+                            movie = entry,
+                            onClick = {
+                                selectedEntry = entry
+                                openBottomSheetChange = true
+                            },
+                            onDeleteClick = {
+                                isVisible = false
                             }
-
-                            IconButton(
-                                onClick = { isVisible = false },
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .padding(end = 10.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                            }
-                        }
+                        )
                     }
                 }
 
@@ -211,6 +194,7 @@ fun SeriesControlScreen(
             item { Spacer(Modifier.padding(45.dp)) }
         }
     }
+
 }
 
 @Composable
