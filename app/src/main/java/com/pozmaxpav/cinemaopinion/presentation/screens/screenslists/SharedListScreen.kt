@@ -121,61 +121,61 @@ fun ListSharedScreen(
 
             if (openBottomSheetChange) {
                 CustomBottomSheet(
-                    content = {
-                        selectedMovie?.let { movie ->
-                            selectedComment?.let { comment ->
-                                ChangeComment(
-                                    sharedListId = listId,
-                                    userName = userName,
-                                    selectedMovieId = movie.id,
-                                    selectedComment = comment,
-                                    fraction = 0.7f,
-                                    viewModel = sharedListsViewModel,
-                                    onClose = { openBottomSheetChange = false }
-                                )
-                            }
+                    onCloseRequest = { openBottomSheetChange = false }
+                ) { onClose ->
+                    selectedMovie?.let { movie ->
+                        selectedComment?.let { comment ->
+                            ChangeComment(
+                                sharedListId = listId,
+                                userName = userName,
+                                selectedMovieId = movie.id,
+                                selectedComment = comment,
+                                fraction = 0.7f,
+                                viewModel = sharedListsViewModel,
+                                onClose = onClose
+                            )
                         }
                     }
-                )
+                }
                 AdaptiveBackHandler { openBottomSheetChange = false }
             }
 
             if (openBottomSheetComments) {
                 CustomBottomSheet(
-                    content = {
-                        AddComment(
-                            dataUser = userData,
-                            sharedListId = listId,
-                            viewModel = sharedListsViewModel,
-                            listName = listName,
-                            selectedItem = selectedMovie,
-                            fraction = 0.7f,
-                            context = context,
-                            onClick = { openBottomSheetComments = false }
-                        )
-                    }
-                )
+                    onCloseRequest = { openBottomSheetComments = false }
+                ) { onClose ->
+                    AddComment(
+                        dataUser = userData,
+                        sharedListId = listId,
+                        viewModel = sharedListsViewModel,
+                        listName = listName,
+                        selectedItem = selectedMovie,
+                        fraction = 0.7f,
+                        context = context,
+                        onClick = onClose
+                    )
+                }
                 AdaptiveBackHandler { openBottomSheetComments = false }
             }
 
             selectedMovie?.let { movie ->
                 if (openBottomSheetReviews) {
                     CustomBottomSheet(
-                        content = {
-                            ShowCommentList(
-                                userId = userId,
-                                selectedMovieId = movie.id,
-                                viewModel = sharedListsViewModel,
-                                listId = listId,
-                                fraction = 0.7f,
-                                onClick = { comment ->
-                                    selectedComment = comment
-                                    openBottomSheetChange = true
-                                },
-                                onClose = { openBottomSheetReviews = false }
-                            )
-                        }
-                    )
+                        onCloseRequest = { openBottomSheetReviews = false }
+                    ) { onClose ->
+                        ShowCommentList(
+                            userId = userId,
+                            selectedMovieId = movie.id,
+                            viewModel = sharedListsViewModel,
+                            listId = listId,
+                            fraction = 0.7f,
+                            onClick = { comment ->
+                                selectedComment = comment
+                                openBottomSheetChange = true
+                            },
+                            onClose = onClose
+                        )
+                    }
                     AdaptiveBackHandler { openBottomSheetReviews = false }
                 }
                 DetailsCardSelectedMovie(

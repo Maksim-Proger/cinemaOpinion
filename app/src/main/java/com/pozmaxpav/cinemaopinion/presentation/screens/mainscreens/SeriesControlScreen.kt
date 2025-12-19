@@ -92,32 +92,32 @@ fun SeriesControlScreen(
 
     if (openBottomSheetAdd) {
         CustomBottomSheet(
-            content = {
-                AddItem(
-                    seriesControlViewModel = seriesControlViewModel,
-                    userId = userId,
-                    fraction = 0.3f,
-                    onClickCloseButton = { openBottomSheetAdd = false }
-                )
-            },
-        )
+            onCloseRequest = { openBottomSheetAdd = false }
+        ) { onClose ->
+            AddItem(
+                seriesControlViewModel = seriesControlViewModel,
+                userId = userId,
+                fraction = 0.3f,
+                onClickCloseButton = onClose
+            )
+        }
         AdaptiveBackHandler { openBottomSheetAdd = false }
     }
 
     if (openBottomSheetChange) {
         CustomBottomSheet(
-            content = {
-                selectedEntry?.let {
-                    ChangeItem(
-                        userId = userId,
-                        fraction = 0.5f,
-                        selectedEntry = it,
-                        seriesControlViewModel = seriesControlViewModel,
-                        onClick = { openBottomSheetChange = false }
-                    )
-                }
-            },
-        )
+            onCloseRequest = { openBottomSheetChange = false }
+        ) { onClose ->
+            selectedEntry?.let {
+                ChangeItem(
+                    userId = userId,
+                    fraction = 0.5f,
+                    selectedEntry = it,
+                    seriesControlViewModel = seriesControlViewModel,
+                    onClick = onClose
+                )
+            }
+        }
         AdaptiveBackHandler { openBottomSheetChange = false }
     }
 

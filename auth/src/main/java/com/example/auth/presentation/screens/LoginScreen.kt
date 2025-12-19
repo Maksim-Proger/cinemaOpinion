@@ -95,16 +95,16 @@ fun LoginScreen(
 
         if (openBottomSheet) {
             CustomBottomSheet(
-                content = {
-                    RegistrationScreen(
-                        authViewModel = authViewModel,
-                        keyboardController = keyboardController,
-                        focusManager = focusManager,
-                        fraction = 0.9f,
-                        onClose = { openBottomSheet = false }
-                    )
-                }
-            )
+                onCloseRequest = { openBottomSheet = false }
+            ) { onClose ->
+                RegistrationScreen(
+                    authViewModel = authViewModel,
+                    keyboardController = keyboardController,
+                    focusManager = focusManager,
+                    fraction = 0.9f,
+                    onClose = onClose
+                )
+            }
         }
 
         Column(
