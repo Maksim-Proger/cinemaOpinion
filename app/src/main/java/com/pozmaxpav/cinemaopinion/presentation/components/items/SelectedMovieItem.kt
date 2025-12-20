@@ -29,7 +29,7 @@ fun SelectedMovieItem(
             }
     ) {
         WorkerWithImage(movie = null, selectedMovie = movie, width = 120.dp)
-        Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+        Spacer(modifier = Modifier.padding(horizontal = 12.dp))
         Text(
             text = movie.nameFilm,
             style = MaterialTheme.typography.bodyLarge

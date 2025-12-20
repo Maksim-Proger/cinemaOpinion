@@ -11,6 +11,7 @@ import com.pozmaxpav.cinemaopinion.data.repository.firebase.PersonalMovieReposit
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.NotificationRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SharedListsRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.SystemMovieRepoImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepoImpl
 import com.pozmaxpav.cinemaopinion.data.repository.system.SystemRepositoryAppImpl
 import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiRepository
@@ -19,6 +20,7 @@ import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepos
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.NotificationRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SharedListsRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SystemMovieRepo
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepo
 import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemRepositoryApp
 import dagger.Module
@@ -101,6 +103,12 @@ object AppModule {
     @Singleton
     fun providePersonalMovieRepo(databaseReference: DatabaseReference, listenerHolder: FirebaseListenerHolder): PersonalMovieRepository {
         return PersonalMovieRepositoryImpl(databaseReference, listenerHolder)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSystemMovieRepo(databaseReference: DatabaseReference): SystemMovieRepo {
+        return SystemMovieRepoImpl(databaseReference)
     }
 
     @Provides

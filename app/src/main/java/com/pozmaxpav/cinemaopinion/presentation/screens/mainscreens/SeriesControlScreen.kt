@@ -3,6 +3,7 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -200,9 +201,7 @@ fun SeriesControlScreen(
                                 selectedEntry = entry
                                 openBottomSheetChange = true
                             },
-                            onDeleteClick = {
-                                showDeleteDialog = true
-                            }
+                            onDeleteClick = { showDeleteDialog = true }
                         )
                     }
                 }
@@ -226,6 +225,7 @@ private fun AddItem(
 
     Column(
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .fillMaxHeight(fraction)
             .padding(horizontal = 16.dp)
@@ -279,6 +279,7 @@ private fun ChangeItem(
 
     Column(
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .fillMaxHeight(fraction)
             .padding(horizontal = 16.dp)

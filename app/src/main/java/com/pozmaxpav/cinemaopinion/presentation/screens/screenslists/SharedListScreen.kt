@@ -48,6 +48,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
@@ -222,7 +223,8 @@ fun ListSharedScreen(
                         contentPadding = PaddingValues(10.dp)
                     ) {
                         items(movies, key = { it.id }) { movie ->
-                            var isVisible by remember { mutableStateOf(true) }
+                            var isVisible by remember(movie.id) { mutableStateOf(true) }
+                            var showDeleteDialog by remember(movie.id) { mutableStateOf(false) }
 
                             LaunchedEffect(isVisible) {
                                 if (!isVisible) {
@@ -236,6 +238,18 @@ fun ListSharedScreen(
                                         sharedListId = listId
                                     )
                                 }
+                            }
+
+                            if (showDeleteDialog) {
+                                DeleteDialog(
+                                    entryTitle = movie.nameFilm,
+                                    onDismissRequest = { showDeleteDialog = false },
+                                    confirmButtonClick = {
+                                        showDeleteDialog = false
+                                        isVisible = false
+                                    },
+                                    dismissButtonClick = { showDeleteDialog = false }
+                                )
                             }
 
                             AnimatedVisibility(
@@ -267,7 +281,7 @@ fun ListSharedScreen(
                                             )
                                         }
                                         IconButton(
-                                            onClick = { isVisible = false },
+                                            onClick = { showDeleteDialog = true },
                                             modifier = Modifier
                                                 .size(50.dp)
                                                 .padding(end = 10.dp)
