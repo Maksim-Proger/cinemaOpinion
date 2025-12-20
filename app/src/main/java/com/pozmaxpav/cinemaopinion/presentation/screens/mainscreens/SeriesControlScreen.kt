@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,6 +53,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.example.ui.presentation.components.fab.FABMenu
 import com.example.ui.presentation.components.text.CustomTextField
 import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
@@ -153,12 +156,27 @@ fun SeriesControlScreen(
         ) {
             items(listMovies, key = { it.id }) { entry ->
 
-                var isVisible by remember { mutableStateOf(true) }
+                var isVisible by remember(entry.id) { mutableStateOf(true) }
+                var showDeleteDialog by remember(entry.id) { mutableStateOf(false) }
 
                 LaunchedEffect(isVisible) {
                     if (!isVisible) {
                         seriesControlViewModel.deleteMovie(userId, entry.id)
                     }
+                }
+
+                if (showDeleteDialog) {
+                    DeleteDialog(
+                        entryTitle = entry.title,
+                        onDismissRequest = { showDeleteDialog = false },
+                        confirmButtonClick = {
+                            showDeleteDialog = false
+                            isVisible = false
+                        },
+                        dismissButtonClick = {
+                            showDeleteDialog = false
+                        }
+                    )
                 }
 
                 AnimatedVisibility(
@@ -183,12 +201,11 @@ fun SeriesControlScreen(
                                 openBottomSheetChange = true
                             },
                             onDeleteClick = {
-                                isVisible = false
+                                showDeleteDialog = true
                             }
                         )
                     }
                 }
-
                 Spacer(modifier = Modifier.padding(vertical = 5.dp))
             }
             item { Spacer(Modifier.padding(45.dp)) }
