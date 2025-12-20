@@ -55,13 +55,11 @@ fun MovieItem(
             Spacer(modifier = Modifier.padding(horizontal = 12.dp))
 
             Column {
-
                 Text(
                     text = movie.nameRu ?: "Нет названия",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.secondary
                 )
-
                 when (movie) {
                     is MovieData.Movie -> {
                         MetaText(
@@ -69,61 +67,26 @@ fun MovieItem(
                             genre = formatGenres(movie.genres),
                             country = formatCountries(country = movie.countries)
                         )
-//                        Text(
-//                            text = movie.premiereRu,
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            color = MaterialTheme.colorScheme.secondary
-//                        )
-//                        Spacer(modifier = Modifier.height(7.dp))
-//                        Text(
-//                            text = formatGenres(movie.genres),
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            color = MaterialTheme.colorScheme.secondary
-//                        )
                     }
                     is MovieData.MovieTop -> {
-                        Text(
-                            text = movie.year,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                        Spacer(modifier = Modifier.height(7.dp))
-                        Text(
-                            text = movie.rating,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.secondary
+                        MetaText(
+                            year = movie.year,
+                            genre = formatGenres(movie.genres),
+                            country = formatCountries(country = movie.countries)
                         )
                     }
                     is MovieData.MovieSearch -> {
-                        Text(
-                            text = movie.year ?: "Нет данных о дате",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                        Spacer(modifier = Modifier.height(7.dp))
-                        Text(
-                            text = "Рейтинг Kinopoisk: ${movie.ratingKinopoisk ?: "Нет данных о рейтинге"}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                        Spacer(modifier = Modifier.height(7.dp))
-                        Text(
-                            text = "Рейтинг Imdb: ${movie.ratingImdb ?: "Нет данных о рейтинге"}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.secondary
+                        MetaText(
+                            year = movie.year ?: "Нет данных о дате",
+                            genre = formatGenres(movie.genres),
+                            country = formatCountries(country = movie.countries)
                         )
                     }
                     is MovieData.MovieSearch2 -> {
-                        Text(
-                            text = "Название на английском: ${movie.nameEn}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                        Spacer(modifier = Modifier.height(7.dp))
-                        Text(
-                            text = movie.year ?: "Нет данных о дате",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.secondary
+                        MetaText(
+                            year = movie.year ?: "Нет данных о дате",
+                            genre = formatGenres(movie.genres),
+                            country = formatCountries(country = movie.countries)
                         )
                     }
                 }
@@ -179,12 +142,4 @@ private fun MetaText(
             )
         }
     }
-}
-@Composable
-private fun MetaDot() {
-    Text(
-        text = "•",
-        modifier = Modifier.padding(horizontal = 6.dp),
-        color = MaterialTheme.colorScheme.secondary
-    )
 }

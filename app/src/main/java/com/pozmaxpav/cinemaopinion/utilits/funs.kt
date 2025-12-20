@@ -2,6 +2,7 @@ package com.pozmaxpav.cinemaopinion.utilits
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -261,6 +262,7 @@ fun ShowCommentList(
 ) {
     Column(
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .fillMaxHeight(fraction = fraction)
             .padding(horizontal = 16.dp)
@@ -367,7 +369,7 @@ private fun CommentsList(
                     .fillMaxWidth()
                     .padding(vertical = 7.dp)
                     .clickable { onClick(comment) },
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(16.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.secondary,
@@ -432,6 +434,7 @@ fun AddComment(
 
     Column(
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .fillMaxHeight(fraction)
             .padding(horizontal = 16.dp)
@@ -538,6 +541,7 @@ fun ChangeComment(
 
     Column(
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxWidth()
             .fillMaxHeight(fraction = fraction)
             .padding(horizontal = 16.dp)

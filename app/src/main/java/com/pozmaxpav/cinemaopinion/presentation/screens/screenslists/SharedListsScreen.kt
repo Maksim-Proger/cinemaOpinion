@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SharedListItem
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -78,11 +79,25 @@ fun SharedListsScreen(
             contentPadding = PaddingValues(10.dp)
         ) {
             items(lists, key = { it.listId }) { item ->
-                var isVisible by remember { mutableStateOf(true) }
+                var isVisible by remember(item.listId) { mutableStateOf(true) }
+                var showDeleteDialog by remember(item.listId) { mutableStateOf(false) }
+
                 LaunchedEffect(isVisible) {
                     if (!isVisible) {
                         sharedListsViewModel.removeList(item.listId)
                     }
+                }
+
+                if (showDeleteDialog) {
+                    DeleteDialog(
+                        entryTitle = item.title,
+                        onDismissRequest = { showDeleteDialog = false },
+                        confirmButtonClick = {
+                            showDeleteDialog = false
+                            isVisible = false
+                        },
+                        dismissButtonClick = { showDeleteDialog = false }
+                    )
                 }
 
                 AnimatedVisibility(
@@ -138,7 +153,7 @@ fun SharedListsScreen(
                             )
 
                             IconButton(
-                                onClick = { isVisible = false },
+                                onClick = { showDeleteDialog = true },
                                 modifier = Modifier
                                     .size(50.dp)
                                     .padding(end = 10.dp)

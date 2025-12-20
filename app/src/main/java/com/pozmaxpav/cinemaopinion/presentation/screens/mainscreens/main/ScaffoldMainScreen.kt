@@ -29,8 +29,10 @@ import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsC
 import com.pozmaxpav.cinemaopinion.presentation.components.items.fabMenuItems
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.seasonal.FetchSeasonalMovies
 //import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.seasonal.FetchSeasonalMovies
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SystemMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilits.SendRequestAdvancedSearch
 import com.pozmaxpav.cinemaopinion.utilits.SendSelectedDate
@@ -41,7 +43,8 @@ import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 fun ScaffoldMainScreen(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
-    apiViewModel: ApiViewModel = hiltViewModel()
+    apiViewModel: ApiViewModel = hiltViewModel(),
+    systemMovieViewModel: SystemMovieViewModel = hiltViewModel()
 ) {
     val state = rememberMainScreenState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -156,7 +159,6 @@ fun ScaffoldMainScreen(
                 }
 
                 else -> {
-
                     when (loadingState) {
                         is LoadingState.Loading -> AnimationImplementation(innerPadding)
                         is LoadingState.Success -> {
@@ -165,13 +167,13 @@ fun ScaffoldMainScreen(
                                     .fillMaxSize()
                                     .padding(innerPadding)
                             ) {
-//                                FetchSeasonalMovies(
-//                                    isScrolling = state.isScrolling,
-//                                    viewModel = movieViewModel,
-//                                    selectedMovie = { movie ->
-//                                        state.selectedSeasonalMovie.value = movie
-//                                    }
-//                                )
+                                FetchSeasonalMovies(
+                                    isScrolling = state.isScrolling,
+                                    viewModel = systemMovieViewModel,
+                                    selectedMovie = { movie ->
+                                        state.selectedSeasonalMovie.value = movie
+                                    }
+                                )
                                 FetchMovies(
                                     state = state,
                                     apiViewModel = apiViewModel,
