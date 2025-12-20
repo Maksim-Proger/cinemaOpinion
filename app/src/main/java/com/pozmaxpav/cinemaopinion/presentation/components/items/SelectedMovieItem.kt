@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
+import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
 
 @Composable
 fun SelectedMovieItem(
@@ -28,10 +28,7 @@ fun SelectedMovieItem(
                 showTopBar()
             }
     ) {
-        WorkerWithImageSelectedMovie(
-            movie = movie,
-            height = 90.dp
-        )
+        WorkerWithImage(movie = null, selectedMovie = movie, width = 120.dp)
         Spacer(modifier = Modifier.padding(horizontal = 10.dp))
         Text(
             text = movie.nameFilm,

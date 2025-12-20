@@ -1,7 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.components.detailscards
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,13 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.outlined.LocalOffer
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Schedule
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -51,17 +44,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.ui.presentation.components.CustomTextButton
-import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.example.ui.presentation.components.ExpandedCard
 import com.example.ui.presentation.components.ratingbar.RatingBarScaffold
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImageSelectedMovie
 import com.pozmaxpav.cinemaopinion.utilits.showToast
-import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
 
 @Composable
 fun DetailsCardSpecial(
@@ -130,7 +121,9 @@ fun DetailsCardSpecial(
         ) {
             // region Верхние кнопки
             Row(
-                modifier = Modifier.fillMaxWidth().padding(5.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -159,7 +152,6 @@ fun DetailsCardSpecial(
             // endregion
 
 
-
             Column(
                 modifier = Modifier
                     .wrapContentHeight()
@@ -180,11 +172,14 @@ fun DetailsCardSpecial(
                     Column(modifier = Modifier.fillMaxWidth()) {
                         ExpandedCard(
                             title = stringResource(R.string.text_for_expandedCard_field),
-                            description = info?.description ?: stringResource(R.string.limit_is_over)
+                            description = info?.description
+                                ?: stringResource(R.string.limit_is_over)
                         )
                         Spacer(Modifier.padding(vertical = 5.dp))
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 7.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 7.dp),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             CustomTextButton(
