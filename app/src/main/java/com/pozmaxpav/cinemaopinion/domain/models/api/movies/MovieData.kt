@@ -1,7 +1,5 @@
 package com.pozmaxpav.cinemaopinion.domain.models.api.movies
 
-import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiGenre
-
 sealed class MovieData : UnifyingId {
     abstract val nameRu: String?
     abstract val posterUrl: String?

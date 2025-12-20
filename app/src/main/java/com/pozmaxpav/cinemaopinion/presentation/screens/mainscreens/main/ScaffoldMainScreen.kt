@@ -63,7 +63,12 @@ fun ScaffoldMainScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            if (!state.searchBarActive.value && !state.showDatePicker.value) {
+            if (
+                !state.searchBarActive.value &&
+                !state.showDatePicker.value &&
+                state.selectedMovie.value == null &&
+                state.selectedSeasonalMovie.value == null
+            ) {
                 TopAppBarMainScreen(
                     title = if (!state.titleTopBarState.value) stringResource(id = R.string.top_app_bar_header_name_all_movies)
                     else stringResource(id = R.string.top_app_bar_header_name_top_list_movies),
