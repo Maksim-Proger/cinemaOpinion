@@ -324,6 +324,7 @@ fun ListSelectedMovies(
                             ) {
                                 Text(
                                     text = "При загрузке произошла ошибка.",
+                                    color = MaterialTheme.colorScheme.secondary,
                                     style = MaterialTheme.typography.titleMedium
                                 )
                             }
