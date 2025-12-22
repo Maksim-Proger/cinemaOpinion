@@ -42,8 +42,11 @@ class SharedListsViewModel @Inject constructor(
     private val _listName = MutableStateFlow("")
     val listName = _listName.asStateFlow()
 
-    private val _movies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
-    val movies = _movies.asStateFlow()
+    private val _listMovies = MutableStateFlow<List<DomainSelectedMovieModel>>(emptyList())
+    val movies = _listMovies.asStateFlow()
+
+    private val _movie = MutableStateFlow<DomainSelectedMovieModel?>(null)
+    val movie = _movie.asStateFlow()
 
     private val _comments = MutableStateFlow<List<DomainCommentModel>>(emptyList())
     val comments = _comments.asStateFlow()
@@ -171,6 +174,16 @@ class SharedListsViewModel @Inject constructor(
         }
     }
 
+
+    fun getMovieById(listId: String, movieId: Int) {
+        viewModelScope.launch {
+            try {
+                _movie.value = moviesUseCases.getMovieById(listId, movieId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
     fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel) {
         viewModelScope.launch {
             try {
@@ -197,7 +210,7 @@ class SharedListsViewModel @Inject constructor(
     fun getMovies(listId: String) {
         viewModelScope.launch {
             try {
-                _movies.value = moviesUseCases.getMovies(listId)
+                _listMovies.value = moviesUseCases.getMovies(listId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -206,10 +219,12 @@ class SharedListsViewModel @Inject constructor(
     fun observeMovies(listId: String) {
         viewModelScope.launch {
             moviesUseCases.observeListMovies(listId) { onMoviesUpdated ->
-                _movies.value = onMoviesUpdated
+                _listMovies.value = onMoviesUpdated
             }
         }
     }
+
+
 
 //    fun sendingToNewDirectory(
 //        dataSource: String,

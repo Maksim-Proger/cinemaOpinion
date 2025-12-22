@@ -6,5 +6,6 @@ data class MoviesUseCases @Inject constructor(
     val addMovie: AddMovieUseCase,
     val getMovies: GetMoviesUseCase,
     val removeMovie: RemoveMovieUseCase,
-    val observeListMovies: ObserveListMoviesUseCase
+    val observeListMovies: ObserveListMoviesUseCase,
+    val getMovieById: GetMovieByIdUseCase
 )

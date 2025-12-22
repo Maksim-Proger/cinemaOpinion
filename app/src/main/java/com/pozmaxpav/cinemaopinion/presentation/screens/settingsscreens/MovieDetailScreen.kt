@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -19,6 +20,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,21 +60,43 @@ fun MovieDetailScreen(
     listId: String,
     movieId: Int,
     userName: String,
-    sharedListsViewModel: SharedListsViewModel = hiltViewModel()
+    viewModel: SharedListsViewModel = hiltViewModel()
 ) {
-//
-//    val movie by movieViewModel.movie.collectAsState()
-//    val context = LocalContext.current
-//
-//    LaunchedEffect(movieId) {
-//        if (listId.isNotEmpty() && movieId != 0) {
-//            movieViewModel.getMovieById(listId, movieId)
-//        }
-//    }
-//
-//    Column(
-//        modifier = Modifier.wrapContentSize()
-//    ) {
+    val context = LocalContext.current
+
+    val movie by viewModel.movie.collectAsState()
+
+    LaunchedEffect(movieId) {
+        if (listId.isNotEmpty() && movieId != 0) {
+            viewModel.getMovieById(listId, movieId)
+        }
+    }
+    Scaffold { innerPadding ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(innerPadding)
+        ) {
+            movie?.let { movie ->
+                DetailsCardSelectedMovie(
+                    movie = movie,
+                    navController = navController,
+                    commentButton = {},
+                    reviews = {},
+                    onCloseButton = {}
+                )
+            }
+        }
+    }
+
+//    Column(modifier = Modifier.wrapContentSize()) {
+//        OtherActions(
+//            movie = movie,
+//            newDataSource = listId,
+//            movieId = movieId,
+//            navController = navController,
+//            viewModel = viewModel,
+//            userName = userName,
+//            context = context
+//        )
 //        if (listId == stringResource(R.string.movie_was_deleted)) {
 //            TheMovieWasDeleted(navController)
 //        } else {
@@ -89,25 +113,23 @@ fun MovieDetailScreen(
 //    }
 }
 
-//@Composable
-//private fun OtherActions(
-//    movie: DomainSelectedMovieModel?,
-//    newDataSource: String,
-//    movieId: Int,
-//    navController: NavHostController,
-//    movieViewModel: MovieViewModel,
-//    userName: String,
-//    context: Context,
-//) {
-//
-//    var openBottomSheetComments by remember { mutableStateOf(false) }
-//
-//    Column {
+@Composable
+private fun OtherActions(
+    movie: DomainSelectedMovieModel?,
+    newDataSource: String,
+    movieId: Int,
+    navController: NavHostController,
+    viewModel: SharedListsViewModel,
+    userName: String,
+    context: Context,
+) {
+
+    var openBottomSheetComments by remember { mutableStateOf(false) }
+
+    Column {
 //        if (openBottomSheetComments) {
 //            CustomBottomSheet(
-//                onClose = {
-//                    openBottomSheetComments = !openBottomSheetComments
-//                },
+//                onClose = { openBottomSheetComments = !openBottomSheetComments },
 //                content = {
 //                    AddComment(
 //                        movie,
@@ -124,34 +146,20 @@ fun MovieDetailScreen(
 //                fraction = 0.7f
 //            )
 //        }
-//
-//        movie?.let { movie ->
-//            DetailsCardSelectedMovie(
+
+        movie?.let { movie ->
+            DetailsCardSelectedMovie(
 //                titleForMovieDetailScreen = elementDirectory(newDataSource),
-//                movie = movie,
-//                content = {
-//                    ShowComment(newDataSource, movieId, movieViewModel)
-//                },
-//                commentButton = {
-//                    CustomTextButton(
-//                        textButton = context.getString(R.string.placeholder_for_comment_field),
-//                        bottomPadding = 7.dp,
-//                        containerColor = MaterialTheme.colorScheme.secondary,
-//                        contentColor = MaterialTheme.colorScheme.onSecondary,
-//                        onClickButton = { openBottomSheetComments = !openBottomSheetComments }
-//                    )
-//                },
-//                onClick = {
-//                    navController.navigate(Route.ListOfChangesScreen.route) {
-//                        popUpTo(Route.MovieDetailScreen.route) { inclusive = true }
-//                        launchSingleTop = true
-//                    }
-//                }
-//            )
-//        }
-//    }
-//}
-//
+                movie = movie,
+                navController = navController,
+                commentButton = {},
+                reviews = {},
+                onCloseButton = {}
+            )
+        }
+    }
+}
+
 //@Composable
 //private fun TheMovieWasDeleted(navController: NavHostController) {
 //    Column {
@@ -187,7 +195,7 @@ fun MovieDetailScreen(
 //        }
 //    }
 //}
-//
+
 //@Composable
 //private fun AddComment(
 //    movie: DomainSelectedMovieModel?,
@@ -244,14 +252,14 @@ fun MovieDetailScreen(
 //                        userName,
 //                        comment
 //                    )
-////                    sharedListsViewModel.createNotification(
-////                        context,
-////                        userName,
-////                        R.string.record_added_comment_to_movie,
-////                        movie.nameFilm,
-////                        newDataSource,
-////                        movieId
-////                    )
+//                    sharedListsViewModel.createNotification(
+//                        context,
+//                        userName,
+//                        R.string.record_added_comment_to_movie,
+//                        movie.nameFilm,
+//                        newDataSource,
+//                        movieId
+//                    )
 //                    showToast(context, R.string.comment_added)
 //                    setComment("")
 //                }
@@ -260,7 +268,7 @@ fun MovieDetailScreen(
 //        )
 //    }
 //}
-//
+
 //private fun elementDirectory(newDataSource: String): String {
 //    return when {
 //        newDataSource.contains("list_movies") -> "В списке с фильмами"
@@ -272,11 +280,7 @@ fun MovieDetailScreen(
 //}
 //
 //@Composable
-//fun ShowComment(
-//    newDataSource: String,
-//    movieId: Int,
-//    movieViewModel: MovieViewModel,
-//) {
+//fun ShowComment(newDataSource: String, movieId: Int, movieViewModel: MovieViewModel) {
 //
 //    val stateComments by movieViewModel.commentsDownloadStatus.collectAsState()
 //    val listComments by movieViewModel.comments.collectAsState()

@@ -192,7 +192,7 @@ fun ListSelectedMovies(
                     navController = navController,
                     commentButton = {
                         CustomTextButton(
-                            textButton = context.getString(R.string.placeholder_for_comment_field),
+                            textButton = context.getString(R.string.button_leave_comment),
                             imageVector = Icons.Default.AddComment,
                             modifier = Modifier.fillMaxWidth(),
                             containerColor = MaterialTheme.colorScheme.secondary,

@@ -55,6 +55,7 @@ fun MovieItem(
             Spacer(modifier = Modifier.padding(horizontal = 12.dp))
 
             Column {
+                Spacer(Modifier.padding(vertical = 10.dp))
                 Text(
                     text = movie.nameRu ?: "Нет названия",
                     style = MaterialTheme.typography.bodyLarge,
