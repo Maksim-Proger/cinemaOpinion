@@ -64,7 +64,7 @@ import com.pozmaxpav.cinemaopinion.utilits.showToast
 @Composable
 fun DetailsCardSelectedMovie(
     movie: DomainSelectedMovieModel,
-    userId: String,
+    userId: String = "",
     navController: NavHostController,
     reviews: @Composable () -> Unit = {},
     commentButton: @Composable () -> Unit = {},

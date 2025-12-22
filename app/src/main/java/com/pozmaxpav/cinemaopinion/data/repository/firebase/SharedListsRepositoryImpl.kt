@@ -32,36 +32,6 @@ class SharedListsRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference,
     private val listenerHolder: FirebaseListenerHolder
 ) : SharedListsRepository {
-    // TODO: Проверить методы!
-//    override suspend fun getMovieById(listId: String, movieId: Int): DomainSelectedMovieModel? {
-//        if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
-//
-//        val sharedListKey = databaseReference
-//            .child(NODE_SHARED_LIST)
-//            .orderByChild("listId")
-//            .equalTo(listId)
-//            .get().await()
-//            .children.firstOrNull()?.key
-//            ?: throw java.lang.IllegalArgumentException("List with ID $listId not found")
-//
-//        val movieKey = databaseReference
-//            .child(NODE_SHARED_LIST)
-//            .child(sharedListKey)
-//            .child(NODE_SHARED_LIST_MOVIES)
-//            .orderByChild("id")
-//            .equalTo(movieId.toDouble())
-//            .get().await()
-//            .children.firstOrNull()?.key
-//            ?: throw java.lang.IllegalArgumentException("Movie with ID $movieId not found")
-//
-//        val movieData = databaseReference
-//            .child(listId)
-//            .child(movieKey)
-//            .get()
-//            .await()
-//
-//        return movieData.getValue(DomainSelectedMovieModel::class.java)
-//    }
 //    override suspend fun sendingToNewDirectory(dataSource: String, directionDataSource: String, movieId: Double) {
 //        try {
 //            val snapshot = databaseReference
@@ -232,6 +202,28 @@ class SharedListsRepositoryImpl @Inject constructor(
 
         // 5. Сохраняем с правильной reference
         listenerHolder.addListener(MOVIES_KEY_LISTENER, moviesRef, listener)
+    }
+    override suspend fun getMovieById(listId: String, movieId: Int): DomainSelectedMovieModel? {
+        require(listId.isNotBlank()) { "List ID must not be empty" }
+
+        val sharedListKey = databaseReference
+            .child(NODE_SHARED_LIST)
+            .orderByChild("listId")
+            .equalTo(listId)
+            .get().await().children.firstOrNull()?.key
+            ?: throw java.lang.IllegalArgumentException("List with ID $listId not found")
+
+        return databaseReference
+            .child(NODE_SHARED_LIST)
+            .child(sharedListKey)
+            .child(NODE_SHARED_LIST_MOVIES)
+            .orderByChild("id")
+            .equalTo(movieId.toDouble())
+            .get()
+            .await()
+            .children
+            .firstOrNull()
+            ?.getValue(DomainSelectedMovieModel::class.java)
     }
 
     override suspend fun addComment(listId: String, movieId: Int, comment: DomainCommentModel) {

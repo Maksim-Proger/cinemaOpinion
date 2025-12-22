@@ -111,7 +111,7 @@ fun ListOfChangesScreen(
                         userData?.let { user ->
                             navController.navigate(
                                 Route.MovieDetailScreen.createRoute(
-                                    listId = "item.newDataSource",
+                                    listId = item.sharedListId,
                                     movieId = item.entityId,
                                     userName = user.nikName
                                 )
