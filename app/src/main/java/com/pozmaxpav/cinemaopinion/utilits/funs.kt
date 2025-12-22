@@ -444,7 +444,7 @@ fun AddComment(
             onValueChange = setComment,
             placeholder = {
                 Text(
-                    text = stringResource(R.string.placeholder_for_comment_field),
+                    text = stringResource(R.string.button_leave_comment),
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
