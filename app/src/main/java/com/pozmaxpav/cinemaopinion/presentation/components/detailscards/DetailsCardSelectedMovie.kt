@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,11 +17,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.PostAdd
@@ -58,6 +58,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListsScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
@@ -69,8 +70,9 @@ fun DetailsCardSelectedMovie(
     reviews: @Composable () -> Unit = {},
     commentButton: @Composable () -> Unit = {},
     apiViewModel: ApiViewModel = hiltViewModel(),
-    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
+    personalViewModel: PersonalMovieViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
+    seriesViewModel: SeriesControlViewModel = hiltViewModel(),
     onCloseButton: () -> Unit
 ) {
     val context = LocalContext.current
@@ -85,7 +87,7 @@ fun DetailsCardSelectedMovie(
 
     LaunchedEffect(triggerOnClickPersonalMovie) {
         if (triggerOnClickPersonalMovie) {
-            personalMovieViewModel.toastMessage.collect { resId ->
+            personalViewModel.toastMessage.collect { resId ->
                 showToast(context = context, messageId = resId)
                 onCloseButton()
             }
@@ -131,18 +133,35 @@ fun DetailsCardSelectedMovie(
                             tint = MaterialTheme.colorScheme.secondary
                         )
                     }
-                    IconButton(
-                        onClick = {
-                            personalMovieViewModel.addMovie(userId, selectedMovie = movie)
-                            triggerOnClickPersonalMovie = true
-                        }
+                    Row(
+                        modifier = Modifier.wrapContentWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(25.dp)
                     ) {
-                        Icon(
-                            modifier = Modifier.size(35.dp),
-                            imageVector = Icons.Default.FavoriteBorder,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
+                        IconButton(
+                            onClick = {
+                                seriesViewModel.addNewEntry(userId, movie.nameFilm)
+                            }
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(35.dp),
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                personalViewModel.addMovie(userId, selectedMovie = movie)
+                                triggerOnClickPersonalMovie = true
+                            }
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(35.dp),
+                                imageVector = Icons.Default.FavoriteBorder,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
                     }
                 }
                 // endregion
