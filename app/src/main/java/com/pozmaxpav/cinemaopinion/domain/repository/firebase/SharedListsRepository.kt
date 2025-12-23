@@ -6,9 +6,6 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
 
 interface SharedListsRepository {
-//    suspend fun sendingToNewDirectory(dataSource: String, directionDataSource: String, movieId: Double)
-
-
 
     suspend fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel)
     suspend fun removeMovie(listId: String, movieId: Int)
@@ -26,6 +23,9 @@ interface SharedListsRepository {
     suspend fun getLists(userId: String): List<DomainSharedListModel>
     suspend fun getListName(listId: String): String
     suspend fun observeLists(userId: String, onListsUpdated: (List<DomainSharedListModel>) -> Unit)
+
+    // TODO: Разобрать и проверить
+    suspend fun sendingAllMoviesToNewDirectory(sourceNode: String, listId: String)
 
     fun removeMoviesListener()
     fun removeCommentsListener()
