@@ -98,124 +98,127 @@ fun DetailsCardSelectedMovie(
         apiViewModel.getSearchMovieById(movie.id)
     }
 
-    Column(
-        modifier = Modifier
-            .wrapContentSize()
-            .padding(WindowInsets.statusBars.asPaddingValues())
-    ) {
-        Card(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
+                .fillMaxSize()
+                .padding(WindowInsets.statusBars.asPaddingValues())
         ) {
-            // region Верхние кнопки
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onCloseButton) {
-                    Icon(
-                        modifier = Modifier.size(35.dp),
-                        imageVector = Icons.Default.ArrowBackIosNew,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                IconButton(
-                    onClick = {
-                        personalMovieViewModel.addMovie(userId, selectedMovie = movie)
-                        triggerOnClickPersonalMovie = true
-                    }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(35.dp),
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-            // endregion
-            Column(
+            Card(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(horizontal = 15.dp)
-                    .verticalScroll(scrollState)
+                    .padding(horizontal = 20.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
             ) {
-                DetailCardPoster(movie, detailedInfo)
+                // region Верхние кнопки
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onCloseButton) {
+                        Icon(
+                            modifier = Modifier.size(35.dp),
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                    IconButton(
+                        onClick = {
+                            personalMovieViewModel.addMovie(userId, selectedMovie = movie)
+                            triggerOnClickPersonalMovie = true
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(35.dp),
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+                // endregion
+                Column(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp)
+                        .verticalScroll(scrollState)
+                ) {
+                    DetailCardPoster(movie, detailedInfo)
 
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Spacer(Modifier.padding(15.dp))
-                    Text(
-                        text = movie.nameFilm,
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                    Spacer(Modifier.padding(vertical = 5.dp))
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        ExpandedCard(
-                            title = stringResource(R.string.text_for_expandedCard_field),
-                            description = info?.description
-                                ?: stringResource(R.string.limit_is_over)
+                        Spacer(Modifier.padding(15.dp))
+                        Text(
+                            text = movie.nameFilm,
+                            style = MaterialTheme.typography.displayLarge,
+                            color = MaterialTheme.colorScheme.secondary
                         )
-                        Spacer(Modifier.padding(5.dp))
-                        CustomTextButton(
-                            textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
-                            imageVector = Icons.Outlined.PostAdd,
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            modifier = Modifier.fillMaxWidth(),
-                            onClickButton = { openSharedLists = true }
-                        )
-                        Spacer(Modifier.padding(5.dp))
-                        commentButton()
-                        Spacer(Modifier.padding(5.dp))
-                        reviews()
-                        Spacer(Modifier.padding(10.dp))
+                        Spacer(Modifier.padding(vertical = 5.dp))
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            ExpandedCard(
+                                title = stringResource(R.string.text_for_expandedCard_field),
+                                description = info?.description
+                                    ?: stringResource(R.string.limit_is_over)
+                            )
+                            Spacer(Modifier.padding(5.dp))
+                            CustomTextButton(
+                                textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
+                                imageVector = Icons.Outlined.PostAdd,
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary,
+                                modifier = Modifier.fillMaxWidth(),
+                                onClickButton = { openSharedLists = true }
+                            )
+                            Spacer(Modifier.padding(5.dp))
+                            commentButton()
+                            Spacer(Modifier.padding(5.dp))
+                            reviews()
+                            Spacer(Modifier.padding(10.dp))
+                        }
                     }
                 }
             }
         }
-    }
-    if (openSharedLists) {
-        Box(
-            modifier = Modifier
-                .fillMaxHeight(0.9f)
-                .background(
-                    color = Color.Black.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .clickable { openSharedLists = false }
-        ) {
-            Column(
+        if (openSharedLists) {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                userData?.let { user ->
-                    SharedListsScreen(
-                        userId = userId,
-                        userName = user.nikName,
-                        navController = navController,
-                        addButton = true,
-                        selectedMovie = movie,
-                        onCloseSharedLists = {
-                            openSharedLists = false
-                            onCloseButton()
-                        }
+                    .background(
+                        color = Color.Black.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(12.dp)
                     )
+                    .clickable { openSharedLists = false },
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(26.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    userData?.let { user ->
+                        SharedListsScreen(
+                            userId = userId,
+                            userName = user.nikName,
+                            navController = navController,
+                            addButton = true,
+                            selectedMovie = movie,
+                            onCloseSharedLists = {
+                                openSharedLists = false
+                                onCloseButton()
+                            }
+                        )
+                    }
                 }
             }
         }
