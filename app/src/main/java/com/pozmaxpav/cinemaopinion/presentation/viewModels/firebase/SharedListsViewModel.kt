@@ -11,6 +11,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlist.comments.CommentsUseCases
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlist.lists.ListsUseCases
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlist.movies.MoviesUseCases
+import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlist.system.SendMoviesUseCase
 import com.pozmaxpav.cinemaopinion.utilits.formatTextWithUnderscores
 import com.pozmaxpav.cinemaopinion.utilits.simpleTransliterate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,8 @@ import javax.inject.Inject
 class SharedListsViewModel @Inject constructor(
     private val listsUseCases: ListsUseCases,
     private val moviesUseCases: MoviesUseCases,
-    private val commentsUseCases: CommentsUseCases
+    private val commentsUseCases: CommentsUseCases,
+    private val sendMoviesUseCase: SendMoviesUseCase
 ) : ViewModel() {
 
     private val _movieDownloadStatus = MutableStateFlow<LoadingState>(LoadingState.Success)
@@ -224,21 +226,15 @@ class SharedListsViewModel @Inject constructor(
         }
     }
 
-
-
-//    fun sendingToNewDirectory(
-//        dataSource: String,
-//        directionDataSource: String,
-//        movieId: Double
-//    ) {
-//        viewModelScope.launch {
-//            try {
-//                sendingToNewDirectoryUseCase(dataSource, directionDataSource, movieId)
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
-//        }
-//    }
+    fun sendMovies(sourceNode: String, listId: String) {
+        viewModelScope.launch {
+            try {
+                sendMoviesUseCase(sourceNode, listId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     public override fun onCleared() {
         commentsUseCases.observeComments.removeListener()

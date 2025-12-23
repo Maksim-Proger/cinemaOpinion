@@ -32,70 +32,6 @@ class SharedListsRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference,
     private val listenerHolder: FirebaseListenerHolder
 ) : SharedListsRepository {
-//    override suspend fun sendingToNewDirectory(dataSource: String, directionDataSource: String, movieId: Double) {
-//        try {
-//            val snapshot = databaseReference
-//                .child(dataSource)
-//                .orderByChild("id")
-//                .equalTo(movieId)
-//                .get()
-//                .await()
-//
-//            if (snapshot.exists()) {
-//                val movieSnapshot =
-//                    snapshot.children.firstOrNull() // Берём первую подходящую запись
-//                val movieKey = movieSnapshot?.key // Получаем ключ записи
-//
-//                if (movieSnapshot != null && movieKey != null) {
-//                    val movieData = movieSnapshot.value // Получаем данные записи
-//
-//                    // Копируем запись в новую папку
-//                    databaseReference
-//                        .child(directionDataSource)
-//                        .child(movieKey)
-//                        .setValue(movieData)
-//                        .await()
-//
-//                    // Удаляем запись после переноса
-//                    databaseReference
-//                        .child(dataSource)
-//                        .child(movieKey)
-//                        .removeValue()
-//                        .await()
-//
-//                    changeRecords(movieId, directionDataSource)
-//                }
-//            }
-//
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
-//    }
-//    private suspend fun changeRecords(movieId: Double, directionDataSource: String) {
-//        val snapshot = databaseReference.child(NODE_LIST_CHANGES).get().await()
-//        snapshot.children.forEach { childSnapshot ->
-//            val result = childSnapshot.getValue(DomainNotificationModel::class.java)
-//            if (result?.entityId == movieId.toInt()) {
-//                val updates = mapOf("newDataSource" to directionDataSource)
-//                databaseReference
-//                    .child(NODE_LIST_CHANGES)
-//                    .child(childSnapshot.key!!)
-//                    .updateChildren(updates).await()
-//            }
-//        }
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
 
     override suspend fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel) {
         if (listId.isEmpty()) throw IllegalArgumentException("List ID cannot be empty")
@@ -109,20 +45,17 @@ class SharedListsRepositoryImpl @Inject constructor(
             .children.firstOrNull()?.key
             ?: throw IllegalArgumentException("List with ID $listId not found")
 
-        // генерируем новый узел для фильма
         val movieRef = databaseReference
             .child(NODE_SHARED_LIST)
             .child(sharedListKey)
             .child(NODE_SHARED_LIST_MOVIES)
             .push()
 
-        // пишем в него данные
         movieRef.setValue(selectedMovie).await()
     }
     override suspend fun removeMovie(listId: String, movieId: Int) {
         if (listId.isEmpty()) throw IllegalArgumentException("List ID cannot be empty")
 
-        // Находим ключ списка
         val sharedListKey = databaseReference
             .child(NODE_SHARED_LIST)
             .orderByChild("listId")
@@ -132,7 +65,6 @@ class SharedListsRepositoryImpl @Inject constructor(
             .children.firstOrNull()?.key
             ?: throw IllegalArgumentException("List with ID $listId not found")
 
-        // Переходим в shared_list_movies
         val moviesNode = databaseReference
             .child(NODE_SHARED_LIST)
             .child(sharedListKey)
@@ -140,12 +72,10 @@ class SharedListsRepositoryImpl @Inject constructor(
             .get()
             .await()
 
-        // Ищем фильм по id
         val movieSnapshot = moviesNode.children.firstOrNull { movie ->
             movie.child("id").getValue(Int::class.java) == movieId
         } ?: throw IllegalArgumentException("Movie with ID $movieId not found")
 
-        // Удаляем конкретный фильм
         movieSnapshot.ref.removeValue().await()
     }
     override suspend fun getMovies(listId: String): List<DomainSelectedMovieModel> {
@@ -183,7 +113,6 @@ class SharedListsRepositoryImpl @Inject constructor(
             .child(sharedListKey)
             .child(NODE_SHARED_LIST_MOVIES)
 
-        // 3. Создаём слушатель
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val movies = snapshot.children.mapNotNull {
@@ -197,10 +126,8 @@ class SharedListsRepositoryImpl @Inject constructor(
             }
         }
 
-        // 4. Навешиваем
         moviesRef.addValueEventListener(listener)
 
-        // 5. Сохраняем с правильной reference
         listenerHolder.addListener(MOVIES_KEY_LISTENER, moviesRef, listener)
     }
     override suspend fun getMovieById(listId: String, movieId: Int): DomainSelectedMovieModel? {
@@ -654,6 +581,53 @@ class SharedListsRepositoryImpl @Inject constructor(
             .filter { it.isNotBlank() }
             .joinToString(", ")
     }
+
+    // TODO: Разобрать и проверить
+    override suspend fun sendingAllMoviesToNewDirectory(sourceNode: String, listId: String) {
+        try {
+            // 1. Находим ключ совместного списка по listId
+            val sharedListKey = findSharedListKeyByListId(listId)
+                ?: throw IllegalStateException("Shared list with listId=$listId not found")
+
+            // 2. Берём все фильмы из исходной ноды
+            val sourceSnapshot = databaseReference
+                .child(sourceNode)
+                .get()
+                .await()
+
+            if (!sourceSnapshot.exists()) return
+
+            val updates = mutableMapOf<String, Any?>()
+
+            sourceSnapshot.children.forEach { movieSnapshot ->
+                val movieKey = movieSnapshot.key ?: return@forEach
+                val movieData = movieSnapshot.value ?: return@forEach
+
+                // 3. Копируем в shared_list_movies
+                updates["shared_lists/$sharedListKey/shared_list_movies/$movieKey"] = movieData
+
+                // 4. Удаляем из исходной ноды
+                updates["$sourceNode/$movieKey"] = null
+            }
+
+            // 5. Атомарное обновление
+            databaseReference.updateChildren(updates).await()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    private suspend fun findSharedListKeyByListId(listId: String): String? {
+        val snapshot = databaseReference
+            .child("shared_lists")
+            .orderByChild("listId")
+            .equalTo(listId)
+            .get()
+            .await()
+
+        return snapshot.children.firstOrNull()?.key
+    }
+    // TODO: Разобрать и проверить
 
     override fun removeMoviesListener() {
         listenerHolder.removeListener(MOVIES_KEY_LISTENER)

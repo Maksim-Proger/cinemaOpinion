@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.core.utils.CoreConstants.GENERAL_TEXT_FOR_ALERT_DIALOG
+import com.example.core.utils.CoreConstants.NEW_YEAR_TEXT_FOR_ALERT_DIALOG
 import com.example.ui.presentation.components.CustomTextButton
 
 @Composable
@@ -22,12 +23,12 @@ fun PreviewAlertDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            WithoutEventButton(onDismiss)
-//            WithEventButton(onDismiss)
+//            WithoutEventButton(onDismiss)
+            WithEventButton(onDismiss)
         },
         text = {
-            WithoutEventText()
-//            WithEventText()
+//            WithoutEventText()
+            WithEventText()
         },
         containerColor = MaterialTheme.colorScheme.background
     )
@@ -92,7 +93,7 @@ private fun WithEventText() {
         Spacer(modifier = Modifier.padding(16.dp))
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = GENERAL_TEXT_FOR_ALERT_DIALOG,
+                text = NEW_YEAR_TEXT_FOR_ALERT_DIALOG,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.secondary
             )
