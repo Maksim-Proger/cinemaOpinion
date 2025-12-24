@@ -47,7 +47,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -81,8 +80,8 @@ fun DetailsCardFilm(
     val scrollState = rememberScrollState()
 
     val userData by userViewModel.userData.collectAsState()
-    val info by apiViewModel.informationMovie.collectAsState()
-    val detailedInfo by apiViewModel.detailedInformationAboutFilm.collectAsState()
+    val info by apiViewModel.movieInfo.collectAsState()
+    val detailedInfo by apiViewModel.detailedInfo.collectAsState()
     var openSharedLists by remember { mutableStateOf(false) }
 
     var triggerOnClickPersonalMovie by remember { mutableStateOf(false) }
@@ -124,7 +123,9 @@ fun DetailsCardFilm(
 
             // region Верхние кнопки
             Row(
-                modifier = Modifier.fillMaxWidth().padding(5.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -181,6 +182,7 @@ fun DetailsCardFilm(
                             )
                             Spacer(Modifier.padding(vertical = 5.dp))
                         }
+
                         is MovieData.MovieTop -> {
                             Spacer(Modifier.padding(vertical = 5.dp))
                             MetaText(
@@ -191,6 +193,7 @@ fun DetailsCardFilm(
                             )
                             Spacer(Modifier.padding(vertical = 5.dp))
                         }
+
                         is MovieData.MovieSearch -> {
                             Spacer(Modifier.padding(vertical = 5.dp))
                             MetaText(
@@ -201,6 +204,7 @@ fun DetailsCardFilm(
                             )
                             Spacer(Modifier.padding(vertical = 5.dp))
                         }
+
                         is MovieData.MovieSearch2 -> {
                             Spacer(Modifier.padding(vertical = 5.dp))
                             MetaText(
@@ -211,6 +215,7 @@ fun DetailsCardFilm(
                             )
                             Spacer(Modifier.padding(vertical = 5.dp))
                         }
+
                         null -> { // Обработка случая, когда movie == null
                             Text(
                                 text = stringResource(id = R.string.movie_is_not_uploaded),
@@ -285,7 +290,9 @@ private fun MetaText(
             Icon(
                 imageVector = Icons.Outlined.Schedule,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp).padding(end = 6.dp),
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 6.dp),
                 tint = MaterialTheme.colorScheme.secondary
             )
             Text(
@@ -304,7 +311,9 @@ private fun MetaText(
             Icon(
                 imageVector = Icons.Outlined.LocalOffer,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp).padding(end = 6.dp),
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 6.dp),
                 tint = MaterialTheme.colorScheme.secondary
             )
             Text(
@@ -317,7 +326,9 @@ private fun MetaText(
             Icon(
                 imageVector = Icons.Outlined.LocationOn,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp).padding(end = 6.dp),
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(end = 6.dp),
                 tint = MaterialTheme.colorScheme.secondary
             )
             Text(
@@ -408,9 +419,6 @@ private fun ShowRating(movie: MovieData.MovieSearch?) {
     }
 
 }
-
-
-
 
 
 //                    if (userData?.nikName == stringResource(R.string.developer_field)) {

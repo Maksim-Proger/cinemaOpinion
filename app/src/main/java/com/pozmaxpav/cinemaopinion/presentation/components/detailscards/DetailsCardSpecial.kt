@@ -69,8 +69,8 @@ fun DetailsCardSpecial(
 
     var triggerOnClickPersonalMovie by remember { mutableStateOf(false) }
 
-    val info by apiViewModel.informationMovie.collectAsState()
-    val detailedInfo by apiViewModel.detailedInformationAboutFilm.collectAsState()
+    val info by apiViewModel.movieInfo.collectAsState()
+    val detailedInfo by apiViewModel.detailedInfo.collectAsState()
     var showRatingBar by remember { mutableStateOf(false) }
     val quantitySeasonalEventPoints by userViewModel.seasonalEventPoints.collectAsState()
 

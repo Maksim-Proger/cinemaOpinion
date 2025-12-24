@@ -82,8 +82,8 @@ fun DetailsCardSelectedMovie(
     var openSharedLists by remember { mutableStateOf(false) }
 
     val userData by userViewModel.userData.collectAsState()
-    val info by apiViewModel.informationMovie.collectAsState()
-    val detailedInfo by apiViewModel.detailedInformationAboutFilm.collectAsState()
+    val info by apiViewModel.movieInfo.collectAsState()
+    val detailedInfo by apiViewModel.detailedInfo.collectAsState()
 
     LaunchedEffect(triggerOnClickPersonalMovie) {
         if (triggerOnClickPersonalMovie) {
@@ -125,17 +125,38 @@ fun DetailsCardSelectedMovie(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = onCloseButton) {
-                        Icon(
-                            modifier = Modifier.size(35.dp),
-                            imageVector = Icons.Default.ArrowBackIosNew,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
+                    Row(
+                        modifier = Modifier.wrapContentWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(25.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = onCloseButton) {
+                            Icon(
+                                modifier = Modifier.size(33.dp),
+                                imageVector = Icons.Default.ArrowBackIosNew,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .padding(horizontal = 10.dp, vertical = 6.dp)
+                        ) {
+                            Text(
+                                text = detailedInfo?.type ?: "",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
                     }
                     Row(
                         modifier = Modifier.wrapContentWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(25.dp)
+                        horizontalArrangement = Arrangement.spacedBy(25.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
                             onClick = {
@@ -143,7 +164,7 @@ fun DetailsCardSelectedMovie(
                             }
                         ) {
                             Icon(
-                                modifier = Modifier.size(35.dp),
+                                modifier = Modifier.size(37.dp),
                                 imageVector = Icons.Default.Add,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.secondary
@@ -164,6 +185,7 @@ fun DetailsCardSelectedMovie(
                         }
                     }
                 }
+                Spacer(Modifier.padding(vertical = 5.dp))
                 // endregion
                 Column(
                     modifier = Modifier

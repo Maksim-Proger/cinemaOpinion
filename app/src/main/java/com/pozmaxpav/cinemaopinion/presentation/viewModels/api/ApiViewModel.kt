@@ -38,8 +38,8 @@ class ApiViewModel @Inject constructor(
     private val getSearchMovieByIdUseCase: GetSearchMovieByIdUseCase
 ) : ViewModel() {
 
-    private val _Loading_state = MutableStateFlow<LoadingState>(LoadingState.Success)
-    val loadingState: StateFlow<LoadingState> = _Loading_state.asStateFlow()
+    private val _loadingState = MutableStateFlow<LoadingState>(LoadingState.Success)
+    val loadingState: StateFlow<LoadingState> = _loadingState.asStateFlow()
 
     private val _premiereMovies = MutableStateFlow<MovieList?>(null)
     val premiersMovies: StateFlow<MovieList?> get() = _premiereMovies.asStateFlow()
@@ -54,11 +54,11 @@ class ApiViewModel @Inject constructor(
     private val _searchMovies2 = MutableStateFlow<MovieSearchList2?>(null)
     val searchMovies2 = _searchMovies2.asStateFlow()
 
-    private val _informationMovie = MutableStateFlow<Information?>(null)
-    val informationMovie: StateFlow<Information?> get() = _informationMovie.asStateFlow()
+    private val _movieInfo = MutableStateFlow<Information?>(null)
+    val movieInfo: StateFlow<Information?> get() = _movieInfo.asStateFlow()
 
-    private val _detailedInformationAboutFilm = MutableStateFlow<MovieData.MovieSearch?>(null)
-    val detailedInformationAboutFilm = _detailedInformationAboutFilm.asStateFlow()
+    private val _detailedInfo = MutableStateFlow<MovieData.MovieSearch?>(null)
+    val detailedInfo = _detailedInfo.asStateFlow()
 
     private val _mediaNews = MutableStateFlow<NewsList?>(null)
     val mediaNews: StateFlow<NewsList?> get() = _mediaNews.asStateFlow()
@@ -67,7 +67,17 @@ class ApiViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val info = getSearchMovieByIdUseCase(id)
-                _detailedInformationAboutFilm.value = info
+                _detailedInfo.value = info
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    fun getInformationMovie(movieId: Int) {
+        viewModelScope.launch {
+            try {
+                val info = getMovieInformationUseCase(movieId)
+                _movieInfo.value = info
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -83,24 +93,14 @@ class ApiViewModel @Inject constructor(
             }
         }
     }
-    fun getInformationMovie(movieId: Int) {
-        viewModelScope.launch {
-            try {
-                val info = getMovieInformationUseCase(movieId)
-                _informationMovie.value = info
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
     fun fetchPremiersMovies(year: Int, month: String) {
         viewModelScope.launch {
-            _Loading_state.value = LoadingState.Loading
+            _loadingState.value = LoadingState.Loading
             try {
                 val movies = getPremiereMoviesUseCase(year, month)
                 _premiereMovies.value = movies
                 delay(500)
-                _Loading_state.value = LoadingState.Success
+                _loadingState.value = LoadingState.Success
                 isInitialized = true
             } catch (e: Exception) {
                 e.printStackTrace()
