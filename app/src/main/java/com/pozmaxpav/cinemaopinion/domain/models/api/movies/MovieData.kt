@@ -35,6 +35,7 @@ sealed class MovieData : UnifyingId {
 
     data class MovieSearch(
         val kinopoiskId: Int,
+        val type: String?,
         val ratingKinopoisk: Double?,
         val ratingImdb: Double?,
         val filmLength: Int?,

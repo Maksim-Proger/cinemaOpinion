@@ -8,12 +8,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -161,19 +164,34 @@ fun ScaffoldMainScreen(
                 else -> {
                     when (loadingState) {
                         is LoadingState.Loading -> AnimationImplementation(innerPadding)
+                        is LoadingState.Error -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "При загрузке произошла ошибка.",
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+                        }
                         is LoadingState.Success -> {
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(innerPadding)
                             ) {
-                                FetchSeasonalMovies(
-                                    isScrolling = state.isScrolling,
-                                    viewModel = systemMovieViewModel,
-                                    selectedMovie = { movie ->
-                                        state.selectedSeasonalMovie.value = movie
-                                    }
-                                )
+                                if (!state.searchCompleted.value) {
+                                    FetchSeasonalMovies(
+                                        isScrolling = state.isScrolling,
+                                        viewModel = systemMovieViewModel,
+                                        selectedMovie = { movie ->
+                                            state.selectedSeasonalMovie.value = movie
+                                        }
+                                    )
+                                }
+
                                 FetchMovies(
                                     state = state,
                                     apiViewModel = apiViewModel,
@@ -182,10 +200,6 @@ fun ScaffoldMainScreen(
                                     }
                                 )
                             }
-                        }
-
-                        is LoadingState.Error -> {
-                            // TODO: Дописать реализацию поведения во время ошибки
                         }
                     }
                 }

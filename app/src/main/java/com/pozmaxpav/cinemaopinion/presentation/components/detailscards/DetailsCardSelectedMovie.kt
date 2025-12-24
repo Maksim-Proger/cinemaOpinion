@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,11 +17,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.PostAdd
@@ -58,6 +58,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListsScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
@@ -69,8 +70,9 @@ fun DetailsCardSelectedMovie(
     reviews: @Composable () -> Unit = {},
     commentButton: @Composable () -> Unit = {},
     apiViewModel: ApiViewModel = hiltViewModel(),
-    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
+    personalViewModel: PersonalMovieViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
+    seriesViewModel: SeriesControlViewModel = hiltViewModel(),
     onCloseButton: () -> Unit
 ) {
     val context = LocalContext.current
@@ -80,12 +82,12 @@ fun DetailsCardSelectedMovie(
     var openSharedLists by remember { mutableStateOf(false) }
 
     val userData by userViewModel.userData.collectAsState()
-    val info by apiViewModel.informationMovie.collectAsState()
-    val detailedInfo by apiViewModel.detailedInformationAboutFilm.collectAsState()
+    val info by apiViewModel.movieInfo.collectAsState()
+    val detailedInfo by apiViewModel.detailedInfo.collectAsState()
 
     LaunchedEffect(triggerOnClickPersonalMovie) {
         if (triggerOnClickPersonalMovie) {
-            personalMovieViewModel.toastMessage.collect { resId ->
+            personalViewModel.toastMessage.collect { resId ->
                 showToast(context = context, messageId = resId)
                 onCloseButton()
             }
@@ -98,124 +100,166 @@ fun DetailsCardSelectedMovie(
         apiViewModel.getSearchMovieById(movie.id)
     }
 
-    Column(
-        modifier = Modifier
-            .wrapContentSize()
-            .padding(WindowInsets.statusBars.asPaddingValues())
-    ) {
-        Card(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
+                .fillMaxSize()
+                .padding(WindowInsets.statusBars.asPaddingValues())
         ) {
-            // region Верхние кнопки
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onCloseButton) {
-                    Icon(
-                        modifier = Modifier.size(35.dp),
-                        imageVector = Icons.Default.ArrowBackIosNew,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                IconButton(
-                    onClick = {
-                        personalMovieViewModel.addMovie(userId, selectedMovie = movie)
-                        triggerOnClickPersonalMovie = true
-                    }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(35.dp),
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-            // endregion
-            Column(
+            Card(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(horizontal = 15.dp)
-                    .verticalScroll(scrollState)
+                    .padding(horizontal = 20.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
             ) {
-                DetailCardPoster(movie, detailedInfo)
+                // region Верхние кнопки
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        modifier = Modifier.wrapContentWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(25.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = onCloseButton) {
+                            Icon(
+                                modifier = Modifier.size(33.dp),
+                                imageVector = Icons.Default.ArrowBackIosNew,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .padding(horizontal = 10.dp, vertical = 6.dp)
+                        ) {
+                            Text(
+                                text = detailedInfo?.type ?: "",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier.wrapContentWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(25.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = {
+                                seriesViewModel.addNewEntry(userId, movie.nameFilm)
+                            }
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(37.dp),
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                personalViewModel.addMovie(userId, selectedMovie = movie)
+                                triggerOnClickPersonalMovie = true
+                            }
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(35.dp),
+                                imageVector = Icons.Default.FavoriteBorder,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
+                    }
+                }
+                Spacer(Modifier.padding(vertical = 5.dp))
+                // endregion
+                Column(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp)
+                        .verticalScroll(scrollState)
+                ) {
+                    DetailCardPoster(movie, detailedInfo)
 
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Spacer(Modifier.padding(15.dp))
-                    Text(
-                        text = movie.nameFilm,
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                    Spacer(Modifier.padding(vertical = 5.dp))
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        ExpandedCard(
-                            title = stringResource(R.string.text_for_expandedCard_field),
-                            description = info?.description
-                                ?: stringResource(R.string.limit_is_over)
+                        Spacer(Modifier.padding(15.dp))
+                        Text(
+                            text = movie.nameFilm,
+                            style = MaterialTheme.typography.displayLarge,
+                            color = MaterialTheme.colorScheme.secondary
                         )
-                        Spacer(Modifier.padding(5.dp))
-                        CustomTextButton(
-                            textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
-                            imageVector = Icons.Outlined.PostAdd,
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            modifier = Modifier.fillMaxWidth(),
-                            onClickButton = { openSharedLists = true }
-                        )
-                        Spacer(Modifier.padding(5.dp))
-                        commentButton()
-                        Spacer(Modifier.padding(5.dp))
-                        reviews()
-                        Spacer(Modifier.padding(10.dp))
+                        Spacer(Modifier.padding(vertical = 5.dp))
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            ExpandedCard(
+                                title = stringResource(R.string.text_for_expandedCard_field),
+                                description = info?.description
+                                    ?: stringResource(R.string.limit_is_over)
+                            )
+                            Spacer(Modifier.padding(5.dp))
+                            CustomTextButton(
+                                textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
+                                imageVector = Icons.Outlined.PostAdd,
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary,
+                                modifier = Modifier.fillMaxWidth(),
+                                onClickButton = { openSharedLists = true }
+                            )
+                            Spacer(Modifier.padding(5.dp))
+                            commentButton()
+                            Spacer(Modifier.padding(5.dp))
+                            reviews()
+                            Spacer(Modifier.padding(10.dp))
+                        }
                     }
                 }
             }
         }
-    }
-    if (openSharedLists) {
-        Box(
-            modifier = Modifier
-                .fillMaxHeight(0.9f)
-                .background(
-                    color = Color.Black.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .clickable { openSharedLists = false }
-        ) {
-            Column(
+        if (openSharedLists) {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                userData?.let { user ->
-                    SharedListsScreen(
-                        userId = userId,
-                        userName = user.nikName,
-                        navController = navController,
-                        addButton = true,
-                        selectedMovie = movie,
-                        onCloseSharedLists = {
-                            openSharedLists = false
-                            onCloseButton()
-                        }
+                    .background(
+                        color = Color.Black.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(12.dp)
                     )
+                    .clickable { openSharedLists = false },
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(26.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    userData?.let { user ->
+                        SharedListsScreen(
+                            userId = userId,
+                            userName = user.nikName,
+                            navController = navController,
+                            addButton = true,
+                            selectedMovie = movie,
+                            onCloseSharedLists = {
+                                openSharedLists = false
+                                onCloseButton()
+                            }
+                        )
+                    }
                 }
             }
         }

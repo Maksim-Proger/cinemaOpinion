@@ -72,6 +72,7 @@ fun ApiMovieTopList.toDomain(): MovieTopList {
 fun ApiMovieSearch.toDomain(): MovieData.MovieSearch {
     return MovieData.MovieSearch(
         kinopoiskId = kinopoiskId,
+        type = type,
         nameRu = nameRu,
         posterUrl = posterUrl,
         year = year,
