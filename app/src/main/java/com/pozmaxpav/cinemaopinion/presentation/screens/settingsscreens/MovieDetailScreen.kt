@@ -48,7 +48,9 @@ import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsC
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
+import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilits.showToast
 
 @Composable
@@ -142,7 +144,9 @@ fun MovieDetailScreen(
                             onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
                         )
                     },
-                    onCloseButton = {}
+                    onCloseButton = {
+                        navigateFunction(navController, Route.MainScreen.route)
+                    }
                 )
             }
         } else {

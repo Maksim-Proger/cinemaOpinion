@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -158,6 +159,7 @@ fun DetailsCardSelectedMovie(
                         horizontalArrangement = Arrangement.spacedBy(25.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+
                         IconButton(
                             onClick = {
                                 seriesViewModel.addNewEntry(userId, movie.nameFilm)
@@ -170,6 +172,7 @@ fun DetailsCardSelectedMovie(
                                 tint = MaterialTheme.colorScheme.secondary
                             )
                         }
+
                         IconButton(
                             onClick = {
                                 personalViewModel.addMovie(userId, selectedMovie = movie)
@@ -183,10 +186,12 @@ fun DetailsCardSelectedMovie(
                                 tint = MaterialTheme.colorScheme.secondary
                             )
                         }
+
                     }
                 }
                 Spacer(Modifier.padding(vertical = 5.dp))
                 // endregion
+                
                 Column(
                     modifier = Modifier
                         .wrapContentHeight()
@@ -278,6 +283,7 @@ private fun decoderTypeMovie(type: String?): String {
             else -> "Тип не указан"
         }
     }
+    return ""
 }
 
 @Composable
