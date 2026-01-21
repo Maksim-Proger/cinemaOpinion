@@ -147,7 +147,7 @@ fun DetailsCardSelectedMovie(
                                 .padding(horizontal = 10.dp, vertical = 6.dp)
                         ) {
                             Text(
-                                text = detailedInfo?.type ?: "",
+                                text = decoderTypeMovie(detailedInfo?.type),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSecondary
                             )
@@ -262,6 +262,20 @@ fun DetailsCardSelectedMovie(
                     }
                 }
             }
+        }
+    }
+}
+
+// TODO: Доработать
+private fun decoderTypeMovie(type: String?): String {
+    type?.let {
+        return when {
+            it.contains("FILM") -> "Фильм"
+            it.contains("TV_SHOW") -> "Передача"
+            it.contains("TV_SERIES") -> "Сериал"
+            it.contains("MINI_SERIES") -> "Сериал"
+            it.contains("ALL") -> ""
+            else -> "Тип не указан"
         }
     }
 }
