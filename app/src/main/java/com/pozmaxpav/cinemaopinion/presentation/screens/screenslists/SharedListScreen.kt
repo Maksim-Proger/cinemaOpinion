@@ -62,10 +62,10 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.Notification
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
-import com.pozmaxpav.cinemaopinion.utilits.AddComment
-import com.pozmaxpav.cinemaopinion.utilits.ChangeComment
-import com.pozmaxpav.cinemaopinion.utilits.ShowCommentList
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilities.AddComment
+import com.pozmaxpav.cinemaopinion.utilities.ChangeComment
+import com.pozmaxpav.cinemaopinion.utilities.ShowCommentList
+import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

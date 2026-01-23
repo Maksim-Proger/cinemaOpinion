@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
-import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
+import com.pozmaxpav.cinemaopinion.utilities.WorkerWithImage
 
 @Composable
 fun SelectedMovieItem(

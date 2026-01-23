@@ -12,8 +12,8 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlist.comments.C
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlist.lists.ListsUseCases
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlist.movies.MoviesUseCases
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.sharedlist.system.SendMoviesUseCase
-import com.pozmaxpav.cinemaopinion.utilits.formatTextWithUnderscores
-import com.pozmaxpav.cinemaopinion.utilits.simpleTransliterate
+import com.pozmaxpav.cinemaopinion.utilities.formatTextWithUnderscores
+import com.pozmaxpav.cinemaopinion.utilities.simpleTransliterate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow

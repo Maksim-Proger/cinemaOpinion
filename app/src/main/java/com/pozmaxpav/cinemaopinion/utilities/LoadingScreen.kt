@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.utilits
+package com.pozmaxpav.cinemaopinion.utilities
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

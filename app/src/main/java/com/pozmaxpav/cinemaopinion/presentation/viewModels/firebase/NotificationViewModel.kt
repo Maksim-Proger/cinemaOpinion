@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.NotificationUseCases
-import com.pozmaxpav.cinemaopinion.utilits.deletingOldRecords
+import com.pozmaxpav.cinemaopinion.utilities.deletingOldRecords
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

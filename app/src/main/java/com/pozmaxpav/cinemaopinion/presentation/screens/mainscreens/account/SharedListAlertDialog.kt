@@ -24,7 +24,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.utilits.showToast
+import com.pozmaxpav.cinemaopinion.utilities.showToast
 
 @Composable
 fun SharedListAlertDialog(

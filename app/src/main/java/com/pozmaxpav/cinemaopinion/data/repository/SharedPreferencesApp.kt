@@ -9,6 +9,18 @@ object SharedPreferencesApp {
     private const val RESULT_CHECKING_APP_VERSION = "result_checking"
     private const val USER_ID = "user_id"
     private const val REGISTRATION_FLAG = "registration_flag"
+    private const val PUSH_TOKEN = "push_token"
+
+    fun savePushToken(context: Context, pushToken: String) {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        sharedPreferences.edit {
+            putString(PUSH_TOKEN, pushToken)
+        }
+    }
+    fun getPushToken(context: Context): String? {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(PUSH_TOKEN, null)
+    }
 
     fun saveRegistrationFlag(context: Context, registrationFlag: Boolean) {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)

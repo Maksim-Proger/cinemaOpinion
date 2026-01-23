@@ -47,8 +47,8 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsModel
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.utilits.formatDate
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilities.formatDate
+import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 

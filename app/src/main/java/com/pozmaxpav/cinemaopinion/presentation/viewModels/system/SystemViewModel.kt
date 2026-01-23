@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.ClearUserDataUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetAppVersionUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetPushTokenUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetRegistrationFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetResultCheckingUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetUserIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveAppVersionUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.SavePushTokenUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveRegistrationFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveResultCheckingUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveUserIdUseCase
@@ -27,7 +29,9 @@ class SystemViewModel @Inject constructor(
     private val getUserIdUseCase: GetUserIdUseCase,
     private val saveRegistrationFlagUseCase: SaveRegistrationFlagUseCase,
     private val getRegistrationFlagUseCase: GetRegistrationFlagUseCase,
-    private val clearUserDataUseCase: ClearUserDataUseCase
+    private val clearUserDataUseCase: ClearUserDataUseCase,
+    private val savePushTokenUseCase: SavePushTokenUseCase,
+    private val getPushTokenUseCase: GetPushTokenUseCase
 ) : ViewModel() {
 
     private val _versionApp = MutableStateFlow("Unknown")
@@ -41,6 +45,9 @@ class SystemViewModel @Inject constructor(
 
     private val _registrationFlag = MutableStateFlow(false)
     val registrationFlag = _registrationFlag.asStateFlow()
+
+    private val _pushToken = MutableStateFlow("Unknown")
+    val pushToken = _pushToken.asStateFlow()
 
     init {
         getRegistrationFlag()
@@ -59,6 +66,26 @@ class SystemViewModel @Inject constructor(
             _registrationFlag.value = runCatching {
                 getRegistrationFlagUseCase()
             }.getOrDefault(false)
+        }
+    }
+
+    fun savePushToken(pushToken: String) {
+        viewModelScope.launch {
+            try {
+                savePushTokenUseCase(pushToken)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun getPushToken() {
+        viewModelScope.launch {
+            try {
+                _pushToken.value = getPushTokenUseCase() ?: "Unknown"
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

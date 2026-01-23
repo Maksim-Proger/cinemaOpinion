@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,7 +24,6 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_MOVIES
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_SERIALS
 import com.pozmaxpav.cinemaopinion.R
 import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
@@ -31,8 +31,8 @@ import com.example.ui.presentation.components.SettingsRadioButtons
 import com.example.ui.presentation.viewmodels.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunctionClearAllScreens
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
+import com.pozmaxpav.cinemaopinion.utilities.navigateFunctionClearAllScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +40,7 @@ fun SettingsScreen(
     userName: String,
     themeViewModel: ThemeViewModel,
     navController: NavHostController,
+    systemViewModel: SystemViewModel = hiltViewModel(),
     viewModel: SharedListsViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -49,6 +50,11 @@ fun SettingsScreen(
     val optionsList = myStringArray.toList()
 
     val indexSelectedTheme by themeViewModel.indexSelectedTheme.collectAsState()
+    val token = systemViewModel.pushToken.collectAsState()
+
+    LaunchedEffect(Unit) {
+        systemViewModel.getPushToken()
+    }
 
     Scaffold(
         topBar = {
@@ -101,6 +107,10 @@ fun SettingsScreen(
                         }
                     }
                 }
+                Text(
+                    text = token.toString()
+                )
+
             }
 
             if (userName == "Разработчик") {
