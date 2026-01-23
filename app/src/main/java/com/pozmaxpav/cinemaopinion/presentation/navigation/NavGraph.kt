@@ -24,7 +24,7 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.MovieDet
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SettingsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.WebViewScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 
 @Composable
 fun NavGraph(

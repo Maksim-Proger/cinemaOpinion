@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.utilits
+package com.pozmaxpav.cinemaopinion.utilities
 
 import android.content.Context
 import androidx.compose.runtime.Composable

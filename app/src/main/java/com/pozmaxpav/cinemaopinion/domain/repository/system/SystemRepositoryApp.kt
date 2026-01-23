@@ -1,7 +1,12 @@
 package com.pozmaxpav.cinemaopinion.domain.repository.system
 
+import android.content.Context
+
 interface SystemRepositoryApp {
     fun clearUserData()
+
+    fun savePushToken(pushToken: String)
+    fun getPushToken(): String?
 
     fun saveUserId(userId: String)
     fun getUserId(): String?

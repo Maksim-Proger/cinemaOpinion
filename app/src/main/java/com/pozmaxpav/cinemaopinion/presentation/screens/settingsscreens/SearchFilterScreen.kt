@@ -56,7 +56,7 @@ import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.components.CustomBoxShowOverlay
 import com.example.ui.presentation.components.text.CustomTextField
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
-import com.pozmaxpav.cinemaopinion.utilits.parsYearsToString
+import com.pozmaxpav.cinemaopinion.utilities.parsYearsToString
 import kotlin.math.ceil
 
 @OptIn(ExperimentalMaterial3Api::class)

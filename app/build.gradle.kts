@@ -71,6 +71,9 @@ dependencies {
     implementation(project(":ui"))
     implementation(project(":core"))
 
+    // RuStore Push SDK
+    implementation("ru.rustore.sdk:pushclient:6.0.0")
+
     // WebView
     implementation(libs.webkit)
 

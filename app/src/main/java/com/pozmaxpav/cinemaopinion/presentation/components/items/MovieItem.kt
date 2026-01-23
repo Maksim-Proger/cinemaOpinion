@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -24,10 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
-import com.pozmaxpav.cinemaopinion.utilits.WorkerWithImage
-import com.pozmaxpav.cinemaopinion.utilits.formatCountries
-import com.pozmaxpav.cinemaopinion.utilits.formatDate2
-import com.pozmaxpav.cinemaopinion.utilits.formatGenres
+import com.pozmaxpav.cinemaopinion.utilities.WorkerWithImage
+import com.pozmaxpav.cinemaopinion.utilities.formatCountries
+import com.pozmaxpav.cinemaopinion.utilities.formatDate2
+import com.pozmaxpav.cinemaopinion.utilities.formatGenres
 
 @Composable
 fun MovieItem(

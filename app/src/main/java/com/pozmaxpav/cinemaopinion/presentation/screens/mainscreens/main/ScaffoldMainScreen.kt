@@ -37,9 +37,9 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.seasonal.Fet
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SystemMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
-import com.pozmaxpav.cinemaopinion.utilits.SendRequestAdvancedSearch
-import com.pozmaxpav.cinemaopinion.utilits.SendSelectedDate
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilities.SendRequestAdvancedSearch
+import com.pozmaxpav.cinemaopinion.utilities.SendSelectedDate
+import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

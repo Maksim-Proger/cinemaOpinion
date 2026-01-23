@@ -14,7 +14,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,9 +25,8 @@ import com.example.ui.presentation.components.dropmenu.SettingsMenu
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunction
-import com.pozmaxpav.cinemaopinion.utilits.navigateFunctionClearAllScreens
-import kotlinx.coroutines.launch
+import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilities.navigateFunctionClearAllScreens
 
 @Composable
 fun AccountSettingMenu(

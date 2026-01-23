@@ -59,11 +59,11 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedLists
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.utilits.formatCountries
-import com.pozmaxpav.cinemaopinion.utilits.formatDate2
-import com.pozmaxpav.cinemaopinion.utilits.formatGenres
-import com.pozmaxpav.cinemaopinion.utilits.showToast
-import com.pozmaxpav.cinemaopinion.utilits.toSelectedMovie
+import com.pozmaxpav.cinemaopinion.utilities.formatCountries
+import com.pozmaxpav.cinemaopinion.utilities.formatDate2
+import com.pozmaxpav.cinemaopinion.utilities.formatGenres
+import com.pozmaxpav.cinemaopinion.utilities.showToast
+import com.pozmaxpav.cinemaopinion.utilities.toSelectedMovie
 
 @Composable
 fun DetailsCardFilm(

@@ -8,8 +8,17 @@ import javax.inject.Inject
 class SystemRepositoryAppImpl @Inject constructor(
     private val context: Context
 ) : SystemRepositoryApp {
+
     override fun clearUserData() {
         SharedPreferencesApp.clearUserData(context)
+    }
+
+    override fun savePushToken(pushToken: String) {
+        SharedPreferencesApp.savePushToken(context, pushToken)
+    }
+
+    override fun getPushToken(): String? {
+        return SharedPreferencesApp.getPushToken(context)
     }
 
     override fun saveUserId(userId: String) {
@@ -43,4 +52,5 @@ class SystemRepositoryAppImpl @Inject constructor(
     override fun getResultChecking(): Boolean {
         return SharedPreferencesApp.getResultChecking(context)
     }
+
 }
