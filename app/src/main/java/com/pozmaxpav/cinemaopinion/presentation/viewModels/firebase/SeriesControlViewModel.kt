@@ -39,8 +39,12 @@ class SeriesControlViewModel @Inject constructor(
     }
     fun observeListEntries(userId: String) {
         viewModelScope.launch {
-            observeListEntriesUseCase(userId) { onEntriesUpdated ->
-                _listMovies.value = onEntriesUpdated
+            try {
+                observeListEntriesUseCase(userId) { onEntriesUpdated ->
+                    _listMovies.value = onEntriesUpdated
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
