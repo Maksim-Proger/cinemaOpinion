@@ -101,7 +101,6 @@ class SeriesControlRepositoryImpl @Inject constructor(
         listenerHolder.addListener(ENTRIES_KEY_LISTENER, entriesRef, listener)
     }
 
-
     override suspend fun addNewEntry(userId: String, entry: DomainSeriesControlModel) {
         if (userId.isNotEmpty()) {
             val userSnapshot = databaseReference

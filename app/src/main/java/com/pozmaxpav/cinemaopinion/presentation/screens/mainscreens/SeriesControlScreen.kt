@@ -84,8 +84,10 @@ fun SeriesControlScreen(
         systemViewModel.getUserId()
     }
     LaunchedEffect(userId) {
-        seriesControlViewModel.getListEntries(userId)
-        seriesControlViewModel.observeListEntries(userId)
+        if (userId.isNotBlank() && userId != "Unknown") {
+            seriesControlViewModel.getListEntries(userId)
+            seriesControlViewModel.observeListEntries(userId)
+        }
     }
 
     if (openBottomSheetAdd) {
