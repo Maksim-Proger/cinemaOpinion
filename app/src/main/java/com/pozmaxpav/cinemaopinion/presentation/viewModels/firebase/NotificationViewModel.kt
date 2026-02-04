@@ -27,19 +27,8 @@ class NotificationViewModel @Inject constructor(
 ) : ViewModel() {
 
     // region Push
-    private val _token = MutableStateFlow("")
     private val _statusReg = MutableStateFlow(false)
     val statusReg = _statusReg.asStateFlow()
-
-    fun saveStatus(status: Boolean) {
-        viewModelScope.launch {
-            try {
-                saveDeviceRegistrationStatusUseCase(status)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 
     fun getStatus() {
         viewModelScope.launch {
@@ -50,23 +39,22 @@ class NotificationViewModel @Inject constructor(
             }
         }
     }
-
-    fun getPushToken() {
-        viewModelScope.launch {
-            try {
-                _token.value = getPushTokenUseCase() ?: ""
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
     fun registerDevice(userId: String, deviceId: String) {
-        getPushToken()
-        val currentToken = _token.value
-
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                createdListener.onDataDeviceCreated(userId, currentToken, deviceId)
+                // 1. Сначала дожидаемся получения токена (вызываем UseCase напрямую)
+                val token = getPushTokenUseCase()
+                if (!token.isNullOrBlank()) {
+                    // 2. Отправляем на бэкенд
+                    createdListener.onDataDeviceCreated(userId, token, deviceId)
+
+                    // 3. ТОЛЬКО ЕСЛИ ОТПРАВКА ПРОШЛА УСПЕШНО — сохраняем статус
+                    // Вызываем метод репозитория напрямую или через другой метод
+                    saveDeviceRegistrationStatusUseCase(true)
+
+                    // Обновляем StateFlow для UI
+                    _statusReg.value = true
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -74,7 +62,6 @@ class NotificationViewModel @Inject constructor(
     }
 
     // endregion
-
 
     private val _notifications = MutableStateFlow<List<DomainNotificationModel>>(emptyList())
     val notifications = _notifications.asStateFlow()
