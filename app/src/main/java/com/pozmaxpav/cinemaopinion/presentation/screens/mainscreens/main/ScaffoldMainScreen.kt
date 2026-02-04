@@ -68,15 +68,13 @@ fun ScaffoldMainScreen(
 
     val context = LocalContext.current
     val notViewModel: NotificationViewModel = hiltViewModel()
+    val status by notViewModel.statusReg.collectAsState()
     val deviceId = remember { Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) }
 
-    LaunchedEffect(userId) {
-        if (userId != "Unknown") {
+    LaunchedEffect(userId, status) {
+        if (userId != "Unknown" && !status) {
             // Отправляем pushToken и deviceId в модуль backend для дальнейшей отправки на сервер
             notViewModel.registerDevice(userId, deviceId)
-
-            // Сохраняем статус регистрации устройства
-            notViewModel.saveStatus(true)
         }
     }
 
@@ -85,6 +83,7 @@ fun ScaffoldMainScreen(
 
     LaunchedEffect(Unit) {
         systemViewModel.getUserId()
+        notViewModel.getStatus()
     }
     LaunchedEffect(state.scrollToTop.value) {
         if (state.scrollToTop.value) {
