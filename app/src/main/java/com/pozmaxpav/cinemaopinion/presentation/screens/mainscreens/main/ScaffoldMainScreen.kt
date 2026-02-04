@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
+import android.provider.Settings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -35,11 +38,16 @@ import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.seasonal.FetchSeasonalMovies
 //import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.seasonal.FetchSeasonalMovies
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SystemMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilities.SendRequestAdvancedSearch
 import com.pozmaxpav.cinemaopinion.utilities.SendSelectedDate
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceDataCreatedListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +63,25 @@ fun ScaffoldMainScreen(
     val userId by systemViewModel.userId.collectAsState()
     val loadingState by apiViewModel.loadingState.collectAsState()
     val showDialogEvents by systemViewModel.resultChecking.collectAsState()
+
+    // region Test
+
+    val context = LocalContext.current
+    val notViewModel: NotificationViewModel = hiltViewModel()
+    val deviceId = remember { Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) }
+
+    LaunchedEffect(userId) {
+        if (userId != "Unknown") {
+            // Отправляем pushToken и deviceId в модуль backend для дальнейшей отправки на сервер
+            notViewModel.registerDevice(userId, deviceId)
+
+            // Сохраняем статус регистрации устройства
+            notViewModel.saveStatus(true)
+        }
+    }
+
+    // endregion
+
 
     LaunchedEffect(Unit) {
         systemViewModel.getUserId()

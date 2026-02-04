@@ -130,6 +130,7 @@ fun SharedListsScreen(
                                                 selectedMovie = movie
                                             )
                                             notificationViewModel.createNotification(
+                                                userId = userId,
                                                 context = context,
                                                 entityId = movie.id,
                                                 sharedListId = item.listId,

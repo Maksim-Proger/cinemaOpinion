@@ -45,6 +45,7 @@ import com.pozmaxpav.cinemaopinion.utilities.ShowCommentList
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilities.showToast
 
@@ -54,6 +55,7 @@ fun MovieDetailScreen(
     listId: String,
     movieId: Int,
     userName: String,
+    systemViewModel: SystemViewModel,
     viewModel: SharedListsViewModel = hiltViewModel(),
     notificationViewModel: NotificationViewModel = hiltViewModel(),
 ) {
@@ -64,6 +66,7 @@ fun MovieDetailScreen(
     var openBottomSheetReviews by remember { mutableStateOf(false) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
 
+    val userId by systemViewModel.userId.collectAsState()
     val movie by viewModel.movie.collectAsState()
     val listName by viewModel.listName.collectAsState()
 
@@ -98,6 +101,7 @@ fun MovieDetailScreen(
             onCloseRequest = { openBottomSheetComments = false }
         ) { onClose ->
             AddComment(
+                userId = userId,
                 movie = movie,
                 viewModel = viewModel,
                 notificationViewModel = notificationViewModel,
@@ -171,6 +175,7 @@ private fun elementDirectory(newDataSource: String): String {
 
 @Composable
 private fun AddComment(
+    userId: String,
     movie: DomainSelectedMovieModel?,
     viewModel: SharedListsViewModel,
     notificationViewModel: NotificationViewModel,
@@ -236,6 +241,7 @@ private fun AddComment(
 
                     movie?.let {
                         notificationViewModel.createNotification(
+                            userId = userId,
                             context = context,
                             entityId = movieId,
                             sharedListId = listId,

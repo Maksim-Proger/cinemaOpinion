@@ -58,6 +58,7 @@ fun SharedListAlertDialog(
         sharedListsViewModel.successfulResult.collect { (sharedId, listTitle) ->
             userData?.let { user ->
                 notificationViewModel.createNotification(
+                    userId = userId,
                     context = context,
                     sharedListId = sharedId,
                     username = user.nikName,

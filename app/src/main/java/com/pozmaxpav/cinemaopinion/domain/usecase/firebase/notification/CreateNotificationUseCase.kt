@@ -7,7 +7,7 @@ import javax.inject.Inject
 class CreateNotificationUseCase @Inject constructor(
     private val repository: NotificationRepository
 ) {
-    suspend operator fun invoke(domainNotificationModel: DomainNotificationModel) {
-        repository.createNotification(domainNotificationModel)
+    suspend operator fun invoke(userId: String, domainNotificationModel: DomainNotificationModel) {
+        repository.createNotification(userId, domainNotificationModel)
     }
 }

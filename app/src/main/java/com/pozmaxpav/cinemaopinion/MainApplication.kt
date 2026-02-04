@@ -14,7 +14,6 @@ class MainApplication: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // Создаем канал уведомлений (Android 8+)
         createNotificationChannel()
 
         // Инициализация RuStore Push SDK
@@ -36,7 +35,6 @@ class MainApplication: Application() {
     }
 
     private fun createNotificationChannel() {
-        // ID и имя канала
         val channelId = "default_push_channel"
         val channelName = "Push Notifications"
 

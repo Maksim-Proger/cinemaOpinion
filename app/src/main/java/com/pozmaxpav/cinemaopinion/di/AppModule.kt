@@ -1,14 +1,16 @@
 package com.pozmaxpav.cinemaopinion.di
 
 import android.content.Context
+import com.example.backend.BackendNotifyChangeCreatedUseCase
+import com.example.backend.BackendRegisterDeviceUseCase
 import com.example.core.utils.FirebaseListenerHolder
 import com.google.firebase.database.DatabaseReference
 import com.pozmaxpav.cinemaopinion.data.api.MovieApi
 import com.pozmaxpav.cinemaopinion.data.api.MovieInformationApi
 import com.pozmaxpav.cinemaopinion.data.repository.api.GetMovieInformationApiRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.api.MovieRepositoryApiImpl
-import com.pozmaxpav.cinemaopinion.data.repository.firebase.PersonalMovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.NotificationRepositoryImpl
+import com.pozmaxpav.cinemaopinion.data.repository.firebase.PersonalMovieRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SeriesControlRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SharedListsRepositoryImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SystemMovieRepoImpl
@@ -16,13 +18,17 @@ import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepoImpl
 import com.pozmaxpav.cinemaopinion.data.repository.system.SystemRepositoryAppImpl
 import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
-import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.NotificationRepository
+import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SeriesControlRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SharedListsRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SystemMovieRepo
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepo
 import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemRepositoryApp
+import com.pozmaxpav.cinemaopinion.utilities.notification.BackendDeviceDataCreatedListener
+import com.pozmaxpav.cinemaopinion.utilities.notification.BackendNotificationCreatedListener
+import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceDataCreatedListener
+import com.pozmaxpav.cinemaopinion.utilities.notification.NotificationCreatedListener
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -113,12 +119,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNotificationRepo(databaseReference: DatabaseReference): NotificationRepository {
-        return NotificationRepositoryImpl(databaseReference)
-    }
-
-    @Provides
-    @Singleton
     fun provideSharedListsRepo(databaseReference: DatabaseReference, listenerHolder: FirebaseListenerHolder): SharedListsRepository {
         return SharedListsRepositoryImpl(databaseReference, listenerHolder)
     }
@@ -129,6 +129,45 @@ object AppModule {
         return UserRepoImpl(databaseReference)
     }
 
+    @Provides
+    @Singleton
+    fun provideNotificationRepo(
+        databaseReference: DatabaseReference,
+        notificationCreatedListener: NotificationCreatedListener
+    ): NotificationRepository {
+        return NotificationRepositoryImpl(
+            databaseReference = databaseReference,
+            createdListener = notificationCreatedListener
+        )
+    }
+
+    // endregion
+
+    // region Backend
+    @Provides
+    @Singleton
+    fun provideNotifyChangeCreatedUseCase(): BackendNotifyChangeCreatedUseCase {
+        return BackendNotifyChangeCreatedUseCase()
+    }
+    @Provides
+    @Singleton
+    fun provideNotificationCreatedListener(
+        backendNotifyChangeCreatedUseCase: BackendNotifyChangeCreatedUseCase
+    ): NotificationCreatedListener {
+        return BackendNotificationCreatedListener(backendNotifyChangeCreatedUseCase)
+    }
+    @Provides
+    @Singleton
+    fun provideBackendRegisterDeviceUseCase(): BackendRegisterDeviceUseCase {
+        return BackendRegisterDeviceUseCase()
+    }
+    @Provides
+    @Singleton
+    fun provideDeviceDataCreatedListener(
+        backendRegisterDeviceUseCase: BackendRegisterDeviceUseCase
+    ) : DeviceDataCreatedListener {
+        return BackendDeviceDataCreatedListener(backendRegisterDeviceUseCase)
+    }
     // endregion
 
     // region System
@@ -140,5 +179,4 @@ object AppModule {
     }
 
     // endregion
-
 }

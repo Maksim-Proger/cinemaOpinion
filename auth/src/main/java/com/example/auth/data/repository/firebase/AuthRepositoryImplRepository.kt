@@ -1,8 +1,7 @@
 package com.example.auth.data.repository.firebase
 
-import android.util.Log
-import com.example.core.domain.DomainUserModel
 import com.example.auth.domain.repository.AuthRepository
+import com.example.core.domain.DomainUserModel
 import com.example.core.utils.CoreDatabaseConstants
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.tasks.await
@@ -15,7 +14,11 @@ class AuthRepositoryImplRepository @Inject constructor(
     override suspend fun addUser(domainUserModel: DomainUserModel) {
         val userId = domainUserModel.id
         if (userId.isNotEmpty())
-            databaseReference.child(CoreDatabaseConstants.NODE_LIST_USERS).child(userId).setValue(domainUserModel).await()
+            databaseReference
+                .child(CoreDatabaseConstants.NODE_LIST_USERS)
+                .child(userId)
+                .setValue(domainUserModel)
+                .await()
         else throw Exception("User ID is missing")
     }
 
