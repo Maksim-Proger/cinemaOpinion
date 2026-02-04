@@ -70,6 +70,7 @@ dependencies {
     implementation(project(":intro"))
     implementation(project(":ui"))
     implementation(project(":core"))
+    implementation(project(":backend"))
 
     // RuStore Push SDK
     implementation("ru.rustore.sdk:pushclient:6.0.0")

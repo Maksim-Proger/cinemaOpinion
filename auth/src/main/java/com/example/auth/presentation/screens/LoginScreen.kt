@@ -70,7 +70,6 @@ fun LoginScreen(
                     onLoginSuccess(user.id, true)
                 }
             }
-
             authViewModel.resetAuthResult()
         }
     }

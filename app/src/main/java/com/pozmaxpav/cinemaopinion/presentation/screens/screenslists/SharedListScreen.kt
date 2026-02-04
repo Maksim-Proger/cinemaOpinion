@@ -230,6 +230,7 @@ fun ListSharedScreen(
                                 if (!isVisible) {
                                     sharedListsViewModel.removeMovie(listId, movie.id)
                                     notificationViewModel.createNotification(
+                                        userId = userId,
                                         context = context,
                                         entityId = movie.id,
                                         username = userName,

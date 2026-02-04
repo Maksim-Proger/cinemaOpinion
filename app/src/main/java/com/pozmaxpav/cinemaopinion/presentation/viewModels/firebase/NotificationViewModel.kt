@@ -5,8 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.NotificationUseCases
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetDeviceRegistrationStatusUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetPushTokenUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveDeviceRegistrationStatusUseCase
 import com.pozmaxpav.cinemaopinion.utilities.deletingOldRecords
+import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceDataCreatedListener
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -14,13 +19,79 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotificationViewModel @Inject constructor(
-    private val notificationUseCases: NotificationUseCases
+    private val notificationUseCases: NotificationUseCases,
+    private val getPushTokenUseCase: GetPushTokenUseCase,
+    private val createdListener: DeviceDataCreatedListener,
+    private val saveDeviceRegistrationStatusUseCase: SaveDeviceRegistrationStatusUseCase,
+    private val getDeviceRegistrationStatusUseCase: GetDeviceRegistrationStatusUseCase
 ) : ViewModel() {
+
+    // region Push
+    private val _token = MutableStateFlow("")
+    private val _statusReg = MutableStateFlow(false)
+    val statusReg = _statusReg.asStateFlow()
+
+    fun saveStatus(status: Boolean) {
+        viewModelScope.launch {
+            try {
+                saveDeviceRegistrationStatusUseCase(status)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun getStatus() {
+        viewModelScope.launch {
+            try {
+                _statusReg.value = getDeviceRegistrationStatusUseCase()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun getPushToken() {
+        viewModelScope.launch {
+            try {
+                _token.value = getPushTokenUseCase() ?: ""
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    fun registerDevice(userId: String, deviceId: String) {
+        getPushToken()
+        val currentToken = _token.value
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                createdListener.onDataDeviceCreated(userId, currentToken, deviceId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    // endregion
+
 
     private val _notifications = MutableStateFlow<List<DomainNotificationModel>>(emptyList())
     val notifications = _notifications.asStateFlow()
 
+    fun getNotifications(userId: String) {
+        viewModelScope.launch {
+            try {
+                _notifications.value = notificationUseCases.getNotification(userId)
+                removeOldNotifications() // Удаляем старые записи
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun createNotification(
+        userId: String,
         context: Context,
         entityId: Int = 0,
         sharedListId: String = "",
@@ -45,18 +116,7 @@ class NotificationViewModel @Inject constructor(
                     noteText = noteText,
                     timestamp = System.currentTimeMillis()
                 )
-                notificationUseCases.addNotification(note)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    fun getNotifications(userId: String) {
-        viewModelScope.launch {
-            try {
-                _notifications.value = notificationUseCases.getNotification(userId)
-                removeOldNotifications() // Удаляем старые записи
+                notificationUseCases.addNotification(userId, note)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

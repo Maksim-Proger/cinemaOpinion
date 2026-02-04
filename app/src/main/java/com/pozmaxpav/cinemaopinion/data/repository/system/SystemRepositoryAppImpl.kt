@@ -9,8 +9,18 @@ class SystemRepositoryAppImpl @Inject constructor(
     private val context: Context
 ) : SystemRepositoryApp {
 
+
+
     override fun clearUserData() {
         SharedPreferencesApp.clearUserData(context)
+    }
+
+    override fun saveDeviceRegistrationStatus(status: Boolean) {
+        SharedPreferencesApp.saveDeviceRegistrationStatus(context, status)
+    }
+
+    override fun getDeviceRegistrationStatus(): Boolean {
+        return SharedPreferencesApp.getDeviceRegistrationStatus(context)
     }
 
     override fun savePushToken(pushToken: String) {

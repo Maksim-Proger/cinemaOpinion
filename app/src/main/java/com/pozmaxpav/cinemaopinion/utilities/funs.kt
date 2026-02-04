@@ -495,6 +495,7 @@ fun AddComment(
                                         commentUser = comment
                                     )
                                     notificationViewModel.createNotification(
+                                        userId = user.id,
                                         context = context,
                                         entityId = movie.id,
                                         sharedListId = sharedListId,

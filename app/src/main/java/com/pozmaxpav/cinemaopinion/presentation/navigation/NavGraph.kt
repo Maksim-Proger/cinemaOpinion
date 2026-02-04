@@ -123,7 +123,8 @@ fun NavGraph(
                 navController = navController,
                 listId = listId,
                 movieId = movieId,
-                userName = userName
+                userName = userName,
+                systemViewModel = systemViewModel
             )
         }
 

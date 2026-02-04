@@ -5,6 +5,9 @@ import android.content.Context
 interface SystemRepositoryApp {
     fun clearUserData()
 
+    fun saveDeviceRegistrationStatus(status: Boolean)
+    fun getDeviceRegistrationStatus(): Boolean
+
     fun savePushToken(pushToken: String)
     fun getPushToken(): String?
 

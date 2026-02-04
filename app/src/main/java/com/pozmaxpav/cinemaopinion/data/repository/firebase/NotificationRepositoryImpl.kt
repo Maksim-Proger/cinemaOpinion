@@ -1,31 +1,43 @@
 package com.pozmaxpav.cinemaopinion.data.repository.firebase
 
+import android.util.Log
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_CHANGES
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_USERS
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.getValue
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.NotificationRepository
+import com.pozmaxpav.cinemaopinion.utilities.notification.NotificationCreatedListener
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class NotificationRepositoryImpl @Inject constructor(
-    private val databaseReference: DatabaseReference
+    private val databaseReference: DatabaseReference,
+    private val createdListener: NotificationCreatedListener? = null
 ) : NotificationRepository {
 
-    override suspend fun createNotification(domainNotificationModel: DomainNotificationModel) {
-        val key = databaseReference.child(NODE_LIST_CHANGES).push().key
-        key?.let {
-            val record = DomainNotificationModel(
-                noteId = it,
-                entityId = domainNotificationModel.entityId,
-                sharedListId = domainNotificationModel.sharedListId,
-                username = domainNotificationModel.username,
-                noteText = domainNotificationModel.noteText,
-                timestamp = domainNotificationModel.timestamp
-            )
-            databaseReference.child(NODE_LIST_CHANGES).child(it).setValue(record).await()
-        } ?: throw Exception("Failed to generate key")
+    override suspend fun createNotification(userId: String, domainNotificationModel: DomainNotificationModel) {
+        try {
+            val key = databaseReference
+                .child(NODE_LIST_CHANGES)
+                .push()
+                .key ?: return // Если ключ не создался, выходим
+
+            val record = domainNotificationModel.copy(noteId = key)
+
+            // Сохраняем в Firebase
+            databaseReference
+                .child(NODE_LIST_CHANGES)
+                .child(key)
+                .setValue(record)
+                .await()
+
+            // Проверяем ID и уведомляем наш сервер
+            if (userId.isNotBlank() && userId != "Unknown") {
+                createdListener?.onNotificationCreated(userId, key)
+            }
+        } catch (e: Exception) {
+            Log.e("NotificationError", "Failed to create notification", e)
+        }
     }
 
     override suspend fun getNotifications(userId: String): List<DomainNotificationModel> {
