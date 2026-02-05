@@ -23,12 +23,12 @@ fun PreviewAlertDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-//            WithoutEventButton(onDismiss)
-            WithEventButton(onDismiss)
+            WithoutEventButton(onDismiss)
+//            WithEventButton(onDismiss)
         },
         text = {
-//            WithoutEventText()
-            WithEventText()
+            WithoutEventText()
+//            WithEventText()
         },
         containerColor = MaterialTheme.colorScheme.background
     )
@@ -61,7 +61,6 @@ private fun WithoutEventText() {
         }
     }
 }
-
 @Composable
 private fun WithoutEventButton(onDismiss: () -> Unit) {
     CustomTextButton(
@@ -73,7 +72,6 @@ private fun WithoutEventButton(onDismiss: () -> Unit) {
         onClickButton = onDismiss
     )
 }
-
 @Composable
 private fun WithEventText() {
     Column(

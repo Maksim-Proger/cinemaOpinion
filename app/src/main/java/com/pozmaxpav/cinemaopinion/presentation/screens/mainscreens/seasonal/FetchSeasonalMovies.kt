@@ -8,9 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
@@ -44,52 +42,54 @@ fun FetchSeasonalMovies(
     val lisStateRow = rememberLazyListState()
     val seasonalMovies = getSeasonalListMovies(viewModel)
 
-    AnimatedVisibility(
-        visible = !isScrolling,
-        enter = slideInHorizontally(
-            initialOffsetX = { -it },
-            animationSpec = tween(durationMillis = 300)
-        ),
-        exit = slideOutHorizontally(
-            targetOffsetX = { -it },
-            animationSpec = tween(durationMillis = 300)
-        )
-    ) {
-        Card(modifier = Modifier.padding(horizontal = 16.dp)) {
-            Column(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .background(color = MaterialTheme.colorScheme.surface)
-            ) {
-                Row(
+    if (seasonalMovies != null) {
+        AnimatedVisibility(
+            visible = !isScrolling,
+            enter = slideInHorizontally(
+                initialOffsetX = { -it },
+                animationSpec = tween(durationMillis = 300)
+            ),
+            exit = slideOutHorizontally(
+                targetOffsetX = { -it },
+                animationSpec = tween(durationMillis = 300)
+            )
+        ) {
+            Card(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Center
+                        .wrapContentHeight()
+                        .background(color = MaterialTheme.colorScheme.surface)
                 ) {
-                    Text(
-                        text = getSeasonalTitle(),
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontSize = 24.sp,
-                            letterSpacing = 0.7.sp
-                        ),
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
-
-                seasonalMovies?.let { list ->
-                    LazyRow(
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
-                        state = lisStateRow
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        items(list, key = { it.id }) { movie ->
-                            SeasonalMovieItem(
-                                modifier = Modifier.animateItem(),
-                                movie = movie
-                            ) {
-                                selectedMovie(movie)
+                        Text(
+                            text = getSeasonalTitle(),
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontSize = 24.sp,
+                                letterSpacing = 0.7.sp
+                            ),
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+
+                    seasonalMovies.let { list ->
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            state = lisStateRow
+                        ) {
+                            items(list, key = { it.id }) { movie ->
+                                SeasonalMovieItem(
+                                    modifier = Modifier.animateItem(),
+                                    movie = movie
+                                ) {
+                                    selectedMovie(movie)
+                                }
                             }
                         }
                     }
@@ -114,11 +114,8 @@ private fun getSeasonalTitle(): String {
 
 @Composable
 private fun getSeasonalListMovies(viewModel: SystemMovieViewModel): List<DomainSelectedMovieModel>? {
-
     val currentMonth = remember { LocalDate.now().monthValue }
-
     val movies by viewModel.list.collectAsState()
-
     val currentSeason = remember(currentMonth) {
         when (currentMonth) {
             12, 1 -> Season.NewYear
