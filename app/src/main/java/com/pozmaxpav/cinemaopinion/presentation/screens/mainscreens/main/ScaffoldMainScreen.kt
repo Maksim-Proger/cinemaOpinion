@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
 import android.provider.Settings
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,7 +65,7 @@ fun ScaffoldMainScreen(
     val loadingState by apiViewModel.loadingState.collectAsState()
     val showDialogEvents by systemViewModel.resultChecking.collectAsState()
 
-    // region Test
+    // region Push Notification
 
     val context = LocalContext.current
     val notViewModel: NotificationViewModel = hiltViewModel()
@@ -79,7 +80,6 @@ fun ScaffoldMainScreen(
     }
 
     // endregion
-
 
     LaunchedEffect(Unit) {
         systemViewModel.getUserId()

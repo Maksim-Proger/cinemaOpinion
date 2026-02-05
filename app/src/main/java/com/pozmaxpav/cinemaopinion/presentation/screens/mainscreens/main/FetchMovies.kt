@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.items.MovieItem
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
+import java.time.LocalDate
 
 @Composable
 fun FetchMovies(
@@ -30,7 +31,7 @@ fun FetchMovies(
 
     LaunchedEffect(Unit) {
         if (!isInitialized) {
-            apiViewModel.fetchPremiersMovies(2025, "December")
+            apiViewModel.fetchPremiersMovies(getYear(), getNameMonth())
             apiViewModel.fetchTopListMovies(state.currentPage.intValue)
         }
     }
@@ -85,3 +86,13 @@ fun FetchMovies(
 
 }
 
+private fun getYear(): Int {
+    val currentDate = LocalDate.now()
+    return currentDate.year
+}
+
+private fun getNameMonth(): String {
+    val currentDate = LocalDate.now()
+    val currentMonthName = currentDate.month.name
+    return currentMonthName.lowercase().replaceFirstChar { it.uppercase() }
+}
