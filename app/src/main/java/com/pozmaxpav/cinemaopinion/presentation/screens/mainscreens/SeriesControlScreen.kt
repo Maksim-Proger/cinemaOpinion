@@ -19,11 +19,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -280,43 +284,87 @@ private fun ChangeItem(
             .fillMaxHeight(fraction)
             .padding(horizontal = 16.dp)
     ) {
-        CustomTextField(
-            value = season,
-            onValueChange = setSeason,
-            label = {
-                Text(
-                    text = stringResource(R.string.write_season),
-                    style = MaterialTheme.typography.bodyMedium
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            IconButton(
+                onClick = {/*TODO: Добавить действие*/}
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = null
                 )
-            },
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-                }
-            ),
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done
-        )
+            }
+            CustomTextField(
+                value = season,
+                onValueChange = setSeason,
+                label = {
+                    Text(
+                        text = stringResource(R.string.write_season),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                ),
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            )
+            IconButton(
+                onClick = {/*TODO: Добавить действие*/}
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowForwardIos,
+                    contentDescription = null
+                )
+            }
+        }
 
-        CustomTextField(
-            value = series,
-            onValueChange = setSeries,
-            label = {
-                Text(
-                    text = stringResource(R.string.write_series),
-                    style = MaterialTheme.typography.bodyMedium
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            IconButton(
+                onClick = {/*TODO: Добавить действие*/}
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = null
                 )
-            },
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-                }
-            ),
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done
-        )
+            }
+            CustomTextField(
+                value = series,
+                onValueChange = setSeries,
+                label = {
+                    Text(
+                        text = stringResource(R.string.write_series),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                ),
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            )
+            IconButton(
+                onClick = {/*TODO: Добавить действие*/}
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowForwardIos,
+                    contentDescription = null
+                )
+            }
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
