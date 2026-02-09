@@ -1,8 +1,11 @@
 package com.pozmaxpav.cinemaopinion.utilities.notification
 
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
+import com.pozmaxpav.cinemaopinion.MainActivity
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetUserIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SavePushTokenUseCase
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,15 +57,24 @@ class MyRuStoreMessagingService : RuStoreMessagingService() {
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val channelId = "default_push_channel"
 
-        // Правильно берём данные
+        // Правильно берём данные. Основные идут из message.data["title"]
         val title = message.data["title"] ?: message.notification?.title ?: "Push Title"
-
         val body = message.data["body"] ?: message.notification?.body ?: "Push Body"
+
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(body)
             .setSmallIcon(R.drawable.ic_notification)
+            .setContentIntent(pendingIntent)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message.notification?.body))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
