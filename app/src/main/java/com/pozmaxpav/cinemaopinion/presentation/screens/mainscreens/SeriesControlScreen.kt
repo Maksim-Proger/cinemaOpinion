@@ -290,16 +290,28 @@ private fun ChangeItem(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             IconButton(
-                onClick = {/*TODO: Добавить действие*/}
+                onClick = {
+                    val currentNum = season.toIntOrNull() ?: 0
+                    if (currentNum > 0) {
+                        setSeason((currentNum - 1).toString())
+                    }
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
             CustomTextField(
                 value = season,
-                onValueChange = setSeason,
+                horizontalPadding = 0.dp,
+                onValueChange = { newValue ->
+                    // Разрешаем вводить только цифры
+                    if (newValue.all { it.isDigit() }) {
+                        setSeason(newValue)
+                    }
+                },
                 label = {
                     Text(
                         text = stringResource(R.string.write_season),
@@ -316,11 +328,15 @@ private fun ChangeItem(
                 imeAction = ImeAction.Done
             )
             IconButton(
-                onClick = {/*TODO: Добавить действие*/}
+                onClick = {
+                    val currentNum = season.toIntOrNull() ?: 0
+                    setSeason((currentNum + 1).toString())
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowForwardIos,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
         }
@@ -331,16 +347,28 @@ private fun ChangeItem(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             IconButton(
-                onClick = {/*TODO: Добавить действие*/}
+                onClick = {
+                    val currentNumber = series.toIntOrNull() ?: 0
+                    if (currentNumber > 0) {
+                        setSeries((currentNumber - 1).toString())
+                    }
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
             CustomTextField(
                 value = series,
-                onValueChange = setSeries,
+                horizontalPadding = 0.dp,
+                onValueChange = { newValue ->
+                    // Разрешаем вводить только цифры
+                    if (newValue.all { it.isDigit() }) {
+                        setSeries(newValue)
+                    }
+                },
                 label = {
                     Text(
                         text = stringResource(R.string.write_series),
@@ -357,11 +385,17 @@ private fun ChangeItem(
                 imeAction = ImeAction.Done
             )
             IconButton(
-                onClick = {/*TODO: Добавить действие*/}
+                onClick = {
+                    val currentNumber = series.toIntOrNull() ?: 0
+                    if (currentNumber > 0) {
+                        setSeries((currentNumber + 1).toString())
+                    }
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowForwardIos,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
         }
