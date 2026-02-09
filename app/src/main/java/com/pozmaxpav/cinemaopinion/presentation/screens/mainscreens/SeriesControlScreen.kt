@@ -399,7 +399,7 @@ private fun ChangeItem(
                 )
             }
         }
-
+        Spacer(Modifier.padding(vertical = 15.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
