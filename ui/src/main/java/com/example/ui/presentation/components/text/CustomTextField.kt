@@ -49,7 +49,7 @@ fun CustomTextField(
     CompositionLocalProvider(LocalTextSelectionColors provides customSelectionColors) {
         OutlinedTextField(
             modifier = Modifier
-                .fillMaxWidth()
+//                .fillMaxWidth() // TODO: надо придумать как теперь с этим быть
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding),
             value = value,
             shape = RoundedCornerShape(16.dp),
