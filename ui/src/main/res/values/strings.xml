@@ -14,4 +14,7 @@
     <string name="description_icon_notifications_button">Icon Notifications Button</string>
     <string name="description_icon_clear_text">Icon Clear Text</string>
 
+    <!--  Text Button  -->
+    <string name="delete_entry">Удалить</string>
+
 </resources>
