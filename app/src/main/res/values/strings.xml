@@ -1,7 +1,8 @@
 <resources>
 <!--    <string name="app_name">Cinema Opinion</string>-->
 <!--    <string name="app_name">PopCorn</string>-->
-    <string name="app_name">КиноМнение</string>
+<!--    <string name="app_name">КиноМнение</string>-->
+    <string name="app_name">К.Мнение</string>
 
     <!--  Context Menu  -->
     <string name="shortcut_series_control_short">Серии</string>
