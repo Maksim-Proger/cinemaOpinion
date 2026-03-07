@@ -50,6 +50,10 @@ dependencies {
     // LottieAnimation
     implementation(libs.lottie.compose)
 
+    // Markwon
+    implementation("io.noties.markwon:core:4.6.2")
+    implementation("io.noties.markwon:ext-strikethrough:4.6.2")
+
     implementation(libs.material.icons.extended)
     implementation(libs.navigation.compose)
     implementation(libs.androidx.core.ktx)

@@ -53,6 +53,7 @@ import com.example.core.utils.state.LoadingState
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 import com.example.ui.presentation.components.text.CustomTextFieldForComments
+import com.example.ui.utils.MarkdownText
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Country
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Genre
@@ -387,9 +388,12 @@ private fun CommentsList(
                         )
                     }
 
-                    Text(
-                        text = comment.commentText,
-                        style = MaterialTheme.typography.bodyLarge
+                    MarkdownText(
+                        markdown = comment.commentText,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp),
+                        color = MaterialTheme.colorScheme.onSecondary
                     )
 
                     Row(
