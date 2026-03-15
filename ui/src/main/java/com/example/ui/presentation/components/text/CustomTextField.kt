@@ -1,6 +1,5 @@
 package com.example.ui.presentation.components.text
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -27,9 +26,10 @@ import com.example.ui.R
 @Composable
 fun CustomTextField(
     value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
     verticalPadding: Dp = 15.dp,
     horizontalPadding: Dp = 15.dp,
-    onValueChange: (String) -> Unit,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -48,7 +48,7 @@ fun CustomTextField(
 
     CompositionLocalProvider(LocalTextSelectionColors provides customSelectionColors) {
         OutlinedTextField(
-            modifier = Modifier
+            modifier = modifier
 //                .fillMaxWidth() // TODO: надо придумать как теперь с этим быть
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding),
             value = value,

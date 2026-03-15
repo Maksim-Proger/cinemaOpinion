@@ -393,7 +393,8 @@ private fun CommentsList(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp),
-                        color = MaterialTheme.colorScheme.onSecondary
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        onClick = { onClick(comment) }
                     )
 
                     Row(
