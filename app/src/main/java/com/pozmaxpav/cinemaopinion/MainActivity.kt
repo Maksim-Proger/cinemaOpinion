@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -36,10 +37,8 @@ class MainActivity : ComponentActivity() {
     private val requestNotificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                // Разрешение предоставлено
                 android.util.Log.d("RuStorePush", "POST_NOTIFICATIONS разрешение предоставлено")
             } else {
-                // Разрешение отклонено
                 android.util.Log.d("RuStorePush", "POST_NOTIFICATIONS разрешение отклонено")
             }
         }
@@ -48,7 +47,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Запрос разрешения на пуши (Android 13+)
+        // Запрос разрешения на получение push (Android 13+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -102,6 +101,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
     }
 }
 

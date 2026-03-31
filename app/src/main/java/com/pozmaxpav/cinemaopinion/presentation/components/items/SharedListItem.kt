@@ -44,7 +44,7 @@ fun SharedListItem(
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(Modifier.padding(vertical = 5.dp))
-        ExpandedCardTest(item.users)
+        ExpandedCardTest(item.users.values.joinToString(", "))
     }
 }
 

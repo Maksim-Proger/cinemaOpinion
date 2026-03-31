@@ -117,6 +117,7 @@ fun LoginScreen(
             CustomTextField(
                 value = login,
                 onValueChange = setLogin,
+                modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(
                         stringResource(id = R.string.text_for_email_field),
@@ -147,6 +148,7 @@ fun LoginScreen(
             CustomTextField(
                 value = password,
                 onValueChange = setPassword,
+                modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(
                         stringResource(id = R.string.text_for_password_field),

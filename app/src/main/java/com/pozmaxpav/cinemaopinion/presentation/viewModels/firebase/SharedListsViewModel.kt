@@ -140,7 +140,7 @@ class SharedListsViewModel @Inject constructor(
             listId = sharedID,
             title = title,
             source = source,
-            users = "",
+            users = emptyMap(),
             timestamp = System.currentTimeMillis()
         )
         val forProfile = DomainMySharedListModel(

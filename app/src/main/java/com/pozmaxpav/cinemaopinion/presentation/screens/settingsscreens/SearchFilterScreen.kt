@@ -468,6 +468,7 @@ fun SearchKeyword(
     CustomTextField(
         value = searchWord,
         onValueChange = setSearchWord,
+        modifier = Modifier.fillMaxWidth(),
         label = {
             Text(
                 text = "Введите название фильма",

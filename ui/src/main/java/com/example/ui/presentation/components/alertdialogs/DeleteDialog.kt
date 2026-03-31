@@ -5,6 +5,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.R
 
 @Composable
 fun DeleteDialog(
@@ -30,13 +34,13 @@ fun DeleteDialog(
             )
         },
         confirmButton = {
-            TextButton(onClick = confirmButtonClick) {
-                Text(
-                    text = "Удалить",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            }
+            CustomTextButton(
+                textButton = stringResource(R.string.delete_entry),
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
+                modifier = Modifier,
+                onClickButton = confirmButtonClick
+            )
         },
         dismissButton = {
             TextButton(onClick = dismissButtonClick) {

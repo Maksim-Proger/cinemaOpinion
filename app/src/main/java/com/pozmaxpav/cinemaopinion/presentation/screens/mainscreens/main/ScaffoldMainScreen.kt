@@ -1,7 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
 import android.provider.Settings
-import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -45,19 +47,20 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewMode
 import com.pozmaxpav.cinemaopinion.utilities.SendRequestAdvancedSearch
 import com.pozmaxpav.cinemaopinion.utilities.SendSelectedDate
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
-import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceDataCreatedListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.pozmaxpav.cinemaopinion.utilities.showToast2
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldMainScreen(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
+    onExit: () -> Unit = {},
     apiViewModel: ApiViewModel = hiltViewModel(),
     systemMovieViewModel: SystemMovieViewModel = hiltViewModel()
 ) {
+    var backPressedTime by remember { mutableLongStateOf(0L) }
+    val backPreventTime = 2000L
+
     val state = rememberMainScreenState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -92,6 +95,16 @@ fun ScaffoldMainScreen(
         }
     }
 
+    BackHandler(enabled = true) {
+        val currentTime = System.currentTimeMillis()
+        if (backPressedTime + backPreventTime > currentTime) {
+            onExit()
+        } else {
+            showToast2(context, "Нажмите ещё раз, чтобы выйти")
+            backPressedTime = currentTime
+        }
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -113,7 +126,7 @@ fun ScaffoldMainScreen(
                     onTransitionAction = {
                         navigateFunction(
                             navController,
-                            Route.ListOfChangesScreen.route
+                            Route.NotificationsScreen.route
                         )
                     }
                 )

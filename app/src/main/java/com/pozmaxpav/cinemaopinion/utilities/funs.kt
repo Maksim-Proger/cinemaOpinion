@@ -53,6 +53,7 @@ import com.example.core.utils.state.LoadingState
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 import com.example.ui.presentation.components.text.CustomTextFieldForComments
+import com.example.ui.utils.MarkdownText
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Country
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.Genre
@@ -188,6 +189,9 @@ fun MovieData.toSelectedMovie(): DomainSelectedMovieModel {
 
 fun showToast(context: Context, messageId: Int) {
     val message = context.getString(messageId)
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
+fun showToast2(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
@@ -387,9 +391,13 @@ private fun CommentsList(
                         )
                     }
 
-                    Text(
-                        text = comment.commentText,
-                        style = MaterialTheme.typography.bodyLarge
+                    MarkdownText(
+                        markdown = comment.commentText,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp),
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        onClick = { onClick(comment) }
                     )
 
                     Row(

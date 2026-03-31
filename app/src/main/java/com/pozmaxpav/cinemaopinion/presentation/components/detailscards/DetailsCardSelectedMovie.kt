@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.components.detailscards
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -162,6 +163,10 @@ fun DetailsCardSelectedMovie(
                         IconButton(
                             onClick = {
                                 seriesViewModel.addNewEntry(userId, movie.nameFilm)
+                                Toast.makeText(
+                                    context, "Контроль серий начался",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         ) {
                             Icon(

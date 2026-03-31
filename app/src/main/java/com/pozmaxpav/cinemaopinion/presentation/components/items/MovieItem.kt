@@ -46,20 +46,20 @@ fun MovieItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(9.dp)
                 .background(color = MaterialTheme.colorScheme.surface)
         ) {
 
-            WorkerWithImage(movie = movie, selectedMovie = null, width = 120.dp)
+            WorkerWithImage(movie = movie, selectedMovie = null, width = 100.dp)
             Spacer(modifier = Modifier.padding(horizontal = 12.dp))
 
             Column {
-                Spacer(Modifier.padding(vertical = 10.dp))
                 Text(
                     text = movie.nameRu ?: "Нет названия",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.secondary
                 )
+                Spacer(Modifier.padding(vertical = 5.dp))
                 when (movie) {
                     is MovieData.Movie -> {
                         MetaText(

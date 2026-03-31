@@ -235,6 +235,19 @@ fun ListSelectedMovies(
                             }
                         }
 
+                        is LoadingState.Error -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "При загрузке произошла ошибка.",
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+                        }
+
                         is LoadingState.Success -> {
                             LazyColumn(
                                 state = listState,
@@ -314,19 +327,6 @@ fun ListSelectedMovies(
                                     }
                                     Spacer(Modifier.padding(5.dp))
                                 }
-                            }
-                        }
-
-                        is LoadingState.Error -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "При загрузке произошла ошибка.",
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    style = MaterialTheme.typography.titleMedium
-                                )
                             }
                         }
                     }

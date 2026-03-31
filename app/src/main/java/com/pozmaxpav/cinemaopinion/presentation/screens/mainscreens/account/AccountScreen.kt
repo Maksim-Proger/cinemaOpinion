@@ -135,7 +135,7 @@ fun AccountScreen(
                             userData?.let { user ->
                                 Text(
                                     text = user.nikName,
-                                    style = MaterialTheme.typography.displayMedium
+                                    style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
                                     text = user.email,
