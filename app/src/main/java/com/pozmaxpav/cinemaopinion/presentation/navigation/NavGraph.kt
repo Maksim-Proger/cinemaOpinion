@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.navigation
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -33,13 +34,14 @@ fun NavGraph(
     startDestination: String
 ) {
     val navController = rememberNavController()
+    val activity = LocalActivity.current
 
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
         composable(Route.MainScreen.route) {
-            ScaffoldMainScreen(navController, systemViewModel)
+            ScaffoldMainScreen(navController, systemViewModel, onExit = { activity?.finish() })
         }
         composable(Route.MediaNewsScreen.route) { MediaNewsScreen(navController) }
         composable(Route.ListOfChangesScreen.route) {

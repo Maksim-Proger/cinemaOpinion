@@ -191,6 +191,9 @@ fun showToast(context: Context, messageId: Int) {
     val message = context.getString(messageId)
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
+fun showToast2(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
 
 fun navigateFunction(navController: NavHostController, route: String) {
 
