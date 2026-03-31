@@ -38,19 +38,17 @@ class MainApplication: Application() {
         val channelId = "default_push_channel"
         val channelName = "Push Notifications"
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                channelName,
-                NotificationManager.IMPORTANCE_DEFAULT
-            ).apply {
-                description = "Channel for app push notifications"
-            }
-
-            val notificationManager =
-                getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            channelId,
+            channelName,
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = "Channel for app push notifications"
         }
+
+        val notificationManager =
+            getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
     }
 
 }

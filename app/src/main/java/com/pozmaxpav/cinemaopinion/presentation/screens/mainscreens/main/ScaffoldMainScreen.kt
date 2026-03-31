@@ -1,7 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,12 +47,7 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewMode
 import com.pozmaxpav.cinemaopinion.utilities.SendRequestAdvancedSearch
 import com.pozmaxpav.cinemaopinion.utilities.SendSelectedDate
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
-import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceDataCreatedListener
-import com.pozmaxpav.cinemaopinion.utilities.showToast
 import com.pozmaxpav.cinemaopinion.utilities.showToast2
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -132,7 +126,7 @@ fun ScaffoldMainScreen(
                     onTransitionAction = {
                         navigateFunction(
                             navController,
-                            Route.ListOfChangesScreen.route
+                            Route.NotificationsScreen.route
                         )
                     }
                 )

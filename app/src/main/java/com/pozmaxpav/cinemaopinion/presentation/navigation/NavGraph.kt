@@ -7,13 +7,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.example.auth.presentation.navigation.authNavGraph
 import com.example.intro.presentation.navigation.introNavGraph
 import com.example.ui.presentation.viewmodels.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.MediaNewsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.SeriesControlScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.ScaffoldMainScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListOfChangesScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.NotificationsScreen
 //import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralMovies
 //import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralSerials
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedMovies
@@ -44,8 +45,13 @@ fun NavGraph(
             ScaffoldMainScreen(navController, systemViewModel, onExit = { activity?.finish() })
         }
         composable(Route.MediaNewsScreen.route) { MediaNewsScreen(navController) }
-        composable(Route.ListOfChangesScreen.route) {
-            ListOfChangesScreen(navController, systemViewModel)
+        composable(
+            route = Route.NotificationsScreen.route,
+            deepLinks = listOf(
+                navDeepLink { uriPattern = "myapp://notifications" }
+            )
+        ) {
+            NotificationsScreen(navController, systemViewModel)
         }
         composable(Route.EditPersonalInformationScreen.route) {
             EditProfileScreen(navController, systemViewModel)

@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.pozmaxpav.cinemaopinion.MainActivity
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetUserIdUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SavePushTokenUseCase
@@ -61,12 +62,17 @@ class MyRuStoreMessagingService : RuStoreMessagingService() {
         val title = message.data["title"] ?: message.notification?.title ?: "Push Title"
         val body = message.data["body"] ?: message.notification?.body ?: "Push Body"
 
-        val intent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
+        val deepLinkIntent = Intent(
+            Intent.ACTION_VIEW,
+            "myapp://notifications".toUri(),
+            this,
+            MainActivity::class.java
+        )
 
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
+            this,
+            0,
+            deepLinkIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 

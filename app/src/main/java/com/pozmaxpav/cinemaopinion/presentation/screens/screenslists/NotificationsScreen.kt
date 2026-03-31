@@ -46,7 +46,7 @@ import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListOfChangesScreen(
+fun NotificationsScreen(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
     userViewModel: UserViewModel = hiltViewModel(),
@@ -60,10 +60,10 @@ fun ListOfChangesScreen(
     val userData by userViewModel.userData.collectAsState()
 
     LaunchedEffect(Unit) {
-        notificationViewModel.getNotifications(userId)
         systemViewModel.getUserId()
     }
     LaunchedEffect(userId) {
+        notificationViewModel.getNotifications(userId)
         userViewModel.getUserData(userId)
     }
 
