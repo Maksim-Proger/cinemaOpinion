@@ -1,17 +1,17 @@
 package com.example.backend
 
+import android.util.Log
+
 class BackendNotifyChangeCreatedUseCase {
-    suspend operator fun invoke(userId: String, changeId: String) {
-        try {
+    suspend operator fun invoke(userId: String, changeId: String): Result<Unit> =
+        runCatching {
             BackendApiProvider.api.notifyChangeCreated(
                 ChangeCreatedRequest(
                     userId = userId,
                     changeId = changeId
                 )
             )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            // Здесь можно добавить обработку ошибок (например, через Result)
+        }.onFailure { e ->
+            Log.e("BackendNotify", "Failed to notify change $changeId", e)
         }
-    }
 }

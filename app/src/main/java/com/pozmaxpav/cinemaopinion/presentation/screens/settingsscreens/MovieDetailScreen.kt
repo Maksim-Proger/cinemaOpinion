@@ -46,6 +46,7 @@ import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
+import com.pozmaxpav.cinemaopinion.utilities.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilities.showToast
 
@@ -113,6 +114,23 @@ fun MovieDetailScreen(
                 context = context,
                 onClick = onClose
             )
+        }
+    }
+    if (openBottomSheetChange) {
+        CustomBottomSheet(
+            onCloseRequest = { openBottomSheetChange = false }
+        ) { onClose ->
+            selectedComment?.let { comment ->
+                ChangeComment(
+                    userId = userId,
+                    userName = userName,
+                    selectedMovieId = movieId,
+                    selectedComment = comment,
+                    fraction = 0.7f,
+                    viewModel = viewModel,
+                    onClose = onClose
+                )
+            }
         }
     }
 
@@ -260,3 +278,5 @@ private fun AddComment(
         }
     }
 }
+
+

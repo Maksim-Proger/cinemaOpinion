@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -35,6 +36,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.ui.presentation.components.dropmenu.DropdownMenuItem
+import com.example.ui.presentation.components.dropmenu.SettingsMenu
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +60,7 @@ fun SpecialTopAppBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .wrapContentHeight()
             .background(backgroundColor)
             .padding(horizontal = 16.dp)
             .padding(WindowInsets.statusBars.asPaddingValues())
@@ -76,14 +80,32 @@ fun SpecialTopAppBar(
             onClick2 = goToHome
         )
 
-        TopAppBarString(
-            modifier = Modifier.graphicsLayer {
-                translationX = -offset.toPx()
-                translationY = offset.toPx()
-            },
-            title = title,
-            color = MaterialTheme.colorScheme.background,
-            textColor = MaterialTheme.colorScheme.secondary
+        Row(
+            modifier = Modifier.wrapContentHeight(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TopAppBarString(
+                modifier = Modifier.graphicsLayer {
+                    translationX = -offset.toPx()
+                    translationY = offset.toPx()
+                },
+                title = title,
+                color = MaterialTheme.colorScheme.background,
+                textColor = MaterialTheme.colorScheme.secondary
+            )
+            Menu()
+        }
+    }
+}
+
+@Composable
+private fun Menu() {
+    SettingsMenu { closeMenu ->
+        DropdownMenuItem(
+            onAction = {},
+            title = "Архив",
+            leadingIcon = null
         )
     }
 }

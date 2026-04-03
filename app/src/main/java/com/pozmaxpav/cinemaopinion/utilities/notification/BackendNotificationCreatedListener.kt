@@ -7,6 +7,6 @@ class BackendNotificationCreatedListener(
 ) : NotificationCreatedListener {
 
     override suspend fun onNotificationCreated(userId: String, changeId: String) {
-        backendNotifyChangeCreatedUseCase.invoke(userId, changeId)
+        backendNotifyChangeCreatedUseCase.invoke(userId, changeId).onFailure {}
     }
 }

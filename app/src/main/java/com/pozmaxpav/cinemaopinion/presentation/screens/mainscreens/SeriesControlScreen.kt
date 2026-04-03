@@ -387,9 +387,7 @@ private fun ChangeItem(
             IconButton(
                 onClick = {
                     val currentNumber = series.toIntOrNull() ?: 0
-                    if (currentNumber > 0) {
-                        setSeries((currentNumber + 1).toString())
-                    }
+                    setSeries((currentNumber + 1).toString())
                 }
             ) {
                 Icon(
