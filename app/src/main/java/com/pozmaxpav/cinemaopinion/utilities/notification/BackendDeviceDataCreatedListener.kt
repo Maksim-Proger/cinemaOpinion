@@ -6,6 +6,6 @@ class BackendDeviceDataCreatedListener(
     private val backendRegisterDeviceUseCase: BackendRegisterDeviceUseCase
 ) : DeviceDataCreatedListener {
     override suspend fun onDataDeviceCreated(userId: String, pushToken: String, deviceId: String) {
-        backendRegisterDeviceUseCase.invoke(userId, pushToken, deviceId)
+        backendRegisterDeviceUseCase.invoke(userId, pushToken, deviceId).onFailure {}
     }
 }

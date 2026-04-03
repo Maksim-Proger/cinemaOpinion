@@ -16,7 +16,7 @@
     </shortcut>
 
     <shortcut
-        android:shortcutId="id_list_of_changes_screen"
+        android:shortcutId="id_notifications_screen"
         android:enabled="true"
         android:icon="@drawable/ic_notification"
         android:shortcutShortLabel="@string/shortcut_list_of_changes_screen_short"
@@ -26,7 +26,7 @@
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.pozmaxpav.cinemaopinion"
             android:targetClass="com.pozmaxpav.cinemaopinion.MainActivity">
-            <extra android:name="destination" android:value="list_of_changes_screen" />
+            <extra android:name="destination" android:value="notifications_screen" />
         </intent>
     </shortcut>
 

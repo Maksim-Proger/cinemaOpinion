@@ -66,23 +66,23 @@ fun fabMenuItems(
         )
     }
 
-    items += FABMenuItemData(
-        text = {
-            Text(
-                text = stringResource(R.string.drop_down_menu_item_nac_to_media_news_screen),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        icon = {
-            Icon(
-                modifier = modifier,
-                imageVector = Icons.Default.Newspaper,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondary
-            )
-        },
-        onClick = onNavigateToNews
-    )
+//    items += FABMenuItemData(
+//        text = {
+//            Text(
+//                text = stringResource(R.string.drop_down_menu_item_nac_to_media_news_screen),
+//                style = MaterialTheme.typography.bodyMedium
+//            )
+//        },
+//        icon = {
+//            Icon(
+//                modifier = modifier,
+//                imageVector = Icons.Default.Newspaper,
+//                contentDescription = null,
+//                tint = MaterialTheme.colorScheme.onSecondary
+//            )
+//        },
+//        onClick = onNavigateToNews
+//    )
 
     return items
 }
