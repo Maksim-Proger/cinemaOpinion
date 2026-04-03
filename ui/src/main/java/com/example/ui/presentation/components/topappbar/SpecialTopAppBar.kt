@@ -5,7 +5,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -14,8 +13,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.ui.presentation.components.dropmenu.DropdownMenuItem
 import com.example.ui.presentation.components.dropmenu.SettingsMenu
@@ -94,14 +92,38 @@ fun SpecialTopAppBar(
                 color = MaterialTheme.colorScheme.background,
                 textColor = MaterialTheme.colorScheme.secondary
             )
-            Menu()
+            Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+            Menu(
+                modifier = Modifier.graphicsLayer {
+                    translationX = -offset.toPx()
+                    translationY = offset.toPx()
+                },
+                color = MaterialTheme.colorScheme.background,
+                tint = MaterialTheme.colorScheme.secondary,
+                containerColor = MaterialTheme.colorScheme.background
+
+            )
         }
     }
 }
 
 @Composable
-private fun Menu() {
-    SettingsMenu { closeMenu ->
+private fun Menu(
+    modifier: Modifier,
+    color: Color,
+    tint: Color,
+    containerColor: Color
+) {
+    SettingsMenu(
+        modifier = modifier
+            .background(
+                color = color.copy(alpha = 0.8f),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(horizontal = 10.dp, vertical = 6.dp),
+        tint = tint,
+        containerColor = containerColor
+    ) { closeMenu ->
         DropdownMenuItem(
             onAction = {},
             title = "Архив",
