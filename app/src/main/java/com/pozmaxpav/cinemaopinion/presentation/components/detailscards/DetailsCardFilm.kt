@@ -173,7 +173,7 @@ fun DetailsCardFilm(
                     )
                     when (movie) {
                         is MovieData.Movie -> {
-                            Spacer(Modifier.padding(vertical = 5.dp))
+                            Spacer(Modifier.padding(vertical = 15.dp))
                             MetaText(
                                 year = formatDate2(date = movie.premiereRu),
                                 duration = "${detailedInfo?.filmLength ?: "Н/Д"} мин.",

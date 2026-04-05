@@ -186,15 +186,34 @@ class SharedListsViewModel @Inject constructor(
             }
         }
     }
-    fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel) {
+    fun addMovie(
+        listId: String,
+        destination: String,
+        selectedMovie: DomainSelectedMovieModel
+    ) {
         viewModelScope.launch {
             try {
-                if (moviesUseCases.getMovies(listId).any { it.id == selectedMovie.id }) {
-                    _toastMessage.emit(R.string.movie_has_already_been_added)
-                } else {
-                    moviesUseCases.addMovie(listId, selectedMovie)
-                    _toastMessage.emit(R.string.movie_has_been_added_to_list)
-                }
+                moviesUseCases.addMovie(listId, destination, selectedMovie)
+//                if (moviesUseCases.getMovies(listId).any { it.id == selectedMovie.id }) {
+//                    _toastMessage.emit(R.string.movie_has_already_been_added)
+//                } else {
+//                    moviesUseCases.addMovie(listId, destination, selectedMovie)
+//                    _toastMessage.emit(R.string.movie_has_been_added_to_list)
+//                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    fun moveMovie(
+        listId: String,
+        sourceNode: String,
+        destination: String,
+        movieId: Int
+    ) {
+        viewModelScope.launch {
+            try {
+                moviesUseCases.moveMovie(listId, sourceNode, destination, movieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

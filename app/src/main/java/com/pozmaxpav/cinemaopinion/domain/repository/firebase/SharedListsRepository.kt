@@ -7,12 +7,32 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
 
 interface SharedListsRepository {
 
-    suspend fun addMovie(listId: String, selectedMovie: DomainSelectedMovieModel)
-    suspend fun removeMovie(listId: String, movieId: Int)
+    // region Movies
+    suspend fun addMovie(
+        listId: String,
+        destination: String,
+        selectedMovie: DomainSelectedMovieModel
+    )
+    suspend fun moveMovie(
+        listId: String,
+        sourceNode: String,
+        destination: String,
+        movieId: Int
+    )
+    suspend fun removeMovie(
+        listId: String,
+        movieId: Int
+    )
     suspend fun getMovies(listId: String): List<DomainSelectedMovieModel>
-    suspend fun observeListMovies(listId: String, onMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit)
-    suspend fun getMovieById(listId: String, movieId: Int): DomainSelectedMovieModel?
-
+    suspend fun observeListMovies(
+        listId: String,
+        onMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit
+    )
+    suspend fun getMovieById(
+        listId: String,
+        movieId: Int
+    ): DomainSelectedMovieModel?
+    // endregion
     suspend fun addComment(listId: String, movieId: Int, comment: DomainCommentModel)
     suspend fun updateComment(listId: String, movieId: Int, commentId: String, selectedComment: DomainCommentModel)
     suspend fun getComments(listId: String, movieId: Int): List<DomainCommentModel>
