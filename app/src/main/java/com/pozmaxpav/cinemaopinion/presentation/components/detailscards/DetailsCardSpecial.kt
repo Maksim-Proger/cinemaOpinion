@@ -168,7 +168,7 @@ fun DetailsCardSpecial(
                         style = MaterialTheme.typography.displayLarge,
                         color = MaterialTheme.colorScheme.secondary
                     )
-                    Spacer(Modifier.padding(vertical = 5.dp))
+                    Spacer(Modifier.padding(vertical = 15.dp))
                     Column(modifier = Modifier.fillMaxWidth()) {
                         ExpandedCard(
                             title = stringResource(R.string.text_for_expandedCard_field),
@@ -183,7 +183,7 @@ fun DetailsCardSpecial(
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             CustomTextButton(
-                                textButton = stringResource(R.string.button_viewed),
+                                textButton = stringResource(R.string.button_send_to_archive),
                                 containerColor = MaterialTheme.colorScheme.secondary,
                                 contentColor = MaterialTheme.colorScheme.onSecondary,
                                 modifier = Modifier.fillMaxWidth(),

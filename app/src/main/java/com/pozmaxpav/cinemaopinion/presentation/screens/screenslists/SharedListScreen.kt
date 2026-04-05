@@ -25,6 +25,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CommentBank
+import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.outlined.PostAdd
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,6 +48,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WAITING_CONTINUATION_SERIES
+import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WATCHED_MOVIES
+import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_MOVIES
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
@@ -160,6 +165,7 @@ fun ListSharedScreen(
             }
 
             selectedMovie?.let { movie ->
+
                 if (openBottomSheetReviews) {
                     CustomBottomSheet(
                         onCloseRequest = { openBottomSheetReviews = false }
@@ -179,10 +185,30 @@ fun ListSharedScreen(
                     }
                     AdaptiveBackHandler { openBottomSheetReviews = false }
                 }
+
                 DetailsCardSelectedMovie(
                     movie = movie,
                     userId = userId,
                     navController = navController,
+                    sendToWaitingList = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_move_to_waiting_list),
+                            imageVector = Icons.Outlined.PostAdd,
+                            modifier = Modifier.fillMaxWidth(),
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = {
+                                selectedMovie?.let { movie ->
+                                    sharedListsViewModel.moveMovie(
+                                        listId = listId,
+                                        sourceNode = NODE_SHARED_LIST_MOVIES,
+                                        destination = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                        movieId = movie.id
+                                    )
+                                }
+                            }
+                        )
+                    },
                     commentButton = {
                         CustomTextButton(
                             textButton = context.getString(R.string.button_leave_comment),
@@ -201,6 +227,25 @@ fun ListSharedScreen(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary,
                             onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
+                        )
+                    },
+                    sendToArchive = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_send_to_archive),
+                            imageVector = Icons.Outlined.Done,
+                            modifier = Modifier.fillMaxWidth(),
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = {
+                                selectedMovie?.let { movie ->
+                                    sharedListsViewModel.moveMovie(
+                                        listId = listId,
+                                        sourceNode = NODE_SHARED_LIST_MOVIES,
+                                        destination = NODE_LIST_WATCHED_MOVIES,
+                                        movieId = movie.id
+                                    )
+                                }
+                            }
                         )
                     },
                     onCloseButton = { selectedMovie = null }

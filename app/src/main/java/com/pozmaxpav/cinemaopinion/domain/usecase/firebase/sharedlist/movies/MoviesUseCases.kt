@@ -4,6 +4,7 @@ import javax.inject.Inject
 
 data class MoviesUseCases @Inject constructor(
     val addMovie: AddMovieUseCase,
+    val moveMovie: MoveMovieUseCase,
     val getMovies: GetMoviesUseCase,
     val removeMovie: RemoveMovieUseCase,
     val observeListMovies: ObserveListMoviesUseCase,

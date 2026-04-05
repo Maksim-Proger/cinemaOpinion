@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.components.detailscards
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.PostAdd
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -68,6 +68,8 @@ fun DetailsCardSelectedMovie(
     movie: DomainSelectedMovieModel,
     userId: String = "",
     navController: NavHostController,
+    sendToWaitingList: @Composable () -> Unit = {},
+    sendToArchive: @Composable () -> Unit = {},
     reviews: @Composable () -> Unit = {},
     commentButton: @Composable () -> Unit = {},
     apiViewModel: ApiViewModel = hiltViewModel(),
@@ -118,6 +120,7 @@ fun DetailsCardSelectedMovie(
                     contentColor = MaterialTheme.colorScheme.onSurface
                 )
             ) {
+
                 // region Верхние кнопки
                 Row(
                     modifier = Modifier
@@ -160,21 +163,21 @@ fun DetailsCardSelectedMovie(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
-                        IconButton(
-                            onClick = {
-                                seriesViewModel.addNewEntry(userId, movie.nameFilm)
-                                Toast.makeText(
-                                    context, "Контроль серий начался",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                        if (detailedInfo?.type == "TV_SERIES" || detailedInfo?.type == "MINI_SERIES") {
+
+                            IconButton(
+                                onClick = {
+                                    seriesViewModel.addNewEntry(userId, movie.nameFilm)
+                                    showToast(context, R.string.Series_control_start)
+                                }
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(37.dp),
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.secondary
+                                )
                             }
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(37.dp),
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.secondary
-                            )
                         }
 
                         IconButton(
@@ -212,7 +215,7 @@ fun DetailsCardSelectedMovie(
                             style = MaterialTheme.typography.displayLarge,
                             color = MaterialTheme.colorScheme.secondary
                         )
-                        Spacer(Modifier.padding(vertical = 5.dp))
+                        Spacer(Modifier.padding(vertical = 15.dp))
                         Column(modifier = Modifier.fillMaxWidth()) {
                             ExpandedCard(
                                 title = stringResource(R.string.text_for_expandedCard_field),
@@ -229,9 +232,15 @@ fun DetailsCardSelectedMovie(
                                 onClickButton = { openSharedLists = true }
                             )
                             Spacer(Modifier.padding(5.dp))
+                            if (detailedInfo?.type == "TV_SERIES" || detailedInfo?.type == "MINI_SERIES") {
+                                sendToWaitingList()
+                                Spacer(Modifier.padding(5.dp))
+                            }
                             commentButton()
                             Spacer(Modifier.padding(5.dp))
                             reviews()
+                            Spacer(Modifier.padding(5.dp))
+                            sendToArchive()
                             Spacer(Modifier.padding(10.dp))
                         }
                     }
@@ -275,7 +284,6 @@ fun DetailsCardSelectedMovie(
     }
 }
 
-// TODO: Доработать
 private fun decoderTypeMovie(type: String?): String {
     type?.let {
         return when {

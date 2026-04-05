@@ -7,7 +7,7 @@ import javax.inject.Inject
 class AddMovieUseCase @Inject constructor(
     private val repository: SharedListsRepository
 ) {
-    suspend operator fun invoke(listId: String, selectedMovie: DomainSelectedMovieModel) {
-        repository.addMovie(listId, selectedMovie)
+    suspend operator fun invoke(listId: String, destination: String, selectedMovie: DomainSelectedMovieModel) {
+        repository.addMovie(listId, destination, selectedMovie)
     }
 }

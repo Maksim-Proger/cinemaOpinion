@@ -88,7 +88,7 @@
     <!--  Text Button  -->
     <string name="button_leave_comment">Оставить отзыв</string>
     <string name="button_show_response">Показать отзывы</string>
-    <string name="button_viewed">Просмотрен</string>
+    <string name="button_send_to_archive">Просмотрен</string>
     <string name="button_add">Добавить</string>
     <string name="button_save">Сохранить</string>
     <string name="button_add_to_yourself">Добавить к себе</string>
@@ -116,6 +116,7 @@
     <string name="login_completed">Вход выполнен</string>
     <string name="edit_personal_information">Данные пользователя обновлены</string>
     <string name="comment_added">Комментарий добавлен</string>
+    <string name="Series_control_start">Контроль серий начался</string>
 
     <string name="element_has_been_added">Элемент добавлен</string>
 
@@ -151,7 +152,6 @@
     <string name="title_of_the_list_for_the_new_year">Почувствуй Новый год!</string>
     <string name="title_of_the_list_for_the_halloween">Ужасного Хэллоуина!</string>
     <string name="record_added_to_new_year_collection">Пополнил(а) коллекцию новогодней подборки: </string>
-
 
     <!--  Text Error  -->
     <string name="limit_is_over">К сожалению, в базе пусто или суточный лимит закончился</string>

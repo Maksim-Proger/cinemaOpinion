@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_MOVIES
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SharedListItem
@@ -127,6 +128,7 @@ fun SharedListsScreen(
                                         selectedMovie?.let { movie ->
                                             sharedListsViewModel.addMovie(
                                                 listId = item.listId,
+                                                destination = NODE_SHARED_LIST_MOVIES,
                                                 selectedMovie = movie
                                             )
                                             notificationViewModel.createNotification(
