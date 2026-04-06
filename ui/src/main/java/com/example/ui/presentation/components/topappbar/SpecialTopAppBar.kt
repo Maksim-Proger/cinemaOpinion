@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -102,7 +103,7 @@ fun SpecialTopAppBar(
                 },
                 color = MaterialTheme.colorScheme.background, // Обводка вокруг кнопки меню
                 tint = MaterialTheme.colorScheme.secondary, // Цвет кнопку
-                containerColor = MaterialTheme.colorScheme.background, // Цвет контейнера открывающегося меню
+                containerColor = MaterialTheme.colorScheme.secondary, // Цвет контейнера открывающегося меню
                 onArchiveClick = onArchiveClick,
                 onWaitlistClick = onWaitlistClick
             )
@@ -137,6 +138,7 @@ private fun Menu(
             title = "Архив",
             leadingIcon = null
         )
+        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
         DropdownMenuItem(
             onAction = {
                 onWaitlistClick()

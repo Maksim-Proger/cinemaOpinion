@@ -25,14 +25,15 @@ sealed class Route(val route: String) {
             "movie_details/$listId/$movieId/$userName"
     }
     data object InternalSharedList :
-        Route(route = "internal_shared_list/{dataSource}/{listId}/{title}/{userId}/{userName}") {
+        Route(route = "internal_shared_list/{dataSource}/{listId}/{title}/{userId}/{userName}/{listName}") {
         fun openInternalSharedList(
             dataSource: String,
             listId: String,
             title: String,
             userId: String,
-            userName: String
-        ) = "internal_shared_list/$dataSource/$listId/$title/$userId/$userName"
+            userName: String,
+            listName: String
+        ) = "internal_shared_list/$dataSource/$listId/$title/$userId/$userName/$listName"
     }
 }
 

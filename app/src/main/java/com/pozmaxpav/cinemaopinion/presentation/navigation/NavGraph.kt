@@ -125,7 +125,8 @@ fun NavGraph(
                 navArgument("listId") {type = NavType.StringType},
                 navArgument("title") {type = NavType.StringType},
                 navArgument("userId") {type = NavType.StringType},
-                navArgument("userName") {type = NavType.StringType}
+                navArgument("userName") {type = NavType.StringType},
+                navArgument("listName") {type = NavType.StringType}
             )
         ) { backStackEntry ->
             val dataSource = backStackEntry.arguments?.getString("dataSource") ?: ""
@@ -133,13 +134,15 @@ fun NavGraph(
             val title = backStackEntry.arguments?.getString("title") ?: ""
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             val userName = backStackEntry.arguments?.getString("userName") ?: ""
+            val listName = backStackEntry.arguments?.getString("listName") ?: ""
             InternalSharedList(
                 navController = navController,
                 dataSource = dataSource,
                 listId = listId,
                 title = title,
                 userId = userId,
-                userName = userName
+                userName = userName,
+                listName = listName
             )
         }
 

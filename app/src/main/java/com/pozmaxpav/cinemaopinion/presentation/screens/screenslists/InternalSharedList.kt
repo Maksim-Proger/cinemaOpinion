@@ -34,15 +34,19 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.CommentBank
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.example.ui.presentation.components.CustomBottomSheet
+import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
@@ -52,7 +56,13 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.Notification
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.utilities.AddComment
+import com.pozmaxpav.cinemaopinion.utilities.ChangeComment
+import com.pozmaxpav.cinemaopinion.utilities.ShowCommentList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,6 +73,8 @@ fun InternalSharedList(
     title: String,
     userId: String,
     userName: String,
+    listName: String,
+    userViewModel: UserViewModel = hiltViewModel(),
     sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
     notificationViewModel: NotificationViewModel = hiltViewModel()
 ) {
@@ -71,6 +83,7 @@ fun InternalSharedList(
     val listState = rememberLazyListState()
 
     val movies by sharedListsViewModel.movies.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
 
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
@@ -88,15 +101,109 @@ fun InternalSharedList(
         sharedListsViewModel.getMovies(listId, dataSource)
         sharedListsViewModel.observeMovies(listId, dataSource)
     }
+    LaunchedEffect(userId) {
+        userViewModel.getUserData(userId)
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
+
+            if (openBottomSheetComments) {
+                CustomBottomSheet(
+                    onCloseRequest = { openBottomSheetComments = false }
+                ) { onClose ->
+                    AddComment(
+                        dataUser = userData,
+                        viewModel = sharedListsViewModel,
+                        listName = listName,
+                        selectedItem = selectedMovie,
+                        fraction = 0.7f,
+                        context = context,
+                        onClick = onClose
+                    )
+                }
+                AdaptiveBackHandler { openBottomSheetComments = false }
+            }
+
+            if (openBottomSheetChange) {
+                CustomBottomSheet(
+                    onCloseRequest = { openBottomSheetChange = false}
+                ) { onClose ->
+                    selectedMovie?.let { movie ->
+                        selectedComment?.let { comment ->
+                            ChangeComment(
+                                sharedListId = listId,
+                                userName = userName,
+                                selectedMovieId = movie.id,
+                                selectedComment = comment,
+                                fraction = 0.7f,
+                                viewModel = sharedListsViewModel,
+                                onClose = onClose
+                            )
+                        }
+                    }
+                }
+                AdaptiveBackHandler { openBottomSheetChange = false }
+            }
+
+            selectedMovie?.let { movie ->
+                if (openBottomSheetReviews) {
+                    CustomBottomSheet(
+                        onCloseRequest = { openBottomSheetReviews = false }
+                    ) { onClose ->
+                        ShowCommentList(
+                            userId = userId,
+                            selectedMovieId = movie.id,
+                            viewModel = sharedListsViewModel,
+                            listId = listId,
+                            fraction = 0.7f,
+                            onClick = {comment ->
+                                selectedComment = comment
+                                openBottomSheetChange = true
+                            },
+                            onClose = onClose
+                        )
+                    }
+                    AdaptiveBackHandler { openBottomSheetReviews = false }
+                }
+                DetailsCardSelectedMovie(
+                    movie = movie,
+                    userId = userId,
+                    navController = navController,
+                    reviews = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_show_response),
+                            imageVector = Icons.Default.CommentBank,
+                            modifier = Modifier.fillMaxWidth(),
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
+                        )
+                    },
+                    onCloseButton = { selectedMovie = null }
+                )
+                AdaptiveBackHandler { selectedMovie = null }
+            }
+
             if (selectedMovie == null) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .background(MaterialTheme.colorScheme.background)
                 ) {
+                    if (movies.isEmpty()) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Пока ничего нет!",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+                    }
+
                     LazyColumn(
                         state = listState,
                         modifier = Modifier
@@ -185,6 +292,7 @@ fun InternalSharedList(
                             }
                         }
                     }
+
                 }
             }
         }

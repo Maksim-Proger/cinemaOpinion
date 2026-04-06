@@ -366,7 +366,8 @@ fun SharedListScreen(
                             listId = listId,
                             title = title,
                             userId = userId,
-                            userName = userName
+                            userName = userName,
+                            listName = listName
                         )
                     )
                 },
@@ -377,7 +378,8 @@ fun SharedListScreen(
                             listId = listId,
                             title = title,
                             userId = userId,
-                            userName = userName
+                            userName = userName,
+                            listName = listName
                         )
                     )
                 }

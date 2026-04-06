@@ -116,7 +116,7 @@ fun AccountScreenOverlay(
 ) {
     if (state.onAccountButtonClick.value) {
         CustomBoxShowOverlay(
-            onDismiss = { state.onAccountButtonClick.value = false },
+            onDismiss = { /* state.onAccountButtonClick.value = false */ },
             paddingVerticalSecondBox = 70.dp,
             paddingHorizontalSecondBox = 14.dp,
             content = {
