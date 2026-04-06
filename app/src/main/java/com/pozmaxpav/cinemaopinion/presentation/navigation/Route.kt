@@ -6,11 +6,7 @@ sealed class Route(val route: String) {
     data object MediaNewsScreen : Route(route = "media_news_screen")
     data object NotificationsScreen : Route(route = "notifications_screen")
     data object SeriesControlScreen : Route(route = "series_control_screen")
-    data object ListWatchedMovies : Route(route = "list_watched_movies")
-    data object ListSelectedGeneralMovies : Route(route = "list_selected_general_movies")
-    data object ListSelectedGeneralSerials : Route(route = "list_selected_general_serials")
     data object ListSelectedMovies : Route(route = "list_selected_movies")
-    data object ListWaitingContinuationSeries : Route(route = "list_waiting_continuation_series")
     data object SettingsScreen : Route(route = "settings_screen/{userName}") {
         fun getUserName(userName: String) = "settings_screen/$userName"
     }
@@ -27,6 +23,17 @@ sealed class Route(val route: String) {
         // Функция для удобного создания пути с параметром
         fun createRoute(listId: String, movieId: Int, userName: String) =
             "movie_details/$listId/$movieId/$userName"
+    }
+    data object InternalSharedList :
+        Route(route = "internal_shared_list/{dataSource}/{listId}/{title}/{userId}/{userName}/{listName}") {
+        fun openInternalSharedList(
+            dataSource: String,
+            listId: String,
+            title: String,
+            userId: String,
+            userName: String,
+            listName: String
+        ) = "internal_shared_list/$dataSource/$listId/$title/$userId/$userName/$listName"
     }
 }
 

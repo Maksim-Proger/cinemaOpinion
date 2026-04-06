@@ -44,12 +44,12 @@ fun SharedListItem(
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(Modifier.padding(vertical = 5.dp))
-        ExpandedCardTest(item.users.values.joinToString(", "))
+        ExpandedCardUsers(item.users.values.joinToString(", "))
     }
 }
 
 @Composable
-private fun ExpandedCardTest(listParticipants: String) {
+private fun ExpandedCardUsers(listParticipants: String) {
 
     var expandedState by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(

@@ -6,7 +6,7 @@ import javax.inject.Inject
 class RemoveMovieUseCase @Inject constructor(
     private val repository: SharedListsRepository
 ) {
-    suspend operator fun invoke(listId: String, movieId: Int) {
-        repository.removeMovie(listId, movieId)
+    suspend operator fun invoke(listId: String, destination: String, movieId: Int) {
+        repository.removeMovie(listId, destination, movieId)
     }
 }

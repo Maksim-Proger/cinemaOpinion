@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.sp
 import com.example.ui.R
 
 val mainFontFamily = FontFamily(
-    Font(R.font.roboto_serif_medium)
+    Font(R.font.inter_tight_semibold_italic)
 )
 val christmasFont = FontFamily(
     Font(R.font.bad_script)

@@ -9,31 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddComment
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.CommentBank
-import androidx.compose.material.icons.outlined.Done
-import androidx.compose.material.icons.outlined.PostAdd
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,56 +22,68 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.CommentBank
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WAITING_CONTINUATION_SERIES
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WATCHED_MOVIES
-import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_MOVIES
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
-import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
+import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
+import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
-import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilities.AddComment
 import com.pozmaxpav.cinemaopinion.utilities.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilities.ShowCommentList
-import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SharedListScreen(
+fun InternalSharedList(
     navController: NavHostController,
-    systemViewModel: SystemViewModel,
-    userName: String,
+    dataSource: String,
     listId: String,
     title: String,
-    apiViewModel: ApiViewModel = hiltViewModel(),
+    userId: String,
+    userName: String,
+    listName: String,
     userViewModel: UserViewModel = hiltViewModel(),
     sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
     notificationViewModel: NotificationViewModel = hiltViewModel()
 ) {
+
     val context = LocalContext.current
     val listState = rememberLazyListState()
 
     val movies by sharedListsViewModel.movies.collectAsState()
-    val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
-    val listName by sharedListsViewModel.listName.collectAsState()
 
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
@@ -105,18 +97,9 @@ fun SharedListScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        systemViewModel.getUserId()
-    }
     LaunchedEffect(listId) {
-        sharedListsViewModel.getMovies(listId, NODE_SHARED_LIST_MOVIES)
-        sharedListsViewModel.observeMovies(listId, NODE_SHARED_LIST_MOVIES)
-        sharedListsViewModel.getListName(listId)
-    }
-    LaunchedEffect(selectedMovie) {
-        selectedMovie?.let { movie ->
-            apiViewModel.getInformationMovie(movie.id)
-        }
+        sharedListsViewModel.getMovies(listId, dataSource)
+        sharedListsViewModel.observeMovies(listId, dataSource)
     }
     LaunchedEffect(userId) {
         userViewModel.getUserData(userId)
@@ -125,9 +108,26 @@ fun SharedListScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
 
+            if (openBottomSheetComments) {
+                CustomBottomSheet(
+                    onCloseRequest = { openBottomSheetComments = false }
+                ) { onClose ->
+                    AddComment(
+                        dataUser = userData,
+                        viewModel = sharedListsViewModel,
+                        listName = listName,
+                        selectedItem = selectedMovie,
+                        fraction = 0.7f,
+                        context = context,
+                        onClick = onClose
+                    )
+                }
+                AdaptiveBackHandler { openBottomSheetComments = false }
+            }
+
             if (openBottomSheetChange) {
                 CustomBottomSheet(
-                    onCloseRequest = { openBottomSheetChange = false }
+                    onCloseRequest = { openBottomSheetChange = false}
                 ) { onClose ->
                     selectedMovie?.let { movie ->
                         selectedComment?.let { comment ->
@@ -146,26 +146,7 @@ fun SharedListScreen(
                 AdaptiveBackHandler { openBottomSheetChange = false }
             }
 
-            if (openBottomSheetComments) {
-                CustomBottomSheet(
-                    onCloseRequest = { openBottomSheetComments = false }
-                ) { onClose ->
-                    AddComment(
-                        dataUser = userData,
-                        sharedListId = listId,
-                        viewModel = sharedListsViewModel,
-                        listName = listName,
-                        selectedItem = selectedMovie,
-                        fraction = 0.7f,
-                        context = context,
-                        onClick = onClose
-                    )
-                }
-                AdaptiveBackHandler { openBottomSheetComments = false }
-            }
-
             selectedMovie?.let { movie ->
-
                 if (openBottomSheetReviews) {
                     CustomBottomSheet(
                         onCloseRequest = { openBottomSheetReviews = false }
@@ -176,7 +157,7 @@ fun SharedListScreen(
                             viewModel = sharedListsViewModel,
                             listId = listId,
                             fraction = 0.7f,
-                            onClick = { comment ->
+                            onClick = {comment ->
                                 selectedComment = comment
                                 openBottomSheetChange = true
                             },
@@ -185,40 +166,10 @@ fun SharedListScreen(
                     }
                     AdaptiveBackHandler { openBottomSheetReviews = false }
                 }
-
                 DetailsCardSelectedMovie(
                     movie = movie,
                     userId = userId,
                     navController = navController,
-                    sendToWaitingList = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_move_to_waiting_list),
-                            imageVector = Icons.Outlined.PostAdd,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = {
-                                selectedMovie?.let { movie ->
-                                    sharedListsViewModel.moveMovie(
-                                        listId = listId,
-                                        sourceNode = NODE_SHARED_LIST_MOVIES,
-                                        destination = NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                        movieId = movie.id
-                                    )
-                                }
-                            }
-                        )
-                    },
-                    commentButton = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_leave_comment),
-                            imageVector = Icons.Default.AddComment,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openBottomSheetComments = !openBottomSheetComments }
-                        )
-                    },
                     reviews = {
                         CustomTextButton(
                             textButton = context.getString(R.string.button_show_response),
@@ -229,28 +180,8 @@ fun SharedListScreen(
                             onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
                         )
                     },
-                    sendToArchive = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_send_to_archive),
-                            imageVector = Icons.Outlined.Done,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = {
-                                selectedMovie?.let { movie ->
-                                    sharedListsViewModel.moveMovie(
-                                        listId = listId,
-                                        sourceNode = NODE_SHARED_LIST_MOVIES,
-                                        destination = NODE_LIST_WATCHED_MOVIES,
-                                        movieId = movie.id
-                                    )
-                                }
-                            }
-                        )
-                    },
                     onCloseButton = { selectedMovie = null }
                 )
-
                 AdaptiveBackHandler { selectedMovie = null }
             }
 
@@ -260,6 +191,19 @@ fun SharedListScreen(
                         .weight(1f)
                         .background(MaterialTheme.colorScheme.background)
                 ) {
+                    if (movies.isEmpty()) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Пока ничего нет!",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+                    }
+
                     LazyColumn(
                         state = listState,
                         modifier = Modifier
@@ -275,9 +219,9 @@ fun SharedListScreen(
                             LaunchedEffect(isVisible) {
                                 if (!isVisible) {
                                     sharedListsViewModel.removeMovie(
-                                        listId,
-                                        NODE_SHARED_LIST_MOVIES,
-                                        movie.id
+                                        listId = listId,
+                                        destination = dataSource,
+                                        movieId = movie.id
                                     )
                                     notificationViewModel.createNotification(
                                         userId = userId,
@@ -346,44 +290,20 @@ fun SharedListScreen(
                                     }
                                 }
                             }
-                            Spacer(Modifier.padding(5.dp))
                         }
                     }
+
                 }
             }
         }
-
         if (selectedMovie == null) {
             SpecialTopAppBar(
                 isAtTop = isAtTop,
                 title = title,
                 goToBack = { navController.popBackStack() },
-                goToHome = { navigateFunction(navController, Route.MainScreen.route) },
-                onArchiveClick = {
-                    navController.navigate(
-                        Route.InternalSharedList.openInternalSharedList(
-                            dataSource = NODE_LIST_WATCHED_MOVIES,
-                            listId = listId,
-                            title = title,
-                            userId = userId,
-                            userName = userName,
-                            listName = listName
-                        )
-                    )
-                },
-                onWaitlistClick = {
-                    navController.navigate(
-                        Route.InternalSharedList.openInternalSharedList(
-                            dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
-                            listId = listId,
-                            title = title,
-                            userId = userId,
-                            userName = userName,
-                            listName = listName
-                        )
-                    )
-                }
+                goToHome = { navigateFunction(navController, Route.MainScreen.route) }
             )
         }
     }
+
 }
