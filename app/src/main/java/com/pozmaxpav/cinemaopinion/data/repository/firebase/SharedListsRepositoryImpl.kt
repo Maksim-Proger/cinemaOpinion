@@ -94,6 +94,7 @@ class SharedListsRepositoryImpl @Inject constructor(
     }
     override suspend fun removeMovie(
         listId: String,
+        destination: String,
         movieId: Int
     ) {
         if (listId.isEmpty()) throw IllegalArgumentException("List ID cannot be empty")
@@ -110,7 +111,8 @@ class SharedListsRepositoryImpl @Inject constructor(
         val moviesNode = databaseReference
             .child(NODE_SHARED_LIST)
             .child(sharedListKey)
-            .child(NODE_SHARED_LIST_MOVIES)
+//            .child(NODE_SHARED_LIST_MOVIES)
+            .child(destination)
             .get()
             .await()
 
@@ -120,7 +122,10 @@ class SharedListsRepositoryImpl @Inject constructor(
 
         movieSnapshot.ref.removeValue().await()
     }
-    override suspend fun getMovies(listId: String): List<DomainSelectedMovieModel> {
+    override suspend fun getMovies(
+        listId: String,
+        destination: String
+    ): List<DomainSelectedMovieModel> {
         if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
 
         val sharedListKey = databaseReference
@@ -135,13 +140,15 @@ class SharedListsRepositoryImpl @Inject constructor(
         return databaseReference
             .child(NODE_SHARED_LIST)
             .child(sharedListKey)
-            .child(NODE_SHARED_LIST_MOVIES)
+//            .child(NODE_SHARED_LIST_MOVIES)
+            .child(destination)
             .get()
             .await()
             .children.mapNotNull { it.getValue(DomainSelectedMovieModel::class.java) }
     }
     override suspend fun observeListMovies(
         listId: String,
+        destination: String,
         onMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit
     ) {
         val sharedListKey = databaseReference
@@ -156,7 +163,8 @@ class SharedListsRepositoryImpl @Inject constructor(
         val moviesRef = databaseReference
             .child(NODE_SHARED_LIST)
             .child(sharedListKey)
-            .child(NODE_SHARED_LIST_MOVIES)
+//            .child(NODE_SHARED_LIST_MOVIES)
+            .child(destination)
 
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

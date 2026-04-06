@@ -14,11 +14,12 @@ import com.example.ui.presentation.viewmodels.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.MediaNewsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.SeriesControlScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.ScaffoldMainScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.InternalSharedList
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.NotificationsScreen
 //import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralMovies
 //import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralSerials
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedMovies
-import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSharedScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListScreen
 //import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWaitingContinuationSeries
 //import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWatchedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.EditProfileScreen
@@ -50,30 +51,16 @@ fun NavGraph(
             deepLinks = listOf(
                 navDeepLink { uriPattern = "myapp://notifications" }
             )
-        ) {
-            NotificationsScreen(navController, systemViewModel)
-        }
+        ) { NotificationsScreen(navController, systemViewModel) }
         composable(Route.EditPersonalInformationScreen.route) {
             EditProfileScreen(navController, systemViewModel)
         }
         composable(Route.SeriesControlScreen.route) {
             SeriesControlScreen(navController, systemViewModel)
         }
-//        composable(Route.ListWatchedMovies.route) {
-//            ListWatchedMovies(navController, systemViewModel)
-//        }
-//        composable(Route.ListSelectedGeneralMovies.route) {
-//            ListSelectedGeneralMovies(navController, systemViewModel)
-//        }
-//        composable(Route.ListSelectedGeneralSerials.route) {
-//            ListSelectedGeneralSerials(navController, systemViewModel)
-//        }
         composable(Route.ListSelectedMovies.route) {
             ListSelectedMovies(navController, systemViewModel)
         }
-//        composable(Route.ListWaitingContinuationSeries.route) {
-//            ListWaitingContinuationSeries(navController, systemViewModel)
-//        }
         composable(
             Route.SettingsScreen.route,
             arguments = listOf(
@@ -98,7 +85,7 @@ fun NavGraph(
             val listId = backStackEntry.arguments?.getString("listId") ?: ""
             val title = backStackEntry.arguments?.getString("title") ?: ""
             val userName = backStackEntry.arguments?.getString("userName") ?: ""
-            ListSharedScreen(
+            SharedListScreen(
                 navController = navController,
                 userName = userName,
                 systemViewModel = systemViewModel,
@@ -106,16 +93,12 @@ fun NavGraph(
                 title = title
             )
         }
-
         composable( // TODO: В Route это заносить не нужно?
             "webView/{url}", // Шаблон маршрута с аргументом "url"
             arguments = listOf(
                 navArgument("url") { type = NavType.StringType }
             )
-        ) {
-            WebViewScreen()
-        }
-
+        ) { WebViewScreen() }
         composable(
             Route.MovieDetailScreen.route,
             arguments = listOf(
@@ -133,6 +116,30 @@ fun NavGraph(
                 movieId = movieId,
                 userName = userName,
                 systemViewModel = systemViewModel
+            )
+        }
+        composable(
+            Route.InternalSharedList.route,
+            arguments = listOf(
+                navArgument("dataSource") {type = NavType.StringType},
+                navArgument("listId") {type = NavType.StringType},
+                navArgument("title") {type = NavType.StringType},
+                navArgument("userId") {type = NavType.StringType},
+                navArgument("userName") {type = NavType.StringType}
+            )
+        ) { backStackEntry ->
+            val dataSource = backStackEntry.arguments?.getString("dataSource") ?: ""
+            val listId = backStackEntry.arguments?.getString("listId") ?: ""
+            val title = backStackEntry.arguments?.getString("title") ?: ""
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            val userName = backStackEntry.arguments?.getString("userName") ?: ""
+            InternalSharedList(
+                navController = navController,
+                dataSource = dataSource,
+                listId = listId,
+                title = title,
+                userId = userId,
+                userName = userName
             )
         }
 

@@ -74,7 +74,7 @@ import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListSharedScreen(
+fun SharedListScreen(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
     userName: String,
@@ -109,8 +109,8 @@ fun ListSharedScreen(
         systemViewModel.getUserId()
     }
     LaunchedEffect(listId) {
-        sharedListsViewModel.getMovies(listId)
-        sharedListsViewModel.observeMovies(listId)
+        sharedListsViewModel.getMovies(listId, NODE_SHARED_LIST_MOVIES)
+        sharedListsViewModel.observeMovies(listId, NODE_SHARED_LIST_MOVIES)
         sharedListsViewModel.getListName(listId)
     }
     LaunchedEffect(selectedMovie) {
@@ -250,6 +250,7 @@ fun ListSharedScreen(
                     },
                     onCloseButton = { selectedMovie = null }
                 )
+
                 AdaptiveBackHandler { selectedMovie = null }
             }
 
@@ -273,7 +274,11 @@ fun ListSharedScreen(
 
                             LaunchedEffect(isVisible) {
                                 if (!isVisible) {
-                                    sharedListsViewModel.removeMovie(listId, movie.id)
+                                    sharedListsViewModel.removeMovie(
+                                        listId,
+                                        NODE_SHARED_LIST_MOVIES,
+                                        movie.id
+                                    )
                                     notificationViewModel.createNotification(
                                         userId = userId,
                                         context = context,
@@ -353,7 +358,29 @@ fun ListSharedScreen(
                 isAtTop = isAtTop,
                 title = title,
                 goToBack = { navController.popBackStack() },
-                goToHome = { navigateFunction(navController, Route.MainScreen.route) }
+                goToHome = { navigateFunction(navController, Route.MainScreen.route) },
+                onArchiveClick = {
+                    navController.navigate(
+                        Route.InternalSharedList.openInternalSharedList(
+                            dataSource = NODE_LIST_WATCHED_MOVIES,
+                            listId = listId,
+                            title = title,
+                            userId = userId,
+                            userName = userName
+                        )
+                    )
+                },
+                onWaitlistClick = {
+                    navController.navigate(
+                        Route.InternalSharedList.openInternalSharedList(
+                            dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                            listId = listId,
+                            title = title,
+                            userId = userId,
+                            userName = userName
+                        )
+                    )
+                }
             )
         }
     }

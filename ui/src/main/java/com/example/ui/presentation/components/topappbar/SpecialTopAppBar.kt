@@ -43,7 +43,9 @@ fun SpecialTopAppBar(
     isAtTop: Boolean,
     title: String,
     goToHome: () -> Unit,
-    goToBack: () -> Unit
+    goToBack: () -> Unit,
+    onArchiveClick: () -> Unit = {},
+    onWaitlistClick: () -> Unit = {}
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = if (isAtTop) MaterialTheme.colorScheme.background else Color.Transparent,
@@ -98,10 +100,11 @@ fun SpecialTopAppBar(
                     translationX = -offset.toPx()
                     translationY = offset.toPx()
                 },
-                color = MaterialTheme.colorScheme.background,
-                tint = MaterialTheme.colorScheme.secondary,
-                containerColor = MaterialTheme.colorScheme.background
-
+                color = MaterialTheme.colorScheme.background, // Обводка вокруг кнопки меню
+                tint = MaterialTheme.colorScheme.secondary, // Цвет кнопку
+                containerColor = MaterialTheme.colorScheme.background, // Цвет контейнера открывающегося меню
+                onArchiveClick = onArchiveClick,
+                onWaitlistClick = onWaitlistClick
             )
         }
     }
@@ -112,7 +115,9 @@ private fun Menu(
     modifier: Modifier,
     color: Color,
     tint: Color,
-    containerColor: Color
+    containerColor: Color,
+    onArchiveClick: () -> Unit = {},
+    onWaitlistClick: () -> Unit = {}
 ) {
     SettingsMenu(
         modifier = modifier
@@ -125,8 +130,19 @@ private fun Menu(
         containerColor = containerColor
     ) { closeMenu ->
         DropdownMenuItem(
-            onAction = {},
+            onAction = {
+                onArchiveClick()
+                closeMenu()
+            },
             title = "Архив",
+            leadingIcon = null
+        )
+        DropdownMenuItem(
+            onAction = {
+                onWaitlistClick()
+                closeMenu()
+            },
+            title = "Лист ожидания",
             leadingIcon = null
         )
     }

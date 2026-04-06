@@ -27,7 +27,7 @@ import com.example.ui.R
 @Composable
 fun SettingsMenu(
     modifier: Modifier = Modifier,
-    tint: Color = MaterialTheme.colorScheme.secondary,
+    tint: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     containerColor: Color = MaterialTheme.colorScheme.secondary,
     content: @Composable (closeMenu: () -> Unit) -> Unit
 ) {

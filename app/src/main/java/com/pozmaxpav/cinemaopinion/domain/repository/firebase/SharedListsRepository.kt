@@ -21,11 +21,16 @@ interface SharedListsRepository {
     )
     suspend fun removeMovie(
         listId: String,
+        destination: String,
         movieId: Int
     )
-    suspend fun getMovies(listId: String): List<DomainSelectedMovieModel>
+    suspend fun getMovies(
+        listId: String,
+        destination: String
+    ): List<DomainSelectedMovieModel>
     suspend fun observeListMovies(
         listId: String,
+        destination: String,
         onMoviesUpdated: (List<DomainSelectedMovieModel>) -> Unit
     )
     suspend fun getMovieById(

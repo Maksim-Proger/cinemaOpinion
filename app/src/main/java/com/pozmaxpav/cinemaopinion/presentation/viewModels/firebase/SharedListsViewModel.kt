@@ -32,6 +32,7 @@ class SharedListsViewModel @Inject constructor(
     private val sendMoviesUseCase: SendMoviesUseCase
 ) : ViewModel() {
 
+    // region Variables
     private val _movieDownloadStatus = MutableStateFlow<LoadingState>(LoadingState.Success)
     val movieDownloadStatus = _movieDownloadStatus.asStateFlow()
 
@@ -66,7 +67,9 @@ class SharedListsViewModel @Inject constructor(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val successfulResult = _successfulResult.asSharedFlow()
+    // endregion
 
+    // region Comments
     fun addComment(listId: String, movieId: Int, username: String, commentUser: String) {
         viewModelScope.launch {
             try {
@@ -113,7 +116,9 @@ class SharedListsViewModel @Inject constructor(
             }
         }
     }
+    // endregion
 
+    // region Lists
     fun getLists(userId: String) {
         viewModelScope.launch {
             try {
@@ -175,9 +180,13 @@ class SharedListsViewModel @Inject constructor(
             }
         }
     }
+    // endregion
 
-
-    fun getMovieById(listId: String, movieId: Int) {
+    // region Movies
+    fun getMovieById(
+        listId: String,
+        movieId: Int
+    ) {
         viewModelScope.launch {
             try {
                 _movie.value = moviesUseCases.getMovieById(listId, movieId)
@@ -193,13 +202,12 @@ class SharedListsViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
-                moviesUseCases.addMovie(listId, destination, selectedMovie)
-//                if (moviesUseCases.getMovies(listId).any { it.id == selectedMovie.id }) {
-//                    _toastMessage.emit(R.string.movie_has_already_been_added)
-//                } else {
-//                    moviesUseCases.addMovie(listId, destination, selectedMovie)
-//                    _toastMessage.emit(R.string.movie_has_been_added_to_list)
-//                }
+                if (moviesUseCases.getMovies(listId, destination).any { it.id == selectedMovie.id }) {
+                    _toastMessage.emit(R.string.movie_has_already_been_added)
+                } else {
+                    moviesUseCases.addMovie(listId, destination, selectedMovie)
+                    _toastMessage.emit(R.string.movie_has_been_added_to_list)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -219,27 +227,37 @@ class SharedListsViewModel @Inject constructor(
             }
         }
     }
-    fun removeMovie(listId: String, movieId: Int) {
+    fun removeMovie(
+        listId: String,
+        destination: String,
+        movieId: Int
+    ) {
         viewModelScope.launch {
             try {
-                moviesUseCases.removeMovie(listId, movieId)
+                moviesUseCases.removeMovie(listId, destination, movieId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-    fun getMovies(listId: String) {
+    fun getMovies(
+        listId: String,
+        destination: String
+    ) {
         viewModelScope.launch {
             try {
-                _listMovies.value = moviesUseCases.getMovies(listId)
+                _listMovies.value = moviesUseCases.getMovies(listId, destination)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-    fun observeMovies(listId: String) {
+    fun observeMovies(
+        listId: String,
+        destination: String
+    ) {
         viewModelScope.launch {
-            moviesUseCases.observeListMovies(listId) { onMoviesUpdated ->
+            moviesUseCases.observeListMovies(listId, destination) { onMoviesUpdated ->
                 _listMovies.value = onMoviesUpdated
             }
         }
@@ -254,6 +272,7 @@ class SharedListsViewModel @Inject constructor(
             }
         }
     }
+    // endregion
 
     public override fun onCleared() {
         commentsUseCases.observeComments.removeListener()
