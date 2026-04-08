@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,7 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.ui.R
 import com.example.ui.presentation.components.dropmenu.DropdownMenuItem
 import com.example.ui.presentation.components.dropmenu.SettingsMenu
 
@@ -95,18 +96,26 @@ fun SpecialTopAppBar(
                 color = MaterialTheme.colorScheme.background,
                 textColor = MaterialTheme.colorScheme.secondary
             )
-            Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-            Menu(
-                modifier = Modifier.graphicsLayer {
-                    translationX = -offset.toPx()
-                    translationY = offset.toPx()
-                },
-                color = MaterialTheme.colorScheme.background, // Обводка вокруг кнопки меню
-                tint = MaterialTheme.colorScheme.secondary, // Цвет кнопку
-                containerColor = MaterialTheme.colorScheme.secondary, // Цвет контейнера открывающегося меню
-                onArchiveClick = onArchiveClick,
-                onWaitlistClick = onWaitlistClick
-            )
+
+            if (
+                title != stringResource(R.string.title_page_personal_list) &&
+                !title.contains(stringResource(R.string.button_open_waiting_list_screen)) &&
+                !title.contains(stringResource(R.string.button_open_archive_screen))
+            ) {
+
+                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                Menu(
+                    modifier = Modifier.graphicsLayer {
+                        translationX = -offset.toPx()
+                        translationY = offset.toPx()
+                    },
+                    color = MaterialTheme.colorScheme.background, // Обводка вокруг кнопки меню
+                    tint = MaterialTheme.colorScheme.secondary, // Цвет кнопку
+                    containerColor = MaterialTheme.colorScheme.secondary, // Цвет контейнера открывающегося меню
+                    onArchiveClick = onArchiveClick,
+                    onWaitlistClick = onWaitlistClick
+                )
+            }
         }
     }
 }
@@ -135,7 +144,7 @@ private fun Menu(
                 onArchiveClick()
                 closeMenu()
             },
-            title = "Архив",
+            title = stringResource(R.string.button_open_archive_screen),
             leadingIcon = null
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
@@ -144,7 +153,7 @@ private fun Menu(
                 onWaitlistClick()
                 closeMenu()
             },
-            title = "Лист ожидания",
+            title = stringResource(R.string.button_open_waiting_list_screen),
             leadingIcon = null
         )
     }
