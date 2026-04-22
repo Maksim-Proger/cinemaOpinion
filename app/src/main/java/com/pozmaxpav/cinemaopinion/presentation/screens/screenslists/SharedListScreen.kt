@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
@@ -45,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -192,7 +194,7 @@ fun SharedListScreen(
                     navController = navController,
                     sendToWaitingList = {
                         CustomTextButton(
-                            textButton = context.getString(R.string.button_move_to_waiting_list),
+                            textButton = context.getString(R.string.button_open_waiting_list),
                             imageVector = Icons.Outlined.PostAdd,
                             modifier = Modifier.fillMaxWidth(),
                             containerColor = MaterialTheme.colorScheme.secondary,
@@ -354,6 +356,9 @@ fun SharedListScreen(
         }
 
         if (selectedMovie == null) {
+            val archiveScreen = stringResource(R.string.title_archive_screen) + " ($title)"
+            val waitingListScreen = stringResource(R.string.title_waiting_list_screen) + " ($title)"
+
             SpecialTopAppBar(
                 isAtTop = isAtTop,
                 title = title,
@@ -364,7 +369,7 @@ fun SharedListScreen(
                         Route.InternalSharedList.openInternalSharedList(
                             dataSource = NODE_LIST_WATCHED_MOVIES,
                             listId = listId,
-                            title = title,
+                            title = archiveScreen,
                             userId = userId,
                             userName = userName,
                             listName = listName
@@ -376,7 +381,7 @@ fun SharedListScreen(
                         Route.InternalSharedList.openInternalSharedList(
                             dataSource = NODE_LIST_WAITING_CONTINUATION_SERIES,
                             listId = listId,
-                            title = title,
+                            title = waitingListScreen,
                             userId = userId,
                             userName = userName,
                             listName = listName

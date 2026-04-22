@@ -16,5 +16,10 @@
 
     <!--  Text Button  -->
     <string name="delete_entry">Удалить</string>
+    <string name="button_open_archive_screen">Архив</string>
+    <string name="button_open_waiting_list_screen">Лист ожидания</string>
+
+    <!--  TopAppBarTitle  -->
+    <string name="title_page_personal_list">Мое</string>
 
 </resources>
