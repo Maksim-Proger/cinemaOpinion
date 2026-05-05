@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.auth.presentation.navigation.AuthRoute
+import com.example.core.utils.sound.SoundManagerProvider
 import com.example.intro.presentation.introscreens.viewmodel.OnBoardingViewModel
 import com.example.intro.presentation.navigation.IntroRoute
 import com.example.ui.presentation.theme.AppTheme
@@ -76,27 +77,29 @@ class MainActivity : ComponentActivity() {
                 ?: if (registrationFlag) Route.MainScreen.route else AuthRoute.LOGIN_SCREEN
 
             AppTheme(themeViewModel) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    when(hasEntered) {
-                        true -> {
-                            CheckAndUpdateAppVersion(context)
-                            NavGraph(
-                                themeViewModel = themeViewModel,
-                                systemViewModel = systemViewModel,
-                                startDestination = destination
-                            )
+                SoundManagerProvider {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        when(hasEntered) {
+                            true -> {
+                                CheckAndUpdateAppVersion(context)
+                                NavGraph(
+                                    themeViewModel = themeViewModel,
+                                    systemViewModel = systemViewModel,
+                                    startDestination = destination
+                                )
+                            }
+                            false -> {
+                                NavGraph(
+                                    themeViewModel = themeViewModel,
+                                    systemViewModel = systemViewModel,
+                                    startDestination = IntroRoute.ON_BOARDING_SCREEN
+                                )
+                            }
+                            null -> LoadingScreen()
                         }
-                        false -> {
-                            NavGraph(
-                                themeViewModel = themeViewModel,
-                                systemViewModel = systemViewModel,
-                                startDestination = IntroRoute.ON_BOARDING_SCREEN
-                            )
-                        }
-                        null -> LoadingScreen()
                     }
                 }
             }
