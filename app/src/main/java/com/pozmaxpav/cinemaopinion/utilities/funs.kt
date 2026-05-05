@@ -476,6 +476,7 @@ fun AddComment(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier,
+                isSendButton = true,
                 onClickButton = {
                     when (viewModel) {
                         is PersonalMovieViewModel -> {
