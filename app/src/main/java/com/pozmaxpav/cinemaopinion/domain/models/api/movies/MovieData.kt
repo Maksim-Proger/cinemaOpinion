@@ -38,7 +38,7 @@ sealed class MovieData : UnifyingId {
         val type: String?,
         val ratingKinopoisk: Double?,
         val ratingImdb: Double?,
-        val filmLength: Int?,
+        val filmLength: String?,
         val genres: List<Genre>,
 
         override val nameRu: String?,
@@ -52,9 +52,9 @@ sealed class MovieData : UnifyingId {
     data class MovieSearch2(
         val filmId: Int,
         val nameEn: String?,
-        val filmLength: Int?,
+        val filmLength: String?,
         val genres: List<Genre>,
-        val rating: Double?,
+        val rating: String?,
 
         override val nameRu: String?,
         override val posterUrl: String,

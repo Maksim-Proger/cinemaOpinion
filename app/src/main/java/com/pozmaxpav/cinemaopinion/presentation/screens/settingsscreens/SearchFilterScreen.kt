@@ -595,7 +595,7 @@ fun RangeSliderToSelectDate(
                     onRangeChange(newRange)
                 }
             },
-            valueRange = 1900f..2025f,
+            valueRange = 1900f..2026f,
             steps = 0,
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.secondary,
