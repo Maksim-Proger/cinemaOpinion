@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
     id("kotlin-parcelize")
     id("dagger.hilt.android.plugin")
 }
@@ -54,7 +54,7 @@ dependencies {
 
     // Navigation + Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
     implementation(libs.androidx.core.ktx)

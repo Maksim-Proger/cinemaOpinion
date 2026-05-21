@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
@@ -84,7 +84,7 @@ dependencies {
 
     // Navigation + Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
     // Compose Navigation
@@ -105,7 +105,7 @@ dependencies {
 
     // Room
     implementation(libs.room.ktx)
-    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     // MaterialExpressive
     //implementation("androidx.compose.material3:material3-android:1.4.0-alpha14") // Разобраться почему Expressive работает только с этой версией
