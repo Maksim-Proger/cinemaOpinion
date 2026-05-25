@@ -127,28 +127,29 @@ fun ListSelectedMovies(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-
-            if (openBottomSheetChange) {
-                CustomBottomSheet(
-                    onCloseRequest = { openBottomSheetChange = false }
-                ) { onClose ->
-                    userData?.let { user ->
-                        selectedMovie?.let { movie ->
-                            selectedComment?.let { comment ->
-                                ChangeComment(
-                                    userId = user.id,
-                                    userName = user.nikName,
-                                    selectedMovieId = movie.id,
-                                    selectedComment = comment,
-                                    fraction = 0.7f,
-                                    viewModel = personalMovieViewModel,
-                                    onClose = onClose
-                                )
+            userData?.let { user ->
+                selectedComment?.let { comment ->
+                    if (user.nikName == comment.username) {
+                        if (openBottomSheetChange) {
+                            CustomBottomSheet(
+                                onCloseRequest = { openBottomSheetChange = false }
+                            ) { onClose ->
+                                selectedMovie?.let { movie ->
+                                    ChangeComment(
+                                        userId = user.id,
+                                        userName = user.nikName,
+                                        selectedMovieId = movie.id,
+                                        selectedComment = comment,
+                                        fraction = 0.7f,
+                                        viewModel = personalMovieViewModel,
+                                        onClose = onClose
+                                    )
+                                }
                             }
+                            AdaptiveBackHandler { openBottomSheetChange = false }
                         }
                     }
                 }
-                AdaptiveBackHandler { openBottomSheetChange = false }
             }
 
             if (openBottomSheetComments) {

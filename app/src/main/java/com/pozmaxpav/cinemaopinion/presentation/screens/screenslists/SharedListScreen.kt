@@ -126,25 +126,27 @@ fun SharedListScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
 
-            if (openBottomSheetChange) {
-                CustomBottomSheet(
-                    onCloseRequest = { openBottomSheetChange = false }
-                ) { onClose ->
-                    selectedMovie?.let { movie ->
-                        selectedComment?.let { comment ->
-                            ChangeComment(
-                                sharedListId = listId,
-                                userName = userName,
-                                selectedMovieId = movie.id,
-                                selectedComment = comment,
-                                fraction = 0.7f,
-                                viewModel = sharedListsViewModel,
-                                onClose = onClose
-                            )
+            selectedComment?.let { comment ->
+                if (userName == comment.username) {
+                    if (openBottomSheetChange) {
+                        CustomBottomSheet(
+                            onCloseRequest = { openBottomSheetChange = false }
+                        ) { onClose ->
+                            selectedMovie?.let { movie ->
+                                ChangeComment(
+                                    sharedListId = listId,
+                                    userName = userName,
+                                    selectedMovieId = movie.id,
+                                    selectedComment = comment,
+                                    fraction = 0.7f,
+                                    viewModel = sharedListsViewModel,
+                                    onClose = onClose
+                                )
+                            }
                         }
+                        AdaptiveBackHandler { openBottomSheetChange = false }
                     }
                 }
-                AdaptiveBackHandler { openBottomSheetChange = false }
             }
 
             if (openBottomSheetComments) {
@@ -166,7 +168,6 @@ fun SharedListScreen(
             }
 
             selectedMovie?.let { movie ->
-
                 if (openBottomSheetReviews) {
                     CustomBottomSheet(
                         onCloseRequest = { openBottomSheetReviews = false }
