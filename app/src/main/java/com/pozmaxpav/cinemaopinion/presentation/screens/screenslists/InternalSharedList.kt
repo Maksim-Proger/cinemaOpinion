@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -127,7 +128,7 @@ fun InternalSharedList(
 
             if (openBottomSheetChange) {
                 CustomBottomSheet(
-                    onCloseRequest = { openBottomSheetChange = false}
+                    onCloseRequest = { openBottomSheetChange = false }
                 ) { onClose ->
                     selectedMovie?.let { movie ->
                         selectedComment?.let { comment ->
@@ -156,8 +157,9 @@ fun InternalSharedList(
                             selectedMovieId = movie.id,
                             viewModel = sharedListsViewModel,
                             listId = listId,
+                            dataSource = dataSource,
                             fraction = 0.7f,
-                            onClick = {comment ->
+                            onClick = { comment ->
                                 selectedComment = comment
                                 openBottomSheetChange = true
                             },
@@ -170,6 +172,7 @@ fun InternalSharedList(
                     movie = movie,
                     userId = userId,
                     navController = navController,
+                    needComment = false,
                     reviews = {
                         CustomTextButton(
                             textButton = context.getString(R.string.button_show_response),
@@ -290,6 +293,7 @@ fun InternalSharedList(
                                     }
                                 }
                             }
+                            Spacer(Modifier.padding(5.dp))
                         }
                     }
 

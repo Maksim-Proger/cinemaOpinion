@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetCommentsUseCase @Inject constructor(
     private val repository: SharedListsRepository
 ) {
-    suspend operator fun invoke(listId: String, movieId: Int) : List<DomainCommentModel> {
-        return repository.getComments(listId, movieId)
+    suspend operator fun invoke(listId: String, movieId: Int, dataSource: String) : List<DomainCommentModel> {
+        return repository.getComments(listId, movieId, dataSource)
     }
 }

@@ -256,6 +256,7 @@ fun ShowCommentList(
     selectedMovieId: Int,
     viewModel: ViewModel,
     listId: String = "",
+    dataSource: String = "",
     fraction: Float,
     onClick: (DomainCommentModel) -> Unit,
     onClose: () -> Unit
@@ -321,8 +322,8 @@ fun ShowCommentList(
 
                 LaunchedEffect(listId, selectedMovieId) {
                     if (listId.isNotEmpty()) {
-                        viewModel.observeComments(listId, selectedMovieId)
-                        viewModel.getComments(listId, selectedMovieId)
+//                        viewModel.observeComments(listId, selectedMovieId)
+                        viewModel.getComments(listId, selectedMovieId, dataSource)
                     }
                 }
 
