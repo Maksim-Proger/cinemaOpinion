@@ -1,15 +1,16 @@
 package com.example.core.utils
 
 object CoreDatabaseConstants {
+    // region seasonEvent
     const val NODE_NEW_YEAR_LIST = "new_year_list"
     const val NODE_HALLOWEEN_LIST = "halloween_list"
     const val NODE_VALENTINE_LIST = "valentine_list"
     const val NODE_MARCH_8_LIST = "march_8_list"
     const val NODE_DEFAULT_LIST = "default"
+    // endregion
 
     const val NODE_LIST_MOVIES = "list_movies"
     const val NODE_LIST_SERIALS = "list_serials"
-    const val NODE_LIST_WATCHED_MOVIES = "list_watched_movies"
     const val NODE_LIST_WAITING_CONTINUATION_SERIES = "list_waiting_continuation_series"
 
 
@@ -18,17 +19,24 @@ object CoreDatabaseConstants {
 
     const val NODE_LIST_USERS = "list_users"
 
+    // region SharedList
     const val NODE_SHARED_LIST = "shared_lists"
     const val NODE_SHARED_LIST_PROFILE = "my_shared_list"
     const val NODE_SHARED_LIST_MOVIES = "shared_list_movies"
+    const val NODE_SHARED_LIST_WATCHED_MOVIES = "list_watched_movies"
+    // endregion
 
+    // region Comments
     const val NODE_COMMENTS = "comments"
     const val NODE_PERSONAL_COMMENTS = "personal_comments"
+    // endregion
 
     const val NODE_SERIES_CONTROL = "series_control"
 
+    // region listener
     const val MOVIES_KEY_LISTENER = "movies_key_listener"
     const val COMMENTS_KEY_LISTENER = "comments_key_listener"
     const val LISTS_KEY_LISTENER = "list_key_listener"
     const val ENTRIES_KEY_LISTENER = "entries_key_listener"
+    // endregion
 }

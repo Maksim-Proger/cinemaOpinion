@@ -100,10 +100,10 @@ class SharedListsViewModel @Inject constructor(
             }
         }
     }
-    fun getComments(listId: String, movieId: Int) {
+    fun getComments(listId: String, movieId: Int, dataSource: String) {
         viewModelScope.launch {
             try {
-                _comments.value = commentsUseCases.getComments(listId, movieId)
+                _comments.value = commentsUseCases.getComments(listId, movieId, dataSource)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

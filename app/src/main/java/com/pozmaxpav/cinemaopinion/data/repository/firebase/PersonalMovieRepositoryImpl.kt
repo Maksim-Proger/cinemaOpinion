@@ -3,7 +3,6 @@ package com.pozmaxpav.cinemaopinion.data.repository.firebase
 import android.util.Log
 import com.example.core.utils.CoreDatabaseConstants.COMMENTS_KEY_LISTENER
 import com.example.core.utils.CoreDatabaseConstants.MOVIES_KEY_LISTENER
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_CHANGES
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_PERSONAL_MOVIES
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_USERS
 import com.example.core.utils.CoreDatabaseConstants.NODE_PERSONAL_COMMENTS
@@ -15,7 +14,6 @@ import com.google.firebase.database.ValueEventListener
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToData
 import com.pozmaxpav.cinemaopinion.data.mappers.commentToDomain
 import com.pozmaxpav.cinemaopinion.data.models.firebase.DataComment
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.PersonalMovieRepository

@@ -68,6 +68,7 @@ fun DetailsCardSelectedMovie(
     movie: DomainSelectedMovieModel,
     userId: String = "",
     navController: NavHostController,
+    needComment: Boolean = true,
     sendToWaitingList: @Composable () -> Unit = {},
     sendToArchive: @Composable () -> Unit = {},
     reviews: @Composable () -> Unit = {},
@@ -236,8 +237,10 @@ fun DetailsCardSelectedMovie(
                                 sendToWaitingList()
                                 Spacer(Modifier.padding(5.dp))
                             }
-                            commentButton()
-                            Spacer(Modifier.padding(5.dp))
+                            if (needComment) {
+                                commentButton()
+                                Spacer(Modifier.padding(5.dp))
+                            }
                             reviews()
                             Spacer(Modifier.padding(5.dp))
                             sendToArchive()

@@ -6,11 +6,10 @@ import com.example.core.utils.CoreDatabaseConstants.LISTS_KEY_LISTENER
 import com.example.core.utils.CoreDatabaseConstants.MOVIES_KEY_LISTENER
 import com.example.core.utils.CoreDatabaseConstants.NODE_COMMENTS
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_USERS
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WAITING_CONTINUATION_SERIES
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WATCHED_MOVIES
 import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST
 import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_MOVIES
 import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_PROFILE
+import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_WATCHED_MOVIES
 import com.example.core.utils.FirebaseListenerHolder
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -255,6 +254,7 @@ class SharedListsRepositoryImpl @Inject constructor(
             .await()
 
     }
+
     override suspend fun updateComment(
         listId: String,
         movieId: Int,
@@ -301,9 +301,11 @@ class SharedListsRepositoryImpl @Inject constructor(
         val updatedDataComment = selectedComment.commentToData().copy(commentId = commentId)
         commentSnapshot.ref.setValue(updatedDataComment).await()
     }
+
     override suspend fun getComments(
         listId: String,
-        movieId: Int
+        movieId: Int,
+        dataSource: String
     ): List<DomainCommentModel> {
         if (listId.isEmpty()) throw IllegalArgumentException("List with ID $listId not found")
 
@@ -318,7 +320,7 @@ class SharedListsRepositoryImpl @Inject constructor(
         val movieKey = databaseReference
             .child(NODE_SHARED_LIST)
             .child(sharedListKey)
-            .child(NODE_SHARED_LIST_MOVIES)
+            .child(dataSource)
             .orderByChild("id")
             .equalTo(movieId.toDouble())
             .get().await()
@@ -328,7 +330,7 @@ class SharedListsRepositoryImpl @Inject constructor(
         val commentSnapshot = databaseReference
             .child(NODE_SHARED_LIST)
             .child(sharedListKey)
-            .child(NODE_SHARED_LIST_MOVIES)
+            .child(dataSource)
             .child(movieKey)
             .child(NODE_COMMENTS)
             .get().await()
@@ -337,6 +339,7 @@ class SharedListsRepositoryImpl @Inject constructor(
             it.getValue(DataComment::class.java)?.commentToDomain()
         }
     }
+
     override suspend fun observeListComments(
         listId: String,
         movieId: Int,
@@ -386,6 +389,7 @@ class SharedListsRepositoryImpl @Inject constructor(
         // 6. Добавляем в Holder корректную пару ref + listener
         listenerHolder.addListener(COMMENTS_KEY_LISTENER, commentsRef, listener)
     }
+
     // endregion
 
     // region Shared Lists

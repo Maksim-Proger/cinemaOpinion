@@ -50,8 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WAITING_CONTINUATION_SERIES
-import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WATCHED_MOVIES
 import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_MOVIES
+import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_WATCHED_MOVIES
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
@@ -177,6 +177,7 @@ fun SharedListScreen(
                             selectedMovieId = movie.id,
                             viewModel = sharedListsViewModel,
                             listId = listId,
+                            dataSource = NODE_SHARED_LIST_MOVIES,
                             fraction = 0.7f,
                             onClick = { comment ->
                                 selectedComment = comment
@@ -243,7 +244,7 @@ fun SharedListScreen(
                                     sharedListsViewModel.moveMovie(
                                         listId = listId,
                                         sourceNode = NODE_SHARED_LIST_MOVIES,
-                                        destination = NODE_LIST_WATCHED_MOVIES,
+                                        destination = NODE_SHARED_LIST_WATCHED_MOVIES,
                                         movieId = movie.id
                                     )
                                 }
@@ -367,7 +368,7 @@ fun SharedListScreen(
                 onArchiveClick = {
                     navController.navigate(
                         Route.InternalSharedList.openInternalSharedList(
-                            dataSource = NODE_LIST_WATCHED_MOVIES,
+                            dataSource = NODE_SHARED_LIST_WATCHED_MOVIES,
                             listId = listId,
                             title = archiveScreen,
                             userId = userId,

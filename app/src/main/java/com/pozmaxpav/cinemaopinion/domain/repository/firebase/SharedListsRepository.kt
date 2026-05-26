@@ -40,7 +40,7 @@ interface SharedListsRepository {
     // endregion
     suspend fun addComment(listId: String, movieId: Int, comment: DomainCommentModel)
     suspend fun updateComment(listId: String, movieId: Int, commentId: String, selectedComment: DomainCommentModel)
-    suspend fun getComments(listId: String, movieId: Int): List<DomainCommentModel>
+    suspend fun getComments(listId: String, movieId: Int, dataSource: String): List<DomainCommentModel>
     suspend fun observeListComments(listId:String, movieId: Int, onCommentsUpdated: (List<DomainCommentModel>) -> Unit)
 
     suspend fun createList(newList: DomainSharedListModel, forProfile: DomainMySharedListModel, userCreatorId: String, invitedUserAddress: List<String>)
