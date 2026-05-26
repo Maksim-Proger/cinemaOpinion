@@ -232,6 +232,9 @@ fun SharedListScreen(
                             onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
                         )
                     },
+                    skipButton = {
+                        
+                    },
                     sendToArchive = {
                         CustomTextButton(
                             textButton = context.getString(R.string.button_send_to_archive),
