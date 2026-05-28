@@ -7,7 +7,6 @@ import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList2
-import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsList
 import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
 import javax.inject.Inject
 
@@ -53,10 +52,6 @@ class MovieRepositoryApiImpl @Inject constructor(private val api: MovieApi) : Mo
 
     override suspend fun getSearchMovieById(id: Int): MovieSearch {
         return api.getSearchMovieById(id).toDomain()
-    }
-
-    override suspend fun getMediaNews(page: Int): NewsList {
-        return api.getMediaNews(page).toDomain()
     }
 
 }

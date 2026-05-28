@@ -233,7 +233,7 @@ fun SharedListScreen(
                         )
                     },
                     skipButton = {
-                        
+                        // TODO: Реализовать логику для кнопки не буду смотреть!
                     },
                     sendToArchive = {
                         CustomTextButton(

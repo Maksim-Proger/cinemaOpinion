@@ -34,3 +34,7 @@ serviceAccount.json
 
 # Android Profiling
 *.hprof
+
+# Claude Ignore
+.claudeignore
+CLAUDE.md

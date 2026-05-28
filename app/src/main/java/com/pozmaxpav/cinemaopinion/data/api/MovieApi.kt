@@ -6,7 +6,6 @@ import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovieSearch
 import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovieSearchList
 import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovieSearchList2
 import com.pozmaxpav.cinemaopinion.data.models.api.movie.ApiMovieTopList
-import com.pozmaxpav.cinemaopinion.data.models.api.news.ApiNewsList
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
@@ -59,11 +58,5 @@ interface MovieApi {
     suspend fun getSearchMovieById(
         @Path("id") id: Int
     ): ApiMovieSearch
-
-    @Headers("X-API-KEY: $API_KEY")
-    @GET("/api/v1/media_posts")
-    suspend fun getMediaNews(
-        @Query("page") page: Int
-    ): ApiNewsList
 
 }

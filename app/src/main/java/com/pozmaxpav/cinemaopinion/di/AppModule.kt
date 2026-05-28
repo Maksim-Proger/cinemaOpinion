@@ -5,6 +5,7 @@ import com.example.backend.BackendNotifyChangeCreatedUseCase
 import com.example.backend.BackendRegisterDeviceUseCase
 import com.example.core.utils.FirebaseListenerHolder
 import com.google.firebase.database.DatabaseReference
+import com.pozmaxpav.cinemaopinion.BuildConfig
 import com.pozmaxpav.cinemaopinion.data.api.MovieApi
 import com.pozmaxpav.cinemaopinion.data.api.MovieInformationApi
 import com.pozmaxpav.cinemaopinion.data.repository.api.GetMovieInformationApiRepositoryImpl
@@ -49,16 +50,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGetMovieListApi(): MovieApi {
-        return Retrofit
-            .Builder()
-            .client(
-                OkHttpClient.Builder().addInterceptor(
-                    HttpLoggingInterceptor().also {
-                        it.level = HttpLoggingInterceptor.Level.BODY
-                    }
-                ).build()
-            )
+    fun provideOkHttpClient(): OkHttpClient {
+        val logLevel = if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor.Level.BODY
+        } else {
+            HttpLoggingInterceptor.Level.NONE
+        }
+        return OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply { level = logLevel })
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetMovieListApi(client: OkHttpClient): MovieApi {
+        return Retrofit.Builder()
+            .client(client)
             .baseUrl("https://kinopoiskapiunofficial.tech")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -73,16 +80,9 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGetMovieInformationApi(): MovieInformationApi {
-        return Retrofit
-            .Builder()
-            .client(
-                OkHttpClient.Builder().addInterceptor(
-                    HttpLoggingInterceptor().also {
-                        it.level = HttpLoggingInterceptor.Level.BODY
-                    }
-                ).build()
-            )
+    fun provideGetMovieInformationApi(client: OkHttpClient): MovieInformationApi {
+        return Retrofit.Builder()
+            .client(client)
             .baseUrl("https://api.kinopoisk.dev")
             .addConverterFactory(GsonConverterFactory.create())
             .build()

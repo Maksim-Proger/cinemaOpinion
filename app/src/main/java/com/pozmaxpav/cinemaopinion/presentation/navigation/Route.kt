@@ -3,7 +3,6 @@ package com.pozmaxpav.cinemaopinion.presentation.navigation
 sealed class Route(val route: String) {
     data object MainScreen : Route(route = "main_screen")
     data object EditPersonalInformationScreen : Route(route = "edit_personal_information_screen")
-    data object MediaNewsScreen : Route(route = "media_news_screen")
     data object NotificationsScreen : Route(route = "notifications_screen")
     data object SeriesControlScreen : Route(route = "series_control_screen")
     data object ListSelectedMovies : Route(route = "list_selected_movies")
@@ -34,6 +33,10 @@ sealed class Route(val route: String) {
             userName: String,
             listName: String
         ) = "internal_shared_list/$dataSource/$listId/$title/$userId/$userName/$listName"
+    }
+
+    data object WebViewScreen : Route(route = "web_view/{url}") {
+        fun navigate(url: String) = "web_view/$url"
     }
 }
 
