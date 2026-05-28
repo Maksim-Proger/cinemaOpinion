@@ -1,21 +1,54 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ----- Stack traces -----
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# ----- Kotlin -----
+-keepattributes *Annotation*, Signature, InnerClasses, EnclosingMethod
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# ----- Retrofit -----
+-keepattributes Signature
+-keep class retrofit2.** { *; }
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+-dontwarn retrofit2.**
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# ----- OkHttp -----
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-keep class okio.** { *; }
+-keep interface okio.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
+
+# ----- Gson -----
+-keep class com.google.gson.** { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+-dontwarn sun.misc.**
+
+# ----- Data-классы API (Gson десериализует через рефлексию) -----
+-keep class com.pozmaxpav.cinemaopinion.data.models.** { *; }
+# Genre и Country — domain-модели, используемые напрямую в ApiMovieSearch/ApiMovieSearch2
+-keep class com.pozmaxpav.cinemaopinion.domain.models.api.** { *; }
+
+# ----- Firebase Realtime Database (no-arg конструкторы + поля) -----
+# Data-модели (app модуль)
+-keep class com.pozmaxpav.cinemaopinion.data.models.firebase.** { *; }
+-keepclassmembers class com.pozmaxpav.cinemaopinion.data.models.firebase.** {
+    <init>();
+    <fields>;
+}
+# Domain-модели (app модуль) — используются напрямую в getValue()
+-keep class com.pozmaxpav.cinemaopinion.domain.models.firebase.** { *; }
+-keepclassmembers class com.pozmaxpav.cinemaopinion.domain.models.firebase.** {
+    <init>();
+    <fields>;
+}
+# DomainUserModel (core модуль) — используется в auth и app
+-keep class com.example.core.domain.** { *; }
+-keepclassmembers class com.example.core.domain.** {
+    <init>();
+    <fields>;
+}

@@ -3,7 +3,6 @@ package com.pozmaxpav.cinemaopinion.presentation.components.items
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,8 +19,7 @@ fun fabMenuItems(
     isScrolling: Boolean,
     titleTopBarState: Boolean,
     onFilterToggle: () -> Unit,
-    onDatePickerToggle: () -> Unit,
-    onNavigateToNews: () -> Unit
+    onDatePickerToggle: () -> Unit
 ): List<FABMenuItemData> {
     val modifier = Modifier.size(20.dp)
     if (isScrolling) return emptyList()
@@ -65,24 +63,6 @@ fun fabMenuItems(
             onClick = onDatePickerToggle
         )
     }
-
-//    items += FABMenuItemData(
-//        text = {
-//            Text(
-//                text = stringResource(R.string.drop_down_menu_item_nac_to_media_news_screen),
-//                style = MaterialTheme.typography.bodyMedium
-//            )
-//        },
-//        icon = {
-//            Icon(
-//                modifier = modifier,
-//                imageVector = Icons.Default.Newspaper,
-//                contentDescription = null,
-//                tint = MaterialTheme.colorScheme.onSecondary
-//            )
-//        },
-//        onClick = onNavigateToNews
-//    )
 
     return items
 }

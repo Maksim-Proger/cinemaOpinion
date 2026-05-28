@@ -69,6 +69,7 @@ fun DetailsCardSelectedMovie(
     userId: String = "",
     navController: NavHostController,
     needComment: Boolean = true,
+    skipButton: @Composable () -> Unit = {},
     sendToWaitingList: @Composable () -> Unit = {},
     sendToArchive: @Composable () -> Unit = {},
     reviews: @Composable () -> Unit = {},
@@ -242,6 +243,8 @@ fun DetailsCardSelectedMovie(
                                 Spacer(Modifier.padding(5.dp))
                             }
                             reviews()
+                            Spacer(Modifier.padding(5.dp))
+                            skipButton()
                             Spacer(Modifier.padding(5.dp))
                             sendToArchive()
                             Spacer(Modifier.padding(10.dp))

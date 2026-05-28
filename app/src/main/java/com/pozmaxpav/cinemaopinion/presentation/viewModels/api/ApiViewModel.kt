@@ -8,7 +8,6 @@ import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList2
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieTopList
-import com.pozmaxpav.cinemaopinion.domain.models.api.news.NewsList
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.information.GetMovieInformationUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetPremiereMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchFilmsByFiltersUseCase
@@ -16,10 +15,8 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchMovieByIdU
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchMovies2UseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchMoviesUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetTopMoviesUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.api.news.GetMediaNewsUseCase
 import com.example.core.utils.state.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,7 +31,6 @@ class ApiViewModel @Inject constructor(
     private val getTopMoviesUseCase: GetTopMoviesUseCase,
     private val getSearchFilmsByFiltersUseCase: GetSearchFilmsByFiltersUseCase,
     private val getMovieInformationUseCase: GetMovieInformationUseCase,
-    private val getMediaNewsUseCase: GetMediaNewsUseCase,
     private val getSearchMovieByIdUseCase: GetSearchMovieByIdUseCase
 ) : ViewModel() {
 
@@ -48,6 +44,7 @@ class ApiViewModel @Inject constructor(
     val topListMovies: StateFlow<MovieTopList?> get() = _topListMovies.asStateFlow()
 
     var isInitialized = false
+        private set
 
     private val _searchMovies = MutableStateFlow<MovieSearchList?>(null)
     val searchMovies = _searchMovies.asStateFlow()
@@ -59,9 +56,6 @@ class ApiViewModel @Inject constructor(
 
     private val _detailedInfo = MutableStateFlow<MovieData.MovieSearch?>(null)
     val detailedInfo = _detailedInfo.asStateFlow()
-
-    private val _mediaNews = MutableStateFlow<NewsList?>(null)
-    val mediaNews: StateFlow<NewsList?> get() = _mediaNews.asStateFlow()
 
     fun getSearchMovieById(id: Int) {
         viewModelScope.launch {
@@ -83,23 +77,12 @@ class ApiViewModel @Inject constructor(
             }
         }
     }
-    fun getMediaNews(page:Int) {
-        viewModelScope.launch {
-            try {
-                val news = getMediaNewsUseCase(page)
-                _mediaNews.value = news
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
     fun fetchPremiersMovies(year: Int, month: String) {
         viewModelScope.launch {
             _loadingState.value = LoadingState.Loading
             try {
                 val movies = getPremiereMoviesUseCase(year, month)
                 _premiereMovies.value = movies
-                delay(500)
                 _loadingState.value = LoadingState.Success
                 isInitialized = true
             } catch (e: Exception) {

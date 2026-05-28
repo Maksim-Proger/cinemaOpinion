@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.ksp)
@@ -8,6 +10,11 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+
 android {
     namespace = "com.pozmaxpav.cinemaopinion"
     compileSdk = 36
@@ -15,7 +22,7 @@ android {
     defaultConfig {
         applicationId = "com.pozmaxpav.cinemaopinion"
         minSdk = 29
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "ver5:2026"
 
@@ -27,10 +34,10 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("C:/Users/PMPav/keystore/mykeystore.jks")
-            storePassword = "mysecretpassword"
-            keyAlias = "mykeyalias"
-            keyPassword = "mysecretpassword"
+            storeFile = file(localProperties["KEYSTORE_FILE"] as String)
+            storePassword = localProperties["KEYSTORE_PASSWORD"] as String
+            keyAlias = localProperties["KEY_ALIAS"] as String
+            keyPassword = localProperties["KEY_PASSWORD"] as String
         }
     }
 
@@ -39,7 +46,8 @@ android {
             signingConfig = signingConfigs.getByName("release")  // Используем релизный ключ
         }
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -54,6 +62,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -99,9 +108,6 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
-
-    //Accompanist
-    implementation(libs.accompanist.systemuicontroller)
 
     // Room
     implementation(libs.room.ktx)

@@ -39,7 +39,6 @@ import com.pozmaxpav.cinemaopinion.presentation.components.items.fabMenuItems
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.seasonal.FetchSeasonalMovies
-//import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.seasonal.FetchSeasonalMovies
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SystemMovieViewModel
@@ -160,9 +159,6 @@ fun ScaffoldMainScreen(
                         },
                         onDatePickerToggle = {
                             state.showDatePicker.value = !state.showDatePicker.value
-                        },
-                        onNavigateToNews = {
-                            navigateFunction(navController, Route.MediaNewsScreen.route)
                         }
                     )
                 )

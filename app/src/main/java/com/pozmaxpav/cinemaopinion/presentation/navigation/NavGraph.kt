@@ -11,17 +11,12 @@ import androidx.navigation.navDeepLink
 import com.example.auth.presentation.navigation.authNavGraph
 import com.example.intro.presentation.navigation.introNavGraph
 import com.example.ui.presentation.viewmodels.ThemeViewModel
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.MediaNewsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.SeriesControlScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.ScaffoldMainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.InternalSharedList
-import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.NotificationsScreen
-//import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralMovies
-//import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedGeneralSerials
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedMovies
+import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.NotificationsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListScreen
-//import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWaitingContinuationSeries
-//import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListWatchedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.EditProfileScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.MovieDetailScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SettingsScreen
@@ -45,7 +40,6 @@ fun NavGraph(
         composable(Route.MainScreen.route) {
             ScaffoldMainScreen(navController, systemViewModel, onExit = { activity?.finish() })
         }
-        composable(Route.MediaNewsScreen.route) { MediaNewsScreen(navController) }
         composable(
             route = Route.NotificationsScreen.route,
             deepLinks = listOf(
@@ -93,8 +87,8 @@ fun NavGraph(
                 title = title
             )
         }
-        composable( // TODO: В Route это заносить не нужно?
-            "webView/{url}", // Шаблон маршрута с аргументом "url"
+        composable(
+            Route.WebViewScreen.route,
             arguments = listOf(
                 navArgument("url") { type = NavType.StringType }
             )
