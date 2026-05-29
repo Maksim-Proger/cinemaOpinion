@@ -101,7 +101,8 @@ fun NotificationsScreen(
                                 Route.MovieDetailScreen.createRoute(
                                     listId = item.sharedListId,
                                     movieId = item.entityId,
-                                    userName = user.nikName
+                                    userName = user.nikName,
+                                    dataSource = item.dataSource
                                 )
                             )
                         }

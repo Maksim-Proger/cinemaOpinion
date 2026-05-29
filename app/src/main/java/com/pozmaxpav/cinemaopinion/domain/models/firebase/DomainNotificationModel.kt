@@ -4,6 +4,7 @@ data class DomainNotificationModel(
     val noteId: String = "",
     val entityId: Int = 0,
     val sharedListId: String = "",
+    val dataSource: String = "",
     val username: String = "",
     val noteText: String = "",
     val timestamp: Long = 0
