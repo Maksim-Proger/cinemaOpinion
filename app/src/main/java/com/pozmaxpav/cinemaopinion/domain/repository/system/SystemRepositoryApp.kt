@@ -8,6 +8,9 @@ interface SystemRepositoryApp {
     fun saveDeviceRegistrationStatus(status: Boolean)
     fun getDeviceRegistrationStatus(): Boolean
 
+    fun saveRegisteredVersionCode(versionCode: Int)
+    fun getRegisteredVersionCode(): Int
+
     fun savePushToken(pushToken: String)
     fun getPushToken(): String?
 
