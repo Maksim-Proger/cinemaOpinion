@@ -82,6 +82,7 @@ class NotificationViewModel @Inject constructor(
         context: Context,
         entityId: Int = 0,
         sharedListId: String = "",
+        dataSource: String = "",
         listName: String = "",
         username: String,
         stringResourceId: Int,
@@ -99,6 +100,7 @@ class NotificationViewModel @Inject constructor(
                     noteId = "", // Оставляем пустым, так как key будет сгенерирован позже
                     entityId = entityId,
                     sharedListId = sharedListId,
+                    dataSource = dataSource,
                     username = username,
                     noteText = noteText,
                     timestamp = System.currentTimeMillis()

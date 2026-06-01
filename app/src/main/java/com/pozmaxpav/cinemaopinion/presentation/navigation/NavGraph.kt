@@ -98,17 +98,20 @@ fun NavGraph(
             arguments = listOf(
                 navArgument("listId") { type = NavType.StringType },
                 navArgument("movieId") { type = NavType.IntType },
-                navArgument("userName") { type = NavType.StringType }
+                navArgument("userName") { type = NavType.StringType },
+                navArgument("dataSource") {type = NavType.StringType}
             )
         ) { backStackEntry ->
             val listId = backStackEntry.arguments?.getString("listId") ?: ""
             val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
             val userName = backStackEntry.arguments?.getString("userName") ?: ""
+            val dataSource = backStackEntry.arguments?.getString("dataSource") ?: ""
             MovieDetailScreen(
                 navController = navController,
                 listId = listId,
                 movieId = movieId,
                 userName = userName,
+                dataSource = dataSource,
                 systemViewModel = systemViewModel
             )
         }

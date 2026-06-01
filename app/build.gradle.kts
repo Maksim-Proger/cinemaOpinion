@@ -22,7 +22,7 @@ android {
     defaultConfig {
         applicationId = "com.pozmaxpav.cinemaopinion"
         minSdk = 29
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "ver5:2026"
 
@@ -82,7 +82,7 @@ dependencies {
     implementation(project(":backend"))
 
     // RuStore Push SDK
-    implementation("ru.rustore.sdk:pushclient:6.0.0")
+    implementation("ru.rustore.sdk:pushclient:7.2.0")
 
     // WebView
     implementation(libs.webkit)

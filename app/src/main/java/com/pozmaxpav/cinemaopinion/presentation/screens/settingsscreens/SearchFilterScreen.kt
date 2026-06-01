@@ -84,7 +84,7 @@ fun SearchFilterScreen(
     var searchWordResult by remember { mutableStateOf("") }
 
     // Переменные для хранения выбранного диапазона возможных годов
-    var selectedRange by remember { mutableStateOf(1900f..2025f) } // Диапазон значений
+    var selectedRange by remember { mutableStateOf(1900f..2026f) } // Диапазон значений
     var sliderPosition by remember { mutableFloatStateOf(0f) }
     // endregion
 

@@ -425,6 +425,7 @@ private fun CommentsList(
 fun AddComment(
     dataUser: DomainUserModel?,
     sharedListId: String = "",
+    dataSource: String = "",
     listName: String = "",
     fraction: Float,
     viewModel: ViewModel,
@@ -509,6 +510,7 @@ fun AddComment(
                                         context = context,
                                         entityId = movie.id,
                                         sharedListId = sharedListId,
+                                        dataSource = dataSource,
                                         listName = listName,
                                         username = user.nikName,
                                         stringResourceId = R.string.record_added_comment_to_movie,

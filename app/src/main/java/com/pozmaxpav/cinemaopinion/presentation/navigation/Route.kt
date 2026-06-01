@@ -18,10 +18,10 @@ sealed class Route(val route: String) {
 
     // Экран с параметрами newDataSource (String) и movieId (Int)
     data object MovieDetailScreen :
-        Route(route = "movie_details/{listId}/{movieId}/{userName}") {
+        Route(route = "movie_details/{listId}/{movieId}/{userName}/{dataSource}") {
         // Функция для удобного создания пути с параметром
-        fun createRoute(listId: String, movieId: Int, userName: String) =
-            "movie_details/$listId/$movieId/$userName"
+        fun createRoute(listId: String, movieId: Int, userName: String, dataSource: String) =
+            "movie_details/$listId/$movieId/$userName/$dataSource"
     }
     data object InternalSharedList :
         Route(route = "internal_shared_list/{dataSource}/{listId}/{title}/{userId}/{userName}/{listName}") {

@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_MOVIES
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.text.CustomTextFieldForComments
@@ -56,6 +57,7 @@ fun MovieDetailScreen(
     listId: String,
     movieId: Int,
     userName: String,
+    dataSource: String,
     systemViewModel: SystemViewModel,
     viewModel: SharedListsViewModel = hiltViewModel(),
     notificationViewModel: NotificationViewModel = hiltViewModel(),
@@ -88,6 +90,7 @@ fun MovieDetailScreen(
                 selectedMovieId = movieId,
                 viewModel = viewModel,
                 listId = listId,
+                dataSource = dataSource,
                 fraction = 0.7f,
                 onClick = { comment ->
                     selectedComment = comment
@@ -97,6 +100,7 @@ fun MovieDetailScreen(
             )
         }
     }
+
     if (openBottomSheetComments) {
         CustomBottomSheet(
             onCloseRequest = { openBottomSheetComments = false }
@@ -116,6 +120,7 @@ fun MovieDetailScreen(
             )
         }
     }
+
     if (openBottomSheetChange) {
         CustomBottomSheet(
             onCloseRequest = { openBottomSheetChange = false }
@@ -178,16 +183,6 @@ fun MovieDetailScreen(
                 )
             }
         }
-    }
-}
-
-private fun elementDirectory(newDataSource: String): String {
-    return when {
-        newDataSource.contains("list_movies") -> "В списке с фильмами"
-        newDataSource.contains("list_serials") -> "В списке с сериалами"
-        newDataSource.contains("list_watched_movies") -> "В списке просмотренных"
-        newDataSource.contains("list_waiting_continuation_series") -> "В листе ожидания"
-        else -> ""
     }
 }
 
@@ -279,4 +274,12 @@ private fun AddComment(
     }
 }
 
-
+//private fun elementDirectory(newDataSource: String): String {
+//    return when {
+//        newDataSource.contains("list_movies") -> "В списке с фильмами"
+//        newDataSource.contains("list_serials") -> "В списке с сериалами"
+//        newDataSource.contains("list_watched_movies") -> "В списке просмотренных"
+//        newDataSource.contains("list_waiting_continuation_series") -> "В листе ожидания"
+//        else -> ""
+//    }
+//}

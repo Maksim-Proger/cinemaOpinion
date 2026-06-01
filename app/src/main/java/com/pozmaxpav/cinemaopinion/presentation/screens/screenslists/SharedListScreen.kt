@@ -156,6 +156,7 @@ fun SharedListScreen(
                     AddComment(
                         dataUser = userData,
                         sharedListId = listId,
+                        dataSource = NODE_SHARED_LIST_MOVIES,
                         viewModel = sharedListsViewModel,
                         listName = listName,
                         selectedItem = selectedMovie,
@@ -193,25 +194,6 @@ fun SharedListScreen(
                     movie = movie,
                     userId = userId,
                     navController = navController,
-                    sendToWaitingList = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_open_waiting_list),
-                            imageVector = Icons.Outlined.PostAdd,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = {
-                                selectedMovie?.let { movie ->
-                                    sharedListsViewModel.moveMovie(
-                                        listId = listId,
-                                        sourceNode = NODE_SHARED_LIST_MOVIES,
-                                        destination = NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                        movieId = movie.id
-                                    )
-                                }
-                            }
-                        )
-                    },
                     commentButton = {
                         CustomTextButton(
                             textButton = context.getString(R.string.button_leave_comment),
@@ -235,6 +217,26 @@ fun SharedListScreen(
                     skipButton = {
                         // TODO: Реализовать логику для кнопки не буду смотреть!
                     },
+                    sendToWaitingList = {
+                        CustomTextButton(
+                            textButton = context.getString(R.string.button_open_waiting_list),
+                            imageVector = Icons.Outlined.PostAdd,
+                            modifier = Modifier.fillMaxWidth(),
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            onClickButton = {
+                                selectedMovie?.let { movie ->
+                                    sharedListsViewModel.moveMovie(
+                                        listId = listId,
+                                        sourceNode = NODE_SHARED_LIST_MOVIES,
+                                        destination = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                        movieId = movie.id
+                                    )
+                                    selectedMovie = null
+                                }
+                            }
+                        )
+                    },
                     sendToArchive = {
                         CustomTextButton(
                             textButton = context.getString(R.string.button_send_to_archive),
@@ -250,6 +252,7 @@ fun SharedListScreen(
                                         destination = NODE_SHARED_LIST_WATCHED_MOVIES,
                                         movieId = movie.id
                                     )
+                                    selectedMovie = null
                                 }
                             }
                         )
