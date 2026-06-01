@@ -5,9 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainNotificationModel
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.notification.NotificationUseCases
+import com.pozmaxpav.cinemaopinion.BuildConfig
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetDeviceRegistrationStatusUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetPushTokenUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.GetRegisteredVersionCodeUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveDeviceRegistrationStatusUseCase
+import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveRegisteredVersionCodeUseCase
 import com.pozmaxpav.cinemaopinion.utilities.deletingOldRecords
 import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceDataCreatedListener
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +26,9 @@ class NotificationViewModel @Inject constructor(
     private val getPushTokenUseCase: GetPushTokenUseCase,
     private val createdListener: DeviceDataCreatedListener,
     private val saveDeviceRegistrationStatusUseCase: SaveDeviceRegistrationStatusUseCase,
-    private val getDeviceRegistrationStatusUseCase: GetDeviceRegistrationStatusUseCase
+    private val getDeviceRegistrationStatusUseCase: GetDeviceRegistrationStatusUseCase,
+    private val saveRegisteredVersionCodeUseCase: SaveRegisteredVersionCodeUseCase,
+    private val getRegisteredVersionCodeUseCase: GetRegisteredVersionCodeUseCase
 ) : ViewModel() {
 
     // region Push
@@ -33,7 +38,8 @@ class NotificationViewModel @Inject constructor(
     fun getStatus() {
         viewModelScope.launch {
             try {
-                _statusReg.value = getDeviceRegistrationStatusUseCase()
+                val savedVersionCode = getRegisteredVersionCodeUseCase()
+                _statusReg.value = savedVersionCode == BuildConfig.VERSION_CODE
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -42,17 +48,11 @@ class NotificationViewModel @Inject constructor(
     fun registerDevice(userId: String, deviceId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                // 1. Сначала дожидаемся получения токена (вызываем UseCase напрямую)
                 val token = getPushTokenUseCase()
                 if (!token.isNullOrBlank()) {
-                    // 2. Отправляем на бэкенд
                     createdListener.onDataDeviceCreated(userId, token, deviceId)
-
-                    // 3. ТОЛЬКО ЕСЛИ ОТПРАВКА ПРОШЛА УСПЕШНО — сохраняем статус
-                    // Вызываем метод репозитория напрямую или через другой метод
                     saveDeviceRegistrationStatusUseCase(true)
-
-                    // Обновляем StateFlow для UI
+                    saveRegisteredVersionCodeUseCase(BuildConfig.VERSION_CODE)
                     _statusReg.value = true
                 }
             } catch (e: Exception) {

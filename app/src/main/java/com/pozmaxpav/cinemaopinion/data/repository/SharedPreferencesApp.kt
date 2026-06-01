@@ -11,6 +11,7 @@ object SharedPreferencesApp {
     private const val REGISTRATION_FLAG = "registration_flag"
     private const val PUSH_TOKEN = "push_token"
     private const val STATUS_DEVICE_REGISTERED = "status_device_registered"
+    private const val REGISTERED_VERSION_CODE = "registered_version_code"
 
     fun saveDeviceRegistrationStatus(context: Context, status: Boolean) {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
@@ -21,6 +22,17 @@ object SharedPreferencesApp {
     fun getDeviceRegistrationStatus(context: Context): Boolean {
         val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
         return sharedPreferences.getBoolean(STATUS_DEVICE_REGISTERED, false)
+    }
+
+    fun saveRegisteredVersionCode(context: Context, versionCode: Int) {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        sharedPreferences.edit {
+            putInt(REGISTERED_VERSION_CODE, versionCode)
+        }
+    }
+    fun getRegisteredVersionCode(context: Context): Int {
+        val sharedPreferences = context.getSharedPreferences(SYSTEM_PREFERENCES_APP, Context.MODE_PRIVATE)
+        return sharedPreferences.getInt(REGISTERED_VERSION_CODE, 0)
     }
 
     fun savePushToken(context: Context, pushToken: String) {
@@ -84,6 +96,8 @@ object SharedPreferencesApp {
         sharedPreferences.edit {
             remove(USER_ID)
             remove(REGISTRATION_FLAG)
+            remove(STATUS_DEVICE_REGISTERED)
+            remove(REGISTERED_VERSION_CODE)
         }
     }
 }

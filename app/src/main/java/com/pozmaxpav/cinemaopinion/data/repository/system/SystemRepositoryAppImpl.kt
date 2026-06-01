@@ -23,6 +23,14 @@ class SystemRepositoryAppImpl @Inject constructor(
         return SharedPreferencesApp.getDeviceRegistrationStatus(context)
     }
 
+    override fun saveRegisteredVersionCode(versionCode: Int) {
+        SharedPreferencesApp.saveRegisteredVersionCode(context, versionCode)
+    }
+
+    override fun getRegisteredVersionCode(): Int {
+        return SharedPreferencesApp.getRegisteredVersionCode(context)
+    }
+
     override fun savePushToken(pushToken: String) {
         SharedPreferencesApp.savePushToken(context, pushToken)
     }

@@ -23,7 +23,7 @@ android {
         applicationId = "com.pozmaxpav.cinemaopinion"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
+        versionCode = 2
         versionName = "ver5:2026"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
