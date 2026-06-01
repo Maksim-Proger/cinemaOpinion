@@ -78,6 +78,7 @@ fun SpecialTopAppBar(
             icons = listOf(Icons.Default.ArrowBackIosNew, Icons.Default.Home),
             color = MaterialTheme.colorScheme.background,
             tint = MaterialTheme.colorScheme.secondary,
+            textColor = MaterialTheme.colorScheme.secondary,
             onClick1 = goToBack,
             onClick2 = goToHome
         )
@@ -110,7 +111,7 @@ fun SpecialTopAppBar(
                         translationY = offset.toPx()
                     },
                     color = MaterialTheme.colorScheme.background, // Обводка вокруг кнопки меню
-                    tint = MaterialTheme.colorScheme.secondary, // Цвет кнопку
+                    tint = MaterialTheme.colorScheme.secondary, // Цвет кнопки
                     containerColor = MaterialTheme.colorScheme.secondary, // Цвет контейнера открывающегося меню
                     onArchiveClick = onArchiveClick,
                     onWaitlistClick = onWaitlistClick
@@ -189,6 +190,7 @@ private fun TopBarIconGroup(
     icons: List<ImageVector>,
     color: Color,
     tint: Color,
+    textColor: Color,
     onClick1: () -> Unit,
     onClick2: () -> Unit
 ) {
@@ -201,12 +203,24 @@ private fun TopBarIconGroup(
             .padding(horizontal = 10.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
+        Row(
             modifier = Modifier.clickable(onClick = onClick1),
-            imageVector = icons[0],
-            contentDescription = null,
-            tint = tint
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = icons[0],
+                contentDescription = null,
+                tint = tint
+            )
+            Spacer(Modifier.padding(horizontal = 5.dp))
+            Text(
+                text = "Назад",
+                style = MaterialTheme.typography.displayMedium,
+                color = textColor
+            )
+        }
+
 //        Spacer(Modifier.padding(horizontal = 5.dp))
 //        Icon(
 //            modifier = Modifier.clickable(onClick = onClick2),
