@@ -339,8 +339,7 @@ fun ListSelectedMovies(
             SpecialTopAppBar(
                 isAtTop = isAtTop,
                 title = stringResource(R.string.title_page_personal_list),
-                goToBack = { navController.popBackStack() },
-                goToHome = { navigateFunction(navController, Route.MainScreen.route) }
+                goToBack = { navController.popBackStack() }
             )
         }
     }

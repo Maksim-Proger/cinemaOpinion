@@ -29,19 +29,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.core.utils.state.LoadingState
-import com.example.ui.presentation.components.topappbar.TopAppBarMainScreen
 import com.example.ui.presentation.components.fab.FABMenu
 import com.example.ui.presentation.components.lottie.AnimationImplementation
+import com.example.ui.presentation.components.topappbar.TopAppBarMainScreen
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSpecial
 import com.pozmaxpav.cinemaopinion.presentation.components.items.fabMenuItems
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.seasonal.FetchSeasonalMovies
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SystemMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilities.SendRequestAdvancedSearch
 import com.pozmaxpav.cinemaopinion.utilities.SendSelectedDate
@@ -55,8 +53,9 @@ fun ScaffoldMainScreen(
     systemViewModel: SystemViewModel,
     onExit: () -> Unit = {},
     apiViewModel: ApiViewModel = hiltViewModel(),
-    systemMovieViewModel: SystemMovieViewModel = hiltViewModel()
 ) {
+
+    // region Переменные
     var backPressedTime by remember { mutableLongStateOf(0L) }
     val backPreventTime = 2000L
 
@@ -66,6 +65,7 @@ fun ScaffoldMainScreen(
     val userId by systemViewModel.userId.collectAsState()
     val loadingState by apiViewModel.loadingState.collectAsState()
     val showDialogEvents by systemViewModel.resultChecking.collectAsState()
+    // endregion
 
     // region Push Notification
 
@@ -114,8 +114,7 @@ fun ScaffoldMainScreen(
                 state.selectedSeasonalMovie.value == null
             ) {
                 TopAppBarMainScreen(
-                    title = if (!state.titleTopBarState.value) stringResource(id = R.string.top_app_bar_header_name_all_movies)
-                    else stringResource(id = R.string.top_app_bar_header_name_top_list_movies),
+                    title = "Фильмы",
                     onSearchButtonClick = { state.searchBarActive.value = true },
                     onAdvancedSearchButtonClick = {
                         state.onAdvancedSearchButtonClick.value = true
@@ -151,12 +150,6 @@ fun ScaffoldMainScreen(
                     },
                     items = fabMenuItems(
                         isScrolling = state.isScrolling,
-                        titleTopBarState = state.titleTopBarState.value,
-                        onFilterToggle = {
-                            state.isTopMoviesSelected.value = !state.isTopMoviesSelected.value
-                            state.titleTopBarState.value = !state.titleTopBarState.value
-                            state.searchCompleted.value = false
-                        },
                         onDatePickerToggle = {
                             state.showDatePicker.value = !state.showDatePicker.value
                         }
@@ -165,6 +158,11 @@ fun ScaffoldMainScreen(
             }
         }
     ) { innerPadding ->
+
+        // Test
+
+        //
+
         Box(modifier = Modifier.fillMaxSize()) {
 
             SendSelectedDate(state, apiViewModel)
@@ -183,7 +181,6 @@ fun ScaffoldMainScreen(
                     }
                     AdaptiveBackHandler { state.selectedMovie.value = null }
                 }
-
                 state.selectedSeasonalMovie.value != null -> {
                     state.selectedSeasonalMovie.value?.let {
                         DetailsCardSpecial(
@@ -195,7 +192,6 @@ fun ScaffoldMainScreen(
                     }
                     AdaptiveBackHandler { state.selectedSeasonalMovie.value = null }
                 }
-
                 else -> {
                     when (loadingState) {
                         is LoadingState.Loading -> AnimationImplementation(innerPadding)
@@ -217,18 +213,10 @@ fun ScaffoldMainScreen(
                                     .fillMaxSize()
                                     .padding(innerPadding)
                             ) {
-                                if (!state.searchCompleted.value) {
-                                    FetchSeasonalMovies(
-                                        isScrolling = state.isScrolling,
-                                        viewModel = systemMovieViewModel,
-                                        selectedMovie = { movie ->
-                                            state.selectedSeasonalMovie.value = movie
-                                        }
-                                    )
-                                }
-
                                 FetchMovies(
+                                    userId = userId,
                                     state = state,
+                                    navController = navController,
                                     apiViewModel = apiViewModel,
                                     selectedMovie = { movie ->
                                         state.selectedMovie.value = movie

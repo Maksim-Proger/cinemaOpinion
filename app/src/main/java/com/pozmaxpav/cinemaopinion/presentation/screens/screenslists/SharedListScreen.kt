@@ -370,7 +370,6 @@ fun SharedListScreen(
                 isAtTop = isAtTop,
                 title = title,
                 goToBack = { navController.popBackStack() },
-                goToHome = { navigateFunction(navController, Route.MainScreen.route) },
                 onArchiveClick = {
                     navController.navigate(
                         Route.InternalSharedList.openInternalSharedList(

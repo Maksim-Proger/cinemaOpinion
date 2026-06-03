@@ -37,11 +37,11 @@ class ApiViewModel @Inject constructor(
     private val _loadingState = MutableStateFlow<LoadingState>(LoadingState.Success)
     val loadingState: StateFlow<LoadingState> = _loadingState.asStateFlow()
 
-    private val _premiereMovies = MutableStateFlow<MovieList?>(null)
-    val premiersMovies: StateFlow<MovieList?> get() = _premiereMovies.asStateFlow()
+    private val _premiereMovies = MutableStateFlow<List<MovieData.Movie>>(emptyList())
+    val premiersMovies: StateFlow<List<MovieData.Movie>> = _premiereMovies.asStateFlow()
 
-    private val _topListMovies = MutableStateFlow<MovieTopList?>(null)
-    val topListMovies: StateFlow<MovieTopList?> get() = _topListMovies.asStateFlow()
+    private val _topListMovies = MutableStateFlow<List<MovieData.MovieTop>>(emptyList())
+    val topListMovies: StateFlow<List<MovieData.MovieTop>> = _topListMovies.asStateFlow()
 
     var isInitialized = false
         private set
@@ -81,8 +81,7 @@ class ApiViewModel @Inject constructor(
         viewModelScope.launch {
             _loadingState.value = LoadingState.Loading
             try {
-                val movies = getPremiereMoviesUseCase(year, month)
-                _premiereMovies.value = movies
+                _premiereMovies.value = getPremiereMoviesUseCase(year, month).items
                 _loadingState.value = LoadingState.Success
                 isInitialized = true
             } catch (e: Exception) {
@@ -93,8 +92,7 @@ class ApiViewModel @Inject constructor(
     fun fetchTopListMovies(page: Int) {
         viewModelScope.launch {
             try {
-                val movies = getTopMoviesUseCase(page)
-                _topListMovies.value = movies
+                _topListMovies.value = getTopMoviesUseCase(page).films
             } catch (e: Exception) {
                 e.printStackTrace()
             }

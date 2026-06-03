@@ -11,6 +11,9 @@ import com.pozmaxpav.cinemaopinion.domain.models.system.CompositeRequest
 @Stable
 class MainScreenState(
     val listState: LazyListState,
+    val favouriteListState: LazyListState,
+    val premiereListState: LazyListState,
+    val topListState: LazyListState,
     var selectedDate: MutableState<Pair<Int, String>?>, // Значение выбранной даты
     var dateSelectionComplete: MutableState<Boolean>, // Флаг подтверждения, что дата выбрана и можно отправлять запрос
     var query: MutableState<String>,
@@ -33,8 +36,11 @@ class MainScreenState(
     var saveSearchQuery: MutableState<String>, // Сохраняем содержание поиска при переключении страниц
     var selectedMovie: MutableState<MovieData?>,
     var selectedSeasonalMovie: MutableState<DomainSelectedMovieModel?>,
+    var selectedFavoriteMovie: MutableState<DomainSelectedMovieModel?>,
 ) {
-    val isScrolling by derivedStateOf { listState.firstVisibleItemIndex > 0 }
+    val isScrolling by derivedStateOf {
+        listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
+    }
 }
 
 

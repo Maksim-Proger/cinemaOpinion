@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -79,11 +80,12 @@ import kotlin.math.abs
 fun WorkerWithImage(
     movie: MovieData?,
     selectedMovie: DomainSelectedMovieModel?,
-    width: Dp
+    width: Dp,
+    elevationDp: Dp = 16.dp
 ) {
     Card(
         shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(16.dp),
+        elevation = CardDefaults.cardElevation(elevationDp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
