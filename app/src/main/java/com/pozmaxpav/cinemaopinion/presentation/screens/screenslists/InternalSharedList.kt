@@ -304,8 +304,7 @@ fun InternalSharedList(
             SpecialTopAppBar(
                 isAtTop = isAtTop,
                 title = title,
-                goToBack = { navController.popBackStack() },
-                goToHome = { navigateFunction(navController, Route.MainScreen.route) }
+                goToBack = { navController.popBackStack() }
             )
         }
     }

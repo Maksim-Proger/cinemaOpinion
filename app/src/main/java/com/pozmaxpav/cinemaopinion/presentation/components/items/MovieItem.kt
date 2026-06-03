@@ -1,32 +1,13 @@
 package com.pozmaxpav.cinemaopinion.presentation.components.items
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.LocalOffer
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Schedule
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.utilities.WorkerWithImage
-import com.pozmaxpav.cinemaopinion.utilities.formatCountries
-import com.pozmaxpav.cinemaopinion.utilities.formatDate2
-import com.pozmaxpav.cinemaopinion.utilities.formatGenres
 
 @Composable
 fun MovieItem(
@@ -34,112 +15,19 @@ fun MovieItem(
     movie: MovieData,
     onClick: () -> Unit
 ) {
-    Card(
+    Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
+            .padding(vertical = 8.dp, horizontal = 4.dp)
+            .clickable { onClick() }
     ) {
-        Row(
-            modifier = Modifier
-                .padding(9.dp)
-                .background(color = MaterialTheme.colorScheme.surface)
-        ) {
-
-            WorkerWithImage(movie = movie, selectedMovie = null, width = 100.dp)
-            Spacer(modifier = Modifier.padding(horizontal = 12.dp))
-
-            Column {
-                Text(
-                    text = movie.nameRu ?: "Нет названия",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-                Spacer(Modifier.padding(vertical = 5.dp))
-                when (movie) {
-                    is MovieData.Movie -> {
-                        MetaText(
-                            year = formatDate2(date = movie.premiereRu),
-                            genre = formatGenres(movie.genres),
-                            country = formatCountries(country = movie.countries)
-                        )
-                    }
-                    is MovieData.MovieTop -> {
-                        MetaText(
-                            year = movie.year,
-                            genre = formatGenres(movie.genres),
-                            country = formatCountries(country = movie.countries)
-                        )
-                    }
-                    is MovieData.MovieSearch -> {
-                        MetaText(
-                            year = movie.year ?: "Нет данных о дате",
-                            genre = formatGenres(movie.genres),
-                            country = formatCountries(country = movie.countries)
-                        )
-                    }
-                    is MovieData.MovieSearch2 -> {
-                        MetaText(
-                            year = movie.year ?: "Нет данных о дате",
-                            genre = formatGenres(movie.genres),
-                            country = formatCountries(country = movie.countries)
-                        )
-                    }
-                }
-            }
-        }
+        WorkerWithImage(
+            movie = movie,
+            selectedMovie = null,
+            width = 170.dp,
+            elevationDp = 0.dp
+        )
     }
 }
 
-@Composable
-private fun MetaText(
-    year: String = "",
-    genre: String = "",
-    country: String = ""
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Outlined.Schedule,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp).padding(end = 6.dp),
-                tint = MaterialTheme.colorScheme.secondary
-            )
-            Text(
-                text = year,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.secondary
-            )
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Outlined.LocalOffer,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp).padding(end = 6.dp),
-                tint = MaterialTheme.colorScheme.secondary
-            )
-            Text(
-                text = genre,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.secondary
-            )
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Outlined.LocationOn,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp).padding(end = 6.dp),
-                tint = MaterialTheme.colorScheme.secondary
-            )
-            Text(
-                text = country,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.secondary
-            )
-        }
-    }
-}
+
+

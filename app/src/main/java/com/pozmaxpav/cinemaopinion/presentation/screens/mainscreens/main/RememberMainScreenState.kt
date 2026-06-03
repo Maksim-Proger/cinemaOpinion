@@ -11,9 +11,15 @@ import com.pozmaxpav.cinemaopinion.domain.models.system.CompositeRequest
 @Composable
 fun rememberMainScreenState(): MainScreenState {
     val listState = rememberLazyListState()
+    val favouriteListState = rememberLazyListState()
+    val premiereListState = rememberLazyListState()
+    val topListState = rememberLazyListState()
     return remember {
         MainScreenState(
             listState = listState,
+            favouriteListState = favouriteListState,
+            premiereListState = premiereListState,
+            topListState = topListState,
             selectedDate = mutableStateOf(null),
             dateSelectionComplete = mutableStateOf(false),
             query = mutableStateOf(""),
@@ -43,7 +49,8 @@ fun rememberMainScreenState(): MainScreenState {
             showPageSwitchingButtons = mutableStateOf(false),
             saveSearchQuery = mutableStateOf(""),
             selectedMovie = mutableStateOf(null),
-            selectedSeasonalMovie = mutableStateOf(null)
+            selectedSeasonalMovie = mutableStateOf(null),
+            selectedFavoriteMovie = mutableStateOf(null),
         )
     }
 }
