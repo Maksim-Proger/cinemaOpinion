@@ -121,9 +121,7 @@ fun SearchBarOverlay(
                 query = state.query.value,
                 onQueryChange = { state.query.value = it },
                 onSearch = { searchQuery ->
-                    state.currentPage.intValue = 1
-                    apiViewModel.fetchSearchMovies(searchQuery, state.currentPage.intValue)
-                    state.saveSearchQuery.value = searchQuery
+                    apiViewModel.searchByKeyword(searchQuery)
                     state.searchHistory.add(searchQuery)
                     state.searchCompleted.value = true
                     state.searchBarActive.value = false

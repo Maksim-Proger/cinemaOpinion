@@ -1,13 +1,21 @@
 package com.pozmaxpav.cinemaopinion.data.repository.api
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.pozmaxpav.cinemaopinion.data.mappers.toDomain
 import com.pozmaxpav.cinemaopinion.data.api.MovieApi
+import com.pozmaxpav.cinemaopinion.data.paging.SearchMoviesPagingSource
+import com.pozmaxpav.cinemaopinion.data.paging.TopMoviesPagingSource
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData.MovieSearch
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieTopList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieSearchList2
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.SearchRequest
 import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class MovieRepositoryApiImpl @Inject constructor(private val api: MovieApi) : MovieRepositoryApi {
@@ -52,6 +60,22 @@ class MovieRepositoryApiImpl @Inject constructor(private val api: MovieApi) : Mo
 
     override suspend fun getSearchMovieById(id: Int): MovieSearch {
         return api.getSearchMovieById(id).toDomain()
+    }
+
+    override fun getTopMoviesStream(): Flow<PagingData<MovieData>> =
+        Pager(
+            config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = { TopMoviesPagingSource(this) }
+        ).flow
+
+    override fun getSearchStream(request: SearchRequest): Flow<PagingData<MovieData>> =
+        Pager(
+            config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = { SearchMoviesPagingSource(this, request) }
+        ).flow
+
+    private companion object {
+        const val PAGE_SIZE = 20
     }
 
 }

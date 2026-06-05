@@ -630,19 +630,8 @@ fun SendRequestAdvancedSearch(
     apiViewModel: ApiViewModel
 ) {
     if (state.sendRequestCompleted.value) {
-        state.requestBody.value.let { compositeRequest ->
-            apiViewModel.searchFilmsByFilters(
-                compositeRequest.type,
-                compositeRequest.keyword,
-                compositeRequest.countries,
-                compositeRequest.genres,
-                compositeRequest.ratingFrom,
-                compositeRequest.yearFrom,
-                compositeRequest.yearTo,
-                state.currentPage.intValue
-            )
-            state.sendRequestCompleted.value = false
-        }
+        apiViewModel.searchByFilters(state.requestBody.value)
+        state.sendRequestCompleted.value = false
     }
 }
 

@@ -113,6 +113,10 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
+    // Paging 3
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose)
+
     // MaterialExpressive
     //implementation("androidx.compose.material3:material3-android:1.4.0-alpha14") // Разобраться почему Expressive работает только с этой версией
 
