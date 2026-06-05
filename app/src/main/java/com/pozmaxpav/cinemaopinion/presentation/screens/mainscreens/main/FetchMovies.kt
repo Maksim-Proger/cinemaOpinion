@@ -174,7 +174,7 @@ fun FetchMovies(
                     Icon(
                         modifier = Modifier.clickable(
                             onClick = {
-
+                                navController.navigate(Route.ApiListScreen.navigate("top"))
                             }
                         ),
                         imageVector = Icons.Default.ArrowForwardIos,

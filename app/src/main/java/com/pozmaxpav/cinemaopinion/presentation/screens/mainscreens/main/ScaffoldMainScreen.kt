@@ -103,6 +103,12 @@ fun ScaffoldMainScreen(
         systemViewModel.getUserId()
         notViewModel.getStatus()
     }
+    LaunchedEffect(state.searchCompleted.value) {
+        if (state.searchCompleted.value) {
+            navController.navigate(Route.ApiListScreen.navigate("search"))
+            state.searchCompleted.value = false
+        }
+    }
     LaunchedEffect(state.scrollToTop.value) {
         if (state.scrollToTop.value) {
             state.listState.animateScrollToItem(0)
@@ -169,12 +175,9 @@ fun ScaffoldMainScreen(
             }
         }
     ) { innerPadding ->
-
         Box(modifier = Modifier.fillMaxSize()) {
-
             SendSelectedDate(state, apiViewModel)
             SendRequestAdvancedSearch(state, apiViewModel)
-
             when {
                 state.selectedMovie.value != null -> {
                     state.selectedMovie.value?.let {
@@ -237,7 +240,6 @@ fun ScaffoldMainScreen(
                     }
                 }
             }
-
             DatePickerOverlay(state)
         }
     }

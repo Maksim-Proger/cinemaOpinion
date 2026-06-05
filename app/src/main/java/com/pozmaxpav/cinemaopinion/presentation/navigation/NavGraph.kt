@@ -13,6 +13,7 @@ import com.example.intro.presentation.navigation.introNavGraph
 import com.example.ui.presentation.viewmodels.ThemeViewModel
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.SeriesControlScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.ScaffoldMainScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ApiListScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.InternalSharedList
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedMovies
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.NotificationsScreen
@@ -22,6 +23,8 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.MovieDet
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SettingsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.WebViewScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 
 @Composable
@@ -140,6 +143,19 @@ fun NavGraph(
                 userId = userId,
                 userName = userName,
                 listName = listName
+            )
+        }
+
+        composable(
+            Route.ApiListScreen.route,
+            arguments = listOf(navArgument("listType") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val listType = backStackEntry.arguments?.getString("listType") ?: ""
+            val userId by systemViewModel.userId.collectAsState()
+            ApiListScreen(
+                navController = navController,
+                listType = listType,
+                userId = userId
             )
         }
 
