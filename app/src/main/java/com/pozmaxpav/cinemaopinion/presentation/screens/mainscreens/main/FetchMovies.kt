@@ -163,12 +163,23 @@ fun FetchMovies(
             ) {
                 Row(
                     Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Start
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = stringResource(R.string.top_movies),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.secondary
+                    )
+                    Icon(
+                        modifier = Modifier.clickable(
+                            onClick = {
+
+                            }
+                        ),
+                        imageVector = Icons.Default.ArrowForwardIos,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                 }
                 LazyRow(
