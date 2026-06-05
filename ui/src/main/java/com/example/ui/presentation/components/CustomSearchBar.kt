@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.DockedSearchBar
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +24,7 @@ import com.example.ui.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomSearchBar(
+    modifier: Modifier = Modifier,
     query: String,
     onQueryChange: (String) -> Unit,
     onSearch: (String) -> Unit,
@@ -31,7 +32,7 @@ fun CustomSearchBar(
     onActiveChange: (Boolean) -> Unit,
     searchHistory: List<String>
 ) {
-    DockedSearchBar(
+    SearchBar(
         inputField = {
             SearchBarDefaults.InputField(
                 modifier = Modifier.fillMaxWidth(),
@@ -76,9 +77,7 @@ fun CustomSearchBar(
         },
         expanded = active,
         onExpandedChange = onActiveChange,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(7.dp),
+        modifier = modifier,
         colors = SearchBarDefaults.colors(
             containerColor = MaterialTheme.colorScheme.surface,
             dividerColor = MaterialTheme.colorScheme.secondary

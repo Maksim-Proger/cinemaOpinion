@@ -23,7 +23,6 @@ class MainScreenState(
     var requestBody: MutableState<CompositeRequest>,
     var sendRequestCompleted: MutableState<Boolean>, // Флаг для предотвращения повторной отправки запроса
     var showDatePicker: MutableState<Boolean>,
-    var isTopMoviesSelected: MutableState<Boolean>,
     var onAccountButtonClick: MutableState<Boolean>,
     var onAdvancedSearchButtonClick: MutableState<Boolean>,
     var locationShowDialogEvents: MutableState<Boolean>,
@@ -31,9 +30,6 @@ class MainScreenState(
     var scrollToTop: MutableState<Boolean>,
     var menuExpanded: MutableState<Boolean>,
     var titleTopBarState: MutableState<Boolean>, // Заголовок для AppBar
-    var currentPage: MutableIntState,
-    var showPageSwitchingButtons: MutableState<Boolean>,
-    var saveSearchQuery: MutableState<String>, // Сохраняем содержание поиска при переключении страниц
     var selectedMovie: MutableState<MovieData?>,
     var selectedSeasonalMovie: MutableState<DomainSelectedMovieModel?>,
     var selectedFavoriteMovie: MutableState<DomainSelectedMovieModel?>,

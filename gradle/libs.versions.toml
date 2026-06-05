@@ -25,6 +25,7 @@ versionCoilCompose = "2.7.0"
 versionMaterialIcons = "1.7.8"
 versionRoom = "2.8.4"
 versionDatastore = "1.2.1"
+versionPaging = "3.3.6"
 
 [libraries]
 firebase-database = { group = "com.google.firebase", name = "firebase-database" }
@@ -45,6 +46,9 @@ material-icons-extended = { group = "androidx.compose.material", name = "materia
 
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "versionRoom" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "versionRoom" }
+
+paging-runtime = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "versionPaging" }
+paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "versionPaging" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "versionDatastore" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

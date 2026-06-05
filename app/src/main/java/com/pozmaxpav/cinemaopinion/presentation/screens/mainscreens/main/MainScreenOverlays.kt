@@ -1,11 +1,33 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.intro.presentation.pages.PageDescription
@@ -20,32 +42,97 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 
 @Composable
+fun SearchField(state: MainScreenState) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(bottom = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .clickable {
+                    state.onAdvancedSearchButtonClick.value = true
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Tune,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .clip(RoundedCornerShape(50.dp))
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    shape = RoundedCornerShape(50.dp)
+                )
+                .clickable { state.searchBarActive.value = true },
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Фильм, сериал или имя",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun SearchBarOverlay(
     state: MainScreenState,
     apiViewModel: ApiViewModel
 ) {
     if (state.searchBarActive.value) {
-        CustomBoxShowOverlay(
-            paddingVerticalSecondBox = 50.dp,
-            paddingHorizontalSecondBox = 16.dp,
-            content = {
-                CustomSearchBar(
-                    query = state.query.value,
-                    onQueryChange = { state.query.value = it },
-                    onSearch = { searchQuery ->
-                        state.currentPage.intValue = 1
-                        apiViewModel.fetchSearchMovies(searchQuery, state.currentPage.intValue)
-                        state.saveSearchQuery.value = searchQuery
-                        state.searchHistory.add(searchQuery)
-                        state.searchCompleted.value = true
-                        state.searchBarActive.value = false
-                    },
-                    active = state.searchBarActive.value,
-                    onActiveChange = { isActive -> state.searchBarActive.value = isActive },
-                    searchHistory = state.searchHistory
-                )
+        Box(modifier = Modifier.fillMaxSize()) {
+            var expanded by remember { mutableStateOf(false) }
+            LaunchedEffect(Unit) {
+                expanded = true
             }
-        )
+            CustomSearchBar(
+                modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(),
+                query = state.query.value,
+                onQueryChange = { state.query.value = it },
+                onSearch = { searchQuery ->
+                    apiViewModel.searchByKeyword(searchQuery)
+                    state.searchHistory.add(searchQuery)
+                    state.searchCompleted.value = true
+                    state.searchBarActive.value = false
+                },
+                active = expanded,
+                onActiveChange = { isActive ->
+                    if (!isActive) state.searchBarActive.value = false
+                },
+                searchHistory = state.searchHistory
+            )
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
+﻿package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -54,12 +54,12 @@ fun FetchMovies(
     val listSelectedMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
     val premiereMovies by apiViewModel.premiersMovies.collectAsStateWithLifecycle()
     val topListMovies by apiViewModel.topListMovies.collectAsStateWithLifecycle()
-    val isInitialized = apiViewModel.isInitialized // Флаг для отправки запроса к Api
+    val isInitialized = apiViewModel.isInitialized // Р¤Р»Р°Рі РґР»СЏ РѕС‚РїСЂР°РІРєРё Р·Р°РїСЂРѕСЃР° Рє Api
 
     LaunchedEffect(Unit) {
         if (!isInitialized) {
             apiViewModel.fetchPremiersMovies(getYear(), getNameMonth())
-            apiViewModel.fetchTopListMovies(state.currentPage.intValue)
+            apiViewModel.fetchTopListMovies()
         }
     }
     LaunchedEffect(userId) {
@@ -163,12 +163,23 @@ fun FetchMovies(
             ) {
                 Row(
                     Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Start
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = stringResource(R.string.top_movies),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.secondary
+                    )
+                    Icon(
+                        modifier = Modifier.clickable(
+                            onClick = {
+                                navController.navigate(Route.ApiListScreen.navigate("top"))
+                            }
+                        ),
+                        imageVector = Icons.Default.ArrowForwardIos,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                 }
                 LazyRow(
@@ -188,98 +199,6 @@ fun FetchMovies(
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//@Composable
-//fun FetchMovies(
-//    state: MainScreenState,
-//    apiViewModel: ApiViewModel,
-//    selectedMovie: (MovieData) -> Unit
-//) {
-//
-//    val premiereMovies = apiViewModel.premiersMovies.collectAsState()
-//    val topListMovies = apiViewModel.topListMovies.collectAsState()
-//    val searchMovies = apiViewModel.searchMovies.collectAsState()
-//    val searchMovies2 = apiViewModel.searchMovies2.collectAsState()
-//
-//    val isInitialized = apiViewModel.isInitialized // Флаг для отправки запроса к Api
-//
-//    LaunchedEffect(Unit) {
-//        if (!isInitialized) {
-//            apiViewModel.fetchPremiersMovies(getYear(), getNameMonth())
-//            apiViewModel.fetchTopListMovies(state.currentPage.intValue)
-//        }
-//    }
-//
-//    val moviesToDisplay: List<MovieData> = when {
-//        state.searchCompleted.value -> {
-//            val firstMovieDatabase = searchMovies.value
-//            val secondMovieDatabase = searchMovies2.value
-//            if (firstMovieDatabase != null && firstMovieDatabase.items.isNotEmpty()) firstMovieDatabase.items
-//            else secondMovieDatabase?.films ?: emptyList()
-//        }
-//
-//        state.isTopMoviesSelected.value -> topListMovies.value?.films ?: emptyList()
-//        else -> premiereMovies.value?.items ?: emptyList()
-//    }
-//
-//    // Проверяем возможность активации кнопок для навигации
-//    val countPages: Int = when {
-//        state.searchCompleted.value -> {
-//            val mainMovies = searchMovies.value
-//            val fallbackMovies = searchMovies2.value
-//            if (mainMovies != null && mainMovies.totalPages != 0) mainMovies.totalPages
-//            else fallbackMovies?.pagesCount ?: 0
-//        }
-//
-//        state.isTopMoviesSelected.value -> topListMovies.value?.pagesCount ?: 0
-//        else -> 0
-//    }
-//    val canGoBack = state.currentPage.intValue > 1
-//    val canGoForward = state.currentPage.intValue < countPages
-//
-//    Column {
-//        LazyColumn(
-//            state = state.listState,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .weight(1f),
-//            contentPadding = PaddingValues(13.dp)
-//        ) {
-//            items(moviesToDisplay, key = { it.id }) { movie ->
-//                MovieItem(
-//                    modifier = Modifier.animateItem(),
-//                    movie = movie
-//                ) {
-//                    selectedMovie(movie)
-//                }
-//            }
-//        }
-//
-//        PageSwitch(state, canGoBack, apiViewModel, canGoForward)
-//    }
-//
-//}
 
 private fun getYear(): Int {
     val currentDate = LocalDate.now()

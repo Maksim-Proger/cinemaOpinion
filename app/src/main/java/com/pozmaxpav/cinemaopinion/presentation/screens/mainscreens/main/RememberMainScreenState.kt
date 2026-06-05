@@ -2,7 +2,6 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,7 +36,6 @@ fun rememberMainScreenState(): MainScreenState {
                 )),
             sendRequestCompleted = mutableStateOf(false),
             showDatePicker = mutableStateOf(false),
-            isTopMoviesSelected = mutableStateOf(false),
             onAccountButtonClick = mutableStateOf(false),
             onAdvancedSearchButtonClick = mutableStateOf(false),
             locationShowDialogEvents = mutableStateOf(false),
@@ -45,9 +43,6 @@ fun rememberMainScreenState(): MainScreenState {
             scrollToTop = mutableStateOf(false),
             menuExpanded = mutableStateOf(false),
             titleTopBarState = mutableStateOf(false),
-            currentPage = mutableIntStateOf(1),
-            showPageSwitchingButtons = mutableStateOf(false),
-            saveSearchQuery = mutableStateOf(""),
             selectedMovie = mutableStateOf(null),
             selectedSeasonalMovie = mutableStateOf(null),
             selectedFavoriteMovie = mutableStateOf(null),

@@ -38,5 +38,9 @@ sealed class Route(val route: String) {
     data object WebViewScreen : Route(route = "web_view/{url}") {
         fun navigate(url: String) = "web_view/$url"
     }
+
+    data object ApiListScreen : Route(route = "api_list_screen/{listType}") {
+        fun navigate(listType: String) = "api_list_screen/$listType"
+    }
 }
 
