@@ -2,11 +2,15 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +33,7 @@ import androidx.paging.compose.itemKey
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.items.MovieItem
+import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import kotlinx.coroutines.flow.emptyFlow
@@ -61,10 +66,11 @@ fun ApiListScreen(
                 val premiereMovies by apiViewModel.premiersMovies.collectAsStateWithLifecycle()
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(premiereMovies, key = { it.id }) { movie ->
-                        MovieItem(
-                            modifier = Modifier.animateItem(),
-                            movie = movie
-                        ) { selectedMovie = movie }
+                        SelectedMovieItem(
+                            movieData = movie,
+                            selectedMovie = null,
+                            onClick = { selectedMovie = movie }
+                        )
                     }
                 }
             }
@@ -107,12 +113,22 @@ private fun PagedMovieList(
                     count = movies.itemCount,
                     key = movies.itemKey { it.id }
                 ) { index ->
-                    movies[index]?.let { movie ->
-                        MovieItem(
-                            modifier = Modifier.animateItem(),
-                            movie = movie
-                        ) { onMovieClick(movie) }
+                    Card(
+                        modifier = Modifier.wrapContentHeight(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
+                    ) {
+                        movies[index]?.let { movie ->
+                            SelectedMovieItem(
+                                movieData = movie,
+                                selectedMovie = null,
+                                onClick = { onMovieClick(movie) }
+                            )
+                        }
                     }
+                    Spacer(Modifier.padding(5.dp))
                 }
                 if (movies.loadState.append is LoadState.Loading) {
                     item {

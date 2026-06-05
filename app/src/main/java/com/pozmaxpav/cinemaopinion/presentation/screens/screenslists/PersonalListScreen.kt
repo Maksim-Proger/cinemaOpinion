@@ -61,7 +61,6 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieMod
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
-import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
@@ -70,7 +69,6 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewMode
 import com.pozmaxpav.cinemaopinion.utilities.AddComment
 import com.pozmaxpav.cinemaopinion.utilities.ChangeComment
 import com.pozmaxpav.cinemaopinion.utilities.ShowCommentList
-import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 import com.pozmaxpav.cinemaopinion.utilities.showToast
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -307,7 +305,8 @@ fun ListSelectedMovies(
                                             ) {
                                                 Row(modifier = Modifier.weight(1f)) {
                                                     SelectedMovieItem(
-                                                        movie = movie,
+                                                        movieData = null,
+                                                        selectedMovie = movie,
                                                         onClick = { selectedMovie = movie }
                                                     )
                                                 }

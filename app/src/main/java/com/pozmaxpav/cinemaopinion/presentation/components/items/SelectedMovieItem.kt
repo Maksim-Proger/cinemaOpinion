@@ -9,13 +9,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.utilities.WorkerWithImage
+import com.pozmaxpav.cinemaopinion.R
 
 @Composable
 fun SelectedMovieItem(
-    movie: DomainSelectedMovieModel,
+    movieData: MovieData?,
+    selectedMovie: DomainSelectedMovieModel?,
     onClick: () -> Unit,
     showTopBar: () -> Unit = {}
 ) {
@@ -28,11 +32,24 @@ fun SelectedMovieItem(
                 showTopBar()
             }
     ) {
-        WorkerWithImage(movie = null, selectedMovie = movie, width = 120.dp)
-        Spacer(modifier = Modifier.padding(horizontal = 12.dp))
-        Text(
-            text = movie.nameFilm,
-            style = MaterialTheme.typography.bodyLarge
-        )
+        selectedMovie?.let { movie ->
+            WorkerWithImage(movie = null, selectedMovie = movie, width = 120.dp)
+            Spacer(modifier = Modifier.padding(horizontal = 12.dp))
+            Text(
+                text = movie.nameFilm,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+        movieData?.let { movie ->
+            WorkerWithImage(movie = movie, selectedMovie = null, width = 120.dp)
+            Spacer(modifier = Modifier.padding(horizontal = 12.dp))
+            Text(
+                text = movie.nameRu ?: stringResource(R.string.no_movie_title),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+
     }
 }
+
+
