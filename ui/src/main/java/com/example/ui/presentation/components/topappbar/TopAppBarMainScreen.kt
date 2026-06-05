@@ -2,9 +2,7 @@ package com.example.ui.presentation.components.topappbar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ContentPasteSearch
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,8 +19,6 @@ import com.example.ui.R
 @Composable
 fun TopAppBarMainScreen(
     title: String,
-    onSearchButtonClick: () -> Unit,
-    onAdvancedSearchButtonClick: () -> Unit,
     onAccountButtonClick: () -> Unit,
     onTransitionAction: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior
@@ -37,20 +33,6 @@ fun TopAppBarMainScreen(
             )
         },
         actions = {
-            IconButton(onClick = onSearchButtonClick) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = stringResource(id = R.string.description_icon_search_button),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-            IconButton(onClick = onAdvancedSearchButtonClick) {
-                Icon(
-                    imageVector = Icons.Default.ContentPasteSearch,
-                    contentDescription = stringResource(id = R.string.description_icon_advanced_search_button),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
             IconButton(onClick = onTransitionAction) {
                 Icon(
                     imageVector = Icons.Default.Notifications,
