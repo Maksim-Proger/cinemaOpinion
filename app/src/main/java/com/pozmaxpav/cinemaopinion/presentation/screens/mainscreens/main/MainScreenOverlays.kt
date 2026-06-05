@@ -1,11 +1,17 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.intro.presentation.pages.PageDescription
@@ -25,27 +31,30 @@ fun SearchBarOverlay(
     apiViewModel: ApiViewModel
 ) {
     if (state.searchBarActive.value) {
-        CustomBoxShowOverlay(
-            paddingVerticalSecondBox = 50.dp,
-            paddingHorizontalSecondBox = 16.dp,
-            content = {
-                CustomSearchBar(
-                    query = state.query.value,
-                    onQueryChange = { state.query.value = it },
-                    onSearch = { searchQuery ->
-                        state.currentPage.intValue = 1
-                        apiViewModel.fetchSearchMovies(searchQuery, state.currentPage.intValue)
-                        state.saveSearchQuery.value = searchQuery
-                        state.searchHistory.add(searchQuery)
-                        state.searchCompleted.value = true
-                        state.searchBarActive.value = false
-                    },
-                    active = state.searchBarActive.value,
-                    onActiveChange = { isActive -> state.searchBarActive.value = isActive },
-                    searchHistory = state.searchHistory
-                )
+        Box(modifier = Modifier.fillMaxSize()) {
+            var expanded by remember { mutableStateOf(false) }
+            LaunchedEffect(Unit) {
+                expanded = true
             }
-        )
+            CustomSearchBar(
+                modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth(),
+                query = state.query.value,
+                onQueryChange = { state.query.value = it },
+                onSearch = { searchQuery ->
+                    state.currentPage.intValue = 1
+                    apiViewModel.fetchSearchMovies(searchQuery, state.currentPage.intValue)
+                    state.saveSearchQuery.value = searchQuery
+                    state.searchHistory.add(searchQuery)
+                    state.searchCompleted.value = true
+                    state.searchBarActive.value = false
+                },
+                active = expanded,
+                onActiveChange = { isActive ->
+                    if (!isActive) state.searchBarActive.value = false
+                },
+                searchHistory = state.searchHistory
+            )
+        }
     }
 }
 
