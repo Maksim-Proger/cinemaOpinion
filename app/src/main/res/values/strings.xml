@@ -88,10 +88,12 @@
     <string name="button_send_to_archive">Просмотрен</string>
     <string name="button_add">Добавить</string>
     <string name="button_save">Сохранить</string>
+    <string name="button_back">Назад</string>
     <string name="button_add_to_yourself">Добавить к себе</string>
     <string name="button_add_to_seasonal_list">В сезонный список</string>
     <string name="text_buttons_film_card_to_my_list">В свой список</string>
     <string name="text_buttons_film_card_to_shared_list">В совместный список</string>
+    <string name="text_buttons_recommend_film">Рекомендовать</string>
     <string name="button_create_shared_list">Создать таблицу</string>
     <string name="fab_button_with_menu_main_screen">Настройки</string>
     <string name="button_open_archive_screen">Архив</string>

@@ -185,6 +185,7 @@ fun ListSelectedMovies(
                     }
                     AdaptiveBackHandler { openBottomSheetReviews = false }
                 }
+
                 DetailsCardSelectedMovie(
                     movie = movie,
                     userId = userId,
@@ -211,6 +212,7 @@ fun ListSelectedMovies(
                     },
                     onCloseButton = { selectedMovie = null }
                 )
+
                 AdaptiveBackHandler { selectedMovie = null }
             }
 

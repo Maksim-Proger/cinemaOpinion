@@ -170,11 +170,11 @@ fun DetailsCardSpecial(
                     )
                     Spacer(Modifier.padding(vertical = 15.dp))
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        ExpandedCard(
-                            title = stringResource(R.string.text_for_expandedCard_field),
-                            description = info?.description
-                                ?: stringResource(R.string.limit_is_over)
-                        )
+//                        ExpandedCard(
+//                            title = stringResource(R.string.text_for_expandedCard_field),
+//                            description = info?.description
+//                                ?: stringResource(R.string.limit_is_over)
+//                        )
                         Spacer(Modifier.padding(vertical = 5.dp))
                         Row(
                             modifier = Modifier

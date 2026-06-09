@@ -54,7 +54,7 @@ fun FetchMovies(
     val listSelectedMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
     val premiereMovies by apiViewModel.premiersMovies.collectAsStateWithLifecycle()
     val topListMovies by apiViewModel.topListMovies.collectAsStateWithLifecycle()
-    val isInitialized = apiViewModel.isInitialized // Р¤Р»Р°Рі РґР»СЏ РѕС‚РїСЂР°РІРєРё Р·Р°РїСЂРѕСЃР° Рє Api
+    val isInitialized = apiViewModel.isInitialized // Флаг для отправки запроса к Api
 
     LaunchedEffect(Unit) {
         if (!isInitialized) {
@@ -132,14 +132,26 @@ fun FetchMovies(
             ) {
                 Row(
                     Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.Start
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = stringResource(R.string.movies_of_the_month),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.secondary
                     )
+                    Icon(
+                        modifier = Modifier.clickable(
+                            onClick = {
+                                navController.navigate(Route.ApiListScreen.navigate("premiere"))
+                            }
+                        ),
+                        imageVector = Icons.Default.ArrowForwardIos,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
                 }
+
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
                     state = state.premiereListState
