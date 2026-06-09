@@ -73,6 +73,8 @@ android {
 }
 
 dependencies {
+    // Palette API
+    implementation("androidx.palette:palette:1.0.0")
 
     // Modules
     implementation(project(":auth"))
@@ -116,9 +118,6 @@ dependencies {
     // Paging 3
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)
-
-    // MaterialExpressive
-    //implementation("androidx.compose.material3:material3-android:1.4.0-alpha14") // Разобраться почему Expressive работает только с этой версией
 
     implementation(libs.material.icons.extended)
     implementation(libs.androidx.core.ktx)

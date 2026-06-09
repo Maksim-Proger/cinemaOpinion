@@ -51,6 +51,7 @@ import com.example.ui.presentation.components.topappbar.TopAppBarMainScreen
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSpecial
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.NewDesignMovieDetailScreen
 import com.pozmaxpav.cinemaopinion.presentation.components.items.fabMenuItems
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -181,11 +182,16 @@ fun ScaffoldMainScreen(
             when {
                 state.selectedMovie.value != null -> {
                     state.selectedMovie.value?.let {
-                        DetailsCardFilm(
+//                        DetailsCardFilm(
+//                            movie = it,
+//                            userId = userId,
+//                            onCloseButton = { state.selectedMovie.value = null },
+//                            navController = navController
+//                        )
+                        NewDesignMovieDetailScreen(
                             movie = it,
                             userId = userId,
                             onCloseButton = { state.selectedMovie.value = null },
-                            padding = innerPadding,
                             navController = navController
                         )
                     }

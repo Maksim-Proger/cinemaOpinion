@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -69,7 +72,6 @@ import com.pozmaxpav.cinemaopinion.utilities.toSelectedMovie
 fun DetailsCardFilm(
     movie: MovieData?,
     userId: String,
-    padding: PaddingValues,
     navController: NavHostController,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
@@ -79,10 +81,10 @@ fun DetailsCardFilm(
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
-    val userData by userViewModel.userData.collectAsState()
-    val info by apiViewModel.movieInfo.collectAsState()
-    val detailedInfo by apiViewModel.detailedInfo.collectAsState()
-    var openSharedLists by remember { mutableStateOf(false) }
+//    val userData by userViewModel.userData.collectAsState()
+//    val info by apiViewModel.movieInfo.collectAsState()
+//    val detailedInfo by apiViewModel.detailedInfo.collectAsState()
+//    var openSharedLists by remember { mutableStateOf(false) }
 
     var triggerOnClickPersonalMovie by remember { mutableStateOf(false) }
 
@@ -94,20 +96,20 @@ fun DetailsCardFilm(
             }
         }
     }
-    LaunchedEffect(movie?.id) {
-        movie?.let { apiViewModel.getSearchMovieById(it.id) }
-    }
-    LaunchedEffect(userId) {
-        userViewModel.getUserData(userId)
-    }
-    LaunchedEffect(movie?.id) {
-        movie?.let { apiViewModel.getInformationMovie(it.id) }
-    }
+//    LaunchedEffect(movie?.id) {
+//        movie?.let { apiViewModel.getSearchMovieById(it.id) }
+//    }
+//    LaunchedEffect(userId) {
+//        userViewModel.getUserData(userId)
+//    }
+//    LaunchedEffect(movie?.id) {
+//        movie?.let { apiViewModel.getInformationMovie(it.id) }
+//    }
 
     Column(
         modifier = Modifier
-            .wrapContentSize()
-            .padding(padding)
+            .fillMaxSize()
+            .padding(WindowInsets.statusBars.asPaddingValues())
     ) {
         Card(
             modifier = Modifier
@@ -121,39 +123,39 @@ fun DetailsCardFilm(
             )
         ) {
 
-            // region Верхние кнопки
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onCloseButton) {
-                    Icon(
-                        modifier = Modifier.size(35.dp),
-                        imageVector = Icons.Default.ArrowBackIosNew,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                IconButton(
-                    onClick = {
-                        movie?.toSelectedMovie()?.let {
-                            personalMovieViewModel.addMovie(userId, selectedMovie = it)
-                        }
-                        triggerOnClickPersonalMovie = true
-                    }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(35.dp),
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-            // endregion
+//            // region Верхние кнопки
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(5.dp),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                IconButton(onClick = onCloseButton) {
+//                    Icon(
+//                        modifier = Modifier.size(35.dp),
+//                        imageVector = Icons.Default.ArrowBackIosNew,
+//                        contentDescription = null,
+//                        tint = MaterialTheme.colorScheme.secondary
+//                    )
+//                }
+//                IconButton(
+//                    onClick = {
+//                        movie?.toSelectedMovie()?.let {
+//                            personalMovieViewModel.addMovie(userId, selectedMovie = it)
+//                        }
+//                        triggerOnClickPersonalMovie = true
+//                    }
+//                ) {
+//                    Icon(
+//                        modifier = Modifier.size(35.dp),
+//                        imageVector = Icons.Default.FavoriteBorder,
+//                        contentDescription = null,
+//                        tint = MaterialTheme.colorScheme.secondary
+//                    )
+//                }
+//            }
+//            // endregion
 
             Column(
                 modifier = Modifier
@@ -162,7 +164,7 @@ fun DetailsCardFilm(
                     .padding(horizontal = 15.dp)
                     .verticalScroll(scrollState)
             ) {
-                DetailCardPoster(movie, detailedInfo)
+//                DetailCardPoster(movie, detailedInfo)
 
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Spacer(Modifier.padding(15.dp))
@@ -171,111 +173,112 @@ fun DetailsCardFilm(
                         style = MaterialTheme.typography.displayLarge,
                         color = MaterialTheme.colorScheme.secondary
                     )
-                    when (movie) {
-                        is MovieData.Movie -> {
-                            Spacer(Modifier.padding(vertical = 15.dp))
-                            MetaText(
-                                year = formatDate2(date = movie.premiereRu),
-                                duration = "${detailedInfo?.filmLength ?: "Н/Д"} мин.",
-                                genre = formatGenres(movie.genres),
-                                country = formatCountries(country = movie.countries)
-                            )
-                            Spacer(Modifier.padding(vertical = 5.dp))
-                        }
-
-                        is MovieData.MovieTop -> {
-                            Spacer(Modifier.padding(vertical = 5.dp))
-                            MetaText(
-                                year = movie.year,
-                                duration = "${detailedInfo?.filmLength ?: "Н/Д"} мин.",
-                                genre = formatGenres(movie.genres),
-                                country = formatCountries(country = movie.countries)
-                            )
-                            Spacer(Modifier.padding(vertical = 5.dp))
-                        }
-
-                        is MovieData.MovieSearch -> {
-                            Spacer(Modifier.padding(vertical = 5.dp))
-                            MetaText(
-                                year = movie.year.toString(),
-                                duration = "${detailedInfo?.filmLength ?: "Н/Д"} мин.",
-                                genre = formatGenres(movie.genres),
-                                country = formatCountries(country = movie.countries)
-                            )
-                            Spacer(Modifier.padding(vertical = 5.dp))
-                        }
-
-                        is MovieData.MovieSearch2 -> {
-                            Spacer(Modifier.padding(vertical = 5.dp))
-                            MetaText(
-                                year = movie.year.toString(),
-                                duration = "${detailedInfo?.filmLength ?: "Н/Д"} мин.",
-                                genre = formatGenres(movie.genres),
-                                country = formatCountries(country = movie.countries)
-                            )
-                            Spacer(Modifier.padding(vertical = 5.dp))
-                        }
-
-                        null -> { // Обработка случая, когда movie == null
-                            Text(
-                                text = stringResource(id = R.string.movie_is_not_uploaded),
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
+//                    when (movie) {
+//                        is MovieData.Movie -> {
+//                            Spacer(Modifier.padding(vertical = 15.dp))
+//                            MetaText(
+//                                year = formatDate2(date = movie.premiereRu),
+//                                duration = "${detailedInfo?.filmLength ?: "Н/Д"} мин.",
+//                                genre = formatGenres(movie.genres),
+//                                country = formatCountries(country = movie.countries)
+//                            )
+//                            Spacer(Modifier.padding(vertical = 5.dp))
+//                        }
+//
+//                        is MovieData.MovieTop -> {
+//                            Spacer(Modifier.padding(vertical = 5.dp))
+//                            MetaText(
+//                                year = movie.year,
+//                                duration = "${detailedInfo?.filmLength ?: "Н/Д"} мин.",
+//                                genre = formatGenres(movie.genres),
+//                                country = formatCountries(country = movie.countries)
+//                            )
+//                            Spacer(Modifier.padding(vertical = 5.dp))
+//                        }
+//
+//                        is MovieData.MovieSearch -> {
+//                            Spacer(Modifier.padding(vertical = 5.dp))
+//                            MetaText(
+//                                year = movie.year.toString(),
+//                                duration = "${detailedInfo?.filmLength ?: "Н/Д"} мин.",
+//                                genre = formatGenres(movie.genres),
+//                                country = formatCountries(country = movie.countries)
+//                            )
+//                            Spacer(Modifier.padding(vertical = 5.dp))
+//                        }
+//
+//                        is MovieData.MovieSearch2 -> {
+//                            Spacer(Modifier.padding(vertical = 5.dp))
+//                            MetaText(
+//                                year = movie.year.toString(),
+//                                duration = "${detailedInfo?.filmLength ?: "Н/Д"} мин.",
+//                                genre = formatGenres(movie.genres),
+//                                country = formatCountries(country = movie.countries)
+//                            )
+//                            Spacer(Modifier.padding(vertical = 5.dp))
+//                        }
+//
+//                        null -> { // Обработка случая, когда movie == null
+//                            Text(
+//                                text = stringResource(id = R.string.movie_is_not_uploaded),
+//                                color = MaterialTheme.colorScheme.error
+//                            )
+//                        }
+//                    }
                 }
+
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    ExpandedCard(
-                        title = stringResource(R.string.text_for_expandedCard_field),
-                        description = info?.description ?: stringResource(R.string.limit_is_over)
-                    )
-                    Spacer(Modifier.padding(5.dp))
-                    CustomTextButton(
-                        textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
-                        imageVector = Icons.Outlined.PostAdd,
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        modifier = Modifier.fillMaxWidth(),
-                        onClickButton = { openSharedLists = true }
-                    )
-                    Spacer(Modifier.padding(10.dp))
+//                    ExpandedCard(
+//                        title = stringResource(R.string.text_for_expandedCard_field),
+//                        description = info?.description ?: stringResource(R.string.limit_is_over)
+//                    )
+//                    Spacer(Modifier.padding(5.dp))
+//                    CustomTextButton(
+//                        textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
+//                        imageVector = Icons.Outlined.PostAdd,
+//                        containerColor = MaterialTheme.colorScheme.secondary,
+//                        contentColor = MaterialTheme.colorScheme.onSecondary,
+//                        modifier = Modifier.fillMaxWidth(),
+//                        onClickButton = { openSharedLists = true }
+//                    )
+//                    Spacer(Modifier.padding(10.dp))
                 }
             }
         }
     }
-    if (openSharedLists) {
-        Box(
-            modifier = Modifier
-                .fillMaxHeight(0.9f)
-                .background(
-                    color = Color.Black.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .clickable { openSharedLists = false }
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                userData?.let { user ->
-                    SharedListsScreen(
-                        userId = userId,
-                        userName = user.nikName,
-                        navController = navController,
-                        addButton = true,
-                        selectedMovie = movie?.toSelectedMovie(),
-                        onCloseSharedLists = {
-                            openSharedLists = false
-                            onCloseButton()
-                        }
-                    )
-                }
-            }
-        }
-    }
+//    if (openSharedLists) {
+//        Box(
+//            modifier = Modifier
+//                .fillMaxHeight(0.9f)
+//                .background(
+//                    color = Color.Black.copy(alpha = 0.5f),
+//                    shape = RoundedCornerShape(12.dp)
+//                )
+//                .clickable { openSharedLists = false }
+//        ) {
+//            Column(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .padding(12.dp),
+//                verticalArrangement = Arrangement.Center,
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                userData?.let { user ->
+//                    SharedListsScreen(
+//                        userId = userId,
+//                        userName = user.nikName,
+//                        navController = navController,
+//                        addButton = true,
+//                        selectedMovie = movie?.toSelectedMovie(),
+//                        onCloseSharedLists = {
+//                            openSharedLists = false
+//                            onCloseButton()
+//                        }
+//                    )
+//                }
+//            }
+//        }
+//    }
 }
 
 @Composable
@@ -349,91 +352,72 @@ private fun MetaDot() {
     )
 }
 
-@Composable
-private fun DetailCardPoster(
-    movie: MovieData?,
-    detailedInfo: MovieData.MovieSearch?
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Card(
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            modifier = Modifier
-                .width(220.dp)
-                .aspectRatio(2f / 3f)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(20.dp))
-            ) {
-                movie?.let {
-                    AsyncImage(
-                        model = it.posterUrl,
-                        contentDescription = it.nameRu
-                            ?: stringResource(R.string.no_movie_title),
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    ShowRating(movie = detailedInfo)
-                }
-            }
-        }
-    }
-}
+//@Composable
+//private fun DetailCardPoster(
+//    movie: MovieData?,
+//    detailedInfo: MovieData.MovieSearch?
+//) {
+//    Row(
+//        modifier = Modifier.fillMaxWidth(),
+//        horizontalArrangement = Arrangement.Center
+//    ) {
+//        Card(
+//            shape = RoundedCornerShape(20.dp),
+//            elevation = CardDefaults.cardElevation(16.dp),
+//            colors = CardDefaults.cardColors(
+//                containerColor = MaterialTheme.colorScheme.surface
+//            ),
+//            modifier = Modifier
+//                .width(220.dp)
+//                .aspectRatio(2f / 3f)
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .clip(RoundedCornerShape(20.dp))
+//            ) {
+//                movie?.let {
+//                    AsyncImage(
+//                        model = it.posterUrl,
+//                        contentDescription = it.nameRu
+//                            ?: stringResource(R.string.no_movie_title),
+//                        modifier = Modifier.fillMaxSize(),
+//                        contentScale = ContentScale.Crop
+//                    )
+//                }
+////                Column(
+////                    modifier = Modifier
+////                        .align(Alignment.BottomEnd)
+////                        .padding(8.dp),
+////                    verticalArrangement = Arrangement.spacedBy(6.dp)
+////                ) {
+////                    ShowRating(movie = detailedInfo)
+////                }
+//            }
+//        }
+//    }
+//}
 
-@Composable
-private fun ShowRating(movie: MovieData.MovieSearch?) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        ),
-        elevation = CardDefaults.cardElevation(8.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(7.dp)
-        ) {
-            Text(
-                text = "КП: ${movie?.ratingKinopoisk ?: "Н/Д"}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = "IMDB: ${movie?.ratingImdb ?: "Н/Д"}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    }
-
-}
-
-
-//                    if (userData?.nikName == stringResource(R.string.developer_field)) {
-//                        CustomTextButton(
-//                            textButton = stringResource(R.string.button_add_to_seasonal_list),
-//                            bottomPadding = 7.dp,
-//                            containerColor = MaterialTheme.colorScheme.secondary,
-//                            contentColor = MaterialTheme.colorScheme.onSecondary,
-//                            onClickButton = {
-//                                movie?.let {
-//                                    movieViewModel.saveMovie(
-//                                        dataSource = NODE_HALLOWEEN_LIST,
-//                                        selectedMovie = it.toSelectedMovie()
-//                                    )
-//                                }
-//                            }
-//                        )
-//                    }
+//@Composable
+//private fun ShowRating(movie: MovieData.MovieSearch?) {
+//    Card(
+//        colors = CardDefaults.cardColors(
+//            containerColor = MaterialTheme.colorScheme.surface,
+//            contentColor = MaterialTheme.colorScheme.onSurface
+//        ),
+//        elevation = CardDefaults.cardElevation(8.dp)
+//    ) {
+//        Column(
+//            modifier = Modifier.padding(7.dp)
+//        ) {
+//            Text(
+//                text = "КП: ${movie?.ratingKinopoisk ?: "Н/Д"}",
+//                style = MaterialTheme.typography.bodyLarge
+//            )
+//            Text(
+//                text = "IMDB: ${movie?.ratingImdb ?: "Н/Д"}",
+//                style = MaterialTheme.typography.bodyLarge
+//            )
+//        }
+//    }
+//}

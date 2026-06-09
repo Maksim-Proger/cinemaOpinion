@@ -219,11 +219,11 @@ fun DetailsCardSelectedMovie(
                         )
                         Spacer(Modifier.padding(vertical = 15.dp))
                         Column(modifier = Modifier.fillMaxWidth()) {
-                            ExpandedCard(
-                                title = stringResource(R.string.text_for_expandedCard_field),
-                                description = info?.description
-                                    ?: stringResource(R.string.limit_is_over)
-                            )
+//                            ExpandedCard(
+//                                title = stringResource(R.string.text_for_expandedCard_field),
+//                                description = info?.description
+//                                    ?: stringResource(R.string.limit_is_over)
+//                            )
                             Spacer(Modifier.padding(5.dp))
                             CustomTextButton(
                                 textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
