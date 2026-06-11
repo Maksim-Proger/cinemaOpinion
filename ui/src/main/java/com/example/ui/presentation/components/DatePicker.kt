@@ -92,7 +92,7 @@ fun DatePickerFunction(
                                         color = if (selectedMonth == month + 1) MaterialTheme.colorScheme.tertiaryContainer
                                         else Color.Transparent
                                     ),
-                                color = if (selectedMonth == month + 1) MaterialTheme.colorScheme.onSurfaceVariant else Color.Black,
+                                color = if (selectedMonth == month + 1) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onTertiary,
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.titleMedium
                             )
@@ -126,7 +126,7 @@ fun DatePickerFunction(
                                         color = if (selectedYear == year) MaterialTheme.colorScheme.tertiaryContainer
                                         else Color.Transparent
                                     ),
-                                color = if (selectedYear == year) MaterialTheme.colorScheme.onSurfaceVariant else Color.Black,
+                                color = if (selectedYear == year) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onTertiary,
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.titleMedium
                             )

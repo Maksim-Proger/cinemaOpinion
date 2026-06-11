@@ -459,8 +459,7 @@ fun AddComment(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline
+                    contentDescription = null
                 )
             },
             keyboardActions = KeyboardActions(
@@ -575,8 +574,7 @@ fun ChangeComment(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline
+                    contentDescription = null
                 )
             },
             keyboardActions = KeyboardActions(

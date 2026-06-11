@@ -48,13 +48,11 @@ fun SeriesControlItem(
         ) {
             Text(
                 text = "${movie.season} сезон",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSecondary
+                style = MaterialTheme.typography.bodyMedium
             )
             Text(
                 text = "${movie.series} серия",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSecondary
+                style = MaterialTheme.typography.bodyMedium
             )
         }
         IconButton(
@@ -63,8 +61,7 @@ fun SeriesControlItem(
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondary
+                contentDescription = null
             )
         }
     }

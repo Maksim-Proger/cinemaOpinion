@@ -28,7 +28,6 @@ import com.example.ui.R
 fun SettingsMenu(
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-    containerColor: Color = MaterialTheme.colorScheme.secondary,
     content: @Composable (closeMenu: () -> Unit) -> Unit
 ) {
     var menuOpeningStatus by remember { mutableStateOf(false) }
@@ -49,7 +48,6 @@ fun SettingsMenu(
             expanded = menuOpeningStatus,
             onDismissRequest = { menuOpeningStatus = false },
             shape = RoundedCornerShape(12.dp),
-            containerColor = containerColor,
             offset = DpOffset(x = 0.dp, y = 10.dp)
         ) {
             content { menuOpeningStatus = false }

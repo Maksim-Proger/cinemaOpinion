@@ -61,7 +61,7 @@ fun CustomTextButton(
                         imageVector = it,
                         contentDescription = null,
                         modifier = Modifier.size(27.dp).padding(end = 6.dp),
-                        tint = MaterialTheme.colorScheme.onSecondary
+                        tint = contentColor
                     )
                 }
 

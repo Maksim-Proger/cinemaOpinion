@@ -79,8 +79,7 @@ fun RegistrationScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = stringResource(id = R.string.description_icon_add_name),
-                    tint = MaterialTheme.colorScheme.outline
+                    contentDescription = stringResource(id = R.string.description_icon_add_name)
                 )
             },
             keyboardActions = KeyboardActions(
@@ -104,8 +103,7 @@ fun RegistrationScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = stringResource(id = R.string.description_icon_add_name),
-                    tint = MaterialTheme.colorScheme.outline
+                    contentDescription = stringResource(id = R.string.description_icon_add_name)
                 )
             },
             keyboardActions = KeyboardActions(
@@ -129,8 +127,7 @@ fun RegistrationScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = stringResource(id = R.string.description_icon_add_name),
-                    tint = MaterialTheme.colorScheme.outline
+                    contentDescription = stringResource(id = R.string.description_icon_add_name)
                 )
             },
             keyboardActions = KeyboardActions(

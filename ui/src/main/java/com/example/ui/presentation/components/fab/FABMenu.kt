@@ -6,9 +6,8 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ToggleFloatingActionButton
-import androidx.compose.material3.ToggleFloatingActionButtonDefaults
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,16 +33,12 @@ fun FABMenu(
             button = {
                 ToggleFloatingActionButton(
                     checked = expanded,
-                    onCheckedChange = { onButtonClick() },
-                    containerColor = ToggleFloatingActionButtonDefaults.containerColor(
-                        initialColor = MaterialTheme.colorScheme.secondary,
-                        finalColor = MaterialTheme.colorScheme.secondary
-                    )
+                    onCheckedChange = { onButtonClick() }
                 ) {
                     Icon(
                         imageVector = imageIcon,
                         contentDescription = contentDescription,
-                        tint = MaterialTheme.colorScheme.onSecondary
+                        modifier = Modifier.animateIcon({ checkedProgress })
                     )
                 }
             }
@@ -52,8 +47,6 @@ fun FABMenu(
                 FloatingActionButtonMenuItem(
                     text = itemData.text,
                     icon = itemData.icon,
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
                     onClick = {
                         itemData.onClick()
                         onExpandedChange(false)
@@ -63,7 +56,3 @@ fun FABMenu(
         }
     }
 }
-
-
-
-

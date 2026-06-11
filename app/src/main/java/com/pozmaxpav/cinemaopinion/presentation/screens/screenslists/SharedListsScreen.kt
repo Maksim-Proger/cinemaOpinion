@@ -163,8 +163,7 @@ fun SharedListsScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondary
+                                    contentDescription = null
                                 )
                             }
                         }
