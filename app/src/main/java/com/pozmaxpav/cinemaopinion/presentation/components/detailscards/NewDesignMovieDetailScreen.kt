@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,11 +26,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CommentBank
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.RemoveRedEye
-import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.PostAdd
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,13 +56,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.palette.graphics.Palette
+import kotlin.math.abs
 import coil.compose.AsyncImage
 import coil.imageLoader
 import coil.request.ImageRequest
@@ -77,6 +74,13 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilities.toSelectedMovie
+
+private val DynamicContentColor = Color.White
+
+private fun hueDistance(a: Float, b: Float): Float {
+    val diff = abs(a - b) % 360f
+    return if (diff > 180f) 360f - diff else diff
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -124,14 +128,29 @@ fun NewDesignMovieDetailScreen(
                 palette?.let { p ->
                     val raw = p.getDominantColor(background.toArgb())
 
-                    // Ограничиваем яркость — не больше 20%
                     val hsl = FloatArray(3)
                     ColorUtils.colorToHSL(raw, hsl)
+                    val dominantHue = hsl[0]
                     hsl[2] = hsl[2].coerceAtMost(0.2f)
                     dominantColor = Color(ColorUtils.HSLToColor(hsl))
 
-                    titleColor = Color(p.getLightVibrantColor(title.toArgb()))
-                    accentColor = Color(p.getVibrantColor(title.toArgb()))
+                    titleColor = Color(ColorUtils.HSLToColor(floatArrayOf(dominantHue, 0.2f, 0.9f)))
+
+                    val vibrantSwatch = p.vibrantSwatch
+                    val vibrantHsl = FloatArray(3)
+                    if (vibrantSwatch != null) {
+                        ColorUtils.colorToHSL(vibrantSwatch.rgb, vibrantHsl)
+                    }
+                    accentColor = if (
+                        vibrantSwatch != null &&
+                        vibrantHsl[1] > 0.35f &&
+                        hueDistance(vibrantHsl[0], dominantHue) <= 40f
+                    ) {
+                        Color(vibrantSwatch.rgb)
+                    } else {
+                        Color(ColorUtils.HSLToColor(floatArrayOf(dominantHue, 0.5f, 0.6f)))
+                    }
+
                     buttonBgColor = Color(p.getDarkMutedColor(button.toArgb()))
                 }
             }
@@ -160,15 +179,15 @@ fun NewDesignMovieDetailScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(WindowInsets.statusBars.asPaddingValues())
             .background(animatedBg)
+            .padding(WindowInsets.statusBars.asPaddingValues())
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-            // Poster
+            // region Poster
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -198,7 +217,7 @@ fun NewDesignMovieDetailScreen(
                         shape = RoundedCornerShape(23.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
                             containerColor = animatedButtonBg.copy(alpha = 0.9f),
-                            contentColor = MaterialTheme.colorScheme.surface
+                            contentColor = DynamicContentColor
                         ),
                         border = null,
                         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp)
@@ -223,7 +242,8 @@ fun NewDesignMovieDetailScreen(
                             onClick = {/*TODO: Действие*/ },
                             shape = RoundedCornerShape(23.dp),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = animatedButtonBg.copy(alpha = 0.9f)
+                                containerColor = animatedButtonBg.copy(alpha = 0.9f),
+                                contentColor = DynamicContentColor
                             ),
                             border = null,
                             contentPadding = PaddingValues(10.dp),
@@ -232,8 +252,7 @@ fun NewDesignMovieDetailScreen(
                             Icon(
                                 modifier = Modifier.size(26.dp),
                                 imageVector = Icons.Default.Favorite,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.secondary
+                                contentDescription = null
                             )
                         }
                         // endregion
@@ -243,7 +262,8 @@ fun NewDesignMovieDetailScreen(
                             onClick = {/*TODO: Действие*/ },
                             shape = RoundedCornerShape(23.dp),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = animatedButtonBg.copy(alpha = 0.9f)
+                                containerColor = animatedButtonBg.copy(alpha = 0.9f),
+                                contentColor = DynamicContentColor
                             ),
                             border = null,
                             contentPadding = PaddingValues(10.dp),
@@ -252,8 +272,7 @@ fun NewDesignMovieDetailScreen(
                             Icon(
                                 modifier = Modifier.size(26.dp),
                                 imageVector = Icons.Default.RemoveRedEye,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.secondary
+                                contentDescription = null
                             )
                         }
                         // endregion
@@ -261,6 +280,7 @@ fun NewDesignMovieDetailScreen(
                 }
                 // endregion
             }
+            // endregion
 
             Column(
                 modifier = Modifier
@@ -310,7 +330,8 @@ fun NewDesignMovieDetailScreen(
                 ExpandedCard(
                     title = stringResource(R.string.text_for_expandedCard_field),
                     description = info?.description ?: stringResource(R.string.limit_is_over),
-                    animatedAccent = animatedAccent
+                    animatedAccent = animatedAccent,
+                    contentColor = DynamicContentColor
                 )
                 Spacer(Modifier.height(24.dp))
             }
@@ -421,8 +442,8 @@ private fun ActionButton(
     icon: ImageVector,
     label: String,
     modifier: Modifier = Modifier,
-    accentColor: Color = MaterialTheme.colorScheme.secondary,   // ← новый параметр
-    borderColor: Color = MaterialTheme.colorScheme.secondary,  // ← новый параметр
+    accentColor: Color = MaterialTheme.colorScheme.secondary,
+    borderColor: Color = MaterialTheme.colorScheme.secondary,
     onClick: () -> Unit = {},
 ) {
     OutlinedButton(
@@ -431,7 +452,7 @@ private fun ActionButton(
         shape = RoundedCornerShape(24.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = Color.Transparent,
-            contentColor = MaterialTheme.colorScheme.surface
+            contentColor = DynamicContentColor
         ),
         border = ButtonDefaults.outlinedButtonBorder.copy(
             brush = SolidColor(borderColor)
