@@ -56,7 +56,7 @@ fun SearchField(state: MainScreenState) {
                 .clip(RoundedCornerShape(8.dp))
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.outline,
                     shape = RoundedCornerShape(8.dp)
                 )
                 .clickable {
@@ -67,7 +67,7 @@ fun SearchField(state: MainScreenState) {
             Icon(
                 imageVector = Icons.Default.Tune,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Spacer(modifier = Modifier.width(8.dp))
@@ -78,7 +78,7 @@ fun SearchField(state: MainScreenState) {
                 .clip(RoundedCornerShape(50.dp))
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.outline,
                     shape = RoundedCornerShape(50.dp)
                 )
                 .clickable { state.searchBarActive.value = true },
@@ -92,13 +92,13 @@ fun SearchField(state: MainScreenState) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Фильм, сериал или имя",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

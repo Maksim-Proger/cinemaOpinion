@@ -89,8 +89,7 @@ fun AccountScreen(
                 Icon(
                     modifier = Modifier.size(30.dp),
                     imageVector = Icons.Default.Close,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    contentDescription = null
                 )
             }
             Text(

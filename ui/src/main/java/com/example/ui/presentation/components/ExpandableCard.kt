@@ -54,7 +54,7 @@ fun ExpandedCard(
     title: String,
     description: String,
     animatedAccent: Color, // Добавлен параметр для вашего акцентного цвета из нового дизайна
-    contentColor: Color = MaterialTheme.colorScheme.surface,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
     modifier: Modifier = Modifier
 ) {
     var expandedState by remember { mutableStateOf(false) }

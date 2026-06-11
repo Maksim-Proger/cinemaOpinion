@@ -22,22 +22,18 @@ fun DeleteDialog(
         title = {
             Text(
                 text = "Подтверждение удаления",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.secondary
+                style = MaterialTheme.typography.bodyLarge
             )
         },
         text = {
             Text(
                 text = "Вы действительно хотите удалить запись: $entryTitle",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondary
+                style = MaterialTheme.typography.bodyMedium
             )
         },
         confirmButton = {
             CustomTextButton(
                 textButton = stringResource(R.string.delete_entry),
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier,
                 onClickButton = confirmButtonClick
             )
@@ -46,8 +42,7 @@ fun DeleteDialog(
             TextButton(onClick = dismissButtonClick) {
                 Text(
                     text = "Отмена",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.secondary
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }

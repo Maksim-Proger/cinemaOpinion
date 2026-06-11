@@ -55,7 +55,7 @@ fun AccountSettingMenu(
                 Icon(
                     imageVector = Icons.Default.Create,
                     contentDescription = stringResource(R.string.description_icon_create_shared_list),
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         )
@@ -70,7 +70,7 @@ fun AccountSettingMenu(
                 Icon(
                     Icons.Default.Edit,
                     contentDescription = stringResource(id = R.string.description_icon_edit),
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         )
@@ -89,7 +89,7 @@ fun AccountSettingMenu(
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = stringResource(id = R.string.description_icon_settings),
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         )
@@ -105,7 +105,7 @@ fun AccountSettingMenu(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Logout,
                     contentDescription = stringResource(id = R.string.description_icon_exit),
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         )

@@ -67,11 +67,11 @@ fun CustomSearchBar(
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.surface,
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
-                    focusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
-                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
-                    cursorColor = MaterialTheme.colorScheme.onPrimary
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    cursorColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         },
@@ -93,7 +93,7 @@ fun CustomSearchBar(
                     Text(
                         text = item,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 leadingContent = {

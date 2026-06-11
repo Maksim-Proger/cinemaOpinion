@@ -79,9 +79,9 @@ fun SpecialTopAppBar(
                 translationY = offset.toPx()
             },
             icons = listOf(Icons.Default.ArrowBackIosNew, Icons.Default.Home),
-            color = MaterialTheme.colorScheme.background,
-            tint = MaterialTheme.colorScheme.secondary,
-            textColor = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            tint = MaterialTheme.colorScheme.onSecondaryContainer,
+            textColor = MaterialTheme.colorScheme.onSecondaryContainer,
             onClick1 = goToBack
         )
 
@@ -96,8 +96,8 @@ fun SpecialTopAppBar(
                     translationY = offset.toPx()
                 },
                 title = title,
-                color = MaterialTheme.colorScheme.background,
-                textColor = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                textColor = MaterialTheme.colorScheme.onSecondaryContainer
             )
 
             if (
@@ -112,9 +112,8 @@ fun SpecialTopAppBar(
                         translationX = -offset.toPx()
                         translationY = offset.toPx()
                     },
-                    color = MaterialTheme.colorScheme.background, // Обводка вокруг кнопки меню
-                    tint = MaterialTheme.colorScheme.secondary, // Цвет кнопки
-                    containerColor = MaterialTheme.colorScheme.secondary, // Цвет контейнера открывающегося меню
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
                     onArchiveClick = onArchiveClick,
                     onWaitlistClick = onWaitlistClick
                 )
@@ -128,7 +127,6 @@ private fun Menu(
     modifier: Modifier,
     color: Color,
     tint: Color,
-    containerColor: Color,
     onArchiveClick: () -> Unit = {},
     onWaitlistClick: () -> Unit = {}
 ) {
@@ -139,8 +137,7 @@ private fun Menu(
                 shape = RoundedCornerShape(16.dp)
             )
             .padding(vertical = 10.dp),
-        tint = tint,
-        containerColor = containerColor
+        tint = tint
     ) { closeMenu ->
         DropdownMenuItem(
             onAction = {

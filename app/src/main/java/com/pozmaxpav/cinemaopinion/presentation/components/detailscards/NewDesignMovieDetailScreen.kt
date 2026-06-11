@@ -67,6 +67,8 @@ import coil.compose.AsyncImage
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.example.ui.presentation.components.ExpandedCard
+import com.example.ui.presentation.theme.DynamicContentColor
+import com.example.ui.presentation.theme.RatingBadgeColor
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListsScreen
@@ -74,8 +76,6 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilities.toSelectedMovie
-
-private val DynamicContentColor = Color.White
 
 private fun hueDistance(a: Float, b: Float): Float {
     val diff = abs(a - b) % 360f
@@ -386,7 +386,7 @@ private fun RatingRow(
     ) {
         Surface(
             shape = RoundedCornerShape(6.dp),
-            color = Color(0xFFF5C518)
+            color = RatingBadgeColor
         ) {
             Text(
                 text = "IMDB: ${movie?.ratingImdb ?: "Н/Д"}",
@@ -399,7 +399,7 @@ private fun RatingRow(
 
         Surface(
             shape = RoundedCornerShape(6.dp),
-            color = Color(0xFFF5C518)
+            color = RatingBadgeColor
         ) {
             Text(
                 text = "КП: ${movie?.ratingKinopoisk ?: "Н/Д"}",
@@ -412,7 +412,7 @@ private fun RatingRow(
 
         Surface(
             shape = RoundedCornerShape(6.dp),
-            color = Color(0xFFF5C518)
+            color = RatingBadgeColor
         ) {
             Text(
                 text = movie?.year ?: "Н/Д",
@@ -424,7 +424,7 @@ private fun RatingRow(
         }
         Surface(
             shape = RoundedCornerShape(6.dp),
-            color = Color(0xFFF5C518)
+            color = RatingBadgeColor
         ) {
             Text(
                 text = "${movie?.filmLength ?: "Н/Д"} мин.",

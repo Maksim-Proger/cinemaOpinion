@@ -152,7 +152,6 @@ fun SearchFilterScreen(
 
                     Text(
                         text = selectedCountry?.second ?: "Страна",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -194,7 +193,6 @@ fun SearchFilterScreen(
 
                     Text(
                         text = selectedGenre?.second ?: "Жанр",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -479,7 +477,7 @@ fun SearchKeyword(
             Icon(
                 imageVector = Icons.Filled.Search,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
         keyboardActions = KeyboardActions(
@@ -520,8 +518,7 @@ fun ShowListCountries(onCountrySelected: (Pair<Int, String>) -> Unit) {
                     headlineContent = {
                         Text(
                             text = country.second,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onPrimary
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
                 )
@@ -560,8 +557,7 @@ fun ShowListGenres(onGenreSelected: (Pair<Int, String>) -> Unit) {
                     headlineContent = {
                         Text(
                             text = genre.second,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onPrimary
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
                 )

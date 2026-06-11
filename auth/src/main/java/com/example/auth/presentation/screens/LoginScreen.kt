@@ -128,8 +128,7 @@ fun LoginScreen(
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = stringResource
-                            (id = R.string.description_icon_add_name),
-                        tint = MaterialTheme.colorScheme.outline
+                            (id = R.string.description_icon_add_name)
                     )
                 },
                 keyboardActions = KeyboardActions(
@@ -159,8 +158,7 @@ fun LoginScreen(
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = stringResource
-                            (id = R.string.description_icon_add_name),
-                        tint = MaterialTheme.colorScheme.outline
+                            (id = R.string.description_icon_add_name)
                     )
                 },
                 keyboardActions = KeyboardActions(

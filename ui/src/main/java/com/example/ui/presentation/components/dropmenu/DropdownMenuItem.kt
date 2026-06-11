@@ -16,7 +16,7 @@ fun DropdownMenuItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSecondary
+                color = MaterialTheme.colorScheme.onSurface
             )
         },
         leadingIcon = leadingIcon,
