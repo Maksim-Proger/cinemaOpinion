@@ -1,7 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.components.detailscards
 
-import android.graphics.drawable.BitmapDrawable
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -50,7 +48,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -58,14 +55,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.ColorUtils
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.palette.graphics.Palette
-import kotlin.math.abs
 import coil.compose.AsyncImage
-import coil.imageLoader
-import coil.request.ImageRequest
 import com.example.ui.presentation.components.ExpandedCard
 import com.example.ui.presentation.theme.DynamicContentColor
 import com.example.ui.presentation.theme.RatingBadgeColor
@@ -75,12 +67,8 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedLists
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.utilities.showToast
 import com.pozmaxpav.cinemaopinion.utilities.toSelectedMovie
-
-private fun hueDistance(a: Float, b: Float): Float {
-    val diff = abs(a - b) % 360f
-    return if (diff > 180f) 360f - diff else diff
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,64 +87,19 @@ fun NewDesignMovieDetailScreen(
     val info by apiViewModel.movieInfo.collectAsState()
     var openSharedLists by remember { mutableStateOf(false) }
     val userData by userViewModel.userData.collectAsState()
+    var triggerOnClickPersonalMovie by remember { mutableStateOf(false) }
 
-    // region Colors
-    val background = MaterialTheme.colorScheme.background
-    var dominantColor by remember { mutableStateOf(background) }
-    val title = MaterialTheme.colorScheme.secondary
-    var titleColor by remember { mutableStateOf(title) }
-    var accentColor by remember { mutableStateOf(title) }
-    val button = MaterialTheme.colorScheme.secondary
-    var buttonBgColor by remember { mutableStateOf(button) }
+    val (animatedBg, animatedTitle, animatedAccent, animatedButtonBg) =
+        rememberDynamicPaletteColors(imageUrl = movie?.posterUrl)
 
-    val animatedBg by animateColorAsState(dominantColor, label = "bg")
-    val animatedTitle by animateColorAsState(titleColor, label = "title")
-    val animatedAccent by animateColorAsState(accentColor, label = "accent")
-    val animatedButtonBg by animateColorAsState(buttonBgColor, label = "buttonBg")
-
-    LaunchedEffect(movie?.posterUrl) {
-        val request = ImageRequest.Builder(context)
-            .data(movie?.posterUrl)
-            .allowHardware(false)
-            .build()
-
-        val result = context.imageLoader.execute(request)
-        val bitmap = (result.drawable as? BitmapDrawable)?.bitmap
-
-        bitmap?.let {
-            Palette.from(it).generate { palette ->
-                palette?.let { p ->
-                    val raw = p.getDominantColor(background.toArgb())
-
-                    val hsl = FloatArray(3)
-                    ColorUtils.colorToHSL(raw, hsl)
-                    val dominantHue = hsl[0]
-                    hsl[2] = hsl[2].coerceAtMost(0.2f)
-                    dominantColor = Color(ColorUtils.HSLToColor(hsl))
-
-                    titleColor = Color(ColorUtils.HSLToColor(floatArrayOf(dominantHue, 0.2f, 0.9f)))
-
-                    val vibrantSwatch = p.vibrantSwatch
-                    val vibrantHsl = FloatArray(3)
-                    if (vibrantSwatch != null) {
-                        ColorUtils.colorToHSL(vibrantSwatch.rgb, vibrantHsl)
-                    }
-                    accentColor = if (
-                        vibrantSwatch != null &&
-                        vibrantHsl[1] > 0.35f &&
-                        hueDistance(vibrantHsl[0], dominantHue) <= 40f
-                    ) {
-                        Color(vibrantSwatch.rgb)
-                    } else {
-                        Color(ColorUtils.HSLToColor(floatArrayOf(dominantHue, 0.5f, 0.6f)))
-                    }
-
-                    buttonBgColor = Color(p.getDarkMutedColor(button.toArgb()))
-                }
+    LaunchedEffect(triggerOnClickPersonalMovie) {
+        if (triggerOnClickPersonalMovie) {
+            personalMovieViewModel.toastMessage.collect { resId ->
+                showToast(context = context, messageId = resId)
+                onCloseButton()
             }
         }
     }
-    // endregion
 
     LaunchedEffect(movie?.id) {
         movie?.let { apiViewModel.getInformationMovie(it.id) }
@@ -239,7 +182,12 @@ fun NewDesignMovieDetailScreen(
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         // region Кнопка Избранное
                         OutlinedButton(
-                            onClick = {/*TODO: Действие*/ },
+                            onClick = {
+                                movie?.toSelectedMovie()?.let {
+                                    personalMovieViewModel.addMovie(userId, selectedMovie = it)
+                                }
+                                triggerOnClickPersonalMovie = true
+                            },
                             shape = RoundedCornerShape(23.dp),
                             colors = ButtonDefaults.outlinedButtonColors(
                                 containerColor = animatedButtonBg.copy(alpha = 0.9f),
@@ -293,10 +241,8 @@ fun NewDesignMovieDetailScreen(
                 // region Title
                 Text(
                     text = movie?.nameRu ?: "Нет названия",
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.ExtraBold,
+                    style = MaterialTheme.typography.displayLarge,
                     color = animatedTitle,
-                    letterSpacing = 1.5.sp,
                 )
                 // endregion
 
@@ -321,7 +267,7 @@ fun NewDesignMovieDetailScreen(
                         accentColor = animatedAccent,
                         borderColor = animatedAccent,
                         modifier = Modifier.weight(1f),
-                        onClick = {/*TODO: Действие*/ }
+                        onClick = { /*TODO: Действие*/ }
                     )
                 }
                 // endregion
@@ -396,7 +342,6 @@ private fun RatingRow(
                 modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
             )
         }
-
         Surface(
             shape = RoundedCornerShape(6.dp),
             color = RatingBadgeColor
@@ -409,7 +354,6 @@ private fun RatingRow(
                 modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
             )
         }
-
         Surface(
             shape = RoundedCornerShape(6.dp),
             color = RatingBadgeColor

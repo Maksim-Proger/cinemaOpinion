@@ -2,28 +2,14 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
 import android.provider.Settings
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,17 +17,16 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.core.utils.state.LoadingState
@@ -49,7 +34,6 @@ import com.example.ui.presentation.components.fab.FABMenu
 import com.example.ui.presentation.components.lottie.AnimationImplementation
 import com.example.ui.presentation.components.topappbar.TopAppBarMainScreen
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSpecial
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.NewDesignMovieDetailScreen
 import com.pozmaxpav.cinemaopinion.presentation.components.items.fabMenuItems
@@ -78,6 +62,14 @@ fun ScaffoldMainScreen(
 
     val state = rememberMainScreenState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    val isScrolling by remember {
+        derivedStateOf {
+            scrollBehavior.state.heightOffset < 0f ||
+                state.listState.firstVisibleItemIndex > 0 ||
+                state.listState.firstVisibleItemScrollOffset > 0
+        }
+    }
 
     val userId by systemViewModel.userId.collectAsState()
     val loadingState by apiViewModel.loadingState.collectAsState()
@@ -113,6 +105,8 @@ fun ScaffoldMainScreen(
     LaunchedEffect(state.scrollToTop.value) {
         if (state.scrollToTop.value) {
             state.listState.animateScrollToItem(0)
+            scrollBehavior.state.heightOffset = 0f
+            scrollBehavior.state.contentOffset = 0f
             state.scrollToTop.value = false
         }
     }
@@ -158,16 +152,16 @@ fun ScaffoldMainScreen(
                 !state.locationShowPageAppDescription.value
             ) {
                 FABMenu(
-                    imageIcon = if (state.isScrolling) Icons.Default.ArrowUpward else Icons.Default.Settings,
+                    imageIcon = if (isScrolling) Icons.Default.ArrowUpward else Icons.Default.Settings,
                     contentDescription = stringResource(R.string.description_icon_fab_button_with_menu),
                     expanded = state.menuExpanded.value,
                     onExpandedChange = { state.menuExpanded.value = it },
                     onButtonClick = {
-                        if (state.isScrolling) state.scrollToTop.value = true
+                        if (isScrolling) state.scrollToTop.value = true
                         else state.menuExpanded.value = !state.menuExpanded.value
                     },
                     items = fabMenuItems(
-                        isScrolling = state.isScrolling,
+                        isScrolling = isScrolling,
                         onDatePickerToggle = {
                             state.showDatePicker.value = !state.showDatePicker.value
                         }
@@ -182,12 +176,6 @@ fun ScaffoldMainScreen(
             when {
                 state.selectedMovie.value != null -> {
                     state.selectedMovie.value?.let {
-//                        DetailsCardFilm(
-//                            movie = it,
-//                            userId = userId,
-//                            onCloseButton = { state.selectedMovie.value = null },
-//                            navController = navController
-//                        )
                         NewDesignMovieDetailScreen(
                             movie = it,
                             userId = userId,
