@@ -33,11 +33,7 @@ class MainScreenState(
     var selectedMovie: MutableState<MovieData?>,
     var selectedSeasonalMovie: MutableState<DomainSelectedMovieModel?>,
     var selectedFavoriteMovie: MutableState<DomainSelectedMovieModel?>,
-) {
-    val isScrolling by derivedStateOf {
-        listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
-    }
-}
+)
 
 
 

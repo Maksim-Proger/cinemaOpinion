@@ -86,16 +86,16 @@ fun DetailsCardFilm(
 //    val detailedInfo by apiViewModel.detailedInfo.collectAsState()
 //    var openSharedLists by remember { mutableStateOf(false) }
 
-    var triggerOnClickPersonalMovie by remember { mutableStateOf(false) }
-
-    LaunchedEffect(triggerOnClickPersonalMovie) {
-        if (triggerOnClickPersonalMovie) {
-            personalMovieViewModel.toastMessage.collect { resId ->
-                showToast(context = context, messageId = resId)
-                onCloseButton()
-            }
-        }
-    }
+//    var triggerOnClickPersonalMovie by remember { mutableStateOf(false) }
+//
+//    LaunchedEffect(triggerOnClickPersonalMovie) {
+//        if (triggerOnClickPersonalMovie) {
+//            personalMovieViewModel.toastMessage.collect { resId ->
+//                showToast(context = context, messageId = resId)
+//                onCloseButton()
+//            }
+//        }
+//    }
 //    LaunchedEffect(movie?.id) {
 //        movie?.let { apiViewModel.getSearchMovieById(it.id) }
 //    }

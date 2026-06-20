@@ -37,6 +37,7 @@ import com.example.ui.presentation.components.CustomSearchBar
 import com.example.ui.presentation.components.DatePickerFunction
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account.AccountScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account.NewAccountScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
@@ -204,13 +205,18 @@ fun AccountScreenOverlay(
     if (state.onAccountButtonClick.value) {
         CustomBoxShowOverlay(
             onDismiss = { /* state.onAccountButtonClick.value = false */ },
-            paddingVerticalSecondBox = 70.dp,
-            paddingHorizontalSecondBox = 14.dp,
+//            paddingVerticalSecondBox = 70.dp,
+//            paddingHorizontalSecondBox = 14.dp,
             content = {
-                AccountScreen(
+//                AccountScreen(
+//                    navController,
+//                    userId,
+//                    onClick = { state.onAccountButtonClick.value = false }
+//                )
+                NewAccountScreen(
                     navController,
                     userId,
-                    onClick = { state.onAccountButtonClick.value = false }
+                    onClose = { state.onAccountButtonClick.value = false }
                 )
                 AdaptiveBackHandler { state.onAccountButtonClick.value = false }
             }

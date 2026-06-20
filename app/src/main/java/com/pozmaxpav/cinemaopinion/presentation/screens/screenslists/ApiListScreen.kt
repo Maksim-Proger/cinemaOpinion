@@ -3,7 +3,6 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -42,7 +41,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
-import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardFilm
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.NewDesignMovieDetailScreen
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
@@ -79,13 +77,6 @@ fun ApiListScreen(
         Column(modifier = Modifier.fillMaxSize()) {
 
             if (selectedMovie != null) {
-
-//                DetailsCardFilm(
-//                    movie = selectedMovie,
-//                    userId = userId,
-//                    onCloseButton = { selectedMovie = null },
-//                    navController = navController
-//                )
                 NewDesignMovieDetailScreen(
                     movie = selectedMovie,
                     userId = userId,
@@ -140,7 +131,8 @@ fun ApiListScreen(
                             PagedMovieList(
                                 movies = pagingFlow.collectAsLazyPagingItems(),
                                 onMovieClick = { selectedMovie = it },
-                                listState = pagedListState
+                                listState = pagedListState,
+                                isAtTop = isAtTop
                             )
                         }
                     }
@@ -162,7 +154,8 @@ fun ApiListScreen(
 private fun PagedMovieList(
     movies: LazyPagingItems<MovieData>,
     onMovieClick: (MovieData) -> Unit,
-    listState: LazyListState
+    listState: LazyListState,
+    isAtTop: Boolean
 ) {
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -191,6 +184,7 @@ private fun PagedMovieList(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(WindowInsets.statusBars.asPaddingValues())
+                                .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
                         ) {
                             items(
                                 count = movies.itemCount,
