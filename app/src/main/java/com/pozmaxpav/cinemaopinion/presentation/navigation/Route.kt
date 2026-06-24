@@ -6,6 +6,9 @@ sealed class Route(val route: String) {
     data object NotificationsScreen : Route(route = "notifications_screen")
     data object SeriesControlScreen : Route(route = "series_control_screen")
     data object ListSelectedMovies : Route(route = "list_selected_movies")
+    data object AchievementsScreen : Route(route = "achievements_screen/{listAwards}") {
+        fun getListAwards(listAwards: String) = "achievements_screen/$listAwards"
+    }
     data object SettingsScreen : Route(route = "settings_screen/{userName}") {
         fun getUserName(userName: String) = "settings_screen/$userName"
     }

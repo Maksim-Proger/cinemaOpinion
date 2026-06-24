@@ -130,6 +130,7 @@ fun NewAccountScreen(
                             )
                         }
                     },
+                    navController = navController,
                     closeScreenButton = onClose
                 )
             }
@@ -271,6 +272,7 @@ private fun HeroSection(
     email: String,
     listAwards: String = "",
     settingsButton: @Composable () -> Unit,
+    navController: NavHostController,
     closeScreenButton: () -> Unit
 ) {
     Box(
@@ -331,7 +333,16 @@ private fun HeroSection(
 
             Spacer(Modifier.height(16.dp))
 
-            Achievements(listAwards = listAwards)
+            Achievements(
+                listAwards = listAwards,
+                onClick = {
+                    navController.navigate(
+                        Route.AchievementsScreen.getListAwards(
+                            listAwards = listAwards
+                        )
+                    )
+                }
+            )
         }
         // endregion
 
@@ -397,30 +408,6 @@ fun Achievements(
 //style = MaterialTheme.typography.displayLarge
 //)
 
-//// region AwardsFields
-//Column(
-//modifier = Modifier.padding(10.dp),
-//verticalArrangement = Arrangement.Bottom
-//) {
-//    TextAwardsFields(listAwards)
-//    Row(
-//        modifier = Modifier.fillMaxWidth(),
-//        horizontalArrangement = Arrangement.Center,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        if (listAwards.isNotEmpty()) {
-//            val newListAwards = listAwards.split(",")
-//            for (i in newListAwards) {
-//                Image(
-//                    painter = painterResource(id = i.toInt()),
-//                    contentDescription = null,
-//                    modifier = Modifier.height(70.dp)
-//                )
-//            }
-//        }
-//    }
-//}
-//// endregion
 
 
 
