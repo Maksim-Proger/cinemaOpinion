@@ -10,6 +10,7 @@ import androidx.compose.material3.ToggleFloatingActionButton
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,11 +36,13 @@ fun FABMenu(
                     checked = expanded,
                     onCheckedChange = { onButtonClick() }
                 ) {
-                    Icon(
-                        imageVector = imageIcon,
-                        contentDescription = contentDescription,
-                        modifier = Modifier.animateIcon({ checkedProgress })
-                    )
+                    key(imageIcon) {
+                        Icon(
+                            imageVector = imageIcon,
+                            contentDescription = contentDescription,
+                            modifier = Modifier.animateIcon({ checkedProgress })
+                        )
+                    }
                 }
             }
         ) {

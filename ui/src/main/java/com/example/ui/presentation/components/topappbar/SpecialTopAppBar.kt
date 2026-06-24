@@ -79,7 +79,7 @@ fun SpecialTopAppBar(
                 translationY = offset.toPx()
             },
             icons = listOf(Icons.Default.ArrowBackIosNew, Icons.Default.Home),
-            color = MaterialTheme.colorScheme.secondaryContainer,
+            color = MaterialTheme.colorScheme.onSecondary,
             tint = MaterialTheme.colorScheme.onSecondaryContainer,
             textColor = MaterialTheme.colorScheme.onSecondaryContainer,
             onClick1 = goToBack
@@ -96,7 +96,7 @@ fun SpecialTopAppBar(
                     translationY = offset.toPx()
                 },
                 title = title,
-                color = MaterialTheme.colorScheme.secondaryContainer,
+                color = MaterialTheme.colorScheme.onSecondary,
                 textColor = MaterialTheme.colorScheme.onSecondaryContainer
             )
 

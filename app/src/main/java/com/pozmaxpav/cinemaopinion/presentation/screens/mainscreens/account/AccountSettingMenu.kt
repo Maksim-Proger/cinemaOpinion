@@ -31,13 +31,20 @@ import com.pozmaxpav.cinemaopinion.utilities.navigateFunctionClearAllScreens
 @Composable
 fun AccountSettingMenu(
     userName: String,
+    customIcon: Boolean = false,
+    expanded: Boolean = false,
+    onExpandedChange: (Boolean) -> Unit = {},
     navController: NavHostController,
     systemViewModel: SystemViewModel,
     openDialog: () -> Unit = {}
 ) {
     var triggerOnClickCloseMenu by remember { mutableStateOf(false) }
 
-    SettingsMenu { closeMenu ->
+    SettingsMenu(
+        customIcon = customIcon,
+        expanded = expanded,
+        onExpandedChange = onExpandedChange
+    ) { closeMenu ->
 
         LaunchedEffect(triggerOnClickCloseMenu) {
             if (triggerOnClickCloseMenu) {

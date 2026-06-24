@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 object BackendApiProvider {
     private const val BASE_URL = "http://147.45.233.103/"
-    private const val API_KEY = "08e076eafcb91b1a188e738ff9bbda9ab24abb87e4bd7e6ade296783742f6948"
+    private val API_KEY = BuildConfig.API_SECRET_KEY
 
     val api: BackendApi by lazy {
         val loggingInterceptor = HttpLoggingInterceptor().apply {

@@ -13,7 +13,10 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.system.SavePushTokenUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveRegistrationFlagUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveResultCheckingUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveUserIdUseCase
+import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceDataDisabledListener
+import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceInfoProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -31,7 +34,9 @@ class SystemViewModel @Inject constructor(
     private val getRegistrationFlagUseCase: GetRegistrationFlagUseCase,
     private val clearUserDataUseCase: ClearUserDataUseCase,
     private val savePushTokenUseCase: SavePushTokenUseCase,
-    private val getPushTokenUseCase: GetPushTokenUseCase
+    private val getPushTokenUseCase: GetPushTokenUseCase,
+    private val disabledListener: DeviceDataDisabledListener,
+    private val deviceInfoProvider: DeviceInfoProvider
 ) : ViewModel() {
 
     private val _versionApp = MutableStateFlow("Unknown")
@@ -152,7 +157,16 @@ class SystemViewModel @Inject constructor(
     }
 
     fun clearUserData() {
-        viewModelScope.launch {
+        val currentUserId = _userId.value
+        viewModelScope.launch(Dispatchers.IO) {
+            if (currentUserId != "Unknown") {
+                try {
+                    val deviceId = deviceInfoProvider.getDeviceId()
+                    disabledListener.onDataDeviceDisabled(currentUserId, deviceId)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
             runCatching { clearUserDataUseCase() }
         }
     }

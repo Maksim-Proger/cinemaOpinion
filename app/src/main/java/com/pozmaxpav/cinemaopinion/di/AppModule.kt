@@ -1,6 +1,7 @@
 package com.pozmaxpav.cinemaopinion.di
 
 import android.content.Context
+import com.example.backend.BackendDisablePushUseCase
 import com.example.backend.BackendNotifyChangeCreatedUseCase
 import com.example.backend.BackendRegisterDeviceUseCase
 import com.example.core.utils.FirebaseListenerHolder
@@ -27,8 +28,10 @@ import com.pozmaxpav.cinemaopinion.domain.repository.firebase.SystemMovieRepo
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.UserRepo
 import com.pozmaxpav.cinemaopinion.domain.repository.system.SystemRepositoryApp
 import com.pozmaxpav.cinemaopinion.utilities.notification.BackendDeviceDataCreatedListener
+import com.pozmaxpav.cinemaopinion.utilities.notification.BackendDeviceDataDisabledListener
 import com.pozmaxpav.cinemaopinion.utilities.notification.BackendNotificationCreatedListener
 import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceDataCreatedListener
+import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceDataDisabledListener
 import com.pozmaxpav.cinemaopinion.utilities.notification.NotificationCreatedListener
 import dagger.Module
 import dagger.Provides
@@ -167,6 +170,18 @@ object AppModule {
         backendRegisterDeviceUseCase: BackendRegisterDeviceUseCase
     ) : DeviceDataCreatedListener {
         return BackendDeviceDataCreatedListener(backendRegisterDeviceUseCase)
+    }
+    @Provides
+    @Singleton
+    fun provideBackendDisablePushUseCase(): BackendDisablePushUseCase {
+        return BackendDisablePushUseCase()
+    }
+    @Provides
+    @Singleton
+    fun provideDeviceDataDisabledListener(
+        backendDisablePushUseCase: BackendDisablePushUseCase
+    ) : DeviceDataDisabledListener {
+        return BackendDeviceDataDisabledListener(backendDisablePushUseCase)
     }
     // endregion
 

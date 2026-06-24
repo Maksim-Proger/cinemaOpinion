@@ -1,6 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
-import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -81,12 +80,11 @@ fun ScaffoldMainScreen(
     val context = LocalContext.current
     val notViewModel: NotificationViewModel = hiltViewModel()
     val status by notViewModel.statusReg.collectAsState()
-    val deviceId = remember { Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) }
 
     LaunchedEffect(userId, status) {
         if (userId != "Unknown" && !status) {
             // Отправляем pushToken и deviceId в модуль backend для дальнейшей отправки на сервер
-            notViewModel.registerDevice(userId, deviceId)
+            notViewModel.registerDevice(userId)
         }
     }
 
