@@ -27,30 +27,39 @@ import com.example.ui.R
 @Composable
 fun SettingsMenu(
     modifier: Modifier = Modifier,
+    customIcon: Boolean = false,
+    expanded: Boolean = false,
+    onExpandedChange: (Boolean) -> Unit = {},
     tint: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     content: @Composable (closeMenu: () -> Unit) -> Unit
 ) {
-    var menuOpeningStatus by remember { mutableStateOf(false) }
+    var internalExpanded by remember { mutableStateOf(false) }
+    val isExpanded = if (customIcon) expanded else internalExpanded
+    val closeMenu: () -> Unit = {
+        if (customIcon) onExpandedChange(false) else internalExpanded = false
+    }
 
     Box(
         modifier = modifier.wrapContentSize(Alignment.Center)
     ) {
-        Icon(
-            modifier = Modifier
-                .size(28.dp)
-                .clickable { menuOpeningStatus = true },
-            imageVector = Icons.Default.MoreVert,
-            contentDescription = stringResource(R.string.description_icon_dropdown_menu_button),
-            tint = tint
-        )
+        if (!customIcon) {
+            Icon(
+                modifier = Modifier
+                    .size(28.dp)
+                    .clickable { internalExpanded = true },
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = stringResource(R.string.description_icon_dropdown_menu_button),
+                tint = tint
+            )
+        }
 
         DropdownMenu(
-            expanded = menuOpeningStatus,
-            onDismissRequest = { menuOpeningStatus = false },
+            expanded = isExpanded,
+            onDismissRequest = closeMenu,
             shape = RoundedCornerShape(12.dp),
             offset = DpOffset(x = 0.dp, y = 10.dp)
         ) {
-            content { menuOpeningStatus = false }
+            content(closeMenu)
         }
     }
 }

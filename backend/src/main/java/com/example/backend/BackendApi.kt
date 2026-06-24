@@ -14,5 +14,10 @@ interface BackendApi {
         @Body body: RegisterDeviceRequest
     )
 
+    @POST("devices/disable")
+    suspend fun disablePush(
+        @Body body: DisablePushRequest
+    )
+
 }
 

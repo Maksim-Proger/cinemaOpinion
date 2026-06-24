@@ -1,13 +1,14 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -18,8 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -31,12 +30,14 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,17 +45,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
-import java.nio.file.WatchEvent
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
+import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
+import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListsScreen
 
 
 // region Цвета
@@ -73,10 +78,15 @@ fun NewAccountScreen(
     userId: String,
     onClose: () -> Unit,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel(),
+    systemViewModel: SystemViewModel = hiltViewModel()
 ) {
     val listSelectedMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
     val userData by userViewModel.userData.collectAsState()
+    val listAwards by userViewModel.listAwards.collectAsState()
+    var openSharedLists by remember { mutableStateOf(false) }
+    var locationShowDialogEvents by remember { mutableStateOf(false) }
+    var settingsMenuExpanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(userId) {
         if (userId != "Unknown") {
@@ -102,8 +112,25 @@ fun NewAccountScreen(
                 HeroSection(
                     name = user.nikName,
                     email = user.email,
-                    onClickSettings = {},
-                    onClose = onClose
+                    listAwards = listAwards,
+                    settingsButton = {
+                        Box {
+                            GlassButton(
+                                icon = Icons.Default.MoreVert,
+                                onClick = { settingsMenuExpanded = true }
+                            )
+                            AccountSettingMenu(
+                                userName = user.nikName,
+                                customIcon = true,
+                                expanded = settingsMenuExpanded,
+                                onExpandedChange = { settingsMenuExpanded = it },
+                                navController = navController,
+                                systemViewModel = systemViewModel,
+                                openDialog = { locationShowDialogEvents = true }
+                            )
+                        }
+                    },
+                    closeScreenButton = onClose
                 )
             }
 
@@ -119,31 +146,82 @@ fun NewAccountScreen(
             ) {
                 ListsRow(
                     label = "Личный список",
+                    imageRes = R.drawable.personal_list,
                     listSelectedMovies = listSelectedMovies,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        navigateFunction(navController, Route.ListSelectedMovies.route)
+                    }
                 )
                 ListsRow(
                     label = "Совместные список",
+                    imageRes = R.drawable.shared_list,
                     listSelectedMovies = listSelectedMovies,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        openSharedLists = true
+                    }
                 )
                 ListsRow(
                     label = "Контроль серий",
+                    imageRes = R.drawable.series_control,
                     listSelectedMovies = listSelectedMovies,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        navigateFunction(navController, Route.SeriesControlScreen.route)
+                    }
                 )
             }
         }
+    }
+
+    if (openSharedLists) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    color = Color.Black.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .clickable { openSharedLists = false }
+
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                userData?.let { user ->
+                    SharedListsScreen(
+                        navController = navController,
+                        userId = userId,
+                        userName = user.nikName
+                    )
+                }
+            }
+        }
+    }
+
+    if (locationShowDialogEvents) {
+        SharedListAlertDialog(
+            userId = userId,
+            onDismiss = { locationShowDialogEvents = false }
+        )
     }
 }
 
 @Composable
 fun ListsRow(
     label: String,
+    @DrawableRes imageRes: Int,
     listSelectedMovies: List<DomainSelectedMovieModel>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier.fillMaxHeight(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
@@ -157,16 +235,16 @@ fun ListsRow(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // region Картинка списка
-//                AsyncImage(
-//                    model = stat.imageUrl,
-//                    contentDescription = null,
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier
-//                        .size(70.dp)
-//                        .clip(RoundedCornerShape(12.dp))
-//                )
-            // endregion
+
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(70.dp)
+                    .clip(RoundedCornerShape(12.dp))
+            )
+            Spacer(Modifier.height(10.dp))
             Text(
                 text = listSelectedMovies.size.toString(),
                 color = TextWhite,
@@ -174,6 +252,7 @@ fun ListsRow(
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
+
             Text(
                 text = label,
                 color = TextSubtle,
@@ -190,9 +269,9 @@ private fun HeroSection(
     photoUrl: String = "",
     name: String,
     email: String,
-    achievementsCount: String = "",
-    onClickSettings: () -> Unit,
-    onClose: () -> Unit
+    listAwards: String = "",
+    settingsButton: @Composable () -> Unit,
+    closeScreenButton: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -219,12 +298,9 @@ private fun HeroSection(
         ) {
             GlassButton(
                 icon = Icons.Default.Close,
-                onClick = {}
+                onClick = closeScreenButton
             )
-            GlassButton(
-                icon = Icons.Default.MoreVert,
-                onClick = {}
-            )
+            settingsButton()
         }
         // endregion
 
@@ -242,6 +318,7 @@ private fun HeroSection(
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.5.sp
             )
+
             Spacer(Modifier.height(4.dp))
 
             Text(
@@ -251,8 +328,14 @@ private fun HeroSection(
                 fontWeight = FontWeight.Normal,
                 letterSpacing = 0.2.sp
             )
+
+            Spacer(Modifier.height(16.dp))
+
+            Achievements(listAwards = listAwards)
         }
         // endregion
+
+
     }
 }
 
@@ -281,10 +364,63 @@ private fun GlassButton(
     }
 }
 
+@Composable
+fun Achievements(
+    listAwards: String,
+    onClick: () -> Unit = {}
+) {
+    val newListAwards = listAwards.split(",")
+
+    OutlinedButton(
+        onClick = onClick,
+        shape = RoundedCornerShape(50),
+        border = ButtonDefaults.outlinedButtonBorder.copy(
+            brush = SolidColor(GlassBorder)
+        ),
+    ) {
+        Text(
+            text = "${newListAwards.size} achievements",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
+
+
+}
 
 
 
 
+
+//Text(
+//text = stringResource(id = R.string.title_account_screen),
+//style = MaterialTheme.typography.displayLarge
+//)
+
+//// region AwardsFields
+//Column(
+//modifier = Modifier.padding(10.dp),
+//verticalArrangement = Arrangement.Bottom
+//) {
+//    TextAwardsFields(listAwards)
+//    Row(
+//        modifier = Modifier.fillMaxWidth(),
+//        horizontalArrangement = Arrangement.Center,
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        if (listAwards.isNotEmpty()) {
+//            val newListAwards = listAwards.split(",")
+//            for (i in newListAwards) {
+//                Image(
+//                    painter = painterResource(id = i.toInt()),
+//                    contentDescription = null,
+//                    modifier = Modifier.height(70.dp)
+//                )
+//            }
+//        }
+//    }
+//}
+//// endregion
 
 
 

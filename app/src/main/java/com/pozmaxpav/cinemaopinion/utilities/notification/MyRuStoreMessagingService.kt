@@ -3,7 +3,6 @@ package com.pozmaxpav.cinemaopinion.utilities.notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.pozmaxpav.cinemaopinion.MainActivity
@@ -30,6 +29,9 @@ class MyRuStoreMessagingService : RuStoreMessagingService() {
     @Inject
     lateinit var getUserId: GetUserIdUseCase
 
+    @Inject
+    lateinit var deviceInfoProvider: DeviceInfoProvider
+
     override fun onNewToken(token: String) {
         super.onNewToken(token)
 
@@ -38,7 +40,7 @@ class MyRuStoreMessagingService : RuStoreMessagingService() {
 
         // 2. Пробуем получить текущего пользователя и deviceId
         val userId = getUserId()
-        val deviceId = Settings.Secure.getString(applicationContext.contentResolver, Settings.Secure.ANDROID_ID)
+        val deviceId = deviceInfoProvider.getDeviceId()
 
         if (userId != null && userId != "Unknown") {
             CoroutineScope(Dispatchers.IO).launch {

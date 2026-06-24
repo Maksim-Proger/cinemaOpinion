@@ -14,3 +14,8 @@ data class ChangeCreatedRequest(
     @SerializedName("changeId") val changeId: String
 )
 
+data class DisablePushRequest(
+    @SerializedName("userId") val userId: String,
+    @SerializedName("deviceId") val deviceId: String
+)
+

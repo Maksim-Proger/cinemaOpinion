@@ -13,6 +13,7 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveDeviceRegistrationS
 import com.pozmaxpav.cinemaopinion.domain.usecase.system.SaveRegisteredVersionCodeUseCase
 import com.pozmaxpav.cinemaopinion.utilities.deletingOldRecords
 import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceDataCreatedListener
+import com.pozmaxpav.cinemaopinion.utilities.notification.DeviceInfoProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,8 @@ class NotificationViewModel @Inject constructor(
     private val saveDeviceRegistrationStatusUseCase: SaveDeviceRegistrationStatusUseCase,
     private val getDeviceRegistrationStatusUseCase: GetDeviceRegistrationStatusUseCase,
     private val saveRegisteredVersionCodeUseCase: SaveRegisteredVersionCodeUseCase,
-    private val getRegisteredVersionCodeUseCase: GetRegisteredVersionCodeUseCase
+    private val getRegisteredVersionCodeUseCase: GetRegisteredVersionCodeUseCase,
+    private val deviceInfoProvider: DeviceInfoProvider
 ) : ViewModel() {
 
     // region Push
@@ -45,11 +47,12 @@ class NotificationViewModel @Inject constructor(
             }
         }
     }
-    fun registerDevice(userId: String, deviceId: String) {
+    fun registerDevice(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val token = getPushTokenUseCase()
                 if (!token.isNullOrBlank()) {
+                    val deviceId = deviceInfoProvider.getDeviceId()
                     createdListener.onDataDeviceCreated(userId, token, deviceId)
                     saveDeviceRegistrationStatusUseCase(true)
                     saveRegisteredVersionCodeUseCase(BuildConfig.VERSION_CODE)
