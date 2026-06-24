@@ -212,7 +212,8 @@ fun InternalSharedList(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(WindowInsets.statusBars.asPaddingValues())
-                            .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
+                            .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp)
+                            .padding(horizontal = 5.dp),
                         contentPadding = PaddingValues(10.dp)
                     ) {
                         items(movies, key = { it.id }) { movie ->

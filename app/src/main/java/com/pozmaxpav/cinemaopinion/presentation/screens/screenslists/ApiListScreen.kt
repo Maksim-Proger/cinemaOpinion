@@ -101,7 +101,8 @@ fun ApiListScreen(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(WindowInsets.statusBars.asPaddingValues())
-                                    .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
+                                    .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp)
+                                    .padding(horizontal = 5.dp),
                             ) {
                                 items(premiereMovies, key = { it.id }) { movie ->
                                     Card(
@@ -186,7 +187,8 @@ private fun PagedMovieList(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(WindowInsets.statusBars.asPaddingValues())
-                                .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
+                                .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp)
+                                .padding(horizontal = 5.dp),
                         ) {
                             items(
                                 count = movies.itemCount,

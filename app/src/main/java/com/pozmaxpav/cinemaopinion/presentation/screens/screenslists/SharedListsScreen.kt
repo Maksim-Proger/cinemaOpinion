@@ -82,8 +82,12 @@ fun SharedListsScreen(
             contentPadding = PaddingValues(10.dp)
         ) {
             items(lists, key = { it.listId }) { item ->
-                var isVisible by remember(item.listId) { mutableStateOf(true) }
-                var showDeleteDialog by remember(item.listId) { mutableStateOf(false) }
+                var isVisible by remember(item.listId) {
+                    mutableStateOf(true)
+                }
+                var showDeleteDialog by remember(item.listId) {
+                    mutableStateOf(false)
+                }
 
                 LaunchedEffect(isVisible) {
                     if (!isVisible) {
