@@ -29,6 +29,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,13 +64,13 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedLists
 
 
 // region Цвета
-private val BgDark = Color(0xFF1C1209)
+
 private val CardDark = Color(0xFF2A1E0F)
 private val GlassWhite = Color(0x33FFFFFF)
 private val GlassBorder = Color(0x55FFFFFF)
 private val TextWhite = Color(0xFFFFFFFF)
 private val TextSubtle = Color(0xFFB8A08A)
-private val TextMuted = Color(0xFF7A6A55)
+
 // endregion
 
 @Composable
@@ -101,7 +102,7 @@ fun NewAccountScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BgDark)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier

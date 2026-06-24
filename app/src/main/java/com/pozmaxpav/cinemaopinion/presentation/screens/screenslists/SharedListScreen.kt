@@ -272,13 +272,23 @@ fun SharedListScreen(
                         state = listState,
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(WindowInsets.statusBars.asPaddingValues())
-                            .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
+                            .padding(
+                                WindowInsets.statusBars.asPaddingValues()
+                            )
+                            .padding(
+                                top = if (isAtTop)
+                                    TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp
+                            )
+                            .padding(horizontal = 5.dp),
                         contentPadding = PaddingValues(10.dp)
                     ) {
                         items(movies, key = { it.id }) { movie ->
-                            var isVisible by remember(movie.id) { mutableStateOf(true) }
-                            var showDeleteDialog by remember(movie.id) { mutableStateOf(false) }
+                            var isVisible by remember(movie.id) {
+                                mutableStateOf(true)
+                            }
+                            var showDeleteDialog by remember(movie.id) {
+                                mutableStateOf(false)
+                            }
 
                             LaunchedEffect(isVisible) {
                                 if (!isVisible) {
