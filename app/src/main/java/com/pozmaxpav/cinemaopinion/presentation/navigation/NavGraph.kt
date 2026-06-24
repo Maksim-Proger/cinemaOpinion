@@ -25,6 +25,7 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.WebViewS
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.AchievementsScreen
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 
 @Composable
@@ -40,6 +41,7 @@ fun NavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
+
         composable(Route.MainScreen.route) {
             ScaffoldMainScreen(navController, systemViewModel, onExit = { activity?.finish() })
         }
@@ -69,6 +71,18 @@ fun NavGraph(
                 userName = userName,
                 themeViewModel = themeViewModel,
                 navController = navController
+            )
+        }
+        composable(
+            Route.AchievementsScreen.route,
+            arguments = listOf(
+                navArgument("listAwards") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val listAwards = backStackEntry.arguments?.getString("listAwards") ?: ""
+            AchievementsScreen(
+                navController = navController,
+                listAwards = listAwards
             )
         }
         composable(
