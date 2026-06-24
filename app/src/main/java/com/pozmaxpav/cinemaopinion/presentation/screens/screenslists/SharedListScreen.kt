@@ -56,6 +56,8 @@ import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
+import com.example.ui.presentation.theme.cardAccent
+import com.example.ui.presentation.theme.onCardAccent
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
@@ -332,8 +334,8 @@ fun SharedListScreen(
                                 Card(
                                     modifier = Modifier.wrapContentHeight(),
                                     colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                        contentColor = MaterialTheme.colorScheme.onSecondary
+                                        containerColor = MaterialTheme.colorScheme.cardAccent,
+                                        contentColor = MaterialTheme.colorScheme.onCardAccent
                                     )
                                 ) {
                                     Row(

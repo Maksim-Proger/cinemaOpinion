@@ -40,6 +40,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_MOVIES
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
+import com.example.ui.presentation.theme.cardAccent
+import com.example.ui.presentation.theme.onCardAccent
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SharedListItem
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -112,8 +114,8 @@ fun SharedListsScreen(
                     Card(
                         modifier = Modifier.wrapContentHeight(),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
+                            containerColor = MaterialTheme.colorScheme.cardAccent,
+                            contentColor = MaterialTheme.colorScheme.onCardAccent
                         )
                     ) {
                         Row(

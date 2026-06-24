@@ -40,6 +40,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
+import com.example.ui.presentation.theme.cardAccent
+import com.example.ui.presentation.theme.onCardAccent
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.NewDesignMovieDetailScreen
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
@@ -105,8 +107,8 @@ fun ApiListScreen(
                                     Card(
                                         modifier = Modifier.wrapContentHeight(),
                                         colors = CardDefaults.cardColors(
-                                            containerColor = MaterialTheme.colorScheme.secondary,
-                                            contentColor = MaterialTheme.colorScheme.onSecondary
+                                            containerColor = MaterialTheme.colorScheme.cardAccent,
+                                            contentColor = MaterialTheme.colorScheme.onCardAccent
                                         )
                                     ) {
                                         SelectedMovieItem(
@@ -193,8 +195,8 @@ private fun PagedMovieList(
                                 Card(
                                     modifier = Modifier.wrapContentHeight(),
                                     colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                        contentColor = MaterialTheme.colorScheme.onSecondary
+                                        containerColor = MaterialTheme.colorScheme.cardAccent,
+                                        contentColor = MaterialTheme.colorScheme.onCardAccent
                                     )
                                 ) {
                                     movies[index]?.let { movie ->

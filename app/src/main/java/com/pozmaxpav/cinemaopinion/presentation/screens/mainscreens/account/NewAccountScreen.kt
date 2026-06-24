@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.ui.presentation.theme.cardAccent
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
@@ -65,8 +66,6 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedLists
 
 // region Цвета
 
-private val CardDark = Color(0xFF2A1E0F)
-private val GlassWhite = Color(0x33FFFFFF)
 private val GlassBorder = Color(0x55FFFFFF)
 private val TextWhite = Color(0xFFFFFFFF)
 private val TextSubtle = Color(0xFFB8A08A)
@@ -222,12 +221,13 @@ fun ListsRow(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
+
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxHeight(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = CardDark
+            containerColor = MaterialTheme.colorScheme.cardAccent
         )
     ) {
         Column(
@@ -356,16 +356,18 @@ private fun GlassButton(
     icon: ImageVector,
     onClick: () -> Unit
 ) {
+    val glassTint = MaterialTheme.colorScheme.onSurface
+
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier.height(42.dp),
         shape = RoundedCornerShape(50),
         border = ButtonDefaults.outlinedButtonBorder.copy(
-            brush = SolidColor(GlassBorder)
+            brush = SolidColor(glassTint.copy(alpha = 0.30f))
         ),
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = GlassWhite,
-            contentColor = TextWhite
+            containerColor = glassTint.copy(alpha = 0.14f),
+            contentColor = glassTint
         )
     ) {
         Icon(

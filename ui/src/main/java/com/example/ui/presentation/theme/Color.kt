@@ -16,3 +16,5 @@ val Sand75 = Color(0xFFD2C2AE)
 val Sand85 = Color(0xFFDDCDB9)
 val Sand95 = Color(0xFFE8D8C4)
 
+val Petrol = Color(0xFF16424D)
+
