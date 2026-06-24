@@ -31,13 +31,36 @@ class SearchMoviesPagingSource(
 
     private suspend fun loadByKeyword(keyword: String, page: Int): Pair<List<MovieData>, Int> {
         val primary = repository.getSearchMovies(keyword, page)
-        return if (primary.items.isNotEmpty()) {
-            primary.items to primary.totalPages
-        } else {
+        if (primary.items.isEmpty()) {
             val fallback = repository.getSearchMovies2(keyword, page)
-            fallback.films to fallback.pagesCount
+            return fallback.films to fallback.pagesCount
         }
+        if (primary.items.all { it.hasPosterAndRussianName() }) {
+            return primary.items to primary.totalPages
+        }
+
+        val fallbackByKey = repository.getSearchMovies2(keyword, page).films
+            .mapNotNull { film -> film.matchKey?.let { it to film } }
+            .toMap()
+        val merged = primary.items.mapNotNull { movie ->
+            if (movie.hasPosterAndRussianName()) {
+                movie
+            } else {
+                movie.matchKey?.let { fallbackByKey[it] }?.takeIf { it.hasPosterAndRussianName() }
+            }
+        }
+        return merged to primary.totalPages
     }
+
+    private fun MovieData.hasPosterAndRussianName(): Boolean =
+        !nameRu.isNullOrBlank() && !posterUrl.isNullOrBlank()
+
+    private val MovieData.matchKey: Pair<String, String>?
+        get() {
+            val name = nameRu?.trim()?.lowercase()
+            val releaseYear = year?.trim()
+            return if (name.isNullOrEmpty() || releaseYear.isNullOrEmpty()) null else name to releaseYear
+        }
 
     private suspend fun loadByFilters(request: CompositeRequest, page: Int): Pair<List<MovieData>, Int> {
         val result = repository.getSearchFilmsByFilters(
