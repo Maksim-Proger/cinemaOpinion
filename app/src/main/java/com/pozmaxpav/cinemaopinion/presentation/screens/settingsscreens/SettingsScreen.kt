@@ -50,7 +50,6 @@ fun SettingsScreen(
     val optionsList = myStringArray.toList()
 
     val indexSelectedTheme by themeViewModel.indexSelectedTheme.collectAsState()
-    val token = systemViewModel.pushToken.collectAsState()
 
     LaunchedEffect(Unit) {
         systemViewModel.getPushToken()
@@ -107,58 +106,11 @@ fun SettingsScreen(
                         }
                     }
                 }
-                Text(
-                    text = token.toString()
-                )
 
             }
 
             if (userName == "Разработчик") {
-                Spacer(modifier = Modifier.padding(vertical = 7.dp))
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Card(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiary,
-                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    ) {
-                        TextButton(
-                            onClick = {}
-                        ) {
-                            Text(
-                                text = "Добавить фильм",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.padding(vertical = 7.dp))
-                    Card(
-                        modifier = Modifier
-                            .wrapContentHeight()
-                            .fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiary,
-                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    ) {
-                        TextButton(
-                            onClick = {
-                                viewModel.sendMovies(
-                                    sourceNode = NODE_LIST_SERIALS,
-                                    listId = "a8116a1d-85a3-4bf6-8b6a-aa551fd1b100"
-                                )
-                            }
-                        ) {
-                            Text(
-                                text = "Перенести фильмы",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                    }
-                }
+                // TODO: Дополнить
             }
         }
     }

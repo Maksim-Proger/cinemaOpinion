@@ -3,10 +3,12 @@ package com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -83,7 +85,7 @@ fun EditProfileScreen(
         },
         floatingActionButton = {
             FABMenu(
-                imageIcon = Icons.Default.Add,
+                imageIcon = Icons.Default.Done,
                 contentDescription = stringResource(id = R.string.description_floating_action_button_save),
                 onButtonClick = {
                     userViewModel.updatingUserData(userId, nikName, email, password)
@@ -100,15 +102,31 @@ fun EditProfileScreen(
                 .fillMaxSize()
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
+
+            // region Аватарка
+            // TODO: тут добавляем кнопку добавления фотографии из галереи устройства и отправку
+            //  на сервер через бекенд модуль клиента
+            // endregion
 
             // region nikName
             CustomTextField(
                 value = nikName,
                 onValueChange = setNikName,
-                label = { Text(stringResource(id = R.string.text_for_edit_nik_name_field)) },
-                placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_nik_name_field)) },
+                modifier = Modifier.fillMaxWidth(),
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.text_for_edit_nik_name_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.placeholder_for_edit_nik_name_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
@@ -116,7 +134,12 @@ fun EditProfileScreen(
                         tint = MaterialTheme.colorScheme.outline
                     )
                 },
-                supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_nik_name_field)) },
+                supportingText = {
+                    Text(
+                        text = stringResource(id = R.string.placeholder_for_edit_nik_name_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
@@ -129,8 +152,19 @@ fun EditProfileScreen(
             CustomTextField(
                 value = email,
                 onValueChange = setEmail,
-                label = { Text(stringResource(id = R.string.text_for_edit_email_field)) },
-                placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_email_field)) },
+                modifier = Modifier.fillMaxWidth(),
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.text_for_edit_email_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.placeholder_for_edit_email_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
@@ -138,7 +172,12 @@ fun EditProfileScreen(
                         tint = MaterialTheme.colorScheme.outline
                     )
                 },
-                supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_email_field)) },
+                supportingText = {
+                    Text(
+                        text = stringResource(id = R.string.placeholder_for_edit_email_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
@@ -151,8 +190,19 @@ fun EditProfileScreen(
             CustomTextField(
                 value = password,
                 onValueChange = setPassword,
-                label = { Text(stringResource(id = R.string.text_for_edit_password_field)) },
-                placeholder = { Text(stringResource(id = R.string.placeholder_for_edit_password_field)) },
+                modifier = Modifier.fillMaxWidth(),
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.text_for_edit_password_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.placeholder_for_edit_password_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
@@ -160,7 +210,12 @@ fun EditProfileScreen(
                         tint = MaterialTheme.colorScheme.outline
                     )
                 },
-                supportingText = { Text(stringResource(id = R.string.placeholder_for_edit_password_field)) },
+                supportingText = {
+                    Text(
+                        text = stringResource(id = R.string.placeholder_for_edit_password_field),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
