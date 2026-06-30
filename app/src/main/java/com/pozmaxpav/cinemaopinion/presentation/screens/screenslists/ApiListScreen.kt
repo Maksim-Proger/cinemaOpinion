@@ -40,6 +40,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
+import com.example.ui.presentation.theme.cardAccent
+import com.example.ui.presentation.theme.onCardAccent
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.NewDesignMovieDetailScreen
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
@@ -99,14 +101,15 @@ fun ApiListScreen(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(WindowInsets.statusBars.asPaddingValues())
-                                    .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
+                                    .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp)
+                                    .padding(horizontal = 5.dp),
                             ) {
                                 items(premiereMovies, key = { it.id }) { movie ->
                                     Card(
                                         modifier = Modifier.wrapContentHeight(),
                                         colors = CardDefaults.cardColors(
-                                            containerColor = MaterialTheme.colorScheme.secondary,
-                                            contentColor = MaterialTheme.colorScheme.onSecondary
+                                            containerColor = MaterialTheme.colorScheme.cardAccent,
+                                            contentColor = MaterialTheme.colorScheme.onCardAccent
                                         )
                                     ) {
                                         SelectedMovieItem(
@@ -184,7 +187,8 @@ private fun PagedMovieList(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(WindowInsets.statusBars.asPaddingValues())
-                                .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
+                                .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp)
+                                .padding(horizontal = 5.dp),
                         ) {
                             items(
                                 count = movies.itemCount,
@@ -193,8 +197,8 @@ private fun PagedMovieList(
                                 Card(
                                     modifier = Modifier.wrapContentHeight(),
                                     colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                        contentColor = MaterialTheme.colorScheme.onSecondary
+                                        containerColor = MaterialTheme.colorScheme.cardAccent,
+                                        contentColor = MaterialTheme.colorScheme.onCardAccent
                                     )
                                 ) {
                                     movies[index]?.let { movie ->

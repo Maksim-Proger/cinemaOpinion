@@ -150,5 +150,12 @@
 
     <!--  Text Error  -->
     <string name="limit_is_over">К сожалению, в базе пусто или суточный лимит закончился</string>
-    
+
+    <!--  Avatar  -->
+    <string name="description_change_avatar">Изменить аватарку</string>
+    <string name="avatar_error_too_large">Файл слишком большой, выберите фото поменьше</string>
+    <string name="avatar_error_invalid_file">Не удалось загрузить файл, попробуйте другое фото</string>
+    <string name="avatar_error_network">Нет соединения, попробуйте позже</string>
+    <string name="avatar_error_unknown">Не удалось обновить аватарку</string>
+
 </resources>

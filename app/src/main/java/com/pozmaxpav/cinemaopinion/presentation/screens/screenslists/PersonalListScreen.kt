@@ -55,6 +55,8 @@ import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
+import com.example.ui.presentation.theme.cardAccent
+import com.example.ui.presentation.theme.onCardAccent
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
@@ -254,14 +256,23 @@ fun ListSelectedMovies(
                                 state = listState,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(WindowInsets.statusBars.asPaddingValues())
-                                    .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
+                                    .padding(
+                                        WindowInsets.statusBars.asPaddingValues()
+                                    )
+                                    .padding(
+                                        top = if (isAtTop)
+                                            TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp)
+                                    .padding(horizontal = 5.dp),
                                 contentPadding = PaddingValues(10.dp)
                             ) {
                                 items(listSelectedMovies, key = { it.id }) { movie ->
 
-                                    var isVisible by remember(movie.id) { mutableStateOf(true) }
-                                    var showDeleteDialog by remember(movie.id) { mutableStateOf(false) }
+                                    var isVisible by remember(movie.id) {
+                                        mutableStateOf(true)
+                                    }
+                                    var showDeleteDialog by remember(movie.id) {
+                                        mutableStateOf(false)
+                                    }
 
                                     LaunchedEffect(isVisible) {
                                         if (!isVisible) {
@@ -294,8 +305,8 @@ fun ListSelectedMovies(
                                         Card(
                                             modifier = Modifier.wrapContentHeight(),
                                             colors = CardDefaults.cardColors(
-                                                containerColor = MaterialTheme.colorScheme.secondary,
-                                                contentColor = MaterialTheme.colorScheme.onSecondary
+                                                containerColor = MaterialTheme.colorScheme.cardAccent,
+                                                contentColor = MaterialTheme.colorScheme.onCardAccent
                                             )
                                         ) {
                                             Row(

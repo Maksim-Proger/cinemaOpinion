@@ -5,11 +5,28 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import android.util.Log
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import coil.disk.DiskCache
+import com.example.backend.BackendApiProvider
 import dagger.hilt.android.HiltAndroidApp
 import ru.rustore.sdk.pushclient.RuStorePushClient
 
 @HiltAndroidApp
-class MainApplication: Application() {
+class MainApplication: Application(), ImageLoaderFactory {
+
+    override fun newImageLoader(): ImageLoader {
+        return ImageLoader.Builder(this)
+            .okHttpClient(BackendApiProvider.imageHttpClient)
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(cacheDir.resolve("image_cache"))
+                    .build()
+            }
+            .respectCacheHeaders(false)
+            .crossfade(true)
+            .build()
+    }
 
     override fun onCreate() {
         super.onCreate()

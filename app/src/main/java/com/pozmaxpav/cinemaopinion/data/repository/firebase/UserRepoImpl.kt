@@ -32,9 +32,13 @@ class UserRepoImpl @Inject constructor(
     override suspend fun updatingUserData(domainUserModel: DomainUserModel) {
         val userId = domainUserModel.id
         if (userId.isNotEmpty()) {
-            // Сохраняем данные по ID
+            val updates = mapOf<String, Any>(
+                "nikName" to domainUserModel.nikName,
+                "email" to domainUserModel.email,
+                "password" to domainUserModel.password
+            )
             databaseReference.child(CoreDatabaseConstants.NODE_LIST_USERS).child(userId)
-                .setValue(domainUserModel).await()
+                .updateChildren(updates).await()
         } else {
             throw Exception("User ID is missing")
         }

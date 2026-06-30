@@ -50,6 +50,8 @@ import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
+import com.example.ui.presentation.theme.cardAccent
+import com.example.ui.presentation.theme.onCardAccent
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
@@ -210,7 +212,8 @@ fun InternalSharedList(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(WindowInsets.statusBars.asPaddingValues())
-                            .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp),
+                            .padding(top = if (isAtTop) TopAppBarDefaults.TopAppBarExpandedHeight else 0.dp)
+                            .padding(horizontal = 5.dp),
                         contentPadding = PaddingValues(10.dp)
                     ) {
                         items(movies, key = { it.id }) { movie ->
@@ -259,8 +262,8 @@ fun InternalSharedList(
                                 Card(
                                     modifier = Modifier.wrapContentHeight(),
                                     colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                        contentColor = MaterialTheme.colorScheme.onSecondary
+                                        containerColor = MaterialTheme.colorScheme.cardAccent,
+                                        contentColor = MaterialTheme.colorScheme.onCardAccent
                                     )
                                 ) {
                                     Row(

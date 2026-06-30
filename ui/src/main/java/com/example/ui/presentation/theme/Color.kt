@@ -9,8 +9,12 @@ val Slate40 = Color(0xFF4A5C6A)
 val Slate65 = Color(0xFF9BA8AB)
 val Slate85 = Color(0xFFCCD0CF)
 
-val Sand20 = Color(0xFF3E2522)
-val Sand45 = Color(0xFF8C6E63)
-val Sand65 = Color(0xFFD3A376)
-val Sand85 = Color(0xFFFFE0B2)
-val Sand95 = Color(0xFFFFF2DF)
+val Sand20 = Color(0xFF561C24)
+val Sand45 = Color(0xFF6D2932)
+val Sand65 = Color(0xFFC7B7A3)
+val Sand75 = Color(0xFFD2C2AE)
+val Sand85 = Color(0xFFDDCDB9)
+val Sand95 = Color(0xFFE8D8C4)
+
+val Petrol = Color(0xFF16424D)
+

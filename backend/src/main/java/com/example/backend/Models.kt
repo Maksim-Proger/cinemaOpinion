@@ -19,3 +19,8 @@ data class DisablePushRequest(
     @SerializedName("deviceId") val deviceId: String
 )
 
+data class UploadAvatarResponse(
+    @SerializedName("status") val status: String,
+    @SerializedName("avatarId") val avatarId: String
+)
+

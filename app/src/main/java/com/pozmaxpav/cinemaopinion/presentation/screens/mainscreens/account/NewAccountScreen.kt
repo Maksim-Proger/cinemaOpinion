@@ -29,6 +29,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,10 +42,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,7 +55,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.ui.presentation.theme.cardAccent
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.presentation.components.AvatarImage
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
@@ -63,13 +68,11 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedLists
 
 
 // region Цвета
-private val BgDark = Color(0xFF1C1209)
-private val CardDark = Color(0xFF2A1E0F)
-private val GlassWhite = Color(0x33FFFFFF)
+
 private val GlassBorder = Color(0x55FFFFFF)
 private val TextWhite = Color(0xFFFFFFFF)
 private val TextSubtle = Color(0xFFB8A08A)
-private val TextMuted = Color(0xFF7A6A55)
+
 // endregion
 
 @Composable
@@ -101,7 +104,7 @@ fun NewAccountScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BgDark)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -110,12 +113,13 @@ fun NewAccountScreen(
         ) {
             userData?.let { user ->
                 HeroSection(
+                    userId = userId,
                     name = user.nikName,
                     email = user.email,
                     listAwards = listAwards,
                     settingsButton = {
                         Box {
-                            GlassButton(
+                            Buttons(
                                 icon = Icons.Default.MoreVert,
                                 onClick = { settingsMenuExpanded = true }
                             )
@@ -221,12 +225,13 @@ fun ListsRow(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
+
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxHeight(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = CardDark
+            containerColor = MaterialTheme.colorScheme.cardAccent
         )
     ) {
         Column(
@@ -267,7 +272,7 @@ fun ListsRow(
 
 @Composable
 private fun HeroSection(
-    photoUrl: String = "",
+    userId: String,
     name: String,
     email: String,
     listAwards: String = "",
@@ -275,19 +280,38 @@ private fun HeroSection(
     navController: NavHostController,
     closeScreenButton: () -> Unit
 ) {
+    val heroHeight = (LocalConfiguration.current.screenHeightDp * 0.65f).dp
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(520.dp) // TODO: Убрать фиксированную высоту.
+            .height(heroHeight)
     ) {
         // region Фото
-//        AsyncImage(
-//            model = photoUrl,
-//            contentDescription = null,
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier.fillMaxSize()
-//        )
+        AvatarImage(
+            userId = userId,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
         // endregion
+
+        // Тёмный градиент снизу — плавный переход в фон
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colorStops = arrayOf(
+                            0.0f to Color.Transparent,
+                            0.45f to Color.Transparent,
+                            0.75f to Color(0x22000000),
+                            1.0f to MaterialTheme.colorScheme.background
+                        )
+                    )
+                )
+        )
 
         // region Верхние кнопки
         Row(
@@ -298,7 +322,7 @@ private fun HeroSection(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            GlassButton(
+            Buttons(
                 icon = Icons.Default.Close,
                 onClick = closeScreenButton
             )
@@ -351,20 +375,21 @@ private fun HeroSection(
 }
 
 @Composable
-private fun GlassButton(
+private fun Buttons(
     icon: ImageVector,
     onClick: () -> Unit
 ) {
+
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier.height(42.dp),
         shape = RoundedCornerShape(50),
         border = ButtonDefaults.outlinedButtonBorder.copy(
-            brush = SolidColor(GlassBorder)
+            brush = SolidColor(MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.30f))
         ),
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = GlassWhite,
-            contentColor = TextWhite
+            containerColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.14f),
+            contentColor = MaterialTheme.colorScheme.onSecondary
         )
     ) {
         Icon(
@@ -399,14 +424,6 @@ fun Achievements(
 
 }
 
-
-
-
-
-//Text(
-//text = stringResource(id = R.string.title_account_screen),
-//style = MaterialTheme.typography.displayLarge
-//)
 
 
 
