@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.backend.BackendDisablePushUseCase
 import com.example.backend.BackendNotifyChangeCreatedUseCase
 import com.example.backend.BackendRegisterDeviceUseCase
+import com.example.backend.BackendUploadAvatarUseCase
 import com.example.core.utils.FirebaseListenerHolder
 import com.google.firebase.database.DatabaseReference
 import com.pozmaxpav.cinemaopinion.BuildConfig
@@ -175,6 +176,11 @@ object AppModule {
     @Singleton
     fun provideBackendDisablePushUseCase(): BackendDisablePushUseCase {
         return BackendDisablePushUseCase()
+    }
+    @Provides
+    @Singleton
+    fun provideBackendUploadAvatarUseCase(): BackendUploadAvatarUseCase {
+        return BackendUploadAvatarUseCase()
     }
     @Provides
     @Singleton
