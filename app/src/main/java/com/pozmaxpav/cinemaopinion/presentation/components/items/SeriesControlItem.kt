@@ -23,7 +23,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlMod
 
 @Composable
 fun SeriesControlItem(
-    movie: DomainSeriesControlModel,
+    item: DomainSeriesControlModel,
     onClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
@@ -35,7 +35,7 @@ fun SeriesControlItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = movie.title,
+            text = item.title,
             modifier = Modifier.weight(1.5f),
             style = MaterialTheme.typography.bodyLarge,
             maxLines = 2,
@@ -46,12 +46,19 @@ fun SeriesControlItem(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.Start
         ) {
+            if (!item.noSeasons) {
+                Text(
+                    text = "${item.season} сезон",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            } else {
+                Text(
+                    text = item.partname,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
             Text(
-                text = "${movie.season} сезон",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = "${movie.series} серия",
+                text = "${item.series} серия",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

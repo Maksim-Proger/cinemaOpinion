@@ -72,12 +72,22 @@ class SeriesControlViewModel @Inject constructor(
             }
         }
     }
-    fun updateMovie(userId: String, entryId: String, title: String, season: Int, series: Int) {
+    fun updateMovie(
+        userId: String,
+        entryId: String,
+        title: String,
+        noSeasons: Boolean,
+        partname: String,
+        season: Int,
+        series: Int
+    ) {
         viewModelScope.launch {
             try {
                 val selectedEntry = DomainSeriesControlModel(
                     entryId,
                     title,
+                    noSeasons,
+                    partname,
                     season,
                     series
                 )

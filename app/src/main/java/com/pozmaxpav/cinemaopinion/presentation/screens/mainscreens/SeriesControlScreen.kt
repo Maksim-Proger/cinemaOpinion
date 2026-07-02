@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
@@ -196,7 +197,7 @@ fun SeriesControlScreen(
                         )
                     ) {
                         SeriesControlItem(
-                            movie = entry,
+                            item = entry,
                             onClick = {
                                 selectedEntry = entry
                                 openBottomSheetChange = true
@@ -231,6 +232,7 @@ private fun AddItem(
             .padding(horizontal = 16.dp)
     ) {
         CustomTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = titleMovie,
             onValueChange = setTitleMovie,
             label = {
@@ -268,6 +270,9 @@ private fun ChangeItem(
 ) {
     val (season, setSeason) = remember { mutableStateOf("") }
     val (series, setSeries) = remember { mutableStateOf("") }
+    val (partname, setPartname) = remember { mutableStateOf("") }
+
+    var localNoSeasons by remember { mutableStateOf(selectedEntry.noSeasons) }
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -275,6 +280,7 @@ private fun ChangeItem(
     LaunchedEffect(Unit) {
         setSeason(selectedEntry.season.toString())
         setSeries(selectedEntry.series.toString())
+        setPartname(selectedEntry.partname)
     }
 
     Column(
@@ -284,62 +290,105 @@ private fun ChangeItem(
             .fillMaxHeight(fraction)
             .padding(horizontal = 16.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            IconButton(
-                onClick = {
-                    val currentNum = season.toIntOrNull() ?: 0
-                    if (currentNum > 0) {
-                        setSeason((currentNum - 1).toString())
-                    }
-                }
+        if (!localNoSeasons) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-            }
-            CustomTextField(
-                value = season,
-                horizontalPadding = 0.dp,
-                onValueChange = { newValue ->
-                    // Разрешаем вводить только цифры
-                    if (newValue.all { it.isDigit() }) {
-                        setSeason(newValue)
+                IconButton(
+                    onClick = {
+                        val currentNum = season.toIntOrNull() ?: 0
+                        if (currentNum > 0) {
+                            setSeason((currentNum - 1).toString())
+                        }
                     }
-                },
-                label = {
-                    Text(
-                        text = stringResource(R.string.write_season),
-                        style = MaterialTheme.typography.bodyMedium
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBackIosNew,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
                     )
-                },
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    }
-                ),
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            )
-            IconButton(
-                onClick = {
-                    val currentNum = season.toIntOrNull() ?: 0
-                    setSeason((currentNum + 1).toString())
                 }
+                CustomTextField(
+                    value = season,
+                    horizontalPadding = 0.dp,
+                    onValueChange = { newValue ->
+                        // Разрешаем вводить только цифры
+                        if (newValue.all { it.isDigit() }) {
+                            setSeason(newValue)
+                        }
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(R.string.write_season),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        }
+                    ),
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                )
+                IconButton(
+                    onClick = {
+                        val currentNum = season.toIntOrNull() ?: 0
+                        setSeason((currentNum + 1).toString())
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                }
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary
+                CustomTextField(
+                    value = partname,
+                    horizontalPadding = 0.dp,
+                    onValueChange = { newValue -> setPartname(newValue) },
+                    label = {
+                        Text(
+                            text = stringResource(R.string.write_name),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        }
+                    ),
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
                 )
             }
         }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Checkbox(
+                checked = localNoSeasons,
+                onCheckedChange = { localNoSeasons = it }
+            )
+            Text(
+                text = "У сериала нет сезонов"
+            )
+        }
+
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -412,8 +461,10 @@ private fun ChangeItem(
                         userId,
                         selectedEntry.id,
                         selectedEntry.title,
-                        season.toInt(),
-                        series.toInt()
+                        noSeasons = localNoSeasons,
+                        partname = partname,
+                        season.toIntOrNull() ?: 0,
+                        series.toIntOrNull() ?: 0
                     )
                     onClick()
                 }
