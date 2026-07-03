@@ -3,6 +3,7 @@ package com.pozmaxpav.cinemaopinion.presentation.components.items
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,7 +18,8 @@ import com.example.ui.presentation.components.fab.FABMenuItemData
 @Composable
 fun fabMenuItems(
     isScrolling: Boolean,
-    onDatePickerToggle: () -> Unit
+    onDatePickerToggle: () -> Unit,
+    onVoiceCommandClick: () -> Unit
 ): List<FABMenuItemData> {
     val modifier = Modifier.size(20.dp)
     if (isScrolling) return emptyList()
@@ -39,6 +41,24 @@ fun fabMenuItems(
                 )
             },
             onClick = onDatePickerToggle
+        )
+
+    items += FABMenuItemData(
+            text = {
+                Text(
+                    text = stringResource(id = R.string.drop_down_menu_item_voice_command),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            icon = {
+                Icon(
+                    modifier = modifier,
+                    imageVector = Icons.Default.Mic,
+                    contentDescription = stringResource(id = R.string.drop_down_menu_item_voice_command),
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            },
+            onClick = onVoiceCommandClick
         )
 
     return items

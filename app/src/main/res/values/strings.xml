@@ -159,4 +159,16 @@
     <string name="avatar_error_network">Нет соединения, попробуйте позже</string>
     <string name="avatar_error_unknown">Не удалось обновить аватарку</string>
 
+    <!--  Voice command  -->
+    <string name="drop_down_menu_item_voice_command">Голосовая команда</string>
+    <string name="voice_command_prompt">Например: «Наруто 2 сезон 4 серия»</string>
+    <string name="voice_recognition_unavailable">Распознавание речи недоступно на этом устройстве</string>
+    <string name="voice_command_not_recognized">Команда не распознана. Скажите, например: «Наруто 2 сезон 4 серия»</string>
+    <string name="voice_command_title_not_found">Сериал «%1$s» не найден в списке</string>
+    <string name="voice_command_no_numeric_seasons">У сериала «%1$s» нет числовых сезонов, измените запись вручную</string>
+    <string name="voice_command_result">Сезон: %1$d, серия: %2$d. Сохранить?</string>
+    <string name="voice_command_result_series_only">Серия: %1$d. Сохранить?</string>
+    <string name="voice_command_applied">Изменения сохранены</string>
+    <string name="button_cancel">Отмена</string>
+
 </resources>
