@@ -2,7 +2,6 @@ package com.example.auth.presentation.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.example.auth.presentation.screens.LoginScreen
 import com.example.auth.presentation.screens.NewLoginScreen
 
 fun NavGraphBuilder.authNavGraph(

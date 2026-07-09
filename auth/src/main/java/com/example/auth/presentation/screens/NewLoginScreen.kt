@@ -1,20 +1,23 @@
 package com.example.auth.presentation.screens
 
-import android.graphics.BlurMaskFilter
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,16 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -45,12 +42,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.auth.presentation.viewmodel.AuthViewModel
-import com.example.ui.presentation.components.CustomBottomSheet
+import com.example.ui.presentation.components.InlineBottomSheet
 
 
 @Composable
@@ -94,98 +90,104 @@ fun NewLoginScreen(
 
     // endregion
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-
-        if (openBottomSheet) {
-            CustomBottomSheet(
-                onCloseRequest = { openBottomSheet = false }
-            ) { onClose ->
-//                RegistrationScreen(
-//                    authViewModel = authViewModel,
-//                    keyboardController = keyboardController,
-//                    focusManager = focusManager,
-//                    fraction = 0.9f,
-//                    onClose = onClose
-//                )
-                NewRegistrationScreen(
-                    authViewModel = authViewModel,
-                    keyboardController = keyboardController,
-                    focusManager = focusManager,
-                    fraction = 0.9f,
-                    onClose = onClose
-                )
-            }
-        }
+    Box(Modifier.fillMaxSize()) {
 
         Column(
             modifier = Modifier
-                .padding(24.dp)
-                .fillMaxWidth()
-                .neuRaised(cornerRadius = 28.dp)
-                .background(NewColors.NeuBg, RoundedCornerShape(28.dp))
-                .padding(horizontal = 28.dp, vertical = 36.dp)
+                .fillMaxSize()
+                .background(NewColors.NeuBg)
+                .padding(WindowInsets.statusBars.asPaddingValues()),
         ) {
+            Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
+                Text(text = "Кино Мнение", style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 37.sp,
+                ))
+            }
 
-            Text(
-                text = "Username",
-                color = NewColors.LabelText,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Normal,
-                modifier = Modifier.padding(start = 4.dp)
-            )
-            Spacer(Modifier.height(10.dp))
-            NeuTextField(
-                value = login,
-                onValueChange = setLogin,
-                placeholder = "admin@CSSScript.com",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Next) }
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .fillMaxWidth()
+                    .neuRaised(cornerRadius = 28.dp)
+                    .background(NewColors.NeuBg, RoundedCornerShape(28.dp))
+                    .padding(horizontal = 28.dp, vertical = 36.dp)
+            ) {
+
+                Text(
+                    text = "Username",
+                    color = NewColors.LabelText,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.padding(start = 4.dp)
                 )
-            )
-            Spacer(Modifier.height(22.dp))
-            Text(
-                text = "Password",
-                color = NewColors.LabelText,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Normal,
-                modifier = Modifier.padding(start = 4.dp)
-            )
-            Spacer(Modifier.height(10.dp))
-            NeuTextField(
-                value = password,
-                onValueChange = setPassword,
-                placeholder = "Enter Password",
-                isPassword = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    }
+                Spacer(Modifier.height(10.dp))
+                NeuTextField(
+                    value = login,
+                    onValueChange = setLogin,
+                    placeholder = "admin@CSSScript.com",
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Next) }
+                    )
                 )
-            )
-            Spacer(Modifier.height(28.dp))
-            SignInButton(
-                label = "Вход",
-                onClick = { authViewModel.authorization(login, password) }
-            )
-            Spacer(Modifier.height(28.dp))
-            SignInButton(
-                label = "Регистрация",
-                onClick = { openBottomSheet = true }
+                Spacer(Modifier.height(22.dp))
+                Text(
+                    text = "Password",
+                    color = NewColors.LabelText,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+                Spacer(Modifier.height(10.dp))
+                NeuTextField(
+                    value = password,
+                    onValueChange = setPassword,
+                    placeholder = "Enter Password",
+                    isPassword = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        }
+                    )
+                )
+                Spacer(Modifier.height(28.dp))
+                SignInButton(
+                    label = "Вход",
+                    onClick = { authViewModel.authorization(login, password) }
+                )
+                Spacer(Modifier.height(28.dp))
+                SignInButton(
+                    label = "Регистрация",
+                    onClick = { openBottomSheet = true }
+                )
+            }
+
+            Spacer(Modifier.weight(1f))
+        }
+
+        InlineBottomSheet(
+            visible = openBottomSheet,
+            onDismissRequest = { openBottomSheet = false },
+            containerColor = NewColors.NeuBg
+        ) {
+            NewRegistrationScreen(
+                authViewModel = authViewModel,
+                fraction = 0.9f,
+                onClose = { openBottomSheet = false }
             )
         }
+
     }
+
 }
 
 @Composable
@@ -264,91 +266,3 @@ private fun SignInButton(
     }
 }
 
-private fun Modifier.neuInset(
-    cornerRadius: Dp,
-    offset: Dp = 4.dp,
-    blur: Dp = 7.dp
-) = this
-    .background(NewColors.NeuBg, RoundedCornerShape(cornerRadius))
-    .drawWithContent {
-        drawContent()
-        drawIntoCanvasClipped(cornerRadius.toPx()) { nc, cr ->
-            val strokeW = offset.toPx() * 1.6f
-            // Тёмная внутренняя тень — сверху-слева
-            val darkPaint = neuStrokePaint(NewColors.NeuDark, strokeW, blur.toPx())
-            nc.drawRoundRect(
-                offset.toPx(), offset.toPx(),
-                size.width + offset.toPx(), size.height + offset.toPx(),
-                cr, cr, darkPaint
-            )
-            // Светлая внутренняя тень — снизу-справа
-            val lightPaint = neuStrokePaint(NewColors.NeuLight, strokeW, blur.toPx())
-            nc.drawRoundRect(
-                -offset.toPx(), -offset.toPx(),
-                size.width - offset.toPx(), size.height - offset.toPx(),
-                cr, cr, lightPaint
-            )
-        }
-    }
-
-private fun Modifier.neuRaised(
-    cornerRadius: Dp,
-    offset: Dp = 7.dp,
-    blur: Dp = 16.dp
-) = this.drawBehind {
-    val cr = cornerRadius.toPx()
-    // Тёмная тень — снизу-справа
-    drawNeuRect(cr, NewColors.NeuDark, offset.toPx(), offset.toPx(), blur.toPx())
-    // Светлая тень — сверху-слева
-    drawNeuRect(cr, NewColors.NeuLight, -offset.toPx(), -offset.toPx(), blur.toPx())
-}
-
-private fun DrawScope.drawNeuRect(
-    cornerRadiusPx: Float,
-    color: Color,
-    offsetX: Float,
-    offsetY: Float,
-    blur: Float
-) {
-    drawIntoCanvas { canvas ->
-        val paint = android.graphics.Paint().apply {
-            isAntiAlias = true
-            this.color = color.toArgb()
-            if (blur > 0f) maskFilter = BlurMaskFilter(blur, BlurMaskFilter.Blur.NORMAL)
-        }
-        canvas.nativeCanvas.drawRoundRect(
-            offsetX, offsetY,
-            size.width + offsetX, size.height + offsetY,
-            cornerRadiusPx, cornerRadiusPx, paint
-        )
-    }
-}
-
-private fun DrawScope.drawIntoCanvasClipped(
-    cornerRadiusPx: Float,
-    block: (nc: android.graphics.Canvas, cr: Float) -> Unit
-) {
-    drawIntoCanvas { canvas ->
-        val nc = canvas.nativeCanvas
-        val save = nc.save()
-        val clip = android.graphics.Path().apply {
-            addRoundRect(
-                0f, 0f, size.width, size.height,
-                cornerRadiusPx, cornerRadiusPx,
-                android.graphics.Path.Direction.CW
-            )
-        }
-        nc.clipPath(clip)
-        block(nc, cornerRadiusPx)
-        nc.restoreToCount(save)
-    }
-}
-
-private fun neuStrokePaint(color: Color, strokeWidth: Float, blur: Float) =
-    android.graphics.Paint().apply {
-        isAntiAlias = true
-        style = android.graphics.Paint.Style.STROKE
-        this.strokeWidth = strokeWidth
-        this.color = color.toArgb()
-        if (blur > 0f) maskFilter = BlurMaskFilter(blur, BlurMaskFilter.Blur.NORMAL)
-    }
