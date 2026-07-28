@@ -48,6 +48,7 @@ import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.VoiceCommandState
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilities.SendRequestAdvancedSearch
@@ -62,6 +63,7 @@ fun ScaffoldMainScreen(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
     apiViewModel: ApiViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
     onExit: () -> Unit = {}
 ) {
 
@@ -81,6 +83,7 @@ fun ScaffoldMainScreen(
     }
 
     val userId by systemViewModel.userId.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
     val loadingState by apiViewModel.loadingState.collectAsState()
     val showDialogEvents by systemViewModel.resultChecking.collectAsState()
     // endregion
@@ -120,6 +123,11 @@ fun ScaffoldMainScreen(
         systemViewModel.getUserId()
         notViewModel.getStatus()
     }
+    LaunchedEffect(userId) {
+        if (userId != "Unknown") {
+            userViewModel.getUserData(userId)
+        }
+    }
     LaunchedEffect(state.searchCompleted.value) {
         if (state.searchCompleted.value) {
             navController.navigate(Route.ApiListScreen.navigate("search"))
@@ -155,7 +163,10 @@ fun ScaffoldMainScreen(
             ) {
                 TopAppBarMainScreen(
                     title = "Фильмы",
-                    onAccountButtonClick = { state.onAccountButtonClick.value = true },
+                    onAccountButtonClick = {
+                        if (userData != null) state.onAccountButtonClick.value = true
+                        else showToast2(context, "Данные еще не загружены")
+                    },
                     scrollBehavior = scrollBehavior,
                     onTransitionAction = {
                         navigateFunction(
@@ -284,7 +295,7 @@ fun ScaffoldMainScreen(
     PreviewOverlay(state, showDialogEvents)
     PageDescriptionOverlay(state, systemViewModel)
     SearchFilterScreenOverlay(state)
-    AccountScreenOverlay(userId, state, navController)
+    AccountScreenOverlay(userId, userData, state, navController)
 
     when (val commandState = voiceCommandState) {
         is VoiceCommandState.AwaitingConfirmation -> {

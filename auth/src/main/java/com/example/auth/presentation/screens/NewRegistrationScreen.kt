@@ -147,7 +147,6 @@ fun NewRegistrationScreen(
             )
             Spacer(Modifier.height(28.dp))
             SignInButton(
-                label = "Сохранить",
                 onClick = {
                     keyboardController?.hide()
                     focusManager.clearFocus()
@@ -204,7 +203,6 @@ private fun NeuTextField(
 
 @Composable
 private fun SignInButton(
-    label: String,
     onClick: () -> Unit = {}
 ) {
     Box(
@@ -225,7 +223,7 @@ private fun SignInButton(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = label,
+            text = "Сохранить",
             color = Color.White,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium

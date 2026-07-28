@@ -13,6 +13,7 @@ import com.pozmaxpav.cinemaopinion.domain.voice.SeriesTitleMatcher
 import com.pozmaxpav.cinemaopinion.domain.voice.VoiceCommandParser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -37,7 +38,7 @@ class SeriesControlViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _listMovies = MutableStateFlow<List<DomainSeriesControlModel>>(emptyList())
-    val listMovies = _listMovies.asStateFlow()
+    val listMovies: StateFlow<List<DomainSeriesControlModel>> = _listMovies
 
     private val _voiceCommandState = MutableStateFlow<VoiceCommandState>(VoiceCommandState.Idle)
     val voiceCommandState = _voiceCommandState.asStateFlow()

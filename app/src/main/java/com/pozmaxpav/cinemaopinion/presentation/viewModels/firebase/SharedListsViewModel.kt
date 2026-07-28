@@ -18,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -40,7 +41,7 @@ class SharedListsViewModel @Inject constructor(
     val commentsDownloadStatus = _commentsDownloadStatus.asStateFlow()
 
     private val _lists = MutableStateFlow<List<DomainSharedListModel>>(emptyList())
-    val list = _lists.asStateFlow()
+    val list: StateFlow<List<DomainSharedListModel>> = _lists
 
     private val _listName = MutableStateFlow("")
     val listName = _listName.asStateFlow()

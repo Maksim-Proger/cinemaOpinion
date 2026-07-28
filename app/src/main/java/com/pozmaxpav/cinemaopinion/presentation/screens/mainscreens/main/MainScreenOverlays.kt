@@ -29,13 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.core.domain.DomainUserModel
 import com.example.intro.presentation.pages.PageDescription
 import com.example.intro.presentation.pages.PreviewAlertDialog
 import com.example.ui.presentation.components.CustomBoxShowOverlay
 import com.example.ui.presentation.components.CustomSearchBar
 import com.example.ui.presentation.components.DatePickerFunction
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
-import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account.NewAccountScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account.AccountScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SearchFilterScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
@@ -197,6 +198,7 @@ fun SearchFilterScreenOverlay(state: MainScreenState) {
 @Composable
 fun AccountScreenOverlay(
     userId: String,
+    userData: DomainUserModel?,
     state: MainScreenState,
     navController: NavHostController
 ) {
@@ -204,9 +206,10 @@ fun AccountScreenOverlay(
         CustomBoxShowOverlay(
             onDismiss = { /* TODO: А это мне надо еще? state.onAccountButtonClick.value = false */ },
             content = {
-                NewAccountScreen(
+                AccountScreen(
                     navController,
                     userId,
+                    userData = userData,
                     onClose = { state.onAccountButtonClick.value = false }
                 )
                 AdaptiveBackHandler { state.onAccountButtonClick.value = false }

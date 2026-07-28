@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.core.domain.DomainUserModel
 import com.example.ui.presentation.theme.cardAccent
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.AvatarImage
@@ -65,6 +66,8 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewMode
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListsScreen
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 
 
 // region Цвета
@@ -76,28 +79,32 @@ private val TextSubtle = Color(0xFFB8A08A)
 // endregion
 
 @Composable
-fun NewAccountScreen(
+fun AccountScreen(
     navController: NavHostController,
     userId: String,
+    userData: DomainUserModel?,
     onClose: () -> Unit,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
-    systemViewModel: SystemViewModel = hiltViewModel()
+    systemViewModel: SystemViewModel = hiltViewModel(),
+    sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
+    seriesControlViewModel: SeriesControlViewModel = hiltViewModel()
 ) {
-    val listSelectedMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
-    val userData by userViewModel.userData.collectAsState()
+    val countPersonalMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
+    val countSharedLists by sharedListsViewModel.list.collectAsState()
+    val countSeriesControlItems by seriesControlViewModel.listMovies.collectAsState()
     val listAwards by userViewModel.listAwards.collectAsState()
+
     var openSharedLists by remember { mutableStateOf(false) }
     var locationShowDialogEvents by remember { mutableStateOf(false) }
     var settingsMenuExpanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(userId) {
-        if (userId != "Unknown") {
-            userViewModel.getUserData(userId)
+        if (userId.isNotBlank() && userId != "Unknown") {
             userViewModel.getAwardsList(userId)
+            sharedListsViewModel.getLists(userId)
+            seriesControlViewModel.getListEntries(userId)
         }
-    }
-    LaunchedEffect(userId) {
         personalMovieViewModel.getMovies(userId)
     }
 
@@ -152,7 +159,7 @@ fun NewAccountScreen(
                 ListsRow(
                     label = "Личный список",
                     imageRes = R.drawable.personal_list,
-                    listSelectedMovies = listSelectedMovies,
+                    count = countPersonalMovies.size,
                     modifier = Modifier.weight(1f),
                     onClick = {
                         navigateFunction(navController, Route.ListSelectedMovies.route)
@@ -161,7 +168,7 @@ fun NewAccountScreen(
                 ListsRow(
                     label = "Совместные список",
                     imageRes = R.drawable.shared_list,
-                    listSelectedMovies = listSelectedMovies,
+                    count = countSharedLists.size,
                     modifier = Modifier.weight(1f),
                     onClick = {
                         openSharedLists = true
@@ -170,7 +177,7 @@ fun NewAccountScreen(
                 ListsRow(
                     label = "Контроль серий",
                     imageRes = R.drawable.series_control,
-                    listSelectedMovies = listSelectedMovies,
+                    count = countSeriesControlItems.size,
                     modifier = Modifier.weight(1f),
                     onClick = {
                         navigateFunction(navController, Route.SeriesControlScreen.route)
@@ -221,11 +228,10 @@ fun NewAccountScreen(
 fun ListsRow(
     label: String,
     @DrawableRes imageRes: Int,
-    listSelectedMovies: List<DomainSelectedMovieModel>,
+    count: Int,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
-
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxHeight(),
@@ -241,7 +247,6 @@ fun ListsRow(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-
             Image(
                 painter = painterResource(id = imageRes),
                 contentDescription = null,
@@ -252,13 +257,13 @@ fun ListsRow(
             )
             Spacer(Modifier.height(10.dp))
             Text(
-                text = listSelectedMovies.size.toString(),
+                text = count.toString(),
                 color = TextWhite,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
-
+            Spacer(Modifier.height(10.dp))
             Text(
                 text = label,
                 color = TextSubtle,
@@ -379,7 +384,6 @@ private fun Buttons(
     icon: ImageVector,
     onClick: () -> Unit
 ) {
-
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier.height(42.dp),
@@ -420,8 +424,6 @@ fun Achievements(
             fontWeight = FontWeight.Medium
         )
     }
-
-
 }
 
 
