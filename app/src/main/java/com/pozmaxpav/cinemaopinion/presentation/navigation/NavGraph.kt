@@ -76,7 +76,11 @@ fun NavGraph(
         composable(
             Route.AchievementsScreen.route,
             arguments = listOf(
-                navArgument("listAwards") { type = NavType.StringType }
+                navArgument("listAwards") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = ""
+                }
             )
         ) { backStackEntry ->
             val listAwards = backStackEntry.arguments?.getString("listAwards") ?: ""

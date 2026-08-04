@@ -6,5 +6,4 @@ interface UserRepo {
     suspend fun getUserData(userId: String): DomainUserModel?
     suspend fun updatingUserData(domainUserModel: DomainUserModel)
     suspend fun updateSpecificField(userId: String, fieldName: String, newValue: Any)
-    suspend fun getUsers(): List<DomainUserModel>
 }

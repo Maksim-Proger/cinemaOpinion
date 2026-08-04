@@ -85,7 +85,6 @@ fun AccountScreen(
     userData: DomainUserModel?,
     onClose: () -> Unit,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel(),
     systemViewModel: SystemViewModel = hiltViewModel(),
     sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
     seriesControlViewModel: SeriesControlViewModel = hiltViewModel()
@@ -93,7 +92,6 @@ fun AccountScreen(
     val countPersonalMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
     val countSharedLists by sharedListsViewModel.list.collectAsState()
     val countSeriesControlItems by seriesControlViewModel.listMovies.collectAsState()
-    val listAwards by userViewModel.listAwards.collectAsState()
 
     var openSharedLists by remember { mutableStateOf(false) }
     var locationShowDialogEvents by remember { mutableStateOf(false) }
@@ -101,11 +99,10 @@ fun AccountScreen(
 
     LaunchedEffect(userId) {
         if (userId.isNotBlank() && userId != "Unknown") {
-            userViewModel.getAwardsList(userId)
             sharedListsViewModel.getLists(userId)
             seriesControlViewModel.getListEntries(userId)
+            personalMovieViewModel.getMovies(userId)
         }
-        personalMovieViewModel.getMovies(userId)
     }
 
     Box(
@@ -123,7 +120,7 @@ fun AccountScreen(
                     userId = userId,
                     name = user.nikName,
                     email = user.email,
-                    listAwards = listAwards,
+                    listAwards = user.awards,
                     settingsButton = {
                         Box {
                             Buttons(
@@ -409,7 +406,9 @@ fun Achievements(
     listAwards: String,
     onClick: () -> Unit = {}
 ) {
-    val newListAwards = listAwards.split(",")
+    val awards = remember(listAwards) {
+        listAwards.split(",").filter { it.isNotBlank() }
+    }
 
     OutlinedButton(
         onClick = onClick,
@@ -417,9 +416,10 @@ fun Achievements(
         border = ButtonDefaults.outlinedButtonBorder.copy(
             brush = SolidColor(GlassBorder)
         ),
+        enabled = awards.isNotEmpty()
     ) {
         Text(
-            text = "${newListAwards.size} achievements",
+            text = "${awards.size} achievements",
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium
         )
