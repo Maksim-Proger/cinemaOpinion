@@ -11,6 +11,7 @@ activityCompose = "1.13.0"
 #composeBom = "2025.09.01"
 composeBom = "2024.09.00" # Разобраться почему Expressive работает только с этой версией
 
+versionSplashScreen = "1.0.1"
 versionRetrofit = "3.0.0"
 versionConverterGson = "3.0.0"
 versionLottieCompose = "6.7.1"
@@ -28,6 +29,8 @@ versionDatastore = "1.2.1"
 versionPaging = "3.3.6"
 
 [libraries]
+android-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "versionSplashScreen" }
+
 firebase-database = { group = "com.google.firebase", name = "firebase-database" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "versionFirebaseBom" }
 

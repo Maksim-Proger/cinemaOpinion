@@ -87,7 +87,7 @@ private fun getSeasonalListMovies(viewModel: SystemMovieViewModel): List<DomainS
     val currentSeason = remember(currentMonth) {
         when (currentMonth) {
             12, 1, 6 -> Season.NewYear
-            10, 11 -> Season.Halloween
+            10, 11, 8 -> Season.Halloween
 //            2 -> Season.Valentine
 //            3 -> Season.March8
             else -> null

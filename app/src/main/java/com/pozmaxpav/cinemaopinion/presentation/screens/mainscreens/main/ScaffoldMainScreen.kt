@@ -244,7 +244,7 @@ fun ScaffoldMainScreen(
                             movie = it,
                             userId = userId,
                             onCloseButton = { state.selectedSeasonalMovie.value = null },
-                            padding = innerPadding
+//                            padding = innerPadding
                         )
                     }
                     AdaptiveBackHandler { state.selectedSeasonalMovie.value = null }

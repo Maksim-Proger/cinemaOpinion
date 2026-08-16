@@ -3,6 +3,7 @@
 
     <!--  General Strings  -->
     <string name="animation_for_rotating_icon">Анимация для поворота иконки</string>
+    <string name="splash_app_title">Киномнение</string>
 
     <!--  Description Icons  -->
     <string name="description_icon_arrow_drop_down_button">Icon ArrowDropDown Button</string>

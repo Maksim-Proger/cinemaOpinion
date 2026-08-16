@@ -1,17 +1,25 @@
 package com.pozmaxpav.cinemaopinion.presentation.components.detailscards
 
+import android.widget.RatingBar
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -20,13 +28,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.CommentBank
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.RemoveRedEye
+import androidx.compose.material.icons.outlined.PostAdd
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,15 +54,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.ExpandedCard
 import com.example.ui.presentation.components.ratingbar.RatingBarScaffold
+import com.example.ui.presentation.theme.DynamicContentColor
+import com.example.ui.presentation.theme.RatingBadgeColor
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
@@ -54,11 +79,11 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovi
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilities.showToast
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsCardSpecial(
     movie: DomainSelectedMovieModel,
     userId: String,
-    padding: PaddingValues,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
     apiViewModel: ApiViewModel = hiltViewModel(),
@@ -73,6 +98,9 @@ fun DetailsCardSpecial(
     val detailedInfo by apiViewModel.detailedInfo.collectAsState()
     var showRatingBar by remember { mutableStateOf(false) }
     val quantitySeasonalEventPoints by userViewModel.seasonalEventPoints.collectAsState()
+
+    val (animatedBg, animatedTitle, animatedAccent, animatedButtonBg) =
+        rememberDynamicPaletteColors(imageUrl = movie.posterUrl)
 
     LaunchedEffect(triggerOnClickPersonalMovie) {
         if (triggerOnClickPersonalMovie) {
@@ -90,12 +118,168 @@ fun DetailsCardSpecial(
         apiViewModel.getInformationMovie(movie.id)
     }
 
-    Column(
+    val posterAlpha by animateFloatAsState(
+        targetValue = (1f - scrollState.value / 600f).coerceIn(0f, 1f),
+        animationSpec = tween(0),
+        label = "posterAlpha"
+    )
+
+    Box(
         modifier = Modifier
-            .wrapContentSize()
-            .padding(padding)
-            .padding(horizontal = 15.dp)
+            .fillMaxSize()
+            .background(animatedBg)
+            .padding(WindowInsets.statusBars.asPaddingValues())
     ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+        ) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(600.dp)
+                    .graphicsLayer { alpha = posterAlpha }
+            ) {
+                // region Poster
+                AsyncImage(
+                    model = movie.posterUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                // endregion
+                // region Up Button's
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(TopAppBarDefaults.TopAppBarExpandedHeight)
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // region Button Back
+                    OutlinedButton(
+                        onClick = onCloseButton,
+                        shape = RoundedCornerShape(23.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = animatedBg.copy(alpha = 0.9f),
+                            contentColor = DynamicContentColor
+                        ),
+                        border = null,
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(23.dp),
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = null
+                        )
+                        Spacer(Modifier.width(5.dp))
+                        Text(
+                            modifier = Modifier.padding(end = 10.dp),
+                            text = stringResource(R.string.button_back),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                    // endregion
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        // region Кнопка Избранное
+                        OutlinedButton(
+                            onClick = {
+                                personalMovieViewModel.addMovie(userId, movie)
+                            },
+                            shape = RoundedCornerShape(23.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = animatedBg.copy(alpha = 0.9f),
+                                contentColor = DynamicContentColor
+                            ),
+                            border = null,
+                            contentPadding = PaddingValues(10.dp),
+                            modifier = Modifier.size(48.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                modifier = Modifier.size(26.dp),
+                                contentDescription = null
+                            )
+                        }
+                        // endregion
+                        // region Кнопка Просмотрен
+                        OutlinedButton(
+                            onClick = {
+                                userViewModel.updatingEventData(userId)
+                                showRatingBar = !showRatingBar
+                            },
+                            shape = RoundedCornerShape(23.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = animatedBg.copy(alpha = 0.9f),
+                                contentColor = DynamicContentColor
+                            ),
+                            border = null,
+                            contentPadding = PaddingValues(10.dp),
+                            modifier = Modifier.size(48.dp)
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(26.dp),
+                                imageVector = Icons.Default.RemoveRedEye,
+                                contentDescription = null
+                            )
+                        }
+                        // endregion
+                    }
+                }
+                // endregion
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                Spacer(Modifier.height(7.dp))
+                RatingRow(movie = detailedInfo)
+
+                // region Title
+                Text(
+                    text = movie.nameFilm,
+                    style = MaterialTheme.typography.displayLarge,
+                    color = animatedTitle
+                )
+                // endregion
+
+                Spacer(Modifier.height(20.dp))
+
+                // region Button's
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    ActionButton(
+                        icon = Icons.Outlined.PostAdd,
+                        label = stringResource(R.string.text_buttons_recommend_film),
+                        accentColor = animatedAccent,
+                        borderColor = animatedAccent,
+                        modifier = Modifier.weight(1f),
+                        onClick = {  }
+                    )
+                }
+                // endregion
+
+                Spacer(Modifier.height(20.dp))
+                ExpandedCard(
+                    title = stringResource(R.string.text_for_expandedCard_field),
+                    description = info?.description ?: stringResource(R.string.limit_is_over),
+                    animatedAccent = animatedAccent,
+                    contentColor = DynamicContentColor
+                )
+                Spacer(Modifier.height(24.dp))
+            }
+        }
+
+        // region RatingBar
         if (showRatingBar) {
             RatingBarScaffold(
                 score = quantitySeasonalEventPoints,
@@ -107,163 +291,118 @@ fun DetailsCardSpecial(
                 showRatingBar = false
             }
         }
+        // endregion
 
-        Card(
-            modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .padding(7.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
-        ) {
-            // region Верхние кнопки
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onCloseButton) {
-                    Icon(
-                        modifier = Modifier.size(35.dp),
-                        imageVector = Icons.Default.ArrowBackIosNew,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-                IconButton(
-                    onClick = {
-                        personalMovieViewModel.addMovie(userId, selectedMovie = movie)
-                        triggerOnClickPersonalMovie = true
-                    }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(35.dp),
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-            // endregion
-
-
-            Column(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp)
-                    .verticalScroll(scrollState)
-            ) {
-                DetailCardPoster(movie, detailedInfo)
-
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Spacer(Modifier.padding(15.dp))
-                    Text(
-                        text = movie.nameFilm,
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                    Spacer(Modifier.padding(vertical = 15.dp))
-                    Column(modifier = Modifier.fillMaxWidth()) {
-//                        ExpandedCard(
-//                            title = stringResource(R.string.text_for_expandedCard_field),
-//                            description = info?.description
-//                                ?: stringResource(R.string.limit_is_over)
-//                        )
-                        Spacer(Modifier.padding(vertical = 5.dp))
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 7.dp),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            CustomTextButton(
-                                textButton = stringResource(R.string.button_send_to_archive),
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                modifier = Modifier.fillMaxWidth(),
-                                onClickButton = {
-                                    userViewModel.updatingEventData(userId)
-                                    showRatingBar = !showRatingBar
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
 @Composable
-private fun DetailCardPoster(
-    movie: DomainSelectedMovieModel,
-    detailedInfo: MovieData.MovieSearch?
+private fun RatingRow(
+    movie: MovieData.MovieSearch?
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(bottom = 8.dp)
     ) {
-        Card(
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            modifier = Modifier
-                .width(220.dp)
-                .aspectRatio(2f / 3f)
+        Surface(
+            shape = RoundedCornerShape(6.dp),
+            color = RatingBadgeColor
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(20.dp))
-            ) {
-                AsyncImage(
-                    model = movie.posterUrl,
-                    contentDescription = movie.nameFilm,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    ShowRating(movie = detailedInfo)
-                }
-            }
+            Text(
+                text = "IMDB: ${movie?.ratingImdb ?: "Н/Д"}",
+                color = Color.Black,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+            )
+        }
+        Surface(
+            shape = RoundedCornerShape(6.dp),
+            color = RatingBadgeColor
+        ) {
+            Text(
+                text = "IMDB: ${movie?.ratingKinopoisk ?: "Н/Д"}",
+                color = Color.Black,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+            )
+        }
+        Surface(
+            shape = RoundedCornerShape(6.dp),
+            color = RatingBadgeColor
+        ) {
+            Text(
+                text = movie?.year ?: "Н/Д",
+                color = Color.Black,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+            )
+        }
+        Surface(
+            shape = RoundedCornerShape(6.dp),
+            color = RatingBadgeColor
+        ) {
+            Text(
+                text = "${movie?.filmLength ?: "Н/Д"} мин.",
+                color = Color.Black,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+            )
         }
     }
 }
 
 @Composable
-private fun ShowRating(movie: MovieData.MovieSearch?) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
+private fun ActionButton(
+    icon: ImageVector,
+    label: String,
+    modifier: Modifier = Modifier,
+    accentColor: Color = MaterialTheme.colorScheme.secondary,
+    borderColor: Color = MaterialTheme.colorScheme.secondary,
+    onClick: () -> Unit = {},
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.height(42.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = Color.Transparent,
+            contentColor = DynamicContentColor
         ),
-        elevation = CardDefaults.cardElevation(8.dp)
+        border = ButtonDefaults.outlinedButtonBorder.copy(
+            brush = SolidColor(borderColor)
+        ),
+        contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(7.dp)
-        ) {
-            Text(
-                text = "КП: ${movie?.ratingKinopoisk ?: "Н/Д"}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = "IMDB: ${movie?.ratingImdb ?: "Н/Д"}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(16.dp),
+            tint = accentColor
+        )
+        Spacer(Modifier.width(4.dp))
+        Text(
+            text = label,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.5.sp
+        )
     }
-
 }
+
+
+
+
+
+
+
+
+////                        ExpandedCard(
+////                            title = stringResource(R.string.text_for_expandedCard_field),
+////                            description = info?.description
+////                                ?: stringResource(R.string.limit_is_over)
+////                        )

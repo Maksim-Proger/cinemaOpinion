@@ -159,7 +159,7 @@ fun NewDesignMovieDetailScreen(
                         onClick = onCloseButton,
                         shape = RoundedCornerShape(23.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = animatedButtonBg.copy(alpha = 0.9f),
+                            containerColor = animatedBg.copy(alpha = 0.9f),
                             contentColor = DynamicContentColor
                         ),
                         border = null,
@@ -190,7 +190,7 @@ fun NewDesignMovieDetailScreen(
                             },
                             shape = RoundedCornerShape(23.dp),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = animatedButtonBg.copy(alpha = 0.9f),
+                                containerColor = animatedBg.copy(alpha = 0.9f),
                                 contentColor = DynamicContentColor
                             ),
                             border = null,
@@ -210,7 +210,7 @@ fun NewDesignMovieDetailScreen(
                             onClick = {/*TODO: Действие*/ },
                             shape = RoundedCornerShape(23.dp),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = animatedButtonBg.copy(alpha = 0.9f),
+                                containerColor = animatedBg.copy(alpha = 0.9f),
                                 contentColor = DynamicContentColor
                             ),
                             border = null,
