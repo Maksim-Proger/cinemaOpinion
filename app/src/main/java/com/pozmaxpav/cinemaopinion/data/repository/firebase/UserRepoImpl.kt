@@ -60,22 +60,4 @@ class UserRepoImpl @Inject constructor(
             throw Exception("User ID is missing")
         }
     }
-
-    override suspend fun getUsers(): List<DomainUserModel> {
-        val snapshot = databaseReference.child(CoreDatabaseConstants.NODE_LIST_USERS).get().await()
-        return snapshot.children.mapNotNull { childrenSnapshot ->
-            childrenSnapshot.getValue(DomainUserModel::class.java)
-        }
-            .map {
-                DomainUserModel(
-                    id = it.id,
-                    nikName = it.nikName,
-                    email = it.email,
-                    password = it.password,
-                    awards = it.awards,
-                    professionalPoints = it.professionalPoints,
-                    seasonalEventPoints = it.seasonalEventPoints
-                )
-            }
-    }
 }

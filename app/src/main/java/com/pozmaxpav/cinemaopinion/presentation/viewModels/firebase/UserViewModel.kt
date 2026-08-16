@@ -12,7 +12,6 @@ import com.example.backend.BackendUploadAvatarUseCase
 import com.example.core.domain.DomainUserModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.user.GetUserDataUseCase
-import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.user.GetUsersUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.user.UpdateSpecificFieldUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.user.UpdatingUserDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,7 +35,6 @@ private const val MAX_AVATAR_SIZE_BYTES = 5 * 1024 * 1024
 class UserViewModel @Inject constructor(
     private val updatingUserDataUseCase: UpdatingUserDataUseCase,
     private val updateSpecificFieldUseCase: UpdateSpecificFieldUseCase,
-    private val getUsersUseCase: GetUsersUseCase,
     private val getUserDataUseCase: GetUserDataUseCase,
     private val uploadAvatarUseCase: BackendUploadAvatarUseCase,
     @ApplicationContext private val context: Context,
@@ -56,9 +54,6 @@ class UserViewModel @Inject constructor(
 
     private val _seasonalEventPoints = MutableStateFlow(0L)
     val seasonalEventPoints = _seasonalEventPoints.asStateFlow()
-
-    private val _listAwards = MutableStateFlow("")
-    val listAwards = _listAwards.asStateFlow()
 
     fun getUserData(userId: String) {
         viewModelScope.launch {
@@ -96,33 +91,21 @@ class UserViewModel @Inject constructor(
             }
         }
     }
-    fun getAwardsList(userId: String) {
-        viewModelScope.launch {
-            try {
-                val userData = getUserDataUseCase(userId)
-                userData?.let { _listAwards.value = it.awards }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
     private fun updateAwardsList(userId: String, newAward: String) {
         viewModelScope.launch {
             try {
-                val userData = getUserDataUseCase(userId)
-                userData?.let {
-                    val currentAwards = it.awards
+                val currentAwards = _userData.value?.awards
+                    ?: getUserDataUseCase(userId)?.awards
+                    ?: return@launch
 
-                    // Проверяем, есть ли уже такая награда в списке
-                    if (currentAwards.contains(newAward)) {
-                        return@launch
-                    }
+                // Проверяем, есть ли уже такая награда в списке
+                if (currentAwards.contains(newAward)) return@launch
 
-                    val updatedAwards = if (currentAwards.isEmpty()) newAward
-                    else "$currentAwards,$newAward"
+                val updatedAwards = if (currentAwards.isEmpty()) newAward
+                else "$currentAwards,$newAward"
 
-                    updateSpecificField(userId, "awards", updatedAwards)
-                }
+                updateSpecificFieldUseCase(userId, "awards", updatedAwards)
+                _userData.value = _userData.value?.copy(awards = updatedAwards)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -130,30 +113,26 @@ class UserViewModel @Inject constructor(
     }
     fun updatingEventData(userId: String) {
         viewModelScope.launch {
-            var points = _seasonalEventPoints.value
-
-            if (_seasonalEventPoints.value < 80L) {
-                points += 20L
-                _seasonalEventPoints.value = points
-                updateSpecificField(userId, "seasonalEventPoints", points)
-            }
-
-            if (points == 40L) {
-                updateAwardsList(userId, R.drawable.half_done.toString())
-            }
-
-            if (points == 80L) {
-                updateAwardsList(userId, R.drawable.complete_passage.toString())
-            }
-        }
-    }
-    private fun updateSpecificField(userId: String, fieldName: String, newValue: Any) {
-        viewModelScope.launch {
             try {
-                updateSpecificFieldUseCase(userId, fieldName, newValue)
+                var points = _seasonalEventPoints.value
+
+                if (_seasonalEventPoints.value < 80L) {
+                    points += 20L
+                    _seasonalEventPoints.value = points
+                    updateSpecificFieldUseCase(userId, "seasonalEventPoints", points)
+                }
+
+                if (points == 40L) {
+                    updateAwardsList(userId, R.drawable.half_done.toString())
+                }
+
+                if (points == 80L) {
+                    updateAwardsList(userId, R.drawable.complete_passage.toString())
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+
         }
     }
     fun uploadAvatar(userId: String, uri: Uri) {

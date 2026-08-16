@@ -1,6 +1,12 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.speech.RecognizerIntent
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +39,7 @@ import com.example.ui.presentation.components.fab.FABMenu
 import com.example.ui.presentation.components.lottie.AnimationImplementation
 import com.example.ui.presentation.components.topappbar.TopAppBarMainScreen
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.components.alertdialogs.VoiceCommandDialog
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSpecial
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.NewDesignMovieDetailScreen
 import com.pozmaxpav.cinemaopinion.presentation.components.items.fabMenuItems
@@ -40,10 +47,14 @@ import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.Adap
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
+import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.VoiceCommandState
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilities.SendRequestAdvancedSearch
 import com.pozmaxpav.cinemaopinion.utilities.SendSelectedDate
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
+import com.pozmaxpav.cinemaopinion.utilities.showToast
 import com.pozmaxpav.cinemaopinion.utilities.showToast2
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,6 +63,7 @@ fun ScaffoldMainScreen(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
     apiViewModel: ApiViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
     onExit: () -> Unit = {}
 ) {
 
@@ -71,6 +83,7 @@ fun ScaffoldMainScreen(
     }
 
     val userId by systemViewModel.userId.collectAsState()
+    val userData by userViewModel.userData.collectAsState()
     val loadingState by apiViewModel.loadingState.collectAsState()
     val showDialogEvents by systemViewModel.resultChecking.collectAsState()
     // endregion
@@ -90,9 +103,30 @@ fun ScaffoldMainScreen(
 
     // endregion
 
+    // region Voice command
+    val seriesControlViewModel: SeriesControlViewModel = hiltViewModel()
+    val voiceCommandState by seriesControlViewModel.voiceCommandState.collectAsState()
+
+    val speechRecognitionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val spokenText = result.data
+            ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            ?.firstOrNull()
+        if (result.resultCode == Activity.RESULT_OK && !spokenText.isNullOrBlank()) {
+            seriesControlViewModel.applyVoiceCommand(userId, spokenText)
+        }
+    }
+    // endregion
+
     LaunchedEffect(Unit) {
         systemViewModel.getUserId()
         notViewModel.getStatus()
+    }
+    LaunchedEffect(userId) {
+        if (userId != "Unknown") {
+            userViewModel.getUserData(userId)
+        }
     }
     LaunchedEffect(state.searchCompleted.value) {
         if (state.searchCompleted.value) {
@@ -129,7 +163,10 @@ fun ScaffoldMainScreen(
             ) {
                 TopAppBarMainScreen(
                     title = "Фильмы",
-                    onAccountButtonClick = { state.onAccountButtonClick.value = true },
+                    onAccountButtonClick = {
+                        if (userData != null) state.onAccountButtonClick.value = true
+                        else showToast2(context, "Данные еще не загружены")
+                    },
                     scrollBehavior = scrollBehavior,
                     onTransitionAction = {
                         navigateFunction(
@@ -162,6 +199,24 @@ fun ScaffoldMainScreen(
                         isScrolling = isScrolling,
                         onDatePickerToggle = {
                             state.showDatePicker.value = !state.showDatePicker.value
+                        },
+                        onVoiceCommandClick = {
+                            try {
+                                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                                    putExtra(
+                                        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                                    )
+                                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU")
+                                    putExtra(
+                                        RecognizerIntent.EXTRA_PROMPT,
+                                        context.getString(R.string.voice_command_prompt)
+                                    )
+                                }
+                                speechRecognitionLauncher.launch(intent)
+                            } catch (e: ActivityNotFoundException) {
+                                showToast(context, R.string.voice_recognition_unavailable)
+                            }
                         }
                     )
                 )
@@ -240,7 +295,45 @@ fun ScaffoldMainScreen(
     PreviewOverlay(state, showDialogEvents)
     PageDescriptionOverlay(state, systemViewModel)
     SearchFilterScreenOverlay(state)
-    AccountScreenOverlay(userId, state, navController)
+    AccountScreenOverlay(userId, userData, state, navController)
+
+    when (val commandState = voiceCommandState) {
+        is VoiceCommandState.AwaitingConfirmation -> {
+            VoiceCommandDialog(
+                updated = commandState.updated,
+                onConfirm = {
+                    seriesControlViewModel.confirmVoiceCommand(userId)
+                    showToast(context, R.string.voice_command_applied)
+                },
+                onDismiss = { seriesControlViewModel.resetVoiceCommandState() }
+            )
+        }
+        VoiceCommandState.NotRecognized -> {
+            LaunchedEffect(commandState) {
+                showToast(context, R.string.voice_command_not_recognized)
+                seriesControlViewModel.resetVoiceCommandState()
+            }
+        }
+        is VoiceCommandState.TitleNotFound -> {
+            LaunchedEffect(commandState) {
+                showToast2(
+                    context,
+                    context.getString(R.string.voice_command_title_not_found, commandState.title)
+                )
+                seriesControlViewModel.resetVoiceCommandState()
+            }
+        }
+        is VoiceCommandState.NoNumericSeasons -> {
+            LaunchedEffect(commandState) {
+                showToast2(
+                    context,
+                    context.getString(R.string.voice_command_no_numeric_seasons, commandState.title)
+                )
+                seriesControlViewModel.resetVoiceCommandState()
+            }
+        }
+        VoiceCommandState.Idle -> Unit
+    }
 
 }
 
