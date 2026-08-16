@@ -13,3 +13,7 @@ val FilmDeleteColor = Color(0xFFB81E31)
 
 val DynamicContentColor = Color.White
 val RatingBadgeColor = Color(0xFFF5C518)
+
+val SplashGradientTop = Slate10
+val SplashGradientMiddle = Sand20
+val SplashGradientBottom = Sand45

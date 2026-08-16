@@ -73,6 +73,9 @@ android {
 }
 
 dependencies {
+    // SplashScreen
+    implementation(libs.android.core.splashscreen)
+
     // Palette API
     implementation("androidx.palette:palette:1.0.0")
 

@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".MainApplication"
@@ -23,7 +24,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.CinemaOpinion">
+            android:theme="@style/Theme.CinemaOpinion.Splash">
 
             <meta-data
                 android:name="android.app.shortcuts"

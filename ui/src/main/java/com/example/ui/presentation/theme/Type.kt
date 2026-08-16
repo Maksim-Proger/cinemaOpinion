@@ -15,6 +15,10 @@ val christmasFont = FontFamily(
     Font(R.font.bad_script)
 )
 
+val splashFontFamily = FontFamily(
+    Font(R.font.inter)
+)
+
 val Typography = Typography(
 
     labelMedium = TextStyle(
