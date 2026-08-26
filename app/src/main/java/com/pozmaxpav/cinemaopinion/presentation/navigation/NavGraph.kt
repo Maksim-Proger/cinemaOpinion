@@ -15,7 +15,7 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.SeriesContro
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.main.ScaffoldMainScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ApiListScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.InternalSharedList
-import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.ListSelectedMovies
+import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.PersonalListScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.NotificationsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.EditProfileScreen
@@ -58,7 +58,7 @@ fun NavGraph(
             SeriesControlScreen(navController, systemViewModel)
         }
         composable(Route.ListSelectedMovies.route) {
-            ListSelectedMovies(navController, systemViewModel)
+            PersonalListScreen(navController, systemViewModel)
         }
         composable(
             Route.SettingsScreen.route,

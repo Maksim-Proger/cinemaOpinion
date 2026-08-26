@@ -215,9 +215,6 @@ fun SharedListScreen(
                             onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
                         )
                     },
-                    skipButton = {
-                        // TODO: Реализовать логику для кнопки не буду смотреть!
-                    },
                     sendToWaitingList = {
                         CustomTextButton(
                             textButton = context.getString(R.string.button_open_waiting_list),

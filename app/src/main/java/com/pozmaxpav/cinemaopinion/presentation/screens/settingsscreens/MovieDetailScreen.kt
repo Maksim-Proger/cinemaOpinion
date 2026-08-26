@@ -146,29 +146,9 @@ fun MovieDetailScreen(
                 DetailsCardSelectedMovie(
                     movie = movie,
                     navController = navController,
-                    commentButton = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_leave_comment),
-                            imageVector = Icons.Default.AddComment,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openBottomSheetComments = !openBottomSheetComments }
-                        )
-                    },
-                    reviews = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_show_response),
-                            imageVector = Icons.Default.CommentBank,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
-                        )
-                    },
-                    onCloseButton = {
-                        navigateFunction(navController, Route.MainScreen.route)
-                    }
+                    commentButton = { openBottomSheetComments = !openBottomSheetComments },
+                    reviews = { openBottomSheetReviews = !openBottomSheetReviews },
+                    onCloseButton = { navigateFunction(navController, Route.MainScreen.route) }
                 )
             }
         } else {

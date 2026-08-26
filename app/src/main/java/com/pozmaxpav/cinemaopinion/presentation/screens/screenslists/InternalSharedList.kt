@@ -173,16 +173,7 @@ fun InternalSharedList(
                     userId = userId,
                     navController = navController,
                     needComment = false,
-                    reviews = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_show_response),
-                            imageVector = Icons.Default.CommentBank,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
-                        )
-                    },
+                    reviews = { openBottomSheetReviews = !openBottomSheetReviews },
                     onCloseButton = { selectedMovie = null }
                 )
                 AdaptiveBackHandler { selectedMovie = null }

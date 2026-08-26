@@ -22,9 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.CommentBank
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,15 +48,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.core.utils.state.LoadingState
-import com.example.ui.presentation.components.CustomBottomSheet
-import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
 import com.example.ui.presentation.theme.cardAccent
 import com.example.ui.presentation.theme.onCardAccent
 import com.pozmaxpav.cinemaopinion.R
-import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainCommentModel
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSelectedMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
@@ -68,14 +63,11 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovi
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
-import com.pozmaxpav.cinemaopinion.utilities.AddComment
-import com.pozmaxpav.cinemaopinion.utilities.ChangeComment
-import com.pozmaxpav.cinemaopinion.utilities.ShowCommentList
 import com.pozmaxpav.cinemaopinion.utilities.showToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListSelectedMovies(
+fun PersonalListScreen(
     navController: NavHostController,
     systemViewModel: SystemViewModel,
     personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
@@ -90,13 +82,8 @@ fun ListSelectedMovies(
     val listSelectedMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
     val userId by systemViewModel.userId.collectAsState()
     val userData by userViewModel.userData.collectAsState()
-
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
-    var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
-    var openBottomSheetComments by remember { mutableStateOf(false) }
-    var openBottomSheetChange by remember { mutableStateOf(false) }
     var triggerOnClickSharedMovie by remember { mutableStateOf(false) }
-    var openBottomSheetReviews by remember { mutableStateOf(false) }
 
     val isAtTop by remember {
         derivedStateOf {
@@ -127,94 +114,17 @@ fun ListSelectedMovies(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            userData?.let { user ->
-                selectedComment?.let { comment ->
-                    if (user.nikName == comment.username) {
-                        if (openBottomSheetChange) {
-                            CustomBottomSheet(
-                                onCloseRequest = { openBottomSheetChange = false }
-                            ) { onClose ->
-                                selectedMovie?.let { movie ->
-                                    ChangeComment(
-                                        userId = user.id,
-                                        userName = user.nikName,
-                                        selectedMovieId = movie.id,
-                                        selectedComment = comment,
-                                        fraction = 0.7f,
-                                        viewModel = personalMovieViewModel,
-                                        onClose = onClose
-                                    )
-                                }
-                            }
-                            AdaptiveBackHandler { openBottomSheetChange = false }
-                        }
-                    }
-                }
-            }
-
-            if (openBottomSheetComments) {
-                CustomBottomSheet(
-                    onCloseRequest = { openBottomSheetComments = false }
-                ) { onClose ->
-                    AddComment(
-                        dataUser = userData,
-                        fraction = 0.7f,
-                        viewModel = personalMovieViewModel,
-                        selectedItem = selectedMovie,
-                        context = context,
-                        onClick = onClose
-                    )
-                }
-                AdaptiveBackHandler { openBottomSheetComments = false }
-            }
 
             selectedMovie?.let { movie ->
-                if (openBottomSheetReviews) {
-                    CustomBottomSheet(
-                        onCloseRequest = { openBottomSheetReviews = false }
-                    ) { onClose ->
-                        ShowCommentList(
-                            userId = userId,
-                            selectedMovieId = movie.id,
-                            viewModel = personalMovieViewModel,
-                            fraction = 0.7f,
-                            onClick = { comment ->
-                                selectedComment = comment
-                                openBottomSheetChange = true
-                            },
-                            onClose = onClose
-                        )
-                    }
-                    AdaptiveBackHandler { openBottomSheetReviews = false }
-                }
-
                 DetailsCardSelectedMovie(
                     movie = movie,
                     userId = userId,
                     navController = navController,
-                    commentButton = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_leave_comment),
-                            imageVector = Icons.Default.AddComment,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openBottomSheetComments = !openBottomSheetComments }
-                        )
-                    },
-                    reviews = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_show_response),
-                            imageVector = Icons.Default.CommentBank,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
-                        )
-                    },
+                    needSkipButton = false,
+                    needFavoritesButton = false,
+                    needComment = false,
                     onCloseButton = { selectedMovie = null }
                 )
-
                 AdaptiveBackHandler { selectedMovie = null }
             }
 

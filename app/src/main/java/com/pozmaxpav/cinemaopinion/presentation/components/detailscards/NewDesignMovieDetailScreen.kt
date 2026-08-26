@@ -204,26 +204,6 @@ fun NewDesignMovieDetailScreen(
                             )
                         }
                         // endregion
-
-                        // region Кнопка Просмотрен
-                        OutlinedButton(
-                            onClick = {/*TODO: Действие*/ },
-                            shape = RoundedCornerShape(23.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = animatedBg.copy(alpha = 0.9f),
-                                contentColor = DynamicContentColor
-                            ),
-                            border = null,
-                            contentPadding = PaddingValues(10.dp),
-                            modifier = Modifier.size(48.dp)
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(26.dp),
-                                imageVector = Icons.Default.RemoveRedEye,
-                                contentDescription = null
-                            )
-                        }
-                        // endregion
                     }
                 }
                 // endregion
@@ -258,21 +238,13 @@ fun NewDesignMovieDetailScreen(
                         label = stringResource(R.string.text_buttons_recommend_film),
                         accentColor = animatedAccent,
                         borderColor = animatedAccent,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = { openSharedLists = true }
-                    )
-                    ActionButton(
-                        icon = Icons.Default.CommentBank,
-                        label = "Отзывы",
-                        accentColor = animatedAccent,
-                        borderColor = animatedAccent,
-                        modifier = Modifier.weight(1f),
-                        onClick = { /*TODO: Действие*/ }
                     )
                 }
                 // endregion
 
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(10.dp))
                 ExpandedCard(
                     title = stringResource(R.string.text_for_expandedCard_field),
                     description = info?.description ?: stringResource(R.string.limit_is_over),
