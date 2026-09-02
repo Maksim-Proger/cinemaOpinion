@@ -52,6 +52,7 @@ import androidx.navigation.NavHostController
 import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WAITING_CONTINUATION_SERIES
 import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_MOVIES
 import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_WATCHED_MOVIES
+import com.example.ui.presentation.components.ActionButton
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
@@ -163,7 +164,8 @@ fun SharedListScreen(
                         selectedItem = selectedMovie,
                         fraction = 0.7f,
                         context = context,
-                        onClick = onClose
+                        onClick = onClose,
+                        onClose = onClose
                     )
                 }
                 AdaptiveBackHandler { openBottomSheetComments = false }
@@ -181,6 +183,14 @@ fun SharedListScreen(
                             listId = listId,
                             dataSource = NODE_SHARED_LIST_MOVIES,
                             fraction = 0.7f,
+                            addCommentButton = {
+                                ActionButton(
+                                    icon = Icons.Default.AddComment,
+                                    label = context.getString(R.string.button_leave_comment),
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
+                                    onClick = { openBottomSheetComments = !openBottomSheetComments }
+                                )
+                            },
                             onClick = { comment ->
                                 selectedComment = comment
                                 openBottomSheetChange = true
@@ -195,48 +205,18 @@ fun SharedListScreen(
                     movie = movie,
                     userId = userId,
                     navController = navController,
-                    commentButton = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_leave_comment),
-                            imageVector = Icons.Default.AddComment,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openBottomSheetComments = !openBottomSheetComments }
-                        )
-                    },
-                    reviews = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_show_response),
-                            imageVector = Icons.Default.CommentBank,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
-                        )
-                    },
-                    skipButton = {
-                        // TODO: Реализовать логику для кнопки не буду смотреть!
-                    },
+                    needReviews = true,
+                    reviews = { openBottomSheetReviews = !openBottomSheetReviews },
                     sendToWaitingList = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_open_waiting_list),
-                            imageVector = Icons.Outlined.PostAdd,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = {
-                                selectedMovie?.let { movie ->
-                                    sharedListsViewModel.moveMovie(
-                                        listId = listId,
-                                        sourceNode = NODE_SHARED_LIST_MOVIES,
-                                        destination = NODE_LIST_WAITING_CONTINUATION_SERIES,
-                                        movieId = movie.id
-                                    )
-                                    selectedMovie = null
-                                }
-                            }
-                        )
+                        selectedMovie?.let { movie ->
+                            sharedListsViewModel.moveMovie(
+                                listId = listId,
+                                sourceNode = NODE_SHARED_LIST_MOVIES,
+                                destination = NODE_LIST_WAITING_CONTINUATION_SERIES,
+                                movieId = movie.id
+                            )
+                            selectedMovie = null
+                        }
                     },
                     sendToArchive = {
                         CustomTextButton(

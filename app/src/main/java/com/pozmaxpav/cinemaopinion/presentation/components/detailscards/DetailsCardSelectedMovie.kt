@@ -1,38 +1,43 @@
 package com.pozmaxpav.cinemaopinion.presentation.components.detailscards
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.filled.CommentBank
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.PostAdd
+import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.outlined.PostAdd
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,17 +47,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.ExpandedCard
+import com.example.ui.presentation.theme.DynamicContentColor
+import com.example.ui.presentation.theme.RatingBadgeColor
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
@@ -63,17 +73,25 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesContro
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.utilities.showToast
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsCardSelectedMovie(
     movie: DomainSelectedMovieModel,
     userId: String = "",
     navController: NavHostController,
-    needComment: Boolean = true,
-    skipButton: @Composable () -> Unit = {},
-    sendToWaitingList: @Composable () -> Unit = {},
+
+    sendToWaitingList: () -> Unit = {},
     sendToArchive: @Composable () -> Unit = {},
-    reviews: @Composable () -> Unit = {},
-    commentButton: @Composable () -> Unit = {},
+
+    needSkipButton: Boolean = true,
+    needFavoritesButton: Boolean = true,
+
+    needReviews: Boolean = true,
+    reviews: () -> Unit = {},
+
+    needButtonWaitingList: Boolean = true,
+
+
     apiViewModel: ApiViewModel = hiltViewModel(),
     personalViewModel: PersonalMovieViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel(),
@@ -90,6 +108,15 @@ fun DetailsCardSelectedMovie(
     val info by apiViewModel.movieInfo.collectAsState()
     val detailedInfo by apiViewModel.detailedInfo.collectAsState()
 
+    val posterAlpha by animateFloatAsState(
+        targetValue = (1f - scrollState.value / 600f).coerceIn(0f, 1f),
+        animationSpec = tween(0),
+        label = "posterAlpha"
+    )
+
+    val (animatedBg, animatedTitle, animatedAccent) =
+        rememberDynamicPaletteColors(imageUrl = movie.posterUrl)
+
     LaunchedEffect(triggerOnClickPersonalMovie) {
         if (triggerOnClickPersonalMovie) {
             personalViewModel.toastMessage.collect { resId ->
@@ -105,154 +132,246 @@ fun DetailsCardSelectedMovie(
         apiViewModel.getSearchMovieById(movie.id)
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(animatedBg)
+            .padding(WindowInsets.statusBars.asPaddingValues())
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(WindowInsets.statusBars.asPaddingValues())
+                .verticalScroll(scrollState)
         ) {
-            Card(
+            Box(
                 modifier = Modifier
-                    .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                )
+                    .height(600.dp)
+                    .graphicsLayer { alpha = posterAlpha }
             ) {
+                // region Poster image
+                AsyncImage(
+                    model = movie.posterUrl,
+                    contentDescription = movie.nameFilm,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                // endregion
 
-                // region Верхние кнопки
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Column {
+                    // region Верхние кнопки
                     Row(
-                        modifier = Modifier.wrapContentWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(25.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(TopAppBarDefaults.TopAppBarExpandedHeight)
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = onCloseButton) {
+                        // region Кнопка Назад
+                        OutlinedButton(
+                            onClick = onCloseButton,
+                            shape = RoundedCornerShape(23.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = animatedBg.copy(alpha = 0.9f),
+                                contentColor = DynamicContentColor
+                            ),
+                            border = null,
+                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp)
+                        ) {
                             Icon(
-                                modifier = Modifier.size(33.dp),
+                                modifier = Modifier.size(23.dp),
                                 imageVector = Icons.Default.ArrowBackIosNew,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.secondary
+                                contentDescription = null
+                            )
+                            Spacer(Modifier.width(5.dp))
+                            Text(
+                                modifier = Modifier.padding(end = 10.dp),
+                                text = stringResource(R.string.button_back),
+                                style = MaterialTheme.typography.titleLarge
                             )
                         }
+                        //endregion
+
+                        // region Тип
                         Row(
                             modifier = Modifier
                                 .background(
-                                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
-                                    shape = RoundedCornerShape(16.dp)
+                                    color = animatedBg.copy(alpha = 0.9f),
+                                    shape = RoundedCornerShape(23.dp)
                                 )
-                                .padding(horizontal = 10.dp, vertical = 6.dp)
                         ) {
                             Text(
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                                color = DynamicContentColor,
                                 text = decoderTypeMovie(detailedInfo?.type),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSecondary
+                                style = MaterialTheme.typography.titleLarge
                             )
                         }
+                        // endregion
                     }
-                    Row(
-                        modifier = Modifier.wrapContentWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(25.dp),
-                        verticalAlignment = Alignment.CenterVertically
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 14.dp),
+                        horizontalAlignment = Alignment.End,
+                        verticalArrangement = Arrangement.spacedBy(7.dp)
                     ) {
 
-                        if (detailedInfo?.type == "TV_SERIES" || detailedInfo?.type == "MINI_SERIES") {
+                        // region Кнопка Избранное
+                        if (needFavoritesButton) {
+                            OutlinedButton(
+                                onClick = {
+                                    personalViewModel.addMovie(userId, selectedMovie = movie)
+                                    triggerOnClickPersonalMovie = true
+                                },
+                                shape = RoundedCornerShape(23.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = animatedBg.copy(alpha = 0.9f),
+                                    contentColor = DynamicContentColor
+                                ),
+                                border = null,
+                                contentPadding = PaddingValues(10.dp),
+                                modifier = Modifier.size(48.dp)
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(26.dp),
+                                    imageVector = Icons.Default.Favorite,
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                        // endregion
 
-                            IconButton(
+                        // region Кнопка Просмотрен
+                        if (needSkipButton) {
+                            OutlinedButton(
+                                onClick = { /*TODO: Действие*/ },
+                                shape = RoundedCornerShape(23.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = animatedBg.copy(alpha = 0.9f),
+                                    contentColor = DynamicContentColor
+                                ),
+                                border = null,
+                                contentPadding = PaddingValues(10.dp),
+                                modifier = Modifier.size(48.dp)
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(26.dp),
+                                    imageVector = Icons.Default.RemoveRedEye,
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                        // endregion
+
+                        // region Кнопка контроль серий
+                        if (
+                            detailedInfo?.type == "TV_SERIES" ||
+                            detailedInfo?.type == "MINI_SERIES"
+                        ) {
+                            OutlinedButton(
                                 onClick = {
                                     seriesViewModel.addNewEntry(userId, movie.nameFilm)
                                     showToast(context, R.string.Series_control_start)
-                                }
+                                },
+                                shape = RoundedCornerShape(23.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = animatedBg.copy(alpha = 0.9f),
+                                    contentColor = DynamicContentColor
+                                ),
+                                border = null,
+                                contentPadding = PaddingValues(10.dp),
+                                modifier = Modifier.size(48.dp)
                             ) {
                                 Icon(
                                     modifier = Modifier.size(37.dp),
                                     imageVector = Icons.Default.Add,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.secondary
+                                    contentDescription = null
                                 )
                             }
                         }
-
-                        IconButton(
-                            onClick = {
-                                personalViewModel.addMovie(userId, selectedMovie = movie)
-                                triggerOnClickPersonalMovie = true
-                            }
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(35.dp),
-                                imageVector = Icons.Default.FavoriteBorder,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.secondary
-                            )
-                        }
+                        // endregion
 
                     }
-                }
-                Spacer(Modifier.padding(vertical = 5.dp))
-                // endregion
-                
-                Column(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp)
-                        .verticalScroll(scrollState)
-                ) {
-                    DetailCardPoster(movie, detailedInfo)
-
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Spacer(Modifier.padding(15.dp))
-                        Text(
-                            text = movie.nameFilm,
-                            style = MaterialTheme.typography.displayLarge,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                        Spacer(Modifier.padding(vertical = 15.dp))
-                        Column(modifier = Modifier.fillMaxWidth()) {
-//                            ExpandedCard(
-//                                title = stringResource(R.string.text_for_expandedCard_field),
-//                                description = info?.description
-//                                    ?: stringResource(R.string.limit_is_over)
-//                            )
-                            Spacer(Modifier.padding(5.dp))
-                            CustomTextButton(
-                                textButton = context.getString(R.string.text_buttons_film_card_to_shared_list),
-                                imageVector = Icons.Outlined.PostAdd,
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                modifier = Modifier.fillMaxWidth(),
-                                onClickButton = { openSharedLists = true }
-                            )
-                            Spacer(Modifier.padding(5.dp))
-                            if (detailedInfo?.type == "TV_SERIES" || detailedInfo?.type == "MINI_SERIES") {
-                                sendToWaitingList()
-                                Spacer(Modifier.padding(5.dp))
-                            }
-                            if (needComment) {
-                                commentButton()
-                                Spacer(Modifier.padding(5.dp))
-                            }
-                            reviews()
-                            Spacer(Modifier.padding(5.dp))
-                            skipButton()
-                            Spacer(Modifier.padding(5.dp))
-                            sendToArchive()
-                            Spacer(Modifier.padding(10.dp))
-                        }
-                    }
+                    // endregion
                 }
             }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                Spacer(Modifier.height(7.dp))
+                RatingRow(movie = detailedInfo)
+
+                // region Title
+                Text(
+                    text = movie.nameFilm,
+                    style = MaterialTheme.typography.displayLarge,
+                    color = animatedTitle,
+                )
+                // endregion
+
+                Spacer(Modifier.height(20.dp))
+
+                // region Кнопки
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    ActionButton(
+                        icon = Icons.Outlined.PostAdd,
+                        label = context.getString(R.string.text_buttons_film_card_to_shared_list),
+                        accentColor = animatedAccent,
+                        borderColor = animatedAccent,
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { openSharedLists = true }
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    if (needReviews) {
+                        ActionButton(
+                            icon = Icons.Default.CommentBank,
+                            label = context.getString(R.string.button_show_response),
+                            accentColor = animatedAccent,
+                            borderColor = animatedAccent,
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = { reviews() }
+                        )
+                        Spacer(Modifier.height(10.dp))
+                    }
+                    if (
+                        needButtonWaitingList &&
+                        detailedInfo?.type == "TV_SERIES" ||
+                        detailedInfo?.type == "MINI_SERIES"
+                    ) {
+                        ActionButton(
+                            icon = Icons.Default.PostAdd,
+                            label = context.getString(R.string.button_open_waiting_list),
+                            accentColor = animatedAccent,
+                            borderColor = animatedAccent,
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = { sendToWaitingList() }
+                        )
+                        Spacer(Modifier.height(10.dp))
+                    }
+                }
+                // endregion
+
+
+                ExpandedCard(
+                    title = stringResource(R.string.text_for_expandedCard_field),
+                    description = info?.description ?: stringResource(R.string.limit_is_over),
+                    animatedAccent = animatedAccent,
+                    contentColor = DynamicContentColor
+                )
+                Spacer(Modifier.height(24.dp))
+            }
         }
+
+        // region Переработать под новое оформление
         if (openSharedLists) {
             Box(
                 modifier = Modifier
@@ -261,13 +380,12 @@ fun DetailsCardSelectedMovie(
                         color = Color.Black.copy(alpha = 0.5f),
                         shape = RoundedCornerShape(12.dp)
                     )
-                    .clickable { openSharedLists = false },
-                contentAlignment = Alignment.Center
+                    .clickable { openSharedLists = false }
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(26.dp),
+                        .padding(12.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -305,69 +423,105 @@ private fun decoderTypeMovie(type: String?): String {
 }
 
 @Composable
-private fun DetailCardPoster(
-    movie: DomainSelectedMovieModel,
-    detailedInfo: MovieData.MovieSearch?
-) {
+private fun RatingRow(movie: MovieData.MovieSearch?) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(bottom = 8.dp)
     ) {
-        Card(
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            modifier = Modifier
-                .width(220.dp)
-                .aspectRatio(2f / 3f)
+        Surface(
+            shape = RoundedCornerShape(6.dp),
+            color = RatingBadgeColor
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(20.dp))
-            ) {
-                AsyncImage(
-                    model = movie.posterUrl,
-                    contentDescription = movie.nameFilm,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    ShowRating(movie = detailedInfo)
-                }
-            }
+            Text(
+                text = "IMDB: ${movie?.ratingImdb ?: "Н/Д"}",
+                color = Color.Black,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+            )
+        }
+        Surface(
+            shape = RoundedCornerShape(6.dp),
+            color = RatingBadgeColor
+        ) {
+            Text(
+                text = "КП: ${movie?.ratingKinopoisk ?: "Н/Д"}",
+                color = Color.Black,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+            )
+        }
+        Surface(
+            shape = RoundedCornerShape(6.dp),
+            color = RatingBadgeColor
+        ) {
+            Text(
+                text = movie?.year ?: "Н/Д",
+                color = Color.Black,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+            )
+        }
+        Surface(
+            shape = RoundedCornerShape(6.dp),
+            color = RatingBadgeColor
+        ) {
+            Text(
+                text = "${movie?.filmLength ?: "Н/Д"} мин.",
+                color = Color.Black,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
+            )
         }
     }
 }
 
 @Composable
-private fun ShowRating(movie: MovieData.MovieSearch?) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
+private fun ActionButton(
+    icon: ImageVector,
+    label: String,
+    modifier: Modifier = Modifier,
+    accentColor: Color = MaterialTheme.colorScheme.secondary,
+    borderColor: Color = MaterialTheme.colorScheme.secondary,
+    onClick: () -> Unit = {}
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.height(42.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = Color.Transparent,
+            contentColor = DynamicContentColor
         ),
-        elevation = CardDefaults.cardElevation(8.dp)
+        border = ButtonDefaults.outlinedButtonBorder.copy(
+            brush = SolidColor(borderColor)
+        ),
+        contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(7.dp)
-        ) {
-            Text(
-                text = "КП: ${movie?.ratingKinopoisk ?: "Н/Д"}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = "IMDB: ${movie?.ratingImdb ?: "Н/Д"}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(16.dp),
+            tint = accentColor
+        )
+        Spacer(Modifier.width(4.dp))
+        Text(
+            text = label,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.5.sp
+        )
     }
-
 }
+
+
+//                    ActionButton(
+//                        onClick2 = { skipButton() }
+//                    )
+//                    ActionButton(
+//                        onClick2 = { sendToArchive() }
+//                    )

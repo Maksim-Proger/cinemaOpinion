@@ -156,8 +156,8 @@ fun EditProfileScreen(
                         .clip(CircleShape)
                         .clickable(enabled = !isUploadingAvatar) {
                             pickAvatarLauncher.launch(
-                                PickVisualMediaRequest(
-                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                                input = PickVisualMediaRequest(
+                                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
                                 )
                             )
                         }

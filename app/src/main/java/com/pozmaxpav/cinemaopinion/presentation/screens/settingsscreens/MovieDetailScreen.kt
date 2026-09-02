@@ -143,33 +143,13 @@ fun MovieDetailScreen(
 
         if (movie != null) {
             movie?.let { movie ->
-                DetailsCardSelectedMovie(
-                    movie = movie,
-                    navController = navController,
-                    commentButton = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_leave_comment),
-                            imageVector = Icons.Default.AddComment,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openBottomSheetComments = !openBottomSheetComments }
-                        )
-                    },
-                    reviews = {
-                        CustomTextButton(
-                            textButton = context.getString(R.string.button_show_response),
-                            imageVector = Icons.Default.CommentBank,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            onClickButton = { openBottomSheetReviews = !openBottomSheetReviews }
-                        )
-                    },
-                    onCloseButton = {
-                        navigateFunction(navController, Route.MainScreen.route)
-                    }
-                )
+//                DetailsCardSelectedMovie(
+//                    movie = movie,
+//                    navController = navController,
+//                    commentButton = { openBottomSheetComments = !openBottomSheetComments },
+//                    reviews = { openBottomSheetReviews = !openBottomSheetReviews },
+//                    onCloseButton = { navigateFunction(navController, Route.MainScreen.route) }
+//                )
             }
         } else {
             Box(
