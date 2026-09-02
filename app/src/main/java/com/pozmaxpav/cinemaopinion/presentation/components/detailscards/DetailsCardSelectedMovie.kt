@@ -89,6 +89,8 @@ fun DetailsCardSelectedMovie(
     needReviews: Boolean = true,
     reviews: () -> Unit = {},
 
+    needButtonWaitingList: Boolean = true,
+
 
     apiViewModel: ApiViewModel = hiltViewModel(),
     personalViewModel: PersonalMovieViewModel = hiltViewModel(),
@@ -112,7 +114,7 @@ fun DetailsCardSelectedMovie(
         label = "posterAlpha"
     )
 
-    val (animatedBg, animatedTitle, animatedAccent, animatedButtonBg) =
+    val (animatedBg, animatedTitle, animatedAccent) =
         rememberDynamicPaletteColors(imageUrl = movie.posterUrl)
 
     LaunchedEffect(triggerOnClickPersonalMovie) {
@@ -316,7 +318,7 @@ fun DetailsCardSelectedMovie(
                 Spacer(Modifier.height(20.dp))
 
                 // region Кнопки
-                Column (
+                Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -338,9 +340,13 @@ fun DetailsCardSelectedMovie(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = { reviews() }
                         )
+                        Spacer(Modifier.height(10.dp))
                     }
-                    Spacer(Modifier.height(10.dp))
-                    if (detailedInfo?.type == "TV_SERIES" || detailedInfo?.type == "MINI_SERIES") {
+                    if (
+                        needButtonWaitingList &&
+                        detailedInfo?.type == "TV_SERIES" ||
+                        detailedInfo?.type == "MINI_SERIES"
+                    ) {
                         ActionButton(
                             icon = Icons.Default.PostAdd,
                             label = context.getString(R.string.button_open_waiting_list),
@@ -349,12 +355,12 @@ fun DetailsCardSelectedMovie(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = { sendToWaitingList() }
                         )
-
+                        Spacer(Modifier.height(10.dp))
                     }
                 }
                 // endregion
 
-                Spacer(Modifier.height(10.dp))
+
                 ExpandedCard(
                     title = stringResource(R.string.text_for_expandedCard_field),
                     description = info?.description ?: stringResource(R.string.limit_is_over),
@@ -511,10 +517,6 @@ private fun ActionButton(
         )
     }
 }
-
-
-
-
 
 
 //                    ActionButton(

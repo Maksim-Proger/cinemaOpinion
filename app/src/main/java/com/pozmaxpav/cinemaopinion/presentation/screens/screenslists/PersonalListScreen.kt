@@ -123,6 +123,7 @@ fun PersonalListScreen(
                     needSkipButton = false,
                     needFavoritesButton = false,
                     needReviews = false,
+                    needButtonWaitingList = false,
                     onCloseButton = { selectedMovie = null }
                 )
                 AdaptiveBackHandler { selectedMovie = null }

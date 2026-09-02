@@ -31,6 +31,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,7 +56,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.backend.BackendApiProvider
 import com.example.core.domain.DomainUserModel
+import com.example.ui.presentation.theme.DynamicContentColor
 import com.example.ui.presentation.theme.cardAccent
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.AvatarImage
@@ -65,6 +68,7 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewMode
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.rememberDynamicPaletteColors
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListsScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
@@ -124,6 +128,7 @@ fun AccountScreen(
                     settingsButton = {
                         Box {
                             Buttons(
+                                userId = userId,
                                 icon = Icons.Default.MoreVert,
                                 onClick = { settingsMenuExpanded = true }
                             )
@@ -325,6 +330,7 @@ private fun HeroSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Buttons(
+                userId = userId,
                 icon = Icons.Default.Close,
                 onClick = closeScreenButton
             )
@@ -333,6 +339,8 @@ private fun HeroSection(
         // endregion
 
         // region Имя
+        val (animatedBg, animatedTitle, animatedAccent) =
+            rememberDynamicPaletteColors(imageUrl = BackendApiProvider.avatarUrl(userId))
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -341,7 +349,7 @@ private fun HeroSection(
         ) {
             Text(
                 text = name,
-                color = TextWhite,
+                color = animatedTitle,
                 fontSize = 34.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.5.sp
@@ -351,7 +359,7 @@ private fun HeroSection(
 
             Text(
                 text = email,
-                color = TextSubtle,
+                color = animatedTitle,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Normal,
                 letterSpacing = 0.2.sp
@@ -360,6 +368,8 @@ private fun HeroSection(
             Spacer(Modifier.height(16.dp))
 
             Achievements(
+                titleColor = animatedTitle,
+                brush = animatedAccent,
                 listAwards = listAwards,
                 onClick = {
                     navController.navigate(
@@ -378,19 +388,24 @@ private fun HeroSection(
 
 @Composable
 private fun Buttons(
+    userId: String,
     icon: ImageVector,
     onClick: () -> Unit
 ) {
+
+    val (animatedBg, animatedAccent) =
+        rememberDynamicPaletteColors(imageUrl = BackendApiProvider.avatarUrl(userId))
+
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier.height(42.dp),
         shape = RoundedCornerShape(50),
         border = ButtonDefaults.outlinedButtonBorder.copy(
-            brush = SolidColor(MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.30f))
+            brush = SolidColor(animatedAccent)
         ),
         colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.14f),
-            contentColor = MaterialTheme.colorScheme.onSecondary
+            containerColor = animatedBg.copy(alpha = 0.9f),
+            contentColor = DynamicContentColor
         )
     ) {
         Icon(
@@ -403,6 +418,8 @@ private fun Buttons(
 
 @Composable
 fun Achievements(
+    titleColor: Color,
+    brush: Color,
     listAwards: String,
     onClick: () -> Unit = {}
 ) {
@@ -413,8 +430,13 @@ fun Achievements(
     OutlinedButton(
         onClick = onClick,
         shape = RoundedCornerShape(50),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = titleColor.copy(alpha = 0.9f),
+            contentColor = DynamicContentColor,
+
+        ),
         border = ButtonDefaults.outlinedButtonBorder.copy(
-            brush = SolidColor(GlassBorder)
+            brush = SolidColor(brush)
         ),
         enabled = awards.isNotEmpty()
     ) {
