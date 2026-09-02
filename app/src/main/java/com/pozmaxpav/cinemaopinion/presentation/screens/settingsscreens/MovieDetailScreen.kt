@@ -143,13 +143,13 @@ fun MovieDetailScreen(
 
         if (movie != null) {
             movie?.let { movie ->
-                DetailsCardSelectedMovie(
-                    movie = movie,
-                    navController = navController,
-                    commentButton = { openBottomSheetComments = !openBottomSheetComments },
-                    reviews = { openBottomSheetReviews = !openBottomSheetReviews },
-                    onCloseButton = { navigateFunction(navController, Route.MainScreen.route) }
-                )
+//                DetailsCardSelectedMovie(
+//                    movie = movie,
+//                    navController = navController,
+//                    commentButton = { openBottomSheetComments = !openBottomSheetComments },
+//                    reviews = { openBottomSheetReviews = !openBottomSheetReviews },
+//                    onCloseButton = { navigateFunction(navController, Route.MainScreen.route) }
+//                )
             }
         } else {
             Box(

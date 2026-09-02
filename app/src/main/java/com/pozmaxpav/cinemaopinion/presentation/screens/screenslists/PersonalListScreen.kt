@@ -122,7 +122,7 @@ fun PersonalListScreen(
                     navController = navController,
                     needSkipButton = false,
                     needFavoritesButton = false,
-                    needComment = false,
+                    needReviews = false,
                     onCloseButton = { selectedMovie = null }
                 )
                 AdaptiveBackHandler { selectedMovie = null }

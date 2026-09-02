@@ -85,7 +85,7 @@
 
     <!--  Text Button  -->
     <string name="button_leave_comment">Оставить отзыв</string>
-    <string name="button_show_response">Показать отзывы</string>
+    <string name="button_show_response">Отзывы</string>
     <string name="button_send_to_archive">Просмотрен</string>
     <string name="button_add">Добавить</string>
     <string name="button_save">Сохранить</string>

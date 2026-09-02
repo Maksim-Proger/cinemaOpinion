@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,27 +19,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.CommentBank
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.PostAdd
 import androidx.compose.material.icons.filled.RemoveRedEye
-import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.PostAdd
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -55,7 +47,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
@@ -69,7 +60,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.ExpandedCard
 import com.example.ui.presentation.theme.DynamicContentColor
 import com.example.ui.presentation.theme.RatingBadgeColor
@@ -90,15 +80,15 @@ fun DetailsCardSelectedMovie(
     userId: String = "",
     navController: NavHostController,
 
-    sendToWaitingList: @Composable () -> Unit = {},
+    sendToWaitingList: () -> Unit = {},
     sendToArchive: @Composable () -> Unit = {},
 
     needSkipButton: Boolean = true,
     needFavoritesButton: Boolean = true,
 
-    reviews: @Composable () -> Unit = {},
-    needComment: Boolean = true,
-    commentButton: @Composable () -> Unit = {},
+    needReviews: Boolean = true,
+    reviews: () -> Unit = {},
+
 
     apiViewModel: ApiViewModel = hiltViewModel(),
     personalViewModel: PersonalMovieViewModel = hiltViewModel(),
@@ -339,15 +329,27 @@ fun DetailsCardSelectedMovie(
                         onClick = { openSharedLists = true }
                     )
                     Spacer(Modifier.height(10.dp))
-                    if (needComment) {
+                    if (needReviews) {
                         ActionButton(
                             icon = Icons.Default.CommentBank,
-                            label = "Отзывы",
+                            label = context.getString(R.string.button_show_response),
                             accentColor = animatedAccent,
                             borderColor = animatedAccent,
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = { /*TODO: Действие*/ }
+                            onClick = { reviews() }
                         )
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    if (detailedInfo?.type == "TV_SERIES" || detailedInfo?.type == "MINI_SERIES") {
+                        ActionButton(
+                            icon = Icons.Default.PostAdd,
+                            label = context.getString(R.string.button_open_waiting_list),
+                            accentColor = animatedAccent,
+                            borderColor = animatedAccent,
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = { sendToWaitingList() }
+                        )
+
                     }
                 }
                 // endregion
@@ -479,8 +481,7 @@ private fun ActionButton(
     modifier: Modifier = Modifier,
     accentColor: Color = MaterialTheme.colorScheme.secondary,
     borderColor: Color = MaterialTheme.colorScheme.secondary,
-    onClick: () -> Unit = {},
-    onClick2: @Composable () -> Unit = {}
+    onClick: () -> Unit = {}
 ) {
     OutlinedButton(
         onClick = onClick,
@@ -513,36 +514,8 @@ private fun ActionButton(
 
 
 
-//                    if (needComment) {
-//                        Row(
-//                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-//                            modifier = Modifier.fillMaxWidth()
-//                        ) {
-//                            ActionButton(
-//                                icon = Icons.Default.AddComment,
-//                                label = context.getString(R.string.button_leave_comment),
-//                                accentColor = animatedAccent,
-//                                borderColor = animatedAccent,
-//                                modifier = Modifier.weight(1f),
-//                                onClick2 = { commentButton() }
-//                            )
-//
-//                            ActionButton(
-//                                icon = Icons.Default.CommentBank,
-//                                label = context.getString(R.string.button_show_response),
-//                                accentColor = animatedAccent,
-//                                borderColor = animatedAccent,
-//                                modifier = Modifier.weight(1f),
-//                                onClick2 = { reviews() }
-//                            )
-//                        }
-//
-//                    }
 
 
-//                    if (detailedInfo?.type == "TV_SERIES" || detailedInfo?.type == "MINI_SERIES") {
-//                        sendToWaitingList()
-//                    }
 
 //                    ActionButton(
 //                        onClick2 = { skipButton() }

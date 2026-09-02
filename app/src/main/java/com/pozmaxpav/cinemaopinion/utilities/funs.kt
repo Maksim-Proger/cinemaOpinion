@@ -260,6 +260,7 @@ fun ShowCommentList(
     listId: String = "",
     dataSource: String = "",
     fraction: Float,
+    addCommentButton: @Composable () -> Unit = {},
     onClick: (DomainCommentModel) -> Unit,
     onClose: () -> Unit
 ) {
@@ -271,8 +272,9 @@ fun ShowCommentList(
             .padding(horizontal = 16.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
+            modifier = Modifier.fillMaxWidth().padding(vertical = 7.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onClose) {
                 Icon(
@@ -282,6 +284,7 @@ fun ShowCommentList(
                     tint = MaterialTheme.colorScheme.secondary
                 )
             }
+            addCommentButton()
         }
 
         when (viewModel) {
@@ -434,6 +437,7 @@ fun AddComment(
     selectedItem: DomainSelectedMovieModel?,
     context: Context,
     notificationViewModel: NotificationViewModel = hiltViewModel(),
+    onClose: () -> Unit,
     onClick: () -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -447,6 +451,22 @@ fun AddComment(
             .fillMaxHeight(fraction)
             .padding(horizontal = 16.dp)
     ) {
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 7.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onClose) {
+                Icon(
+                    modifier = Modifier.size(35.dp),
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+            }
+        }
+
         CustomTextFieldForComments(
             value = comment,
             onValueChange = setComment,
