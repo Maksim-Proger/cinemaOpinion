@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -262,7 +261,7 @@ fun ShowCommentList(
     fraction: Float,
     addCommentButton: @Composable () -> Unit = {},
     onClick: (DomainCommentModel) -> Unit,
-    onClose: () -> Unit
+    onClickCloseButton: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -276,7 +275,7 @@ fun ShowCommentList(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onClose) {
+            IconButton(onClick = onClickCloseButton) {
                 Icon(
                     modifier = Modifier.size(35.dp),
                     imageVector = Icons.Default.ArrowBackIosNew,
@@ -327,7 +326,7 @@ fun ShowCommentList(
 
                 LaunchedEffect(listId, selectedMovieId) {
                     if (listId.isNotEmpty()) {
-//                        viewModel.observeComments(listId, selectedMovieId)
+                        viewModel.observeComments(listId, selectedMovieId)
                         viewModel.getComments(listId, selectedMovieId, dataSource)
                     }
                 }
@@ -437,7 +436,7 @@ fun AddComment(
     selectedItem: DomainSelectedMovieModel?,
     context: Context,
     notificationViewModel: NotificationViewModel = hiltViewModel(),
-    onClose: () -> Unit,
+    onClickCloseButton: () -> Unit,
     onClick: () -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -457,7 +456,7 @@ fun AddComment(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onClose) {
+            IconButton(onClick = onClickCloseButton) {
                 Icon(
                     modifier = Modifier.size(35.dp),
                     imageVector = Icons.Default.ArrowBackIosNew,
@@ -559,7 +558,7 @@ fun ChangeComment(
     fraction: Float,
     selectedComment: DomainCommentModel,
     viewModel: ViewModel,
-    onClose: () -> Unit
+    onClickCloseButton: () -> Unit
 ) {
     val (comment, setComment) = remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -623,7 +622,7 @@ fun ChangeComment(
                                 commentId = selectedComment.commentId,
                                 newCommentText = comment
                             )
-                            onClose()
+                            onClickCloseButton()
                         }
                         is SharedListsViewModel -> {
                             viewModel.updateComment(
@@ -633,7 +632,7 @@ fun ChangeComment(
                                 userName = userName,
                                 newCommentText = comment
                             )
-                            onClose()
+                            onClickCloseButton()
                         }
                     }
                 }
