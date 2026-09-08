@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,15 +13,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -51,8 +58,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.InlineBottomSheet
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.example.ui.presentation.components.fab.FABMenu
 import com.example.ui.presentation.components.text.CustomTextField
@@ -60,7 +67,6 @@ import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SeriesControlItem
-import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
@@ -85,6 +91,16 @@ fun SeriesControlScreen(
     var openBottomSheetAdd by remember { mutableStateOf(false) }
     var openBottomSheetChange by remember { mutableStateOf(false) }
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    fun closeSheets() {
+        keyboardController?.hide()
+        focusManager.clearFocus(force = true)
+        openBottomSheetAdd = false
+        openBottomSheetChange = false
+    }
+
     LaunchedEffect(Unit) {
         systemViewModel.getUserId()
     }
@@ -95,130 +111,126 @@ fun SeriesControlScreen(
         }
     }
 
-    if (openBottomSheetAdd) {
-        CustomBottomSheet(
-            onCloseRequest = { openBottomSheetAdd = false }
-        ) { onClose ->
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                TopAppBarAllScreens(
+                    context = context,
+                    titleId = R.string.title_series_control_screen,
+                    scrollBehavior = scrollBehavior,
+                    onTransitionAction = {
+                        navigateFunction(navController, Route.MainScreen.route)
+                    }
+                )
+            },
+            floatingActionButton = {
+                FABMenu(
+                    imageIcon = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.content_description_for_button_add),
+                    onButtonClick = { openBottomSheetAdd = true },
+                    expanded = false
+                )
+            },
+            floatingActionButtonPosition = FabPosition.End
+        ) { innerPadding ->
+
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentPadding = PaddingValues(10.dp)
+            ) {
+                items(listMovies, key = { it.id }) { entry ->
+
+                    var isVisible by remember(entry.id) { mutableStateOf(true) }
+                    var showDeleteDialog by remember(entry.id) { mutableStateOf(false) }
+
+                    LaunchedEffect(isVisible) {
+                        if (!isVisible) {
+                            seriesControlViewModel.deleteMovie(userId, entry.id)
+                        }
+                    }
+
+                    if (showDeleteDialog) {
+                        DeleteDialog(
+                            entryTitle = entry.title,
+                            onDismissRequest = { showDeleteDialog = false },
+                            confirmButtonClick = {
+                                showDeleteDialog = false
+                                isVisible = false
+                            },
+                            dismissButtonClick = {
+                                showDeleteDialog = false
+                            }
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = isVisible,
+                        modifier = Modifier.animateItem(),
+                        exit = slideOutHorizontally(
+                            targetOffsetX = { -it },
+                            animationSpec = tween(durationMillis = 300)
+                        )
+                    ) {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary
+                            )
+                        ) {
+                            SeriesControlItem(
+                                item = entry,
+                                onClick = {
+                                    selectedEntry = entry
+                                    openBottomSheetChange = true
+                                },
+                                onDeleteClick = { showDeleteDialog = true }
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.padding(vertical = 5.dp))
+                }
+                item { Spacer(Modifier.padding(45.dp)) }
+            }
+        }
+
+        InlineBottomSheet(
+            visible = openBottomSheetAdd,
+            onDismissRequest = { closeSheets() },
+            containerColor = MaterialTheme.colorScheme.background
+        ) {
             AddItem(
                 seriesControlViewModel = seriesControlViewModel,
                 userId = userId,
-                fraction = 0.3f,
-                onClickCloseButton = onClose
+                onClickCloseButton = { closeSheets() }
             )
         }
-        AdaptiveBackHandler { openBottomSheetAdd = false }
-    }
 
-    if (openBottomSheetChange) {
-        CustomBottomSheet(
-            onCloseRequest = { openBottomSheetChange = false }
-        ) { onClose ->
-            selectedEntry?.let {
+        InlineBottomSheet(
+            visible = openBottomSheetChange,
+            onDismissRequest = { closeSheets() },
+            containerColor = MaterialTheme.colorScheme.background
+        ) {
+            selectedEntry?.let { entry ->
                 ChangeItem(
                     userId = userId,
-                    fraction = 0.5f,
-                    selectedEntry = it,
+                    selectedEntry = entry,
                     seriesControlViewModel = seriesControlViewModel,
-                    onClick = onClose
+                    onClickCloseButton = { closeSheets() }
                 )
             }
         }
-        AdaptiveBackHandler { openBottomSheetChange = false }
     }
-
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopAppBarAllScreens(
-                context = context,
-                titleId = R.string.title_series_control_screen,
-                scrollBehavior = scrollBehavior,
-                onTransitionAction = {
-                    navigateFunction(navController, Route.MainScreen.route)
-                }
-            )
-        },
-        floatingActionButton = {
-            FABMenu(
-                imageIcon = Icons.Default.Add,
-                contentDescription = stringResource(R.string.content_description_for_button_add),
-                onButtonClick = { openBottomSheetAdd = true },
-                expanded = false
-            )
-        },
-        floatingActionButtonPosition = FabPosition.End
-    ) { innerPadding ->
-
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(10.dp)
-        ) {
-            items(listMovies, key = { it.id }) { entry ->
-
-                var isVisible by remember(entry.id) { mutableStateOf(true) }
-                var showDeleteDialog by remember(entry.id) { mutableStateOf(false) }
-
-                LaunchedEffect(isVisible) {
-                    if (!isVisible) {
-                        seriesControlViewModel.deleteMovie(userId, entry.id)
-                    }
-                }
-
-                if (showDeleteDialog) {
-                    DeleteDialog(
-                        entryTitle = entry.title,
-                        onDismissRequest = { showDeleteDialog = false },
-                        confirmButtonClick = {
-                            showDeleteDialog = false
-                            isVisible = false
-                        },
-                        dismissButtonClick = {
-                            showDeleteDialog = false
-                        }
-                    )
-                }
-
-                AnimatedVisibility(
-                    visible = isVisible,
-                    modifier = Modifier.animateItem(),
-                    exit = slideOutHorizontally(
-                        targetOffsetX = { -it },
-                        animationSpec = tween(durationMillis = 300)
-                    )
-                ) {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        )
-                    ) {
-                        SeriesControlItem(
-                            item = entry,
-                            onClick = {
-                                selectedEntry = entry
-                                openBottomSheetChange = true
-                            },
-                            onDeleteClick = { showDeleteDialog = true }
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.padding(vertical = 5.dp))
-            }
-            item { Spacer(Modifier.padding(45.dp)) }
-        }
-    }
-
 }
 
 @Composable
 private fun AddItem(
     seriesControlViewModel: SeriesControlViewModel,
     userId: String,
-    fraction: Float,
     onClickCloseButton: () -> Unit
 ) {
     val (titleMovie, setTitleMovie) = remember { mutableStateOf("") }
@@ -226,10 +238,9 @@ private fun AddItem(
 
     Column(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
             .fillMaxWidth()
-            .fillMaxHeight(fraction)
-            .padding(horizontal = 16.dp)
+            .navigationBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 24.dp)
     ) {
         CustomTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -263,10 +274,9 @@ private fun AddItem(
 @Composable
 private fun ChangeItem(
     userId: String,
-    fraction: Float,
     selectedEntry: DomainSeriesControlModel,
     seriesControlViewModel: SeriesControlViewModel,
-    onClick: () -> Unit
+    onClickCloseButton: () -> Unit
 ) {
     val (season, setSeason) = remember { mutableStateOf("") }
     val (series, setSeries) = remember { mutableStateOf("") }
@@ -285,10 +295,10 @@ private fun ChangeItem(
 
     Column(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
             .fillMaxWidth()
-            .fillMaxHeight(fraction)
-            .padding(horizontal = 16.dp)
+            .wrapContentHeight()
+            .navigationBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
         if (!localNoSeasons) {
             Row(
@@ -385,7 +395,8 @@ private fun ChangeItem(
                 onCheckedChange = { localNoSeasons = it }
             )
             Text(
-                text = "У сериала нет сезонов"
+                text = stringResource(R.string.series_not_season_numbers),
+                style = MaterialTheme.typography.titleMedium
             )
         }
 
@@ -466,7 +477,7 @@ private fun ChangeItem(
                         season.toIntOrNull() ?: 0,
                         series.toIntOrNull() ?: 0
                     )
-                    onClick()
+                    onClickCloseButton()
                 }
             )
         }

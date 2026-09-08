@@ -182,7 +182,10 @@ class SharedListsRepositoryImpl @Inject constructor(
 
         listenerHolder.addListener(MOVIES_KEY_LISTENER, moviesRef, listener)
     }
-    override suspend fun getMovieById(listId: String, movieId: Int): DomainSelectedMovieModel? {
+    override suspend fun getMovieById(
+        listId: String,
+        movieId: Int
+    ): DomainSelectedMovieModel? {
         require(listId.isNotBlank()) { "List ID must not be empty" }
 
         val sharedListKey = databaseReference

@@ -1,7 +1,5 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens
 
-import android.os.Build
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -55,7 +53,7 @@ import com.pozmaxpav.cinemaopinion.domain.models.system.CompositeRequest
 import com.example.ui.presentation.components.topappbar.TopAppBarAllScreens
 import com.example.ui.presentation.components.CustomBoxShowOverlay
 import com.example.ui.presentation.components.text.CustomTextField
-import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.OnBackInvokedHandler
+import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.utilities.parsYearsToString
 import kotlin.math.ceil
 
@@ -263,11 +261,7 @@ fun SearchFilterScreen(
                 }
             }
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            OnBackInvokedHandler { showGenresList = false }
-        } else {
-            BackHandler { showGenresList = false }
-        }
+        AdaptiveBackHandler { showGenresList = false }
     }
 
     if (showCountriesList) {
@@ -282,11 +276,7 @@ fun SearchFilterScreen(
                 }
             }
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            OnBackInvokedHandler { showCountriesList = false }
-        } else {
-            BackHandler { showCountriesList = false }
-        }
+        AdaptiveBackHandler { showCountriesList = false }
     }
 
 }

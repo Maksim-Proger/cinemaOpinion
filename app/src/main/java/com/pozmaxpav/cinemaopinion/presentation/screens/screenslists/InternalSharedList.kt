@@ -119,7 +119,7 @@ fun InternalSharedList(
                         fraction = 0.7f,
                         context = context,
                         onClick = onClose,
-                        onClose = onClose
+                        onClickCloseButton = onClose
                     )
                 }
                 AdaptiveBackHandler { openBottomSheetComments = false }
@@ -138,7 +138,7 @@ fun InternalSharedList(
                                 selectedComment = comment,
                                 fraction = 0.7f,
                                 viewModel = sharedListsViewModel,
-                                onClose = onClose
+                                onClickCloseButton = onClose
                             )
                         }
                     }
@@ -162,7 +162,7 @@ fun InternalSharedList(
                                 selectedComment = comment
                                 openBottomSheetChange = true
                             },
-                            onClose = onClose
+                            onClickCloseButton = onClose
                         )
                     }
                     AdaptiveBackHandler { openBottomSheetReviews = false }

@@ -69,7 +69,7 @@ fun ApiListScreen(
     }
 
     val parentEntry = remember(navController) {
-        navController.previousBackStackEntry!!
+        navController.previousBackStackEntry!! // TODO: Избавиться от !!
     }
     val apiViewModel = hiltViewModel<ApiViewModel>(parentEntry)
 

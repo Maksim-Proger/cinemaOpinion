@@ -24,9 +24,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.CommentBank
 import androidx.compose.material.icons.outlined.Done
-import androidx.compose.material.icons.outlined.PostAdd
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,6 +43,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -55,6 +55,7 @@ import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_WATCHED_MOV
 import com.example.ui.presentation.components.ActionButton
 import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
+import com.example.ui.presentation.components.InlineBottomSheet
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
 import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
 import com.example.ui.presentation.theme.cardAccent
@@ -98,9 +99,30 @@ fun SharedListScreen(
 
     var selectedMovie by remember { mutableStateOf<DomainSelectedMovieModel?>(null) }
     var selectedComment by remember { mutableStateOf<DomainCommentModel?>(null) }
-    var openBottomSheetComments by remember { mutableStateOf(false) }
-    var openBottomSheetChange by remember { mutableStateOf(false) }
-    var openBottomSheetReviews by remember { mutableStateOf(false) }
+    var openBottomSheetAddComments by remember { mutableStateOf(false) }
+    var openBottomSheetChangeComments by remember { mutableStateOf(false) }
+    var openBottomSheetShowComments by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    fun hideKeyboard() {
+        keyboardController?.hide()
+        focusManager.clearFocus(force = true)
+    }
+
+    fun closeCommentList() {
+        openBottomSheetShowComments = false
+    }
+
+    fun closeAddComment() {
+        hideKeyboard()
+        openBottomSheetAddComments = false
+    }
+
+    fun closeChangeComment() {
+        hideKeyboard()
+        openBottomSheetChangeComments = false
+    }
 
     val isAtTop by remember {
         derivedStateOf {
@@ -125,88 +147,16 @@ fun SharedListScreen(
         userViewModel.getUserData(userId)
     }
 
+    AdaptiveBackHandler(enabled = selectedMovie != null) { selectedMovie = null }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-
-            selectedComment?.let { comment ->
-                if (userName == comment.username) {
-                    if (openBottomSheetChange) {
-                        CustomBottomSheet(
-                            onCloseRequest = { openBottomSheetChange = false }
-                        ) { onClose ->
-                            selectedMovie?.let { movie ->
-                                ChangeComment(
-                                    sharedListId = listId,
-                                    userName = userName,
-                                    selectedMovieId = movie.id,
-                                    selectedComment = comment,
-                                    fraction = 0.7f,
-                                    viewModel = sharedListsViewModel,
-                                    onClose = onClose
-                                )
-                            }
-                        }
-                        AdaptiveBackHandler { openBottomSheetChange = false }
-                    }
-                }
-            }
-
-            if (openBottomSheetComments) {
-                CustomBottomSheet(
-                    onCloseRequest = { openBottomSheetComments = false }
-                ) { onClose ->
-                    AddComment(
-                        dataUser = userData,
-                        sharedListId = listId,
-                        dataSource = NODE_SHARED_LIST_MOVIES,
-                        viewModel = sharedListsViewModel,
-                        listName = listName,
-                        selectedItem = selectedMovie,
-                        fraction = 0.7f,
-                        context = context,
-                        onClick = onClose,
-                        onClose = onClose
-                    )
-                }
-                AdaptiveBackHandler { openBottomSheetComments = false }
-            }
-
             selectedMovie?.let { movie ->
-                if (openBottomSheetReviews) {
-                    CustomBottomSheet(
-                        onCloseRequest = { openBottomSheetReviews = false }
-                    ) { onClose ->
-                        ShowCommentList(
-                            userId = userId,
-                            selectedMovieId = movie.id,
-                            viewModel = sharedListsViewModel,
-                            listId = listId,
-                            dataSource = NODE_SHARED_LIST_MOVIES,
-                            fraction = 0.7f,
-                            addCommentButton = {
-                                ActionButton(
-                                    icon = Icons.Default.AddComment,
-                                    label = context.getString(R.string.button_leave_comment),
-                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
-                                    onClick = { openBottomSheetComments = !openBottomSheetComments }
-                                )
-                            },
-                            onClick = { comment ->
-                                selectedComment = comment
-                                openBottomSheetChange = true
-                            },
-                            onClose = onClose
-                        )
-                    }
-                    AdaptiveBackHandler { openBottomSheetReviews = false }
-                }
-
                 DetailsCardSelectedMovie(
                     movie = movie,
                     userId = userId,
                     navController = navController,
                     needReviews = true,
-                    reviews = { openBottomSheetReviews = !openBottomSheetReviews },
+                    reviews = { openBottomSheetShowComments = true },
                     sendToWaitingList = {
                         selectedMovie?.let { movie ->
                             sharedListsViewModel.moveMovie(
@@ -240,10 +190,7 @@ fun SharedListScreen(
                     },
                     onCloseButton = { selectedMovie = null }
                 )
-
-                AdaptiveBackHandler { selectedMovie = null }
             }
-
             if (selectedMovie == null) {
                 Column(
                     modifier = Modifier
@@ -351,6 +298,77 @@ fun SharedListScreen(
                     }
                 }
             }
+        }
+
+        InlineBottomSheet(
+            visible = openBottomSheetShowComments,
+            onDismissRequest = { openBottomSheetShowComments = false },
+            containerColor = MaterialTheme.colorScheme.background
+        ) {
+            selectedMovie?.let { movie ->
+                ShowCommentList(
+                    userId = userId,
+                    selectedMovieId = movie.id,
+                    viewModel = sharedListsViewModel,
+                    listId = listId,
+                    dataSource = NODE_SHARED_LIST_MOVIES,
+                    fraction = 0.7f,
+                    addCommentButton = {
+                        ActionButton(
+                            icon = Icons.Default.AddComment,
+                            label = context.getString(R.string.button_leave_comment),
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
+                            onClick = { openBottomSheetAddComments = !openBottomSheetAddComments }
+                        )
+                    },
+                    onClick = { comment ->
+                        if (userName == comment.username) {
+                            selectedComment = comment
+                            openBottomSheetChangeComments = true
+                        }
+                    },
+                    onClickCloseButton = { closeCommentList() }
+                )
+            }
+        }
+
+        InlineBottomSheet(
+            visible = openBottomSheetChangeComments,
+            onDismissRequest = { openBottomSheetChangeComments = false },
+            containerColor = MaterialTheme.colorScheme.background
+        ) {
+            selectedComment?.let { comment ->
+                selectedMovie?.let { movie ->
+                    ChangeComment(
+                        sharedListId = listId,
+                        userName = userName,
+                        selectedMovieId = movie.id,
+                        selectedComment = comment,
+                        fraction = 0.7f,
+                        viewModel = sharedListsViewModel,
+                        onClickCloseButton = { closeChangeComment() }
+                    )
+                }
+            }
+        }
+
+        InlineBottomSheet(
+            visible = openBottomSheetAddComments,
+            onDismissRequest = { openBottomSheetAddComments = false },
+            containerColor = MaterialTheme.colorScheme.background
+        ) {
+            AddComment(
+                dataUser = userData,
+                sharedListId = listId,
+                dataSource = NODE_SHARED_LIST_MOVIES,
+                viewModel = sharedListsViewModel,
+                listName = listName,
+                selectedItem = selectedMovie,
+                fraction = 0.7f,
+                context = context,
+                onClick = { closeAddComment() },
+                onClickCloseButton = { closeAddComment() }
+            )
         }
 
         if (selectedMovie == null) {
