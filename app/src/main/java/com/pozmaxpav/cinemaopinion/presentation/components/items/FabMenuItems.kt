@@ -18,8 +18,8 @@ import com.example.ui.presentation.components.fab.FABMenuItemData
 @Composable
 fun fabMenuItems(
     isScrolling: Boolean,
-    onDatePickerToggle: () -> Unit,
-    onVoiceCommandClick: () -> Unit
+    onDatePickerToggle: () -> Unit = {},
+    onVoiceCommandClick: () -> Unit = {}
 ): List<FABMenuItemData> {
     val modifier = Modifier.size(20.dp)
     if (isScrolling) return emptyList()

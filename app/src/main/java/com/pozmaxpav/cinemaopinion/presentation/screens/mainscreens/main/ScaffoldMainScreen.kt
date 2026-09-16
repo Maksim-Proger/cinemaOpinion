@@ -200,24 +200,24 @@ fun ScaffoldMainScreen(
                         onDatePickerToggle = {
                             state.showDatePicker.value = !state.showDatePicker.value
                         },
-                        onVoiceCommandClick = {
-                            try {
-                                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                                    putExtra(
-                                        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-                                    )
-                                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU")
-                                    putExtra(
-                                        RecognizerIntent.EXTRA_PROMPT,
-                                        context.getString(R.string.voice_command_prompt)
-                                    )
-                                }
-                                speechRecognitionLauncher.launch(intent)
-                            } catch (e: ActivityNotFoundException) {
-                                showToast(context, R.string.voice_recognition_unavailable)
-                            }
-                        }
+//                        onVoiceCommandClick = {
+//                            try {
+//                                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+//                                    putExtra(
+//                                        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+//                                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+//                                    )
+//                                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU")
+//                                    putExtra(
+//                                        RecognizerIntent.EXTRA_PROMPT,
+//                                        context.getString(R.string.voice_command_prompt)
+//                                    )
+//                                }
+//                                speechRecognitionLauncher.launch(intent)
+//                            } catch (e: ActivityNotFoundException) {
+//                                showToast(context, R.string.voice_recognition_unavailable)
+//                            }
+//                        }
                     )
                 )
             }
@@ -295,47 +295,60 @@ fun ScaffoldMainScreen(
     PreviewOverlay(state, showDialogEvents)
     PageDescriptionOverlay(state, systemViewModel)
     SearchFilterScreenOverlay(state)
-    AccountScreenOverlay(userId, userData, state, navController)
 
-    when (val commandState = voiceCommandState) {
-        is VoiceCommandState.AwaitingConfirmation -> {
-            VoiceCommandDialog(
-                updated = commandState.updated,
-                onConfirm = {
-                    seriesControlViewModel.confirmVoiceCommand(userId)
-                    showToast(context, R.string.voice_command_applied)
-                },
-                onDismiss = { seriesControlViewModel.resetVoiceCommandState() }
+
+    PreloadData(
+        userId = userId,
+        resData = { countPersonalMovies, countSharedLists, countSeriesControlItems ->
+            AccountScreenOverlay(
+                userId,
+                userData,
+                state,
+                navController,
+                countPersonalMovies,
+                countSharedLists,
+                countSeriesControlItems
             )
         }
-        VoiceCommandState.NotRecognized -> {
-            LaunchedEffect(commandState) {
-                showToast(context, R.string.voice_command_not_recognized)
-                seriesControlViewModel.resetVoiceCommandState()
-            }
-        }
-        is VoiceCommandState.TitleNotFound -> {
-            LaunchedEffect(commandState) {
-                showToast2(
-                    context,
-                    context.getString(R.string.voice_command_title_not_found, commandState.title)
-                )
-                seriesControlViewModel.resetVoiceCommandState()
-            }
-        }
-        is VoiceCommandState.NoNumericSeasons -> {
-            LaunchedEffect(commandState) {
-                showToast2(
-                    context,
-                    context.getString(R.string.voice_command_no_numeric_seasons, commandState.title)
-                )
-                seriesControlViewModel.resetVoiceCommandState()
-            }
-        }
-        VoiceCommandState.Idle -> Unit
-    }
+    )
+
+
+//    when (val commandState = voiceCommandState) {
+//        is VoiceCommandState.AwaitingConfirmation -> {
+//            VoiceCommandDialog(
+//                updated = commandState.updated,
+//                onConfirm = {
+//                    seriesControlViewModel.confirmVoiceCommand(userId)
+//                    showToast(context, R.string.voice_command_applied)
+//                },
+//                onDismiss = { seriesControlViewModel.resetVoiceCommandState() }
+//            )
+//        }
+//        VoiceCommandState.NotRecognized -> {
+//            LaunchedEffect(commandState) {
+//                showToast(context, R.string.voice_command_not_recognized)
+//                seriesControlViewModel.resetVoiceCommandState()
+//            }
+//        }
+//        is VoiceCommandState.TitleNotFound -> {
+//            LaunchedEffect(commandState) {
+//                showToast2(
+//                    context,
+//                    context.getString(R.string.voice_command_title_not_found, commandState.title)
+//                )
+//                seriesControlViewModel.resetVoiceCommandState()
+//            }
+//        }
+//        is VoiceCommandState.NoNumericSeasons -> {
+//            LaunchedEffect(commandState) {
+//                showToast2(
+//                    context,
+//                    context.getString(R.string.voice_command_no_numeric_seasons, commandState.title)
+//                )
+//                seriesControlViewModel.resetVoiceCommandState()
+//            }
+//        }
+//        VoiceCommandState.Idle -> Unit
+//    }
 
 }
-
-
-

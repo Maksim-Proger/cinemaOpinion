@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -68,6 +69,8 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewMode
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.rememberDynamicPaletteColors
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListsScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
@@ -75,8 +78,6 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsV
 
 
 // region Цвета
-
-private val GlassBorder = Color(0x55FFFFFF)
 private val TextWhite = Color(0xFFFFFFFF)
 private val TextSubtle = Color(0xFFB8A08A)
 
@@ -88,26 +89,16 @@ fun AccountScreen(
     userId: String,
     userData: DomainUserModel?,
     onClose: () -> Unit,
-    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
+    countPersonalMovies: List<DomainSelectedMovieModel>,
+    countSharedLists: List<DomainSharedListModel>,
+    countSeriesControlItems: List<DomainSeriesControlModel>,
     systemViewModel: SystemViewModel = hiltViewModel(),
-    sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
-    seriesControlViewModel: SeriesControlViewModel = hiltViewModel()
 ) {
-    val countPersonalMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
-    val countSharedLists by sharedListsViewModel.list.collectAsState()
-    val countSeriesControlItems by seriesControlViewModel.listMovies.collectAsState()
-
     var openSharedLists by remember { mutableStateOf(false) }
     var locationShowDialogEvents by remember { mutableStateOf(false) }
     var settingsMenuExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(userId) {
-        if (userId.isNotBlank() && userId != "Unknown") {
-            sharedListsViewModel.getLists(userId)
-            seriesControlViewModel.getListEntries(userId)
-            personalMovieViewModel.getMovies(userId)
-        }
-    }
+
 
     Box(
         modifier = Modifier
@@ -159,7 +150,7 @@ fun AccountScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ListsRow(
-                    label = "Личный список",
+                    label = stringResource(R.string.my_list_movies),
                     imageRes = R.drawable.personal_list,
                     count = countPersonalMovies.size,
                     modifier = Modifier.weight(1f),
@@ -168,7 +159,7 @@ fun AccountScreen(
                     }
                 )
                 ListsRow(
-                    label = "Совместные список",
+                    label = stringResource(R.string.shared_lists),
                     imageRes = R.drawable.shared_list,
                     count = countSharedLists.size,
                     modifier = Modifier.weight(1f),
@@ -177,7 +168,7 @@ fun AccountScreen(
                     }
                 )
                 ListsRow(
-                    label = "Контроль серий",
+                    label = stringResource(R.string.series_control),
                     imageRes = R.drawable.series_control,
                     count = countSeriesControlItems.size,
                     modifier = Modifier.weight(1f),
@@ -302,7 +293,7 @@ private fun HeroSection(
         )
         // endregion
 
-        // Тёмный градиент снизу — плавный переход в фон
+        // region Тёмный градиент снизу — плавный переход в фон
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -319,6 +310,7 @@ private fun HeroSection(
                     )
                 )
         )
+        // endregion
 
         // region Верхние кнопки
         Row(
@@ -339,7 +331,7 @@ private fun HeroSection(
         // endregion
 
         // region Имя
-        val (animatedBg, animatedTitle, animatedAccent) =
+        val (animatedTitle, animatedAccent) =
             rememberDynamicPaletteColors(imageUrl = BackendApiProvider.avatarUrl(userId))
         Column(
             modifier = Modifier
@@ -392,7 +384,6 @@ private fun Buttons(
     icon: ImageVector,
     onClick: () -> Unit
 ) {
-
     val (animatedBg, animatedAccent) =
         rememberDynamicPaletteColors(imageUrl = BackendApiProvider.avatarUrl(userId))
 

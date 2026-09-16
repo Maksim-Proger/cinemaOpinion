@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.example.ui"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 29
@@ -45,14 +45,14 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     // MaterialExpressive
-    implementation("androidx.compose.material3:material3-android:1.4.0-alpha14")
+    api(libs.androidx.compose.material.expressive)
 
     // LottieAnimation
     implementation(libs.lottie.compose)
 
     // Markwon
-    implementation("io.noties.markwon:core:4.6.2")
-    implementation("io.noties.markwon:ext-strikethrough:4.6.2")
+    implementation(libs.io.noties.markwon.core)
+    implementation(libs.io.noties.markwon.ext.strikethrough)
 
     implementation(libs.material.icons.extended)
     implementation(libs.navigation.compose)
@@ -68,7 +68,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
