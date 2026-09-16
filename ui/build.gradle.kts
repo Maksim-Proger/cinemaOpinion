@@ -54,6 +54,9 @@ dependencies {
     implementation(libs.io.noties.markwon.core)
     implementation(libs.io.noties.markwon.ext.strikethrough)
 
+    // Palette API
+    implementation("androidx.palette:palette:1.0.0")
+
     implementation(libs.material.icons.extended)
     implementation(libs.navigation.compose)
     implementation(libs.androidx.core.ktx)
@@ -72,3 +75,4 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+

@@ -34,6 +34,12 @@ class SharedListsViewModel @Inject constructor(
 ) : ViewModel() {
 
     // region Variables
+    private val _commentAdded = MutableSharedFlow<Unit>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val commentAdded = _commentAdded.asSharedFlow()
+
     private val _movieDownloadStatus = MutableStateFlow<LoadingState>(LoadingState.Success)
     val movieDownloadStatus = _movieDownloadStatus.asStateFlow()
 
@@ -81,6 +87,7 @@ class SharedListsViewModel @Inject constructor(
                     timestamp = System.currentTimeMillis()
                 )
                 commentsUseCases.addComment(listId, movieId, comment)
+                _commentAdded.tryEmit(Unit)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

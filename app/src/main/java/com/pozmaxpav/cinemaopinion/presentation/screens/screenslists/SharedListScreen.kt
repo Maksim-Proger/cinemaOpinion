@@ -169,8 +169,9 @@ fun SharedListScreen(
                         }
                     },
                     sendToArchive = {
+                        val sendToArchive = stringResource(R.string.button_send_to_archive)
                         CustomTextButton(
-                            textButton = context.getString(R.string.button_send_to_archive),
+                            textButton = sendToArchive,
                             imageVector = Icons.Outlined.Done,
                             modifier = Modifier.fillMaxWidth(),
                             containerColor = MaterialTheme.colorScheme.secondary,
@@ -314,9 +315,10 @@ fun SharedListScreen(
                     dataSource = NODE_SHARED_LIST_MOVIES,
                     fraction = 0.7f,
                     addCommentButton = {
+                        val leaveComment = stringResource(R.string.button_leave_comment)
                         ActionButton(
                             icon = Icons.Default.AddComment,
-                            label = context.getString(R.string.button_leave_comment),
+                            label = leaveComment,
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
                             onClick = { openBottomSheetAddComments = !openBottomSheetAddComments }
                         )

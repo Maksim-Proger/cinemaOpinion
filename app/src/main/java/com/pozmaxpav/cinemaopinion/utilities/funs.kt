@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -50,6 +52,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.core.domain.DomainUserModel
 import com.example.core.utils.state.LoadingState
+import com.example.ui.presentation.components.AuroraGradientOverlay
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.lottie.CustomLottieAnimation
 import com.example.ui.presentation.components.text.CustomTextFieldForComments
@@ -65,6 +68,8 @@ import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.NotificationViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import java.text.SimpleDateFormat
 import java.time.DateTimeException
 import java.time.LocalDate
@@ -74,6 +79,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
+import kotlin.time.Duration.Companion.milliseconds
+import androidx.compose.ui.platform.LocalLocale
 
 @Composable
 fun WorkerWithImage(
@@ -263,98 +270,119 @@ fun ShowCommentList(
     onClick: (DomainCommentModel) -> Unit,
     onClickCloseButton: () -> Unit
 ) {
-    Column(
+
+    var auroraActive by remember { mutableStateOf(false) }
+
+    Box(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
             .fillMaxWidth()
-            .fillMaxHeight(fraction = fraction)
-            .padding(horizontal = 16.dp)
+            .fillMaxHeight(fraction)
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 7.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        AuroraGradientOverlay(
+            active = auroraActive,
+            baseColor = MaterialTheme.colorScheme.background,
+            modifier = Modifier.matchParentSize()
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
         ) {
-            IconButton(onClick = onClickCloseButton) {
-                Icon(
-                    modifier = Modifier.size(35.dp),
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 7.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onClickCloseButton) {
+                    Icon(
+                        modifier = Modifier.size(35.dp),
+                        imageVector = Icons.Default.ArrowBackIosNew,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                addCommentButton()
             }
-            addCommentButton()
-        }
 
-        when (viewModel) {
-            is PersonalMovieViewModel -> {
-                val state by viewModel.commentsDownloadStatus.collectAsState()
-                val comments by viewModel.listComments.collectAsState()
+            when (viewModel) {
+                is PersonalMovieViewModel -> {
+                    val state by viewModel.commentsDownloadStatus.collectAsState()
+                    val comments by viewModel.listComments.collectAsState()
 
-                LaunchedEffect(userId, selectedMovieId) {
-                    if (userId.isNotEmpty()) {
-                        viewModel.observeComments(userId, selectedMovieId)
-                        viewModel.getComments(userId, selectedMovieId)
+                    LaunchedEffect(userId, selectedMovieId) {
+                        if (userId.isNotEmpty()) {
+                            viewModel.observeComments(userId, selectedMovieId)
+                            viewModel.getComments(userId, selectedMovieId)
+                        }
+                    }
+
+                    when (state) {
+                        is LoadingState.Loading -> {
+                            CustomLottieAnimation(
+                                nameFile = "loading_animation.lottie",
+                                modifier = Modifier.scale(0.5f)
+                            )
+                        }
+                        is LoadingState.Error -> {
+                            Text(
+                                text = "При загрузке произошла ошибка.",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+                        is LoadingState.Success -> {
+                            CommentsList(
+                                modifier = Modifier.weight(1f).fillMaxWidth(),
+                                comments = comments,
+                                onClick = onClick
+                            )
+                        }
                     }
                 }
+                is SharedListsViewModel -> {
+                    val state by viewModel.commentsDownloadStatus.collectAsState()
+                    val comments by viewModel.comments.collectAsState()
 
-                when (state) {
-                    is LoadingState.Loading -> {
-                        CustomLottieAnimation(
-                            nameFile = "loading_animation.lottie",
-                            modifier = Modifier.scale(0.5f)
-                        )
+                    LaunchedEffect(listId, selectedMovieId) {
+                        if (listId.isNotEmpty()) {
+                            viewModel.observeComments(listId, selectedMovieId)
+                            viewModel.getComments(listId, selectedMovieId, dataSource)
+                        }
                     }
-                    is LoadingState.Error -> {
-                        Text(
-                            text = "При загрузке произошла ошибка.",
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                    LaunchedEffect(viewModel) {
+                        viewModel.commentAdded.collectLatest {
+                            auroraActive = true
+                            delay(5000.milliseconds)
+                            auroraActive = false
+                        }
                     }
-                    is LoadingState.Success -> {
-                        CommentsList(
-                            modifier = Modifier.weight(1f).fillMaxWidth(),
-                            comments = comments,
-                            onClick = onClick
-                        )
-                    }
-                }
-            }
-            is SharedListsViewModel -> {
-                val state by viewModel.commentsDownloadStatus.collectAsState()
-                val comments by viewModel.comments.collectAsState()
 
-                LaunchedEffect(listId, selectedMovieId) {
-                    if (listId.isNotEmpty()) {
-                        viewModel.observeComments(listId, selectedMovieId)
-                        viewModel.getComments(listId, selectedMovieId, dataSource)
-                    }
-                }
-
-                when (state) {
-                    is LoadingState.Loading -> {
-                        CustomLottieAnimation(
-                            nameFile = "loading_animation.lottie",
-                            modifier = Modifier.scale(0.5f)
-                        )
-                    }
-                    is LoadingState.Error -> {
-                        Text(
-                            text = "При загрузке произошла ошибка.",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
-                    is LoadingState.Success -> {
-                        CommentsList(
-                            modifier = Modifier.weight(1f).fillMaxWidth(),
-                            comments = comments,
-                            onClick = onClick
-                        )
+                    when (state) {
+                        is LoadingState.Loading -> {
+                            CustomLottieAnimation(
+                                nameFile = "loading_animation.lottie",
+                                modifier = Modifier.scale(0.5f)
+                            )
+                        }
+                        is LoadingState.Error -> {
+                            Text(
+                                text = "При загрузке произошла ошибка.",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+                        is LoadingState.Success -> {
+                            CommentsList(
+                                modifier = Modifier.weight(1f).fillMaxWidth(),
+                                comments = comments,
+                                onClick = onClick
+                            )
+                        }
                     }
                 }
             }
         }
     }
+
 }
 
 @Composable
@@ -413,7 +441,7 @@ private fun CommentsList(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
+                            text = SimpleDateFormat("dd.MM.yyyy HH:mm", LocalLocale.current.platformLocale)
                                 .format(Date(comment.timestamp)),
                             style = MaterialTheme.typography.bodyLarge
                         )

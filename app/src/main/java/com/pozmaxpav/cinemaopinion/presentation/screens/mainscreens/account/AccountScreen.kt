@@ -360,8 +360,7 @@ private fun HeroSection(
             Spacer(Modifier.height(16.dp))
 
             Achievements(
-                titleColor = animatedTitle,
-                brush = animatedAccent,
+                brush = animatedTitle,
                 listAwards = listAwards,
                 onClick = {
                     navController.navigate(
@@ -391,7 +390,7 @@ private fun Buttons(
         onClick = onClick,
         modifier = Modifier.height(42.dp),
         shape = RoundedCornerShape(50),
-        border = ButtonDefaults.outlinedButtonBorder.copy(
+        border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
             brush = SolidColor(animatedAccent)
         ),
         colors = ButtonDefaults.outlinedButtonColors(
@@ -409,11 +408,11 @@ private fun Buttons(
 
 @Composable
 fun Achievements(
-    titleColor: Color,
     brush: Color,
     listAwards: String,
     onClick: () -> Unit = {}
 ) {
+
     val awards = remember(listAwards) {
         listAwards.split(",").filter { it.isNotBlank() }
     }
@@ -421,12 +420,7 @@ fun Achievements(
     OutlinedButton(
         onClick = onClick,
         shape = RoundedCornerShape(50),
-        colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = titleColor.copy(alpha = 0.9f),
-            contentColor = DynamicContentColor,
-
-        ),
-        border = ButtonDefaults.outlinedButtonBorder.copy(
+        border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
             brush = SolidColor(brush)
         ),
         enabled = awards.isNotEmpty()
@@ -434,23 +428,11 @@ fun Achievements(
         Text(
             text = "${awards.size} achievements",
             fontSize = 16.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            color = brush
         )
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

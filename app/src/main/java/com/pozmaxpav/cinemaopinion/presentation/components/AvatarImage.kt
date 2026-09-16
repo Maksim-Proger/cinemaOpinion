@@ -22,17 +22,17 @@ fun AvatarImage(
 ) {
     val context = LocalContext.current
 
-    val model = if (previewUri != null) {
-        previewUri
-    } else {
-        val url = BackendApiProvider.avatarUrl(userId)
-        ImageRequest.Builder(context)
-            .data(url)
-            .memoryCacheKey(url)
-            .diskCacheKey(url)
-            .crossfade(false)
-            .build()
-    }
+    val model =
+        if (previewUri != null) { previewUri }
+        else {
+            val url = BackendApiProvider.avatarUrl(userId)
+            ImageRequest.Builder(context)
+                .data(url)
+                .memoryCacheKey(url)
+                .diskCacheKey(url)
+                .crossfade(false)
+                .build()
+        }
 
     SubcomposeAsyncImage(
         model = model,

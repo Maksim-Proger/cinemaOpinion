@@ -9,11 +9,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.pozmaxpav.cinemaopinion.R
 import com.example.ui.presentation.components.fab.FABMenuItemData
+import com.pozmaxpav.cinemaopinion.R
 
 @Composable
 fun fabMenuItems(
@@ -26,40 +25,38 @@ fun fabMenuItems(
     val items = mutableListOf<FABMenuItemData>()
 
     items += FABMenuItemData(
-            text = {
-                Text(
-                    text = stringResource(id = R.string.drop_down_menu_item_select_date),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            },
-            icon = {
-                Icon(
-                    modifier = modifier,
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = stringResource(id = R.string.drop_down_menu_item_select_date),
-                    tint = MaterialTheme.colorScheme.onSecondary
-                )
-            },
-            onClick = onDatePickerToggle
-        )
+        text = {
+            Text(
+                text = stringResource(id = R.string.drop_down_menu_item_select_date),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        icon = {
+            Icon(
+                modifier = modifier,
+                imageVector = Icons.Default.DateRange,
+                contentDescription = stringResource(id = R.string.drop_down_menu_item_select_date),
+            )
+        },
+        onClick = onDatePickerToggle
+    )
 
     items += FABMenuItemData(
-            text = {
-                Text(
-                    text = stringResource(id = R.string.drop_down_menu_item_voice_command),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            },
-            icon = {
-                Icon(
-                    modifier = modifier,
-                    imageVector = Icons.Default.Mic,
-                    contentDescription = stringResource(id = R.string.drop_down_menu_item_voice_command),
-                    tint = MaterialTheme.colorScheme.onSecondary
-                )
-            },
-            onClick = onVoiceCommandClick
-        )
+        text = {
+            Text(
+                text = stringResource(id = R.string.drop_down_menu_item_voice_command),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        icon = {
+            Icon(
+                modifier = modifier,
+                imageVector = Icons.Default.Mic,
+                contentDescription = stringResource(id = R.string.drop_down_menu_item_voice_command),
+            )
+        },
+        onClick = onVoiceCommandClick
+    )
 
     return items
 }
