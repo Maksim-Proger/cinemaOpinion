@@ -82,15 +82,12 @@ fun DetailsCardSelectedMovie(
 
     sendToWaitingList: () -> Unit = {},
     sendToArchive: @Composable () -> Unit = {},
-
+    reviews: () -> Unit = {},
+    needSharedListButton: Boolean = true,
     needSkipButton: Boolean = true,
     needFavoritesButton: Boolean = true,
-
     needReviews: Boolean = true,
-    reviews: () -> Unit = {},
-
     needButtonWaitingList: Boolean = true,
-
 
     apiViewModel: ApiViewModel = hiltViewModel(),
     personalViewModel: PersonalMovieViewModel = hiltViewModel(),
@@ -322,19 +319,26 @@ fun DetailsCardSelectedMovie(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    ActionButton(
-                        icon = Icons.Outlined.PostAdd,
-                        label = context.getString(R.string.text_buttons_film_card_to_shared_list),
-                        accentColor = animatedAccent,
-                        borderColor = animatedAccent,
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = { openSharedLists = true }
-                    )
-                    Spacer(Modifier.height(10.dp))
+                    val sendToSharedList =
+                        stringResource(R.string.text_buttons_film_card_to_shared_list)
+                    val showResponse = stringResource(R.string.button_show_response)
+                    val sendWaitingList = stringResource(R.string.button_open_waiting_list)
+
+                    if (needSharedListButton) {
+                        ActionButton(
+                            icon = Icons.Outlined.PostAdd,
+                            label = sendToSharedList,
+                            accentColor = animatedAccent,
+                            borderColor = animatedAccent,
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = { openSharedLists = true }
+                        )
+                        Spacer(Modifier.height(10.dp))
+                    }
                     if (needReviews) {
                         ActionButton(
                             icon = Icons.Default.CommentBank,
-                            label = context.getString(R.string.button_show_response),
+                            label = showResponse,
                             accentColor = animatedAccent,
                             borderColor = animatedAccent,
                             modifier = Modifier.fillMaxWidth(),
@@ -349,7 +353,7 @@ fun DetailsCardSelectedMovie(
                     ) {
                         ActionButton(
                             icon = Icons.Default.PostAdd,
-                            label = context.getString(R.string.button_open_waiting_list),
+                            label = sendWaitingList,
                             accentColor = animatedAccent,
                             borderColor = animatedAccent,
                             modifier = Modifier.fillMaxWidth(),
@@ -359,7 +363,6 @@ fun DetailsCardSelectedMovie(
                     }
                 }
                 // endregion
-
 
                 ExpandedCard(
                     title = stringResource(R.string.text_for_expandedCard_field),
@@ -371,7 +374,6 @@ fun DetailsCardSelectedMovie(
             }
         }
 
-        // region Переработать под новое оформление
         if (openSharedLists) {
             Box(
                 modifier = Modifier
@@ -518,10 +520,3 @@ private fun ActionButton(
     }
 }
 
-
-//                    ActionButton(
-//                        onClick2 = { skipButton() }
-//                    )
-//                    ActionButton(
-//                        onClick2 = { sendToArchive() }
-//                    )

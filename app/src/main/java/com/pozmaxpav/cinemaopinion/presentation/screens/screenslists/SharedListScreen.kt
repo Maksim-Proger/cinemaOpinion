@@ -53,7 +53,6 @@ import com.example.core.utils.CoreDatabaseConstants.NODE_LIST_WAITING_CONTINUATI
 import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_MOVIES
 import com.example.core.utils.CoreDatabaseConstants.NODE_SHARED_LIST_WATCHED_MOVIES
 import com.example.ui.presentation.components.ActionButton
-import com.example.ui.presentation.components.CustomBottomSheet
 import com.example.ui.presentation.components.CustomTextButton
 import com.example.ui.presentation.components.InlineBottomSheet
 import com.example.ui.presentation.components.alertdialogs.DeleteDialog
@@ -155,7 +154,6 @@ fun SharedListScreen(
                     movie = movie,
                     userId = userId,
                     navController = navController,
-                    needReviews = true,
                     reviews = { openBottomSheetShowComments = true },
                     sendToWaitingList = {
                         selectedMovie?.let { movie ->
@@ -311,14 +309,14 @@ fun SharedListScreen(
                     userId = userId,
                     selectedMovieId = movie.id,
                     viewModel = sharedListsViewModel,
-                    listId = listId,
+                    sharedListId = listId,
                     dataSource = NODE_SHARED_LIST_MOVIES,
                     fraction = 0.7f,
                     addCommentButton = {
-                        val leaveComment = stringResource(R.string.button_leave_comment)
+                        val addComment = stringResource(R.string.button_leave_comment)
                         ActionButton(
                             icon = Icons.Default.AddComment,
-                            label = leaveComment,
+                            label = addComment,
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
                             onClick = { openBottomSheetAddComments = !openBottomSheetAddComments }
                         )

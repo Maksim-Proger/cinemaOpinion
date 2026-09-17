@@ -1,5 +1,7 @@
 package com.pozmaxpav.cinemaopinion.presentation.navigation
 
+import com.example.core.domain.DomainUserModel
+
 sealed class Route(val route: String) {
     data object MainScreen : Route(route = "main_screen")
     data object EditPersonalInformationScreen : Route(route = "edit_personal_information_screen")
@@ -23,8 +25,12 @@ sealed class Route(val route: String) {
     data object MovieDetailScreen :
         Route(route = "movie_details/{listId}/{movieId}/{userName}/{dataSource}") {
         // Функция для удобного создания пути с параметром
-        fun createRoute(listId: String, movieId: Int, userName: String, dataSource: String) =
-            "movie_details/$listId/$movieId/$userName/$dataSource"
+        fun createRoute(
+            listId: String,
+            movieId: Int,
+            userName: String,
+            dataSource: String
+        ) = "movie_details/$listId/$movieId/$userName/$dataSource"
     }
     data object InternalSharedList :
         Route(route = "internal_shared_list/{dataSource}/{listId}/{title}/{userId}/{userName}/{listName}") {

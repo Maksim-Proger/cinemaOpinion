@@ -263,7 +263,7 @@ fun ShowCommentList(
     userId: String = "",
     selectedMovieId: Int,
     viewModel: ViewModel,
-    listId: String = "",
+    sharedListId: String = "",
     dataSource: String = "",
     fraction: Float,
     addCommentButton: @Composable () -> Unit = {},
@@ -343,10 +343,10 @@ fun ShowCommentList(
                     val state by viewModel.commentsDownloadStatus.collectAsState()
                     val comments by viewModel.comments.collectAsState()
 
-                    LaunchedEffect(listId, selectedMovieId) {
-                        if (listId.isNotEmpty()) {
-                            viewModel.observeComments(listId, selectedMovieId)
-                            viewModel.getComments(listId, selectedMovieId, dataSource)
+                    LaunchedEffect(sharedListId, selectedMovieId) {
+                        if (sharedListId.isNotEmpty()) {
+                            viewModel.observeComments(sharedListId, selectedMovieId)
+                            viewModel.getComments(sharedListId, selectedMovieId, dataSource)
                         }
                     }
                     LaunchedEffect(viewModel) {
@@ -603,6 +603,21 @@ fun ChangeComment(
             .fillMaxHeight(fraction = fraction)
             .padding(horizontal = 16.dp)
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 7.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onClickCloseButton) {
+                Icon(
+                    modifier = Modifier.size(35.dp),
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+            }
+        }
+
         CustomTextFieldForComments(
             value = comment,
             onValueChange = setComment,
@@ -631,6 +646,7 @@ fun ChangeComment(
                 }
             )
         )
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
