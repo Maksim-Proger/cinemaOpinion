@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import coil.annotation.ExperimentalCoilApi
 import coil.imageLoader
 import coil.memory.MemoryCache
-import com.example.backend.BackendApiProvider
-import com.example.backend.BackendUploadAvatarUseCase
+import com.example.backend.di.BackendApiProvider
+import com.example.backend.domain.BackendUploadAvatarUseCase
 import com.example.core.domain.DomainUserModel
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.domain.usecase.firebase.user.GetUserDataUseCase

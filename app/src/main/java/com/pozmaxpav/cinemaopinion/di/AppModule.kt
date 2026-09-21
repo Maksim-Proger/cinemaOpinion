@@ -1,10 +1,10 @@
 package com.pozmaxpav.cinemaopinion.di
 
 import android.content.Context
-import com.example.backend.BackendDisablePushUseCase
-import com.example.backend.BackendNotifyChangeCreatedUseCase
-import com.example.backend.BackendRegisterDeviceUseCase
-import com.example.backend.BackendUploadAvatarUseCase
+import com.example.backend.domain.BackendDisablePushUseCase
+import com.example.backend.domain.BackendNotifyChangeCreatedUseCase
+import com.example.backend.domain.BackendRegisterDeviceUseCase
+import com.example.backend.domain.BackendUploadAvatarUseCase
 import com.example.core.utils.FirebaseListenerHolder
 import com.google.firebase.database.DatabaseReference
 import com.pozmaxpav.cinemaopinion.BuildConfig

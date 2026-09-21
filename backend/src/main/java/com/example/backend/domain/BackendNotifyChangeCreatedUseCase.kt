@@ -1,6 +1,8 @@
-package com.example.backend
+package com.example.backend.domain
 
 import android.util.Log
+import com.example.backend.di.BackendApiProvider
+import com.example.backend.ChangeCreatedRequest
 
 class BackendNotifyChangeCreatedUseCase {
     suspend operator fun invoke(userId: String, changeId: String): Result<Unit> =

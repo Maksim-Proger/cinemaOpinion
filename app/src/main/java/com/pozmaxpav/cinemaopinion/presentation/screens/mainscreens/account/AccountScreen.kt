@@ -31,11 +31,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,15 +54,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.backend.BackendApiProvider
+import com.example.backend.di.BackendApiProvider
 import com.example.core.domain.DomainUserModel
 import com.example.ui.presentation.theme.DynamicContentColor
 import com.example.ui.presentation.theme.cardAccent
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.AvatarImage
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 import com.pozmaxpav.cinemaopinion.R
@@ -73,8 +68,6 @@ import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlMod
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.rememberDynamicPaletteColors
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListsScreen
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 
 
 // region Цвета

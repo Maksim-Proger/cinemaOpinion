@@ -1,6 +1,8 @@
-package com.example.backend
+package com.example.backend.domain
 
 import android.util.Log
+import com.example.backend.di.BackendApiProvider
+import com.example.backend.UploadAvatarResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody

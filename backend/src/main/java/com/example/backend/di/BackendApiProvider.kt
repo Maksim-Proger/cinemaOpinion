@@ -1,5 +1,7 @@
-package com.example.backend
+package com.example.backend.di
 
+import com.example.backend.BackendApi
+import com.example.backend.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -10,7 +12,7 @@ import java.util.concurrent.TimeUnit
 object BackendApiProvider {
     private const val BASE_URL = "http://147.45.233.103/"
     private const val BACKEND_HOST = "147.45.233.103"
-    private val API_KEY = BuildConfig.API_SECRET_KEY
+    private const val API_KEY = BuildConfig.API_SECRET_KEY
 
     fun avatarUrl(userId: String): String = "${BASE_URL}avatars/$userId"
 

@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.example.backend.BackendApiProvider
+import com.example.backend.di.BackendApiProvider
 import com.pozmaxpav.cinemaopinion.R
 
 @Composable

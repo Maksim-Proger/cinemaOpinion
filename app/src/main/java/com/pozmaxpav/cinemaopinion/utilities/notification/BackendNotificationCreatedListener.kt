@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.utilities.notification
 
-import com.example.backend.BackendNotifyChangeCreatedUseCase
+import com.example.backend.domain.BackendNotifyChangeCreatedUseCase
 
 class BackendNotificationCreatedListener(
     private val backendNotifyChangeCreatedUseCase: BackendNotifyChangeCreatedUseCase

@@ -3,12 +3,11 @@ package com.pozmaxpav.cinemaopinion
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.os.Build
 import android.util.Log
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.disk.DiskCache
-import com.example.backend.BackendApiProvider
+import com.example.backend.di.BackendApiProvider
 import dagger.hilt.android.HiltAndroidApp
 import ru.rustore.sdk.pushclient.RuStorePushClient
 

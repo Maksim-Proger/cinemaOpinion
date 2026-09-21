@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.utilities.notification
 
-import com.example.backend.BackendDisablePushUseCase
+import com.example.backend.domain.BackendDisablePushUseCase
 
 class BackendDeviceDataDisabledListener(
     private val backendDisablePushUseCase: BackendDisablePushUseCase
