@@ -38,5 +38,3 @@ data class PremiereItemDto(
     @SerializedName("poster_url") val posterUrl: String?,
     @SerializedName("poster_preview") val posterPreview: String?
 )
-
-

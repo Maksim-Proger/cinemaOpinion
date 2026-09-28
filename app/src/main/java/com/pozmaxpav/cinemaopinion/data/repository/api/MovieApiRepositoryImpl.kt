@@ -17,11 +17,23 @@ import com.pozmaxpav.cinemaopinion.domain.models.api.movies.SearchRequest
 import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import com.pozmaxpav.cinemaopinion.data.source.PremieresSource
+import java.time.Month
 
-class MovieRepositoryApiImpl @Inject constructor(private val api: MovieApi) : MovieRepositoryApi {
+class MovieRepositoryApiImpl @Inject constructor(
+    private val api: MovieApi,
+    private val premieresSource: PremieresSource
+) : MovieRepositoryApi {
+
+//    override suspend fun getPremiereMovies(
+//        year: Int, month: String
+//    ): MovieList {
+//        return api.requestMoviesByYearAndMonth(year, month).toDomain()
+//    }
 
     override suspend fun getPremiereMovies(year: Int, month: String): MovieList {
-        return api.requestMoviesByYearAndMonth(year, month).toDomain()
+        val movies = premieresSource.getPremieres(year, Month.valueOf(month.uppercase()).value)
+        return MovieList(total = movies.size, items = movies)
     }
 
     override suspend fun getTopMovies(page: Int): MovieTopList {
