@@ -320,7 +320,7 @@ fun DetailsCardSelectedMovie(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     val sendToSharedList =
-                        stringResource(R.string.text_buttons_film_card_to_shared_list)
+                        stringResource(R.string.text_buttons_recommend_film)
                     val showResponse = stringResource(R.string.button_show_response)
                     val sendWaitingList = stringResource(R.string.button_open_waiting_list)
 

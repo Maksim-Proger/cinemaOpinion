@@ -31,7 +31,8 @@ fun TopAppBarMainScreen(
         title = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.displayLarge
+                style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.secondary
             )
         },
         actions = {

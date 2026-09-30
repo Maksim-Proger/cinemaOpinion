@@ -48,6 +48,7 @@ import com.example.ui.presentation.components.dropmenu.SettingsMenu
 fun SpecialTopAppBar(
     isAtTop: Boolean,
     title: String,
+    showMenu: Boolean = true,
     goToBack: () -> Unit,
     onArchiveClick: () -> Unit = {},
     onWaitlistClick: () -> Unit = {}
@@ -103,7 +104,8 @@ fun SpecialTopAppBar(
             if (
                 title != stringResource(R.string.title_page_personal_list) &&
                 !title.contains(stringResource(R.string.button_open_waiting_list_screen)) &&
-                !title.contains(stringResource(R.string.button_open_archive_screen))
+                !title.contains(stringResource(R.string.button_open_archive_screen)) &&
+                showMenu
             ) {
 
                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
@@ -112,7 +114,7 @@ fun SpecialTopAppBar(
                         translationX = -offset.toPx()
                         translationY = offset.toPx()
                     },
-                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    color = MaterialTheme.colorScheme.onSecondary,
                     tint = MaterialTheme.colorScheme.onSecondaryContainer,
                     onArchiveClick = onArchiveClick,
                     onWaitlistClick = onWaitlistClick
