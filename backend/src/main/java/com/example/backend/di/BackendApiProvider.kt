@@ -10,8 +10,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object BackendApiProvider {
-    private const val BASE_URL = "http://147.45.233.103/"
-    private const val BACKEND_HOST = "147.45.233.103"
+    private const val BASE_URL = "https://api.cinemaopinion.ru:8443/"
+    private const val BACKEND_HOST = "api.cinemaopinion.ru"
     private const val API_KEY = BuildConfig.API_SECRET_KEY
 
     fun avatarUrl(userId: String): String = "${BASE_URL}avatars/$userId"
