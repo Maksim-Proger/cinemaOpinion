@@ -155,7 +155,7 @@ fun InternalSharedList(
                             userId = userId,
                             selectedMovieId = movie.id,
                             viewModel = sharedListsViewModel,
-                            listId = listId,
+                            sharedListId = listId,
                             dataSource = dataSource,
                             fraction = 0.7f,
                             onClick = { comment ->

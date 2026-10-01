@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.example.backend.BackendApiProvider
+import com.example.backend.di.BackendApiProvider
 import com.pozmaxpav.cinemaopinion.R
 
 @Composable
@@ -22,17 +22,17 @@ fun AvatarImage(
 ) {
     val context = LocalContext.current
 
-    val model = if (previewUri != null) {
-        previewUri
-    } else {
-        val url = BackendApiProvider.avatarUrl(userId)
-        ImageRequest.Builder(context)
-            .data(url)
-            .memoryCacheKey(url)
-            .diskCacheKey(url)
-            .crossfade(false)
-            .build()
-    }
+    val model =
+        if (previewUri != null) { previewUri }
+        else {
+            val url = BackendApiProvider.avatarUrl(userId)
+            ImageRequest.Builder(context)
+                .data(url)
+                .memoryCacheKey(url)
+                .diskCacheKey(url)
+                .crossfade(false)
+                .build()
+        }
 
     SubcomposeAsyncImage(
         model = model,

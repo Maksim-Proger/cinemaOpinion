@@ -31,11 +31,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,33 +47,30 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.backend.BackendApiProvider
+import com.example.backend.di.BackendApiProvider
 import com.example.core.domain.DomainUserModel
 import com.example.ui.presentation.theme.DynamicContentColor
 import com.example.ui.presentation.theme.cardAccent
 import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
 import com.pozmaxpav.cinemaopinion.presentation.components.AvatarImage
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.PersonalMovieViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.UserViewModel
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
 import com.pozmaxpav.cinemaopinion.utilities.navigateFunction
 import com.pozmaxpav.cinemaopinion.R
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.rememberDynamicPaletteColors
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListsScreen
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SeriesControlViewModel
-import com.pozmaxpav.cinemaopinion.presentation.viewModels.firebase.SharedListsViewModel
 
 
 // region Цвета
-
-private val GlassBorder = Color(0x55FFFFFF)
 private val TextWhite = Color(0xFFFFFFFF)
 private val TextSubtle = Color(0xFFB8A08A)
 
@@ -88,26 +82,16 @@ fun AccountScreen(
     userId: String,
     userData: DomainUserModel?,
     onClose: () -> Unit,
-    personalMovieViewModel: PersonalMovieViewModel = hiltViewModel(),
+    countPersonalMovies: List<DomainSelectedMovieModel>,
+    countSharedLists: List<DomainSharedListModel>,
+    countSeriesControlItems: List<DomainSeriesControlModel>,
     systemViewModel: SystemViewModel = hiltViewModel(),
-    sharedListsViewModel: SharedListsViewModel = hiltViewModel(),
-    seriesControlViewModel: SeriesControlViewModel = hiltViewModel()
 ) {
-    val countPersonalMovies by personalMovieViewModel.listSelectedMovies.collectAsState()
-    val countSharedLists by sharedListsViewModel.list.collectAsState()
-    val countSeriesControlItems by seriesControlViewModel.listMovies.collectAsState()
-
     var openSharedLists by remember { mutableStateOf(false) }
     var locationShowDialogEvents by remember { mutableStateOf(false) }
     var settingsMenuExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(userId) {
-        if (userId.isNotBlank() && userId != "Unknown") {
-            sharedListsViewModel.getLists(userId)
-            seriesControlViewModel.getListEntries(userId)
-            personalMovieViewModel.getMovies(userId)
-        }
-    }
+
 
     Box(
         modifier = Modifier
@@ -159,7 +143,7 @@ fun AccountScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ListsRow(
-                    label = "Личный список",
+                    label = stringResource(R.string.my_list_movies),
                     imageRes = R.drawable.personal_list,
                     count = countPersonalMovies.size,
                     modifier = Modifier.weight(1f),
@@ -168,7 +152,7 @@ fun AccountScreen(
                     }
                 )
                 ListsRow(
-                    label = "Совместные список",
+                    label = stringResource(R.string.shared_lists),
                     imageRes = R.drawable.shared_list,
                     count = countSharedLists.size,
                     modifier = Modifier.weight(1f),
@@ -177,7 +161,7 @@ fun AccountScreen(
                     }
                 )
                 ListsRow(
-                    label = "Контроль серий",
+                    label = stringResource(R.string.series_control),
                     imageRes = R.drawable.series_control,
                     count = countSeriesControlItems.size,
                     modifier = Modifier.weight(1f),
@@ -302,7 +286,7 @@ private fun HeroSection(
         )
         // endregion
 
-        // Тёмный градиент снизу — плавный переход в фон
+        // region Тёмный градиент снизу — плавный переход в фон
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -319,6 +303,7 @@ private fun HeroSection(
                     )
                 )
         )
+        // endregion
 
         // region Верхние кнопки
         Row(
@@ -339,7 +324,7 @@ private fun HeroSection(
         // endregion
 
         // region Имя
-        val (animatedBg, animatedTitle, animatedAccent) =
+        val (animatedTitle, animatedAccent) =
             rememberDynamicPaletteColors(imageUrl = BackendApiProvider.avatarUrl(userId))
         Column(
             modifier = Modifier
@@ -368,8 +353,7 @@ private fun HeroSection(
             Spacer(Modifier.height(16.dp))
 
             Achievements(
-                titleColor = animatedTitle,
-                brush = animatedAccent,
+                brush = animatedTitle,
                 listAwards = listAwards,
                 onClick = {
                     navController.navigate(
@@ -392,7 +376,6 @@ private fun Buttons(
     icon: ImageVector,
     onClick: () -> Unit
 ) {
-
     val (animatedBg, animatedAccent) =
         rememberDynamicPaletteColors(imageUrl = BackendApiProvider.avatarUrl(userId))
 
@@ -400,7 +383,7 @@ private fun Buttons(
         onClick = onClick,
         modifier = Modifier.height(42.dp),
         shape = RoundedCornerShape(50),
-        border = ButtonDefaults.outlinedButtonBorder.copy(
+        border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
             brush = SolidColor(animatedAccent)
         ),
         colors = ButtonDefaults.outlinedButtonColors(
@@ -418,11 +401,11 @@ private fun Buttons(
 
 @Composable
 fun Achievements(
-    titleColor: Color,
     brush: Color,
     listAwards: String,
     onClick: () -> Unit = {}
 ) {
+
     val awards = remember(listAwards) {
         listAwards.split(",").filter { it.isNotBlank() }
     }
@@ -430,12 +413,7 @@ fun Achievements(
     OutlinedButton(
         onClick = onClick,
         shape = RoundedCornerShape(50),
-        colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = titleColor.copy(alpha = 0.9f),
-            contentColor = DynamicContentColor,
-
-        ),
-        border = ButtonDefaults.outlinedButtonBorder.copy(
+        border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
             brush = SolidColor(brush)
         ),
         enabled = awards.isNotEmpty()
@@ -443,23 +421,11 @@ fun Achievements(
         Text(
             text = "${awards.size} achievements",
             fontSize = 16.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            color = brush
         )
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -41,7 +41,7 @@ import com.example.ui.presentation.components.topappbar.TopAppBarMainScreen
 import com.pozmaxpav.cinemaopinion.R
 import com.pozmaxpav.cinemaopinion.presentation.components.alertdialogs.VoiceCommandDialog
 import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardSpecial
-import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.NewDesignMovieDetailScreen
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.fabMenuItems
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.navigation.Route
@@ -77,8 +77,8 @@ fun ScaffoldMainScreen(
     val isScrolling by remember {
         derivedStateOf {
             scrollBehavior.state.heightOffset < 0f ||
-                state.listState.firstVisibleItemIndex > 0 ||
-                state.listState.firstVisibleItemScrollOffset > 0
+                    state.listState.firstVisibleItemIndex > 0 ||
+                    state.listState.firstVisibleItemScrollOffset > 0
         }
     }
 
@@ -186,6 +186,7 @@ fun ScaffoldMainScreen(
                 !state.showDatePicker.value &&
                 !state.locationShowPageAppDescription.value
             ) {
+                val message = stringResource(R.string.voice_command_prompt)
                 FABMenu(
                     imageIcon = if (isScrolling) Icons.Default.ArrowUpward else Icons.Default.Settings,
                     contentDescription = stringResource(R.string.description_icon_fab_button_with_menu),
@@ -202,17 +203,18 @@ fun ScaffoldMainScreen(
                         },
                         onVoiceCommandClick = {
                             try {
-                                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                                    putExtra(
-                                        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-                                    )
-                                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU")
-                                    putExtra(
-                                        RecognizerIntent.EXTRA_PROMPT,
-                                        context.getString(R.string.voice_command_prompt)
-                                    )
-                                }
+                                val intent =
+                                    Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                                        putExtra(
+                                            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                                            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                                        )
+                                        putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU")
+                                        putExtra(
+                                            RecognizerIntent.EXTRA_PROMPT,
+                                            message
+                                        )
+                                    }
                                 speechRecognitionLauncher.launch(intent)
                             } catch (e: ActivityNotFoundException) {
                                 showToast(context, R.string.voice_recognition_unavailable)
@@ -229,7 +231,7 @@ fun ScaffoldMainScreen(
             when {
                 state.selectedMovie.value != null -> {
                     state.selectedMovie.value?.let {
-                        NewDesignMovieDetailScreen(
+                        DetailsCardMovie(
                             movie = it,
                             userId = userId,
                             onCloseButton = { state.selectedMovie.value = null },
@@ -238,17 +240,18 @@ fun ScaffoldMainScreen(
                     }
                     AdaptiveBackHandler { state.selectedMovie.value = null }
                 }
+
                 state.selectedSeasonalMovie.value != null -> {
                     state.selectedSeasonalMovie.value?.let {
                         DetailsCardSpecial(
                             movie = it,
                             userId = userId,
                             onCloseButton = { state.selectedSeasonalMovie.value = null },
-//                            padding = innerPadding
                         )
                     }
                     AdaptiveBackHandler { state.selectedSeasonalMovie.value = null }
                 }
+
                 else -> {
                     when (loadingState) {
                         is LoadingState.Loading -> AnimationImplementation(innerPadding)
@@ -264,6 +267,7 @@ fun ScaffoldMainScreen(
                                 )
                             }
                         }
+
                         is LoadingState.Success -> {
                             Column(
                                 modifier = Modifier
@@ -295,7 +299,23 @@ fun ScaffoldMainScreen(
     PreviewOverlay(state, showDialogEvents)
     PageDescriptionOverlay(state, systemViewModel)
     SearchFilterScreenOverlay(state)
-    AccountScreenOverlay(userId, userData, state, navController)
+
+
+    PreloadData(
+        userId = userId,
+        resData = { countPersonalMovies, countSharedLists, countSeriesControlItems ->
+            AccountScreenOverlay(
+                userId,
+                userData,
+                state,
+                navController,
+                countPersonalMovies,
+                countSharedLists,
+                countSeriesControlItems
+            )
+        }
+    )
+
 
     when (val commandState = voiceCommandState) {
         is VoiceCommandState.AwaitingConfirmation -> {
@@ -308,34 +328,38 @@ fun ScaffoldMainScreen(
                 onDismiss = { seriesControlViewModel.resetVoiceCommandState() }
             )
         }
+
         VoiceCommandState.NotRecognized -> {
             LaunchedEffect(commandState) {
                 showToast(context, R.string.voice_command_not_recognized)
                 seriesControlViewModel.resetVoiceCommandState()
             }
         }
+
         is VoiceCommandState.TitleNotFound -> {
+            val message = stringResource(R.string.voice_command_title_not_found, commandState.title)
             LaunchedEffect(commandState) {
                 showToast2(
-                    context,
-                    context.getString(R.string.voice_command_title_not_found, commandState.title)
+                    context = context,
+                    message = message
                 )
                 seriesControlViewModel.resetVoiceCommandState()
             }
         }
+
         is VoiceCommandState.NoNumericSeasons -> {
+            val message =
+                stringResource(R.string.voice_command_no_numeric_seasons, commandState.title)
             LaunchedEffect(commandState) {
                 showToast2(
-                    context,
-                    context.getString(R.string.voice_command_no_numeric_seasons, commandState.title)
+                    context = context,
+                    message = message
                 )
                 seriesControlViewModel.resetVoiceCommandState()
             }
         }
+
         VoiceCommandState.Idle -> Unit
     }
 
 }
-
-
-

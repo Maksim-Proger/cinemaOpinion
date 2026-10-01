@@ -19,7 +19,7 @@ import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.PersonalLis
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.NotificationsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.screenslists.SharedListScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.EditProfileScreen
-import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.MovieDetailScreen
+import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.NotificationDetailScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SettingsScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.WebViewScreen
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.system.SystemViewModel
@@ -114,6 +114,7 @@ fun NavGraph(
                 navArgument("url") { type = NavType.StringType }
             )
         ) { WebViewScreen() }
+
         composable(
             Route.MovieDetailScreen.route,
             arguments = listOf(
@@ -127,7 +128,7 @@ fun NavGraph(
             val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
             val userName = backStackEntry.arguments?.getString("userName") ?: ""
             val dataSource = backStackEntry.arguments?.getString("dataSource") ?: ""
-            MovieDetailScreen(
+            NotificationDetailScreen(
                 navController = navController,
                 listId = listId,
                 movieId = movieId,
@@ -136,6 +137,7 @@ fun NavGraph(
                 systemViewModel = systemViewModel
             )
         }
+
         composable(
             Route.InternalSharedList.route,
             arguments = listOf(

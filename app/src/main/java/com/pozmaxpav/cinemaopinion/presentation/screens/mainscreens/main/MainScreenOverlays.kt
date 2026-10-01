@@ -35,6 +35,9 @@ import com.example.intro.presentation.pages.PreviewAlertDialog
 import com.example.ui.presentation.components.CustomBoxShowOverlay
 import com.example.ui.presentation.components.CustomSearchBar
 import com.example.ui.presentation.components.DatePickerFunction
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSelectedMovieModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSeriesControlModel
+import com.pozmaxpav.cinemaopinion.domain.models.firebase.DomainSharedListModel
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.screens.mainscreens.account.AccountScreen
 import com.pozmaxpav.cinemaopinion.presentation.screens.settingsscreens.SearchFilterScreen
@@ -200,16 +203,22 @@ fun AccountScreenOverlay(
     userId: String,
     userData: DomainUserModel?,
     state: MainScreenState,
-    navController: NavHostController
+    navController: NavHostController,
+    countPersonalMovies: List<DomainSelectedMovieModel>,
+    countSharedLists: List<DomainSharedListModel>,
+    countSeriesControlItems: List<DomainSeriesControlModel>
 ) {
     if (state.onAccountButtonClick.value) {
         CustomBoxShowOverlay(
             onDismiss = { /* TODO: А это мне надо еще? state.onAccountButtonClick.value = false */ },
             content = {
                 AccountScreen(
-                    navController,
-                    userId,
+                    navController = navController,
+                    userId = userId,
                     userData = userData,
+                    countPersonalMovies = countPersonalMovies,
+                    countSharedLists = countSharedLists,
+                    countSeriesControlItems = countSeriesControlItems,
                     onClose = { state.onAccountButtonClick.value = false }
                 )
                 AdaptiveBackHandler { state.onAccountButtonClick.value = false }

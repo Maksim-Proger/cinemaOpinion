@@ -1,10 +1,11 @@
 package com.pozmaxpav.cinemaopinion.di
 
 import android.content.Context
-import com.example.backend.BackendDisablePushUseCase
-import com.example.backend.BackendNotifyChangeCreatedUseCase
-import com.example.backend.BackendRegisterDeviceUseCase
-import com.example.backend.BackendUploadAvatarUseCase
+import com.example.backend.domain.BackendDisablePushUseCase
+import com.example.backend.domain.BackendGetPremieresUseCase
+import com.example.backend.domain.BackendNotifyChangeCreatedUseCase
+import com.example.backend.domain.BackendRegisterDeviceUseCase
+import com.example.backend.domain.BackendUploadAvatarUseCase
 import com.example.core.utils.FirebaseListenerHolder
 import com.google.firebase.database.DatabaseReference
 import com.pozmaxpav.cinemaopinion.BuildConfig
@@ -19,6 +20,8 @@ import com.pozmaxpav.cinemaopinion.data.repository.firebase.SharedListsRepositor
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.SystemMovieRepoImpl
 import com.pozmaxpav.cinemaopinion.data.repository.firebase.UserRepoImpl
 import com.pozmaxpav.cinemaopinion.data.repository.system.SystemRepositoryAppImpl
+import com.pozmaxpav.cinemaopinion.data.source.BackendPremieresSource
+import com.pozmaxpav.cinemaopinion.data.source.PremieresSource
 import com.pozmaxpav.cinemaopinion.domain.repository.api.GetMovieInformationApiRepository
 import com.pozmaxpav.cinemaopinion.domain.repository.api.MovieRepositoryApi
 import com.pozmaxpav.cinemaopinion.domain.repository.firebase.NotificationRepository
@@ -76,11 +79,11 @@ object AppModule {
             .create<MovieApi>()
     }
 
-    @Provides
-    @Singleton
-    fun provideMovieRepositoryApi(api: MovieApi): MovieRepositoryApi {
-        return MovieRepositoryApiImpl(api)
-    }
+//    @Provides
+//    @Singleton
+//    fun provideMovieRepositoryApi(api: MovieApi): MovieRepositoryApi {
+//        return MovieRepositoryApiImpl(api)
+//    }
 
     @Provides
     @Singleton
@@ -188,6 +191,17 @@ object AppModule {
         backendDisablePushUseCase: BackendDisablePushUseCase
     ) : DeviceDataDisabledListener {
         return BackendDeviceDataDisabledListener(backendDisablePushUseCase)
+    }
+    @Provides
+    @Singleton
+    fun providePremieresSource(): PremieresSource {
+        return BackendPremieresSource(BackendGetPremieresUseCase())
+    }
+
+    @Provides
+    @Singleton
+    fun provideMovieRepositoryApi(api: MovieApi, premieresSource: PremieresSource): MovieRepositoryApi {
+        return MovieRepositoryApiImpl(api, premieresSource)
     }
     // endregion
 

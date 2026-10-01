@@ -1,6 +1,6 @@
 package com.pozmaxpav.cinemaopinion.utilities.notification
 
-import com.example.backend.BackendRegisterDeviceUseCase
+import com.example.backend.domain.BackendRegisterDeviceUseCase
 
 class BackendDeviceDataCreatedListener(
     private val backendRegisterDeviceUseCase: BackendRegisterDeviceUseCase

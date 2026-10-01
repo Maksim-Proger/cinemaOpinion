@@ -101,6 +101,7 @@ class ApiViewModel @Inject constructor(
                 _loadingState.value = LoadingState.Success
                 isInitialized = true
             } catch (e: Exception) {
+                _loadingState.value = LoadingState.Error
                 e.printStackTrace()
             }
         }

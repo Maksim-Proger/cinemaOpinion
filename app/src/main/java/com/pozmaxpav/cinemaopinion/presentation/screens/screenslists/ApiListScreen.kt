@@ -1,5 +1,6 @@
 package com.pozmaxpav.cinemaopinion.presentation.screens.screenslists
 
+import com.pozmaxpav.cinemaopinion.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,7 +45,7 @@ import com.example.ui.presentation.components.topappbar.SpecialTopAppBar
 import com.example.ui.presentation.theme.cardAccent
 import com.example.ui.presentation.theme.onCardAccent
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
-import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.NewDesignMovieDetailScreen
+import com.pozmaxpav.cinemaopinion.presentation.components.detailscards.DetailsCardMovie
 import com.pozmaxpav.cinemaopinion.presentation.components.items.SelectedMovieItem
 import com.pozmaxpav.cinemaopinion.presentation.components.systemcomponents.AdaptiveBackHandler
 import com.pozmaxpav.cinemaopinion.presentation.viewModels.api.ApiViewModel
@@ -71,15 +73,15 @@ fun ApiListScreen(
     val parentEntry = remember(navController) {
         navController.previousBackStackEntry!! // TODO: Избавиться от !!
     }
-    val apiViewModel = hiltViewModel<ApiViewModel>(parentEntry)
 
+    val apiViewModel = hiltViewModel<ApiViewModel>(parentEntry)
     var selectedMovie by remember { mutableStateOf<MovieData?>(null) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
 
             if (selectedMovie != null) {
-                NewDesignMovieDetailScreen(
+                DetailsCardMovie(
                     movie = selectedMovie,
                     userId = userId,
                     onCloseButton = { selectedMovie = null },
@@ -145,7 +147,10 @@ fun ApiListScreen(
         if (selectedMovie == null) {
             SpecialTopAppBar(
                 isAtTop = isAtTop,
-                title = "Тестовая страница",
+                title =
+                    if (listType == "premiere") stringResource(R.string.movies_of_the_month)
+                    else stringResource(R.string.top_movies),
+                showMenu = false,
                 goToBack = { navController.popBackStack() }
             )
         }

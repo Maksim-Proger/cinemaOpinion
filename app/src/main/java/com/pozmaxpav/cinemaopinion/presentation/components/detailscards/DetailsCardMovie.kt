@@ -24,9 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.CommentBank
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.outlined.PostAdd
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -72,7 +70,7 @@ import com.pozmaxpav.cinemaopinion.utilities.toSelectedMovie
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewDesignMovieDetailScreen(
+fun DetailsCardMovie(
     movie: MovieData?,
     userId: String,
     navController: NavHostController,
