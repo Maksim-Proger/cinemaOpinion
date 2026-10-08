@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.example.core.utils.state.LoadingState
 import com.pozmaxpav.cinemaopinion.domain.models.api.information.Information
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.MovieData
 import com.pozmaxpav.cinemaopinion.domain.models.api.movies.SearchRequest
@@ -14,7 +15,6 @@ import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchMovieByIdU
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetSearchMoviesPagingUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetTopMoviesPagingUseCase
 import com.pozmaxpav.cinemaopinion.domain.usecase.api.movies.GetTopMoviesUseCase
-import com.example.core.utils.state.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +24,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class ApiViewModel @Inject constructor(
@@ -35,6 +37,9 @@ class ApiViewModel @Inject constructor(
     private val getMovieInformationUseCase: GetMovieInformationUseCase,
     private val getSearchMovieByIdUseCase: GetSearchMovieByIdUseCase
 ) : ViewModel() {
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
     private val _loadingState = MutableStateFlow<LoadingState>(LoadingState.Success)
     val loadingState: StateFlow<LoadingState> = _loadingState.asStateFlow()
@@ -93,6 +98,48 @@ class ApiViewModel @Inject constructor(
             }
         }
     }
+
+    fun refreshData() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            try {
+                val date = LocalDate.now()
+                val month = date.month.name.lowercase().replaceFirstChar { it.uppercase() }
+                _premiereMovies.value = getPremiereMoviesUseCase(date.year, month).items
+                _topListMovies.value = getTopMoviesUseCase(1).films
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _isRefreshing.value = false
+            }
+        }
+    }
+
+    fun loadingInitData() {
+
+        if (isInitialized) return // защита от повторного запуска
+        isInitialized = true
+
+        viewModelScope.launch {
+            _loadingState.value = LoadingState.Loading
+            try {
+                val date = LocalDate.now()
+                val month = date.month.name.lowercase().replaceFirstChar { it.uppercase() }
+                _premiereMovies.value = getPremiereMoviesUseCase(date.year, month).items
+                _topListMovies.value = getTopMoviesUseCase(1).films
+                _loadingState.value = LoadingState.Success
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                isInitialized = false
+                _loadingState.value = LoadingState.Error
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun fetchPremiersMovies(year: Int, month: String) {
         viewModelScope.launch {
             _loadingState.value = LoadingState.Loading
@@ -102,15 +149,6 @@ class ApiViewModel @Inject constructor(
                 isInitialized = true
             } catch (e: Exception) {
                 _loadingState.value = LoadingState.Error
-                e.printStackTrace()
-            }
-        }
-    }
-    fun fetchTopListMovies(page: Int = 1) {
-        viewModelScope.launch {
-            try {
-                _topListMovies.value = getTopMoviesUseCase(page).films
-            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
