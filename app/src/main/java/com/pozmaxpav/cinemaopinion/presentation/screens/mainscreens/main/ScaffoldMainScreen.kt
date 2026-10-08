@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,6 +34,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.core.utils.state.LoadingState
 import com.example.ui.presentation.components.fab.FABMenu
@@ -68,6 +70,8 @@ fun ScaffoldMainScreen(
 ) {
 
     // region Переменные
+    val isRefreshing by apiViewModel.isRefreshing.collectAsStateWithLifecycle()
+
     var backPressedTime by remember { mutableLongStateOf(0L) }
     val backPreventTime = 2000L
 
@@ -267,7 +271,6 @@ fun ScaffoldMainScreen(
                                 )
                             }
                         }
-
                         is LoadingState.Success -> {
                             Column(
                                 modifier = Modifier
@@ -277,15 +280,21 @@ fun ScaffoldMainScreen(
 
                                 SearchField(state)
 
-                                FetchMovies(
-                                    userId = userId,
-                                    state = state,
-                                    navController = navController,
-                                    apiViewModel = apiViewModel,
-                                    selectedMovie = { movie ->
-                                        state.selectedMovie.value = movie
-                                    }
-                                )
+                                PullToRefreshBox(
+                                    isRefreshing = isRefreshing,
+                                    onRefresh = { apiViewModel.refreshData() },
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    FetchMovies(
+                                        userId = userId,
+                                        state = state,
+                                        navController = navController,
+                                        apiViewModel = apiViewModel,
+                                        selectedMovie = { movie ->
+                                            state.selectedMovie.value = movie
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
